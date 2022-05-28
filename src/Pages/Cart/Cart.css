@@ -1,0 +1,22 @@
+.cart {
+   display: flex;
+}
+
+.cart_img {
+   padding: 0.3rem;
+}
+
+.cart_img img{
+   width: 50px;
+}
+
+.cart_btn {
+   display: flex;
+   align-items: center;
+   padding: 0.3rem;
+   justify-content: space-evenly;
+}
+
+.cart_btn input {
+   width: 15%;
+}

@@ -1,0 +1,14 @@
+.view_product_sidebar {
+   position: sticky;
+}
+
+.product_image {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+}
+
+.product_image img {
+   width: 70%;
+   height: auto;
+}
