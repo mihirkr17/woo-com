@@ -19,6 +19,7 @@ const ViewProduct = () => {
    const addToCartHandler = async (product) => {
 
       product['quantity'] = 1;
+      product['total_price'] = product?.price;
 
       const response = await fetch(`http://localhost:5000/my-cart/${user?.email}`, {
          method: "POST",
@@ -34,6 +35,26 @@ const ViewProduct = () => {
          navigate('/my-cart');
       }
 
+   }
+
+   const goToBuyHandler = async (product) => {
+      product['quantity'] = 1;
+      product['total_price'] = product?.price;
+      product['user_email'] = user?.email;
+
+      const response = await fetch(`http://localhost:5000/single-cart-product/${product?._id}`, {
+         method: "PUT",
+         headers: {
+            'content-type': 'application/json'
+         },
+         body: JSON.stringify(product)
+      });
+
+      const resData = await response.json();
+
+      if (resData) {
+         navigate(`/product/purchase/${product?._id}`);
+      }
    }
 
 
@@ -53,7 +74,7 @@ const ViewProduct = () => {
                            <button className='btn btn-primary' onClick={() => navigate('/my-cart')}>Go To Cart</button>
                      }
 
-                     <Link to={`/product/purchase/${product._id}`} className='btn btn-warning'>Buy Now</Link>
+                     <button className='btn btn-warning' onClick={() => goToBuyHandler(product)}>Buy Now</button>
                   </div>
                </div>
                <div className="col-lg-6">

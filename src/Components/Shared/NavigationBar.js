@@ -17,7 +17,11 @@ const NavigationBar = () => {
                   <Nav.Link as={NavLink} to="/">Home</Nav.Link>
                   {
                      !user ? <Nav.Link as={NavLink} to="/login">Login</Nav.Link> :
-                     <Button onClick={() => signOut(auth)}>Logout</Button>
+                        <>
+                           <Nav.Link as={NavLink} to='/my-cart'>Cart</Nav.Link>
+                           <Button onClick={() => signOut(auth)}>Logout</Button>
+                        </>
+
                   }
                </Nav>
             </Navbar.Collapse>

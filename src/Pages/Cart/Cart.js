@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { auth } from '../../firebase.init';
@@ -8,9 +8,10 @@ import "./Cart.css";
 const Cart = () => {
    const [user] = useAuthState(auth);
    const { data, loading, refetch } = useFetch(`http://localhost:5000/my-cart-items/${user?.email}`);
+   const [msg, setMsg] = useState("");
 
    if (loading) {
-      <Spinner></Spinner>;
+      return <Spinner></Spinner>;
    }
 
    const quantityHandler = async (product, params) => {
@@ -41,6 +42,24 @@ const Cart = () => {
 
    }
 
+   const removeFromCartHandler = async (product) => {
+      const {_id, title} =product;
+      let confirmMsg = window.confirm("Want to remove this item from your cart ?");
+      if (confirmMsg) {
+         const response = await fetch(`http://localhost:5000/delete-cart-item/${_id}`, {
+            method: "DELETE"
+         });
+
+         if (response.ok) {
+            const resData = await response.json();
+            if (resData) {
+               setMsg(`Successfully remove ${title} from your cart`);
+               refetch();
+            }
+         }
+      }
+   }
+
 
    if (data.length > 0) {
 
@@ -53,6 +72,7 @@ const Cart = () => {
             <div className="container">
                <div className="row">
                   <div className="col-lg-8">
+                     <p><strong className='text-danger'>{msg}</strong></p>
                      <div className="row">
                         {
                            data.map(product => {
@@ -69,6 +89,9 @@ const Cart = () => {
                                        </div>
                                        <div className="card_description">
                                           <div className="card_title">{product.title}</div>
+                                          <div className="remove_btn">
+                                             <button className='btn btn-sm btn-danger' onClick={() => removeFromCartHandler(product)}>Remove</button>
+                                          </div>
                                        </div>
                                     </div>
                                  </div>
