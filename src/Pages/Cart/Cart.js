@@ -1,110 +1,122 @@
 import React, { useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import { useNavigate } from 'react-router-dom';
+import CartAddress from '../../Components/Shared/CartAddress';
+import CartHeader from '../../Components/Shared/CartHeader';
+import CartItem from '../../Components/Shared/CartItem';
+import CartPayment from '../../Components/Shared/CartPayment';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { auth } from '../../firebase.init';
 import { useFetch } from '../../Hooks/useFetch';
+import { useMessage } from '../../Hooks/useMessage';
 import "./Cart.css";
 
 const Cart = () => {
    const [user] = useAuthState(auth);
    const { data, loading, refetch } = useFetch(`http://localhost:5000/my-cart-items/${user?.email}`);
-   const [msg, setMsg] = useState("");
+   const { msg, setMessage } = useMessage();
+   const navigate = useNavigate();
 
    if (loading) {
       return <Spinner></Spinner>;
    }
 
-   const quantityHandler = async (product, params) => {
+   const buyHandler = async (e) => {
+      e.preventDefault();
+      let payment_mode = e.target.payment.value
 
-      let quantity;
+      let orderId = Math.floor(Math.random() * 1000000000);
+      let products = {
+         products: data && data,
+         address: data?.address && data?.address,
+         payment_mode: payment_mode,
+         orderId: orderId
+      };
 
-      if (params === "dec") {
-         quantity = product?.quantity - 1;
-      } else if (params === "inc") {
-         quantity = product?.quantity + 1;
-      }
-
-      let price = parseInt(product?.price) * parseInt(quantity);
-
-      const response = await fetch(`http://localhost:5000/update-cart/${product?._id}`, {
-         method: "PUT",
+      const response = await fetch(`http://localhost:5000/set-order/${user?.email}`, {
+         method: "POST",
          headers: {
-            'content-type': 'application/json'
+            "content-type": "application/json"
          },
-         body: JSON.stringify({ quantity, total_price: price })
-      })
+         body: JSON.stringify(products)
+      });
 
-      const resData = await response.json();
-
-      if (resData) {
-         refetch();
-      }
-
-   }
-
-   const removeFromCartHandler = async (product) => {
-      const {_id, title} =product;
-      let confirmMsg = window.confirm("Want to remove this item from your cart ?");
-      if (confirmMsg) {
-         const response = await fetch(`http://localhost:5000/delete-cart-item/${_id}`, {
-            method: "DELETE"
-         });
-
-         if (response.ok) {
-            const resData = await response.json();
-            if (resData) {
-               setMsg(`Successfully remove ${title} from your cart`);
-               refetch();
-            }
+      if (response.ok) {
+         const resData = await response.json();
+         if (resData) {
+            console.log(resData);
+            navigate(`/checkout/${resData?.orderId}`);
          }
       }
    }
 
+   if (data) {
 
-   if (data.length > 0) {
-
-      let totalPrice = data.map(p => p?.total_price);
-      totalPrice = totalPrice.reduce((p, c) => p + c);
-
+      let totalPrice = data?.product && data?.product.map(p => p?.total_price).reduce((p, c) => p + c, 0);
+      let totalQuantity = data?.product && data?.product.map(p => p?.quantity).reduce((p, c) => p + c, 0);
+      let discount = data?.product && data?.product.map(p => p?.total_discount).reduce((p, c) => p + c, 0);
+      let totalAmount = (totalPrice - discount).toFixed(2);
 
       return (
          <div className='section_default'>
             <div className="container">
+               <p><strong className='text-danger'>{msg}</strong></p>
                <div className="row">
                   <div className="col-lg-8">
-                     <p><strong className='text-danger'>{msg}</strong></p>
                      <div className="row">
-                        {
-                           data.map(product => {
-                              return (
-                                 <div className="col-12 my-3" key={product._id}>
-                                    <div className="card_default cart">
-                                       <div className="cart_img">
-                                          <img src={product.image} alt="" />
-                                          <div className="cart_btn">
-                                             <button className='btn btn-sm btn-primary' disabled={product?.quantity <= 1 ? true : false} onClick={(e) => quantityHandler(product, "dec")}>-</button>
-                                             <input type="text" className='form-control' key={product?.quantity} defaultValue={product?.quantity} name="counter" id="counter" />
-                                             <button className='btn btn-sm btn-primary' onClick={(e) => quantityHandler(product, "inc")}>+</button>
-                                          </div>
-                                       </div>
-                                       <div className="card_description">
-                                          <div className="card_title">{product.title}</div>
-                                          <div className="remove_btn">
-                                             <button className='btn btn-sm btn-danger' onClick={() => removeFromCartHandler(product)}>Remove</button>
-                                          </div>
-                                       </div>
+
+
+
+                        <div className="col-12 my-3">
+                           <CartAddress refetch={refetch} addr={data?.address ? data?.address : ""} user={user}></CartAddress>
+                        </div>
+
+                        <div className="col-12 my-3">
+                           {
+                              data?.product ? data?.product.map(product => {
+                                 return (
+                                    <CartItem key={product?._id} user={user} product={product} refetch={refetch} setMessage={setMessage}></CartItem>
+                                 )
+                              }) :
+                                 <div className="card_default">
+                                    <div className="card_description">
+                                       <h3 className="cart_title">No Product Available In Your Cart</h3>
                                     </div>
                                  </div>
-                              )
-                           })
-                        }
+                           }
+                        </div>
+
                      </div>
+
                   </div>
                   <div className="col-lg-4">
-                     <div className="text-truncate">Price Details</div>
-                     <div className="card_default">
-                        <div className="card_description">
-                           <h3>Total Price : {totalPrice}</h3>
+                     <div className="row">
+                        <div className="col-12 mb-3">
+                           <div className="text-truncate">Price Details</div>
+                           <div className="card_default">
+                              <div className="card_description">
+                                 <pre>Total Price({totalQuantity || 0}) : {Math.round(totalPrice) + " $" || 0}</pre>
+                                 <pre>Discount : -{discount + " $" || 0}</pre>
+                                 <hr />
+                                 <code>Total Amount : {totalAmount || 0}</code>
+                              </div>
+                           </div>
+                        </div>
+                        <div className="col-12 mb-3">
+                           <CartHeader user={user}></CartHeader>
+                        </div>
+                        <div className="col-12 mb-3">
+                           {/* <CartPayment></CartPayment> */}
+                           <div className='card_default'>
+                              <div className="card_description">
+                                 <form onSubmit={buyHandler}>
+                                    <select name="payment" id="payment" className='form-select form-select-sm mb-3'>
+                                       <option value="cod">Cash On Delivery</option>
+                                    </select>
+                                    <button className='btn btn-primary btn-sm' disabled={data?.address?.select_address === true ? false : true}>Buy</button>
+                                 </form>
+                              </div>
+                           </div>
                         </div>
                      </div>
                   </div>
@@ -113,8 +125,6 @@ const Cart = () => {
          </div>
       );
    }
-
-
 };
 
 export default Cart;

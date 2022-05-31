@@ -11,6 +11,7 @@ import Register from './Pages/Register';
 import ViewProduct from './Pages/ViewProduct/ViewProduct';
 import Cart from './Pages/Cart/Cart';
 import Purchase from './Pages/Purchase/Purchase';
+import CheckOut from './Pages/CheckOut/CheckOut';
 
 function App() {
   return (
@@ -23,7 +24,8 @@ function App() {
         <Route path='/register' element={<Register></Register>}></Route>
         <Route path='/product/:productId' element={<ViewProduct></ViewProduct>}></Route>
         <Route path='/my-cart' element={<RequireAuth><Cart></Cart></RequireAuth>}></Route>
-        <Route path='/product/purchase/:productId' element={<Purchase></Purchase>}></Route>
+        <Route path='/product/purchase/:productId' element={<RequireAuth><Purchase></Purchase></RequireAuth>}></Route>
+        <Route path='/checkout/:orderId' element={<CheckOut></CheckOut>}></Route>
       </Routes>
       <Footer></Footer>
     </div>

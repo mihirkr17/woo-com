@@ -28,6 +28,8 @@ export const useFetch = (url) => {
 
          } catch (error) {
             setErr(error);
+         } finally {
+            setLoading(false);
          }
       })();
 

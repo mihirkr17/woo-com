@@ -1,6 +1,6 @@
 import { signOut } from 'firebase/auth';
 import React from 'react';
-import { Button, Container, Nav, Navbar } from 'react-bootstrap';
+import { Button, Container, Dropdown, Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { NavLink } from 'react-router-dom';
 import { auth } from '../../firebase.init';
@@ -10,18 +10,24 @@ const NavigationBar = () => {
    return (
       <Navbar bg="light" expand="lg">
          <Container>
-            <Navbar.Brand as={NavLink} to="/">React-Bootstrap</Navbar.Brand>
+            <Navbar.Brand as={NavLink} to="/">Woo-Com</Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
-               <Nav className="me-auto">
+               <Nav className="ms-auto">
                   <Nav.Link as={NavLink} to="/">Home</Nav.Link>
                   {
                      !user ? <Nav.Link as={NavLink} to="/login">Login</Nav.Link> :
                         <>
                            <Nav.Link as={NavLink} to='/my-cart'>Cart</Nav.Link>
-                           <Button onClick={() => signOut(auth)}>Logout</Button>
+                           <Dropdown>
+                              <Dropdown.Toggle className='btn-sm' variant="secondary" id="dropdown-basic">
+                                 {user?.displayName.split(" ")[0]}
+                              </Dropdown.Toggle>
+                              <Dropdown.Menu>
+                                 <Dropdown.Item as={Button} onClick={() => signOut(auth)}>Logout</Dropdown.Item>
+                              </Dropdown.Menu>
+                           </Dropdown>
                         </>
-
                   }
                </Nav>
             </Navbar.Collapse>
