@@ -18,7 +18,7 @@ const CartAddress = ({ refetch, addr, user }) => {
       final["address_id"] = Math.floor(Math.random() * 1000000000);
 
 
-      const response = await fetch(`http://localhost:5000/add-address/${user?.email}`, {
+      const response = await fetch(`https://woo-com-serve.herokuapp.com/add-address/${user?.email}`, {
          method: "PUT",
          headers: {
             'content-type': 'application/json'
@@ -44,7 +44,7 @@ const CartAddress = ({ refetch, addr, user }) => {
          select_address = true;
       }
 
-      const response = await fetch(`http://localhost:5000/select-address/${user?.email}`, {
+      const response = await fetch(`https://woo-com-serve.herokuapp.com/select-address/${user?.email}`, {
          method: "PUT",
          headers: {
             'content-type': 'application/json'
@@ -61,15 +61,17 @@ const CartAddress = ({ refetch, addr, user }) => {
       }
    }
 
-   const removeAddressHandler = async (addressId) => {
-      const response = await fetch(`http://localhost:5000/delete-address/${user?.email}`, {
-         method: "DELETE"
-      });
+   const removeAddressHandler = async () => {
+      if (window.confirm("Want to remove address ?")) {
+         const response = await fetch(`https://woo-com-serve.herokuapp.com/delete-address/${user?.email}`, {
+            method: "DELETE"
+         });
 
-      if (response.ok) {
-         const resData = await response.json();
-         if (resData) {
-            refetch();
+         if (response.ok) {
+            const resData = await response.json();
+            if (resData) {
+               refetch();
+            }
          }
       }
    }
@@ -88,7 +90,7 @@ const CartAddress = ({ refetch, addr, user }) => {
                      }
                   </div>
 
-                  <span onClick={() => removeAddressHandler(addr?.address_id)} className='ms-2 badge bg-danger'><FontAwesomeIcon icon={faClose}></FontAwesomeIcon></span>
+                  <span onClick={removeAddressHandler} className='ms-2 badge bg-danger'><FontAwesomeIcon icon={faClose}></FontAwesomeIcon></span>
 
                   <div className="py-2">
                      <address>
@@ -100,7 +102,6 @@ const CartAddress = ({ refetch, addr, user }) => {
                         <div className="d-flex align-items-center justify-content-end">
                            {
                               addr ? <button className='btn btn-warning btn-sm'
-                                 // disabled={addr.select_address === true ? true : false}
                                  onClick={() => selectAddress(addr?.select_address)} style={step === false ? { display: "block" } : { display: "none" }}>
                                  {addr?.select_address === true ? "Selected" : "Deliver Here"}
                               </button> : ''

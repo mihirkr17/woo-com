@@ -10,7 +10,7 @@ import { useMessage } from '../../Hooks/useMessage';
 const ViewProduct = () => {
    const { productId } = useParams();
    const [user] = useAuthState(auth);
-   const { data: product, loading, refetch } = useFetch(`http://localhost:5000/view-product/${productId}`);
+   const { data: product, loading, refetch } = useFetch(`https://woo-com-serve.herokuapp.com/view-product/${productId}`);
    const navigate = useNavigate();
    const { msg, setMessage } = useMessage();
 
@@ -33,7 +33,7 @@ const ViewProduct = () => {
       product['final_price'] = total_price;
       product['final_discount'] = discount;
 
-      const response = await fetch(`http://localhost:5000/my-cart/${user?.email}`, {
+      const response = await fetch(`https://woo-com-serve.herokuapp.com/my-cart/${user?.email}`, {
          method: "PUT",
          headers: {
             'content-type': 'application/json'

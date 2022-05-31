@@ -5,7 +5,7 @@ import { useFetch } from '../../Hooks/useFetch';
 
 const CheckOut = () => {
    const { orderId } = useParams();
-   const {data, refetch, loading} = useFetch(`http://localhost:5000/get-orderlist/${orderId}`);
+   const {data, refetch, loading} = useFetch(`https://woo-com-serve.herokuapp.com/get-orderlist/${orderId}`);
 
    if (loading) {
       return <Spinner></Spinner>;
