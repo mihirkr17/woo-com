@@ -13,8 +13,8 @@ const Purchase = () => {
    const { productId } = useParams();
    const [user] = useAuthState(auth);
 
-   const { data: cart, loading: pLoading, refetch } = useFetch(`http://localhost:5000/my-cart-items/${user?.email}`);
-   // const { data: addr, loading: addrLoading, refetch: addrRefetch } = useFetch(`http://localhost:5000/cart-address/${user?.email}`);
+   const { data: cart, loading: pLoading, refetch } = useFetch(`https://woo-com-serve.herokuapp.com/my-cart-items/${user?.email}`);
+   // const { data: addr, loading: addrLoading, refetch: addrRefetch } = useFetch(`https://woo-com-serve.herokuapp.com/cart-address/${user?.email}`);
    const { msg, setMessage } = useMessage("");
    const navigate = useNavigate();
 

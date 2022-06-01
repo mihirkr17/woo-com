@@ -17,7 +17,7 @@ const CartItem = ({ product: cart, refetch, setMessage, user }) => {
       let price = parseInt(cart?.price) * parseInt(quantity);
       let finalDiscount = parseInt(cart?.final_discount) * parseInt(quantity);
 
-      const response = await fetch(`http://localhost:5000/up-cart-qty-ttl-price/${cart?._id}/${user?.email}`, {
+      const response = await fetch(`https://woo-com-serve.herokuapp.com/up-cart-qty-ttl-price/${cart?._id}/${user?.email}`, {
          method: "PUT",
          headers: {
             'content-type': 'application/json'
@@ -37,7 +37,7 @@ const CartItem = ({ product: cart, refetch, setMessage, user }) => {
       const { _id, title } = cart;
       let confirmMsg = window.confirm("Want to remove this item from your cart ?");
       if (confirmMsg) {
-         const response = await fetch(`http://localhost:5000/delete-cart-item/${_id}/${user?.email}`, {
+         const response = await fetch(`https://woo-com-serve.herokuapp.com/delete-cart-item/${_id}/${user?.email}`, {
             method: "DELETE"
          });
 
