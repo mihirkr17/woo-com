@@ -80,23 +80,33 @@ const CartAddress = ({ refetch, addr, user }) => {
          <div className="card_description">
             <div className="row">
                <div className="col-lg-1"><span>2</span></div>
-               <div className="col-lg-8">
-                  <div className={`badge bg-${addr?.select_address === true ? 'success' : 'danger'}`}>
-                     Delivery Address
-                     {
-                        addr?.select_address === true ?
-                           <>&nbsp;<FontAwesomeIcon icon={faCheckDouble} /></> :
-                           <>&nbsp;<FontAwesomeIcon icon={faTriangleExclamation} /></>
-                     }
+               <div className="col-lg-11">
+                  <div className="d-flex align-items-center justify-content-between flex-wrap w-100">
+                     <div className={`badge bg-${addr?.select_address === true ? 'success' : 'danger'}`}>
+                        Delivery Address
+                        {
+                           addr?.select_address === true ?
+                              <>&nbsp;<FontAwesomeIcon icon={faCheckDouble} /></> :
+                              <>&nbsp;<FontAwesomeIcon icon={faTriangleExclamation} /></>
+                        }
+                     </div>
+
+                     <button onClick={removeAddressHandler} className={`ms-2 badge bg-danger ${step === true ? 'd-none' : ''}`}><FontAwesomeIcon icon={faClose}></FontAwesomeIcon></button>
+                     <button className='badge bg-primary'
+                        style={step === false ? { display: "block" } : { display: "none" }}
+                        onClick={() => setStep(true)}>
+                        {addr ? <FontAwesomeIcon icon={faPenAlt} /> : <FontAwesomeIcon icon={faPlus} />}
+                     </button>
                   </div>
-
-                  <span onClick={removeAddressHandler} className='ms-2 badge bg-danger'><FontAwesomeIcon icon={faClose}></FontAwesomeIcon></span>
-
                   <div className="py-2">
                      <address>
                         {
-                           addr ? <p className={`${addr?.select_address === true ? '' : 'text-muted'}`}>
-                              {addr?.name} <br /> {addr?.address},&nbsp;{addr?.city},&nbsp;{addr?.phone},&nbsp;{addr?.zip}
+                           addr ? <p style={{ wordBreak: "break-word" }} className={`${addr?.select_address === true ? '' : 'text-muted'}`}>
+                              <small>Customer Name : {addr?.name}</small><br />
+                              <small>Village : {addr?.address}</small> <br />
+                              <small>City : {addr?.city}</small> <br />
+                              <small>Phone : {addr?.phone}</small> <br />
+                              <small>Zip : {addr?.zip}</small>
                            </p> : <p>Please Insert Address</p>
                         }
                         <div className="d-flex align-items-center justify-content-end">
@@ -106,11 +116,7 @@ const CartAddress = ({ refetch, addr, user }) => {
                                  {addr?.select_address === true ? "Selected" : "Deliver Here"}
                               </button> : ''
                            }
-                           <button className='btn btn-primary btn-sm ms-2'
-                              style={step === false ? { display: "block" } : { display: "none" }}
-                              onClick={() => setStep(true)}>
-                              {addr ? <FontAwesomeIcon icon={faPenAlt} /> : <FontAwesomeIcon icon={faPlus} />}
-                           </button>
+
                         </div>
                      </address>
                   </div>

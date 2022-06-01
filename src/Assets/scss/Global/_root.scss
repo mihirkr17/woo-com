@@ -55,3 +55,12 @@ a {
 a {
   color: var(--color-link);
 }
+
+.badge {
+  border: none;
+  cursor: pointer;
+
+  &:disabled {
+    background-color: gray !important;
+  }
+}

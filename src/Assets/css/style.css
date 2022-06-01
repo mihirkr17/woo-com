@@ -50,6 +50,15 @@ a {
   color: var(--color-link);
 }
 
+.badge {
+  border: none;
+  cursor: pointer;
+}
+
+.badge:disabled {
+  background-color: gray !important;
+}
+
 .card_default {
   background: var(--color-trans-one);
   border-radius: 16px;

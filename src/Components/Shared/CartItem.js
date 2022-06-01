@@ -59,9 +59,9 @@ const CartItem = ({ product: cart, refetch, setMessage, user }) => {
                <img src={cart?.image} alt="" />
             </div>
             <div className="ms-2 cart_btn">
-               <button className='btn btn-sm btn-primary my-1' disabled={cart?.quantity <= 1 ? true : false} onClick={(e) => quantityHandler(cart, "dec")}>-</button>
-               <input type="text" disabled className='form-control form-control-sm' style={{ width: '40px' }} key={cart?.quantity} defaultValue={cart?.quantity} name="counter" id="counter" />
-               <button className='btn btn-sm btn-primary  my-1' onClick={(e) => quantityHandler(cart, "inc")}>+</button>
+               <button className='badge bg-primary my-1' disabled={cart?.quantity <= 1 ? true : false} onClick={(e) => quantityHandler(cart, "dec")}>-</button>
+               <span className='border px-2'>{cart?.quantity} </span>
+               <button className='badge bg-primary my-1' onClick={(e) => quantityHandler(cart, "inc")}>+</button>
             </div>
          </div>
 

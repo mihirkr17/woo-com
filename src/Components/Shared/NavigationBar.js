@@ -19,13 +19,15 @@ const NavigationBar = () => {
                      !user ? <Nav.Link as={NavLink} to="/login">Login</Nav.Link> :
                         <>
                            <Nav.Link as={NavLink} to='/my-cart'>Cart</Nav.Link>
+                           <Nav.Link as={NavLink} to='/dashboard/manage-orders'>Orders</Nav.Link>
+
                            <Dropdown>
                               <Dropdown.Toggle className='btn-sm' variant="secondary" id="dropdown-basic">
                                  {user?.displayName.split(" ")[0]}
                               </Dropdown.Toggle>
                               <Dropdown.Menu>
-                                 <Dropdown.Item as={Button} onClick={() => signOut(auth)}>Logout</Dropdown.Item>
                                  <Dropdown.Item as={Link} to='/my-profile/my-order'>My Order</Dropdown.Item>
+                                 <Dropdown.Item as={Button} onClick={() => signOut(auth)}>Logout</Dropdown.Item>
                               </Dropdown.Menu>
                            </Dropdown>
                         </>

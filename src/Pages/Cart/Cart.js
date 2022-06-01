@@ -39,11 +39,11 @@ const Cart = () => {
          let product = {
             product_name: elem.title,
             price: elem.price,
-            image : elem.image,
+            image: elem.image,
             final_price: elem.final_price,
             quantity: elem.quantity,
             discount: elem.discount,
-            _id : elem._id
+            _id: elem._id
          }
          productArr.push(product);
       }
@@ -55,22 +55,26 @@ const Cart = () => {
          total_product: totalQuantity,
          total_amount: totalAmount,
          address: data?.address && data?.address,
-         payment_mode: payment_mode
+         payment_mode: payment_mode,
+         status: "pending"
       };
 
-      const response = await fetch(`http://localhost:5000/set-order/${user?.email}`, {
-         method: "POST",
-         headers: {
-            "content-type": "application/json"
-         },
-         body: JSON.stringify(order)
-      });
+      if (window.confirm("Buy Now")) {
+         const response = await fetch(`http://localhost:5000/set-order/${user?.email}`, {
+            method: "POST",
+            headers: {
+               "content-type": "application/json"
+            },
+            body: JSON.stringify(order)
+         });
 
-      if (response.ok) {
-         const resData = await response.json();
-         if (resData) {
-            setMessage(<strong className='text-success'>Your Order Successful...</strong>);
-            // navigate(`/checkout/${resData?.orderId}`);
+         if (response.ok) {
+            const resData = await response.json();
+            if (resData) {
+               navigate(`/my-profile/my-order`);
+            }
+         } else {
+            setMessage(<strong className='text-danger'>Something went wrong!</strong>);
          }
       }
    }
@@ -90,10 +94,11 @@ const Cart = () => {
 
 
                         <div className="col-12 mb-3">
-                           <CartAddress refetch={refetch} addr={data?.address ? data?.address : ""} user={user}></CartAddress>
+                           <CartHeader user={user}></CartHeader>
                         </div>
 
                         <div className="col-12 my-3">
+                           <h5>Total In Cart {data?.product && data?.product.length}</h5>
                            {
                               data?.product ? data?.product.map(product => {
                                  return (
@@ -126,7 +131,7 @@ const Cart = () => {
                            </div>
                         </div>
                         <div className="col-12 mb-3">
-                           <CartHeader user={user}></CartHeader>
+                           <CartAddress refetch={refetch} addr={data?.address ? data?.address : ""} user={user}></CartAddress>
                         </div>
                         <div className="col-12 mb-3">
                            {/* <CartPayment></CartPayment> */}

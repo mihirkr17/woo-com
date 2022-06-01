@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom';
 const MyOrder = () => {
    const [user] = useAuthState(auth);
    const [p, setP] = useState(0);
-   const {msg, setMessage} = useMessage();
+   const { msg, setMessage } = useMessage();
    const { data, refetch, loading } = useFetch(`http://localhost:5000/my-order/${user?.email}`);
 
    if (loading) {
@@ -46,20 +46,26 @@ const MyOrder = () => {
             <h3 className="py-4 text-center">
                My All Orders
             </h3>
-            <p className='text-center'>{ data?.orders && data?.orders.length > 0 ? "Total : " + data?.orders.length + " Orders" : "You Have No Orders In Your History"}</p>
+            <p className='text-center'>{data?.orders && data?.orders.length > 0 ? "Total : " + data?.orders.length + " Orders" : "You Have No Orders In Your History"}</p>
             <div className="row">
                {
                   data?.orders ? data?.orders.map(order => {
                      return (
                         <div className="col-12 mb-3" key={order?.orderId}>
                            <div className="card_default">
-                              <small className='badge bg-info text-dark py-2'>Order ID : {order?.orderId}</small>
-                              <button className='btn btn-sm btn-danger ms-3' onClick={() => cancelOrderHandler(order?.orderId)}>Cancel</button>
-                              <div className="card_description">
 
-                                 <p>Total Amount : {order?.total_amount}</p>
+                              <div className="card_description">
+                                 <div className="d-flex align-items-center justify-content-between flex-wrap">
+                                    <small className='text-dark'>OrderID : <i className='text-info'>#{order?.orderId}</i></small>
+                                    <small>Total Amount : {order?.total_amount}$</small>
+                                    <small className='text-dark py-2 mx-1'>Payment Mode : <i>{order?.payment_mode}</i></small>
+                                    <small className='text-dark py-2 mx-1'>Status : <i className='text-success'>{order?.status}</i></small>
+                                    <button className='badge bg-danger ms-3' onClick={() => cancelOrderHandler(order?.orderId)}>Cancel</button>
+                                 </div>
+
+
                                  <article>
-                                    <button className='btn btn-sm' onClick={() => showHandler(order?.orderId)}>{p === order?.orderId ? "Hide" : "Show Order Items"}</button>
+                                    <button className='btn btn-sm' onClick={() => showHandler(order?.orderId)}>{p === order?.orderId ? "Hide" : "See"}&nbsp;Order Items</button>
                                     <Table style={p === order?.orderId ? { display: "block" } : { display: "none" }} striped responsive>
                                        <thead>
                                           <tr>
@@ -69,14 +75,17 @@ const MyOrder = () => {
                                              <th>Order Qty</th>
                                              <th>Final Price</th>
                                              <th>Discount</th>
+                                             <th>Payment Mode</th>
+                                             <th>Status</th>
                                           </tr>
                                        </thead>
                                        <tbody>
                                           {
-                                             order ? order?.product.map((order) => {
-                                                const {_id, product_name, price, image, quantity, final_price, discount } = order;
+                                             order ? order?.product.map((product) => {
+                                                const { _id, product_name, price, image, quantity, final_price, discount } = product;
+
                                                 return (
-                                                   <tr key={order?._id}>
+                                                   <tr key={_id}>
                                                       <td>
                                                          {
                                                             <img src={image} style={{ width: "55px", height: "55px" }} alt="product_image" />
@@ -86,9 +95,9 @@ const MyOrder = () => {
                                                       <td>{price}</td>
                                                       <td>{quantity}</td>
                                                       <td>{final_price}</td>
-                                                      <td>
-                                                         {discount}%
-                                                      </td>
+                                                      <td>{discount}%</td>
+                                                      <td>{order?.payment_mode}</td>
+                                                      <td>{order?.status}</td>
                                                    </tr>
                                                 )
                                              }) : <tr><td>No Orders Found</td></tr>

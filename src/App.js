@@ -13,6 +13,7 @@ import Cart from './Pages/Cart/Cart';
 import Purchase from './Pages/Purchase/Purchase';
 import CheckOut from './Pages/CheckOut/CheckOut';
 import MyOrder from './Pages/MyOrder/MyOrder';
+import ManageOrders from './Admin/Dashboard/Pages/ManageOrders';
 
 function App() {
   return (
@@ -28,6 +29,9 @@ function App() {
         <Route path='/product/purchase/:productId' element={<RequireAuth><Purchase></Purchase></RequireAuth>}></Route>
         <Route path='/checkout/:orderId' element={<CheckOut></CheckOut>}></Route>
         <Route path='/my-profile/my-order' element={<RequireAuth><MyOrder></MyOrder></RequireAuth>}></Route>
+
+        {/* // admin dashboard */}
+        <Route path='/dashboard/manage-orders' element={<ManageOrders></ManageOrders>}></Route>
       </Routes>
       <Footer></Footer>
     </div>
