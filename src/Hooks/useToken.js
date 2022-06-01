@@ -7,7 +7,7 @@ export const useToken = (user) => {
 
    useEffect(() => {
       (async () => {
-         const url = 'https://woo-com-serve.herokuapp.com/user?uid=' + uid;
+         const url = 'http://localhost:5000/user?uid=' + uid;
 
          if (uid) {
             const response = await fetch(url, {

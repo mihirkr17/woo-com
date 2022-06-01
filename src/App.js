@@ -12,6 +12,7 @@ import ViewProduct from './Pages/ViewProduct/ViewProduct';
 import Cart from './Pages/Cart/Cart';
 import Purchase from './Pages/Purchase/Purchase';
 import CheckOut from './Pages/CheckOut/CheckOut';
+import MyOrder from './Pages/MyOrder/MyOrder';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path='/my-cart' element={<RequireAuth><Cart></Cart></RequireAuth>}></Route>
         <Route path='/product/purchase/:productId' element={<RequireAuth><Purchase></Purchase></RequireAuth>}></Route>
         <Route path='/checkout/:orderId' element={<CheckOut></CheckOut>}></Route>
+        <Route path='/my-profile/my-order' element={<RequireAuth><MyOrder></MyOrder></RequireAuth>}></Route>
       </Routes>
       <Footer></Footer>
     </div>

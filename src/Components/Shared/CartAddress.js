@@ -18,7 +18,7 @@ const CartAddress = ({ refetch, addr, user }) => {
       final["address_id"] = Math.floor(Math.random() * 1000000000);
 
 
-      const response = await fetch(`https://woo-com-serve.herokuapp.com/add-address/${user?.email}`, {
+      const response = await fetch(`http://localhost:5000/add-address/${user?.email}`, {
          method: "PUT",
          headers: {
             'content-type': 'application/json'
@@ -44,7 +44,7 @@ const CartAddress = ({ refetch, addr, user }) => {
          select_address = true;
       }
 
-      const response = await fetch(`https://woo-com-serve.herokuapp.com/select-address/${user?.email}`, {
+      const response = await fetch(`http://localhost:5000/select-address/${user?.email}`, {
          method: "PUT",
          headers: {
             'content-type': 'application/json'
@@ -63,7 +63,7 @@ const CartAddress = ({ refetch, addr, user }) => {
 
    const removeAddressHandler = async () => {
       if (window.confirm("Want to remove address ?")) {
-         const response = await fetch(`https://woo-com-serve.herokuapp.com/delete-address/${user?.email}`, {
+         const response = await fetch(`http://localhost:5000/delete-address/${user?.email}`, {
             method: "DELETE"
          });
 

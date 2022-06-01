@@ -2,7 +2,7 @@ import { signOut } from 'firebase/auth';
 import React from 'react';
 import { Button, Container, Dropdown, Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { auth } from '../../firebase.init';
 
 const NavigationBar = () => {
@@ -25,6 +25,7 @@ const NavigationBar = () => {
                               </Dropdown.Toggle>
                               <Dropdown.Menu>
                                  <Dropdown.Item as={Button} onClick={() => signOut(auth)}>Logout</Dropdown.Item>
+                                 <Dropdown.Item as={Link} to='/my-profile/my-order'>My Order</Dropdown.Item>
                               </Dropdown.Menu>
                            </Dropdown>
                         </>
