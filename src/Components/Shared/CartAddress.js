@@ -2,8 +2,7 @@ import { faCheckDouble, faTriangleExclamation, faPlus, faPenAlt, faClose } from 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 
-const CartAddress = ({ refetch, addr, user }) => {
-   const [step, setStep] = useState(false);
+const CartAddress = ({ refetch, addr, user, step, setStep }) => {
 
    const addAddressHandler = async (e) => {
       e.preventDefault();

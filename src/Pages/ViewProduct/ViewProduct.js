@@ -10,7 +10,7 @@ import { useMessage } from '../../Hooks/useMessage';
 const ViewProduct = () => {
    const { productId } = useParams();
    const [user] = useAuthState(auth);
-   const { data: product, loading, refetch } = useFetch(`http://localhost:5000/view-product/${productId}`);
+   const { data: product, loading, refetch } = useFetch(`http://localhost:5000/view-product/${productId}/${user?.email}`);
    const navigate = useNavigate();
    const { msg, setMessage } = useMessage();
 

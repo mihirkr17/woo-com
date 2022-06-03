@@ -26,8 +26,7 @@ const Cart = () => {
    let discount = data?.product && data?.product.map(p => p?.total_discount).reduce((p, c) => p + c, 0);
    let totalAmount = (totalPrice - discount).toFixed(2);
 
-
-   const buyHandler = async (e) => {
+   const buyBtnHandler = async (e) => {
       e.preventDefault();
       let payment_mode = e.target.payment.value;
       let productArr = [];
@@ -119,20 +118,10 @@ const Cart = () => {
                         </div>
                      </div>
                      <div className="col-12 mb-3">
-                        <CartAddress refetch={refetch} addr={data?.address ? data?.address : ""} user={user}></CartAddress>
+                        <CartAddress refetch={refetch} addr={data?.address ? data?.address : ""} user={user} step={step} setStep={setStep}></CartAddress>
                      </div>
                      <div className="col-12 mb-3">
-                        {/* <CartPayment></CartPayment> */}
-                        <div className='card_default'>
-                           <div className="card_description">
-                              <form onSubmit={buyHandler}>
-                                 <select name="payment" id="payment" className='form-select form-select-sm mb-3'>
-                                    <option value="cod">Cash On Delivery</option>
-                                 </select>
-                                 <button className='btn btn-primary btn-sm' disabled={data?.address?.select_address === true ? false : true}>Buy</button>
-                              </form>
-                           </div>
-                        </div>
+                        <CartPayment buyBtnHandler={buyBtnHandler} dataProductLength={data?.product.length} selectAddress={data?.address?.select_address} ></CartPayment>
                      </div>
                   </div>
                </div>
@@ -140,7 +129,6 @@ const Cart = () => {
          </div>
       </div>
    );
-
 };
 
 export default Cart;

@@ -32,7 +32,7 @@ const ManageOrders = () => {
       }
    }
 
-   const setOrderPlaced = async (id, email, status) => {
+   const updateOrderStatusHandler = async (id, email, status) => {
       let confirmMsg = status === "placed" ? "Want To Placed This Order" : "Want To Shipped This Order";
       if (window.confirm(confirmMsg)) {
          const response = await fetch(`http://localhost:5000/update-order-status/${email}/${id}/${status}`, { method: "PUT" });
@@ -76,7 +76,7 @@ const ManageOrders = () => {
                                  <small className='text-dark py-2 mx-1'>Payment Mode : <i>{orders?.payment_mode}</i></small>
                                  <small className='text-dark py-2 mx-1'>Status : <i className='text-success'>{orders?.status}</i></small>
                                  <button disabled={odr?.status === "shipped" ? true : false} className="btn btn-sm btn-outline-primary"
-                                    onClick={() => setOrderPlaced(orders?.orderId, orders?.user_email, orders?.status === "pending" ? "placed" : "shipped")}>
+                                    onClick={() => updateOrderStatusHandler(orders?.orderId, orders?.user_email, orders?.status === "pending" ? "placed" : "shipped")}>
                                     {orders?.status === "pending" ? "Placed" : "Shipped"}
                                  </button>
                                  <button className='btn btn-sm btn-danger ms-3' onClick={() => cancelOrderHandler(orders?.orderId)}>Cancel</button>
