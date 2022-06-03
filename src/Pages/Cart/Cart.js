@@ -13,7 +13,7 @@ import "./Cart.css";
 
 const Cart = () => {
    const [user] = useAuthState(auth);
-   const { data, loading, refetch } = useFetch(`http://localhost:5000/my-cart-items/${user?.email}`);
+   const { data, loading, refetch } = useFetch(`https://woo-com-serve.herokuapp.com/my-cart-items/${user?.email}`);
    const { msg, setMessage } = useMessage();
    const [step, setStep] = useState(false);
    const navigate = useNavigate();
@@ -59,7 +59,7 @@ const Cart = () => {
       };
 
       if (window.confirm("Buy Now")) {
-         const response = await fetch(`http://localhost:5000/set-order/${user?.email}`, {
+         const response = await fetch(`https://woo-com-serve.herokuapp.com/set-order/${user?.email}`, {
             method: "POST",
             headers: {
                "content-type": "application/json"

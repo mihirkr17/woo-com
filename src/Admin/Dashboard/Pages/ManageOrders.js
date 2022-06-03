@@ -11,7 +11,7 @@ const ManageOrders = () => {
    const [user] = useAuthState(auth);
    const [seeMoreToggle, setSeeMoreToggle] = useState(0);
    const { msg, setMessage } = useMessage();
-   const { data, refetch, loading } = useFetch(`http://localhost:5000/manage-orders/all`);
+   const { data, refetch, loading } = useFetch(`https://woo-com-serve.herokuapp.com/manage-orders/all`);
    const [newData, setNewData] = useState();
 
    useEffect(() => {
@@ -25,7 +25,7 @@ const ManageOrders = () => {
 
    const cancelOrderHandler = async (orderId) => {
       if (window.confirm("Want to cancel this order ?")) {
-         const response = await fetch(`http://localhost:5000/cancel-order/${user?.email}/${orderId}`, { method: "DELETE" });
+         const response = await fetch(`https://woo-com-serve.herokuapp.com/cancel-order/${user?.email}/${orderId}`, { method: "DELETE" });
          if (response.ok) await response.json();
          refetch();
          setMessage(<strong className='text-success'>Order Cancelled...</strong>);
@@ -35,14 +35,14 @@ const ManageOrders = () => {
    const updateOrderStatusHandler = async (id, email, status) => {
       let confirmMsg = status === "placed" ? "Want To Placed This Order" : "Want To Shipped This Order";
       if (window.confirm(confirmMsg)) {
-         const response = await fetch(`http://localhost:5000/update-order-status/${email}/${id}/${status}`, { method: "PUT" });
+         const response = await fetch(`https://woo-com-serve.herokuapp.com/update-order-status/${email}/${id}/${status}`, { method: "PUT" });
          if (response.ok) await response.json();
          refetch();
       }
    }
 
    const ordersFilterHandler = async (e) => {
-      const response = await fetch(`http://localhost:5000/manage-orders/${e}`);
+      const response = await fetch(`https://woo-com-serve.herokuapp.com/manage-orders/${e}`);
       if (response.ok) {
          const resData = await response.json();
          setNewData(resData);

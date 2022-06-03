@@ -5,7 +5,7 @@ import Spinner from '../Shared/Spinner/Spinner';
 import Product from './HomeStoreComponents/Product';
 
 const HomeStore = () => {
-   const { data, loading } = useFetch('http://localhost:5000/products/');
+   const { data, loading } = useFetch('https://woo-com-serve.herokuapp.com/products/');
 
    if (loading) return <Spinner></Spinner>;
 

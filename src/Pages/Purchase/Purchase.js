@@ -14,8 +14,8 @@ const Purchase = () => {
    const { productId } = useParams();
    const [user] = useAuthState(auth);
 
-   const { data: cart, loading, refetch } = useFetch(`http://localhost:5000/my-cart-items/${user?.email}`);
-   // const { data: cart2} = useFetch(`http://localhost:5000/my-cart-item/${productId}/${user?.email}`);
+   const { data: cart, loading, refetch } = useFetch(`https://woo-com-serve.herokuapp.com/my-cart-items/${user?.email}`);
+   // const { data: cart2} = useFetch(`https://woo-com-serve.herokuapp.com/my-cart-item/${productId}/${user?.email}`);
    const { msg, setMessage } = useMessage("");
    const navigate = useNavigate();
    const [step, setStep] = useState(false);
@@ -50,7 +50,7 @@ const Purchase = () => {
       };
 
       if (window.confirm("Buy Now")) {
-         const response = await fetch(`http://localhost:5000/set-order/${user?.email}`, {
+         const response = await fetch(`https://woo-com-serve.herokuapp.com/set-order/${user?.email}`, {
             method: "POST",
             headers: {
                "content-type": "application/json"
