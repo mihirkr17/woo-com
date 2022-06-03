@@ -1,33 +1,61 @@
-import React from 'react';
-import { Button, Container, FloatingLabel, Form, Row } from 'react-bootstrap';
+import React, { useEffect } from 'react';
+import { Button, Container, Form, Row } from 'react-bootstrap';
+import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import Spinner from '../../Components/Shared/Spinner/Spinner';
+import { auth } from '../../firebase.init';
+import { useToken } from '../../Hooks/useToken';
 import SocialAuth from './SocialAuth';
 
 const Login = () => {
+   const [signInWithEmailAndPassword, user, loading, error,] = useSignInWithEmailAndPassword(auth);
+   const navigate = useNavigate();
+   const location = useLocation();
+   const [token] = useToken(user);
+   let from = location.state?.from?.pathname || '/';
+   let msg;
+   
+   useEffect(() => {
+      if (token) navigate(from, { replace: true });
+   }, [navigate, token, from]);
 
-   const loginHandler = () => {
+   if (loading) return <Spinner></Spinner>;
+   if (error) msg = <strong className="text-danger">{error?.message}</strong>
 
+   const handleLogin = async (e) => {
+      e.preventDefault();
+      let email = e.target.email.value;
+      let password = e.target.password.value;
+      await signInWithEmailAndPassword(email, password);
    }
 
    return (
       <div>
          <Container>
             <Row>
-               <div className="col-lg-6 mx-auto text-center">
+               <div className="col-lg-4 mx-auto text-center">
                   <h3 className='py-5'>Login to WOO-COM</h3>
-                  <Form onSubmit={loginHandler}>
-                     <FloatingLabel
-                        controlId="floatingInput"
-                        label="Email address"
-                        className="mb-3"
-                     >
-                        <Form.Control type="email"  placeholder="name@example.com" />
-                     </FloatingLabel>
-                     <FloatingLabel controlId="floatingPassword" label="Password">
-                        <Form.Control type="password" placeholder="Password" />
-                     </FloatingLabel>
+                  {msg}
+                  <Form onSubmit={handleLogin}>
 
-                     <Button type='submit' className='my-4'>Login</Button>
+                     <Form.Group className="mb-3" controlId="formBasicEmail">
+                        <Form.Label>Email address</Form.Label>
+                        <Form.Control type="email" name='email' placeholder="Enter email" />
+                     </Form.Group>
+
+                     <Form.Group className="mb-3" controlId="formBasicPassword">
+                        <Form.Label>Password</Form.Label>
+                        <Form.Control type="password" name='password' placeholder="Password" />
+                     </Form.Group>
+                     <Form.Group className="mb-3" controlId="formBasicCheckbox">
+                        <Form.Check type="checkbox" label="Check me out" />
+                     </Form.Group>
+                     <Button variant="primary" type="submit">
+                        Submit
+                     </Button>
                   </Form>
+
+                  <Link to={'/register'}>Go Register</Link>
 
                   <SocialAuth></SocialAuth>
                </div>

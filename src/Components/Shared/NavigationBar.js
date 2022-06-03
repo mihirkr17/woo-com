@@ -23,7 +23,7 @@ const NavigationBar = () => {
 
                            <Dropdown>
                               <Dropdown.Toggle className='btn-sm' variant="secondary" id="dropdown-basic">
-                                 {user?.displayName.split(" ")[0]}
+                                 {user?.displayName}
                               </Dropdown.Toggle>
                               <Dropdown.Menu>
                                  <Dropdown.Item as={Link} to='/my-profile/my-order'>My Order</Dropdown.Item>

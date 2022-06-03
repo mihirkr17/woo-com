@@ -11,11 +11,9 @@ const MyOrder = () => {
    const [user] = useAuthState(auth);
    const [p, setP] = useState(0);
    const { msg, setMessage } = useMessage();
-   const { data, refetch, loading } = useFetch(`https://woo-com-serve.herokuapp.com/my-order/${user?.email}`);
+   const { data, refetch, loading } = useFetch(`http://localhost:5000/my-order/${user?.email}`);
 
-   if (loading) {
-      return <Spinner></Spinner>;
-   }
+   if (loading) return <Spinner></Spinner>;
 
    const showHandler = async (id) => {
       if (id === p) {
@@ -27,7 +25,7 @@ const MyOrder = () => {
 
    const cancelOrderHandler = async (orderId) => {
       if (window.confirm("Want to cancel this order ?")) {
-         const response = await fetch(`https://woo-com-serve.herokuapp.com/cancel-order/${user?.email}/${orderId}`, {
+         const response = await fetch(`http://localhost:5000/cancel-order/${user?.email}/${orderId}`, {
             method: "DELETE"
          });
          if (response.ok) {

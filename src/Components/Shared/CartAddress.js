@@ -8,17 +8,17 @@ const CartAddress = ({ refetch, addr, user }) => {
    const addAddressHandler = async (e) => {
       e.preventDefault();
       let name = e.target.name.value;
-      let address = e.target.address.value;
+      let village = e.target.village.value;
       let city = e.target.city.value;
+      let country = e.target.country.value;
       let phone = e.target.phone.value;
       let zip = e.target.zip.value;
 
-      let final = { name, address, city, phone, zip };
+      let final = { name, village, city, country, phone, zip };
       final["select_address"] = false;
       final["address_id"] = Math.floor(Math.random() * 1000000000);
 
-
-      const response = await fetch(`https://woo-com-serve.herokuapp.com/add-address/${user?.email}`, {
+      const response = await fetch(`http://localhost:5000/add-address/${user?.email}`, {
          method: "PUT",
          headers: {
             'content-type': 'application/json'
@@ -26,25 +26,13 @@ const CartAddress = ({ refetch, addr, user }) => {
          body: JSON.stringify(final)
       });
 
-      if (response.ok) {
-         const resData = await response.json();
-
-         if (resData) {
-            setStep(false);
-            refetch();
-         }
-      }
+      if (response.ok) await response.json(); setStep(false); refetch();
    }
 
    const selectAddress = async (selectAddress) => {
-      let select_address;
-      if (selectAddress === true) {
-         select_address = false;
-      } else {
-         select_address = true;
-      }
+      let select_address = selectAddress === true ? false : true;
 
-      const response = await fetch(`https://woo-com-serve.herokuapp.com/select-address/${user?.email}`, {
+      const response = await fetch(`http://localhost:5000/select-address/${user?.email}`, {
          method: "PUT",
          headers: {
             'content-type': 'application/json'
@@ -52,29 +40,18 @@ const CartAddress = ({ refetch, addr, user }) => {
          body: JSON.stringify({ select_address })
       });
 
-      if (response.ok) {
-         const resData = await response.json();
-
-         if (resData) {
-            refetch();
-         }
-      }
+      if (response.ok) await response.json(); refetch();
    }
 
    const removeAddressHandler = async () => {
       if (window.confirm("Want to remove address ?")) {
-         const response = await fetch(`https://woo-com-serve.herokuapp.com/delete-address/${user?.email}`, {
+         const response = await fetch(`http://localhost:5000/delete-address/${user?.email}`, {
             method: "DELETE"
          });
-
-         if (response.ok) {
-            const resData = await response.json();
-            if (resData) {
-               refetch();
-            }
-         }
+         if (response.ok) return await response.json() && refetch();
       }
    }
+
    return (
       <div className="card_default">
          <div className="card_description">
@@ -103,18 +80,19 @@ const CartAddress = ({ refetch, addr, user }) => {
                         {
                            addr ? <p style={{ wordBreak: "break-word" }} className={`${addr?.select_address === true ? '' : 'text-muted'}`}>
                               <small>Customer Name : {addr?.name}</small><br />
-                              <small>Village : {addr?.address}</small> <br />
+                              <small>Village : {addr?.village}</small> <br />
                               <small>City : {addr?.city}</small> <br />
+                              <small>Country : {addr?.country}</small> <br />
                               <small>Phone : {addr?.phone}</small> <br />
                               <small>Zip : {addr?.zip}</small>
                            </p> : <p>Please Insert Address</p>
                         }
                         <div className="d-flex align-items-center justify-content-end">
                            {
-                              addr ? <button className='btn btn-warning btn-sm'
+                              addr && <button className='btn btn-warning btn-sm'
                                  onClick={() => selectAddress(addr?.select_address)} style={step === false ? { display: "block" } : { display: "none" }}>
                                  {addr?.select_address === true ? "Selected" : "Deliver Here"}
-                              </button> : ''
+                              </button>
                            }
 
                         </div>
@@ -129,12 +107,16 @@ const CartAddress = ({ refetch, addr, user }) => {
                            <input type="text" defaultValue={addr?.name} className='form-control' name='name' required />
                         </div>
                         <div className="form-group my-3">
-                           <label htmlFor="address">Address</label>
-                           <input type="text" defaultValue={addr?.address} className='form-control' name='address' required />
+                           <label htmlFor="address">Village</label>
+                           <input type="text" defaultValue={addr?.village} className='form-control' name='village' required />
                         </div>
                         <div className="form-group my-3">
                            <label htmlFor="city">City</label>
                            <input type="text" defaultValue={addr?.city} className='form-control' name='city' required />
+                        </div>
+                        <div className="form-group my-3">
+                           <label htmlFor="country">Country</label>
+                           <input type="text" defaultValue={addr?.country} className='form-control' name='country' required />
                         </div>
                         <div className="form-group my-3">
                            <label htmlFor="zip">Zip</label>

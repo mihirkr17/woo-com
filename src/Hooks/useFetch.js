@@ -1,31 +1,23 @@
 import { useEffect, useState } from "react"
 
 export const useFetch = (url) => {
-   const [data, setData] = useState(null || {} || [] || "");
+   const [data, setData] = useState();
    const [loading, setLoading] = useState(false);
    const [err, setErr] = useState(null);
    const [ref, setRef] = useState(false);
 
    let refetch;
-   refetch = () => {
-      return setRef(e => !e);
-   }
+   refetch = () => setRef(e => !e);
 
    useEffect(() => {
-      setLoading(true);
       const controller = new AbortController();
       (async () => {
          try {
-            const response = await fetch(url, {signal : controller?.signal});
-
+            setLoading(true);
+            const response = await fetch(url, { signal: controller?.signal });
             if (response.status >= 200 && response.status <= 299) {
-               const data = await response.json();
-               setData(data);
-               setLoading(false);
-            } else {
-               throw new Error("Something went wrong");
+               setData(await response.json());
             }
-
          } catch (error) {
             setErr(error);
          } finally {

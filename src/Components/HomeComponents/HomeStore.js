@@ -5,24 +5,22 @@ import Spinner from '../Shared/Spinner/Spinner';
 import Product from './HomeStoreComponents/Product';
 
 const HomeStore = () => {
-   const { data, loading } = useFetch('https://woo-com-serve.herokuapp.com/products/');
+   const { data, loading } = useFetch('http://localhost:5000/products/');
 
-   if (loading) {
-      return <Spinner></Spinner>;
-   }
+   if (loading) return <Spinner></Spinner>;
 
    return (
       <section className='section_default'>
          <h2 className="section_title">Our Product <p>Drive Into Best</p></h2>
          <Row>
             {
-               data.length > 0 ? data.map(product => {
+               data && data.map(product => {
                   return (
                      <div className="col-lg-3 my-3" key={product._id}>
                         <Product product={product}></Product>
                      </div>
                   )
-               }) : ''
+               })
             }
          </Row>
       </section>

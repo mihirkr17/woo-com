@@ -13,23 +13,19 @@ const Purchase = () => {
    const { productId } = useParams();
    const [user] = useAuthState(auth);
 
-   const { data: cart, loading: pLoading, refetch } = useFetch(`https://woo-com-serve.herokuapp.com/my-cart-items/${user?.email}`);
-   // const { data: addr, loading: addrLoading, refetch: addrRefetch } = useFetch(`https://woo-com-serve.herokuapp.com/cart-address/${user?.email}`);
+   const { data: cart, loading, refetch } = useFetch(`http://localhost:5000/my-cart-items/${user?.email}`);
    const { msg, setMessage } = useMessage("");
    const navigate = useNavigate();
 
-   if (msg !== '') {
-      navigate('/');
-   }
+   if (msg !== '') return navigate('/');
+   if (loading) return <Spinner></Spinner>;
 
-   if (pLoading) {
-      return <Spinner></Spinner>;
-   }
-   let product;
 
-   if (cart) {
-      product = cart?.product && cart?.product.find(p => p._id === productId);
-   }
+   let product = cart && cart?.product && cart?.product.find(p => p._id === productId);
+   let totalPrice = product && parseInt(product?.total_price);
+   let totalQuantity = product && product?.quantity;
+   let discount = product && parseInt(product?.total_discount);
+   let totalAmount = (totalPrice - discount).toFixed(2);
 
    return (
       <div className='section_default'>
@@ -38,8 +34,10 @@ const Purchase = () => {
             <div className="row">
                <div className="col-lg-8">
                   <div className="row">
-                     <div className="col-12 my-3">
-                        <CartAddress refetch={refetch} user={user} addr={cart?.address ? cart?.address : {}}></CartAddress>
+
+
+                     <div className="col-12 mb-3">
+                        <CartHeader user={user}></CartHeader>
                      </div>
 
                      <div className="col-12 my-3">
@@ -50,15 +48,18 @@ const Purchase = () => {
                <div className="col-lg-4">
                   <div className="row">
                      <div className="col-12 mb-3">
-                        <div className="text-truncate">Price Details</div>
                         <div className="card_default">
                            <div className="card_description">
-                              <h3>Total Price({product?.quantity}) : {Math.round(product?.total_price)}</h3>
+                              <div className="text-truncate pb-2">Price Details</div>
+                              <pre>Total Price({totalQuantity || 0}) : {Math.round(totalPrice) + " $" || 0}</pre>
+                              <pre>Discount : -{discount + " $" || 0}</pre>
+                              <hr />
+                              <code>Total Amount : {totalAmount || 0}</code>
                            </div>
                         </div>
                      </div>
-                     <div className="col-12 mb-3">
-                        <CartHeader user={user}></CartHeader>
+                     <div className="col-12 my-3">
+                        <CartAddress refetch={refetch} user={user} addr={cart?.address ? cart?.address : {}}></CartAddress>
                      </div>
                   </div>
                </div>

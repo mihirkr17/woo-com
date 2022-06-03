@@ -3,51 +3,37 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const CartItem = ({ product: cart, refetch, setMessage, user }) => {
+const CartItem = ({ product: cart, refetch, setMessage, user, loading }) => {
 
    const quantityHandler = async (cart, params) => {
-      let quantity;
 
-      if (params === "dec") {
-         quantity = cart?.quantity - 1;
-      } else if (params === "inc") {
-         quantity = cart?.quantity + 1;
-      }
+      let quantity = params === "dec" ? cart?.quantity - 1 : cart?.quantity + 1;
 
       let price = parseInt(cart?.price) * parseInt(quantity);
-      let finalDiscount = parseInt(cart?.final_discount) * parseInt(quantity);
+      let totalDiscount = parseInt(cart?.final_discount) * parseInt(quantity);
 
-      const response = await fetch(`https://woo-com-serve.herokuapp.com/up-cart-qty-ttl-price/${cart?._id}/${user?.email}`, {
+      const response = await fetch(`http://localhost:5000/up-cart-qty-ttl-price/${cart?._id}/${user?.email}`, {
          method: "PUT",
          headers: {
             'content-type': 'application/json'
          },
-         body: JSON.stringify({ quantity, total_price: price, total_discount: finalDiscount })
+         body: JSON.stringify({ quantity, total_price: price, total_discount: totalDiscount })
       })
 
-      const resData = await response.json();
-
-      if (resData) {
-         refetch();
-      }
-
+      if (response.ok) await response.json(); refetch();
    }
 
-   const removeFromCartHandler = async (cart) => {
+   const removeItemFromCartHandler = async (cart) => {
       const { _id, title } = cart;
-      let confirmMsg = window.confirm("Want to remove this item from your cart ?");
-      if (confirmMsg) {
-         const response = await fetch(`https://woo-com-serve.herokuapp.com/delete-cart-item/${_id}/${user?.email}`, {
+
+      if (window.confirm("Want to remove this item from your cart ?")) {
+         const response = await fetch(`http://localhost:5000/delete-cart-item/${_id}/${user?.email}`, {
             method: "DELETE"
          });
 
-         if (response.ok) {
-            const resData = await response.json();
-            if (resData) {
-               setMessage(`Successfully remove ${title} from your cart`);
-               refetch();
-            }
-         }
+         if(response.ok) await response.json();
+         setMessage(`Successfully remove ${title} from your cart`);
+         refetch();
       }
    }
 
@@ -77,7 +63,7 @@ const CartItem = ({ product: cart, refetch, setMessage, user }) => {
                      </small>
                   </div>
                   <div className="remove_btn col-1 text-end">
-                     <button className='btn btn-sm' onClick={() => removeFromCartHandler(cart)}><FontAwesomeIcon icon={faClose} /></button>
+                     <button className='btn btn-sm' onClick={() => removeItemFromCartHandler(cart)}><FontAwesomeIcon icon={faClose} /></button>
                   </div>
                </div>
             </div>

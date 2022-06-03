@@ -2,27 +2,23 @@ import { useEffect, useState } from "react";
 
 export const useToken = (user) => {
    const [token, setToken] = useState(null);
-   const uid = user?.uid;
-   const displayName = user?.displayName;
+   const email = user?.user?.email;
 
    useEffect(() => {
       (async () => {
-         const url = 'https://woo-com-serve.herokuapp.com/user?uid=' + uid;
+         const url = `http://localhost:5000/user/${email}`;
 
-         if (uid) {
+         if (email) {
             const response = await fetch(url, {
-               method: "POST",
-               headers: {
-                  'content-type': 'application/json'
-               },
-               body: JSON.stringify({ uid, displayName })
+               method: "PUT"
             });
 
-            const tokenData = await response.json();
-            setToken(tokenData);
+            const resData = await response.json();
+            setToken(resData);
+            document.cookie = `accessToken=${resData?.token}`;
          }
       })();
-   }, [user, displayName, uid]);
+   }, [user, email]);
 
-   return token;
+   return [token];
 }
