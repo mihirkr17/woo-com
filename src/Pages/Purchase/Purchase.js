@@ -15,13 +15,14 @@ const Purchase = () => {
    const [user] = useAuthState(auth);
 
    const { data: cart, loading, refetch } = useFetch(`https://woo-com-serve.herokuapp.com/my-cart-items/${user?.email}`);
-   // const { data: cart2} = useFetch(`https://woo-com-serve.herokuapp.com/my-cart-item/${productId}/${user?.email}`);
+   const { data: cart2 } = useFetch(`https://woo-com-serve.herokuapp.com/my-cart-item/${productId}/${user?.email}`);
    const { msg, setMessage } = useMessage("");
    const navigate = useNavigate();
    const [step, setStep] = useState(false);
 
    if (msg !== '') return navigate('/');
    if (loading) return <Spinner></Spinner>;
+   // console.log(cart2);
 
 
    let product = cart && cart?.product && cart?.product.find(p => p._id === productId);
@@ -30,23 +31,35 @@ const Purchase = () => {
    let discount = product && parseInt(product?.total_discount);
    let totalAmount = (totalPrice - discount).toFixed(2);
 
-   // console.log(cart2);
-
 
    const buyBtnHandler = async (e) => {
       e.preventDefault();
       let payment_mode = e.target.payment.value;
       let orderId = Math.floor(Math.random() * 1000000000);
 
+      let pp = {
+         product_name: product.title,
+         price: product.price,
+         image: product.image,
+         final_price: product.final_price,
+         quantity: product.quantity,
+         discount: product.discount,
+         _id: product._id,
+         total_price: product.total_price,
+         total_discount: product.total_discount,
+         category : product.category
+      }
+
       let order = {
          user_email: user?.email,
          orderId: orderId,
-         product: [product],
+         product: [pp],
          total_product: totalQuantity,
          total_amount: totalAmount,
          address: cart?.address && cart?.address,
          payment_mode: payment_mode,
-         status: "pending"
+         status: "pending",
+         time_pending: new Date().toLocaleString()
       };
 
       if (window.confirm("Buy Now")) {

@@ -1,6 +1,6 @@
 import { faCheckDouble, faTriangleExclamation, faPlus, faPenAlt, faClose } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useState } from 'react';
+import React from 'react';
 
 const CartAddress = ({ refetch, addr, user, step, setStep }) => {
 
@@ -15,7 +15,6 @@ const CartAddress = ({ refetch, addr, user, step, setStep }) => {
 
       let final = { name, village, city, country, phone, zip };
       final["select_address"] = false;
-      final["address_id"] = Math.floor(Math.random() * 1000000000);
 
       const response = await fetch(`https://woo-com-serve.herokuapp.com/add-address/${user?.email}`, {
          method: "PUT",

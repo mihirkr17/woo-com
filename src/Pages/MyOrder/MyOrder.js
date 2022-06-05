@@ -12,6 +12,10 @@ const MyOrder = () => {
    const [p, setP] = useState(0);
    const { msg, setMessage } = useMessage();
    const { data, refetch, loading } = useFetch(`https://woo-com-serve.herokuapp.com/my-order/${user?.email}`);
+   const { data: rating, refetch: ratingRefetch } = useFetch(`https://woo-com-serve.herokuapp.com/my-review/${user?.email}`);
+   const [rat, setRating] = useState();
+
+   const url = `https://woo-com-serve.herokuapp.com/add-rating/:pId`;
 
    if (loading) return <Spinner></Spinner>;
 
@@ -33,6 +37,40 @@ const MyOrder = () => {
             refetch();
             setMessage(<strong className='text-success'>Order Cancelled...</strong>);
          }
+      }
+   }
+
+   const findRating = rating && rating.map(items => items?.rating?.rating_id);
+
+   const ratingHandler = async (e) => {
+      e.preventDefault();
+      let ratingPoint = e.target.rating_point.value;
+      let ratingDesc = e.target.rating_description.value;
+      let productId = e.target.product_id.value;
+      let userEmail = user?.email;
+      let orderId = e.target.order_id.value;
+      let ratingId = productId.slice(-6) + orderId;
+
+
+      let rating = {
+         product_id: productId,
+         rating_customer: userEmail,
+         rating_point: ratingPoint,
+         rating_description: ratingDesc,
+         rating_id: ratingId
+      }
+
+      const response = await fetch(`https://woo-com-serve.herokuapp.com/add-rating/${userEmail}`, {
+         method: "PUT",
+         headers: {
+            "content-type": "application/json"
+         },
+         body: JSON.stringify(rating)
+      })
+
+      if (response.ok) {
+         const resData = await response.json();
+         ratingRefetch();
       }
    }
 
@@ -58,7 +96,12 @@ const MyOrder = () => {
                                     <small>Total Amount : {order?.total_amount}$</small>
                                     <small className='text-dark py-2 mx-1'>Payment Mode : <i>{order?.payment_mode}</i></small>
                                     <small className='text-dark py-2 mx-1'>Status : <i className='text-success'>{order?.status}</i></small>
-                                    <button className='badge bg-danger ms-3' onClick={() => cancelOrderHandler(order?.orderId)}>Cancel</button>
+                                    {
+                                       order?.status === "pending" ?
+                                          <button className='badge bg-danger ms-3' onClick={() => cancelOrderHandler(order?.orderId)}>Cancel</button> :
+                                          ""
+                                    }
+
                                  </div>
 
 
@@ -72,15 +115,15 @@ const MyOrder = () => {
                                              <th>Price</th>
                                              <th>Order Qty</th>
                                              <th>Final Price</th>
+                                             <th>Total Price</th>
                                              <th>Discount</th>
-                                             <th>Payment Mode</th>
-                                             <th>Status</th>
+                                             <th>Category</th>
                                           </tr>
                                        </thead>
                                        <tbody>
                                           {
                                              order ? order?.product.map((product) => {
-                                                const { _id, product_name, price, image, quantity, final_price, discount } = product;
+                                                const { _id, product_name, price, image, quantity, final_price, category, discount, total_price, total_discount } = product;
 
                                                 return (
                                                    <tr key={_id}>
@@ -89,13 +132,25 @@ const MyOrder = () => {
                                                             <img src={image} style={{ width: "55px", height: "55px" }} alt="product_image" />
                                                          }
                                                       </td>
-                                                      <td><Link to={`/product/${_id}`}>{product_name.length > 20 ? product_name.slice(0, 20) + "..." : product_name}</Link></td>
+                                                      <td><Link to={`/product/${_id}`}>{product_name}</Link></td>
                                                       <td>{price}</td>
                                                       <td>{quantity}</td>
                                                       <td>{final_price}</td>
-                                                      <td>{discount}%</td>
-                                                      <td>{order?.payment_mode}</td>
-                                                      <td>{order?.status}</td>
+                                                      <td>{total_price} - {total_discount}</td>
+                                                      <td>{discount}%/{total_discount}$</td>
+                                                      <td>{category}</td>
+                                                      <td>
+                                                         {findRating && findRating.includes(_id.slice(-6) + order?.orderId) ?
+                                                            <Link to={'/'}>Review</Link> :
+                                                            <form onSubmit={ratingHandler} className='d-flex flex-column'>
+                                                               <input type="range" min={1} max={5} step={1} name='rating_point' />
+                                                               <textarea type="text" name='rating_description' placeholder='Write a Review' />
+                                                               <input type="hidden" defaultValue={_id} name='product_id' />
+                                                               <input type="hidden" defaultValue={order?.orderId} name='order_id' />
+                                                               <button className='status_btn'>Add Review</button>
+                                                            </form>
+                                                         }
+                                                      </td>
                                                    </tr>
                                                 )
                                              }) : <tr><td>No Orders Found</td></tr>
@@ -108,7 +163,7 @@ const MyOrder = () => {
                            </div>
                         </div>
                      )
-                  }) : ""
+                  }).reverse() : ""
                }
             </div>
          </div>

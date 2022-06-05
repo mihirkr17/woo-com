@@ -28,47 +28,59 @@ const Cart = () => {
 
    const buyBtnHandler = async (e) => {
       e.preventDefault();
-      let payment_mode = e.target.payment.value;
-      let productArr = [];
-      let orderId = Math.floor(Math.random() * 1000000000);
+      if (data?.address?.select_address === false) {
+         setMessage(<strong className='text-danger'>Please Select Delivery Address!</strong>);
+      } else if (data?.address === null) {
+         setMessage(<strong className='text-danger'>Please Insert Address!</strong>);
+      } else if (data?.product.length <= 0) {
+         setMessage(<strong className='text-danger'>Select Atleast One Product For Order!</strong>);
+      } else {
+         let payment_mode = e.target.payment.value;
+         let productArr = [];
+         let orderId = Math.floor(Math.random() * 1000000000);
 
-      let d = data && data?.product;
-      for (let i = 0; i < d.length; i++) {
-         let elem = d[i];
-         let product = {
-            product_name: elem.title,
-            price: elem.price,
-            image: elem.image,
-            final_price: elem.final_price,
-            quantity: elem.quantity,
-            discount: elem.discount,
-            _id: elem._id
+         let d = data && data?.product;
+         for (let i = 0; i < d.length; i++) {
+            let elem = d[i];
+            let product = {
+               product_name: elem.title,
+               price: elem.price,
+               image: elem.image,
+               final_price: elem.final_price,
+               quantity: elem.quantity,
+               discount: elem.discount,
+               _id: elem._id,
+               total_price : elem.total_price,
+               total_discount : elem.total_discount,
+               category : elem.category
+            }
+            productArr.push(product);
          }
-         productArr.push(product);
-      }
 
-      let order = {
-         user_email: user?.email,
-         orderId: orderId,
-         product: productArr,
-         total_product: totalQuantity,
-         total_amount: totalAmount,
-         address: data?.address && data?.address,
-         payment_mode: payment_mode,
-         status: "pending"
-      };
+         let orderList = {
+            user_email: user?.email,
+            orderId: orderId,
+            product: productArr,
+            total_product: totalQuantity,
+            total_amount: totalAmount,
+            address: data?.address && data?.address,
+            payment_mode: payment_mode,
+            status: "pending",
+            time_pending : new Date().toLocaleString()
+         };
 
-      if (window.confirm("Buy Now")) {
-         const response = await fetch(`https://woo-com-serve.herokuapp.com/set-order/${user?.email}`, {
-            method: "POST",
-            headers: {
-               "content-type": "application/json"
-            },
-            body: JSON.stringify(order)
-         });
+         if (window.confirm("Buy Now")) {
+            const response = await fetch(`https://woo-com-serve.herokuapp.com/set-order/${user?.email}`, {
+               method: "POST",
+               headers: {
+                  "content-type": "application/json"
+               },
+               body: JSON.stringify(orderList)
+            });
 
-         response.ok ? await response.json() && navigate(`/my-profile/my-order`) :
-            setMessage(<strong className='text-danger'>Something went wrong!</strong>);
+            response.ok ? await response.json() && navigate(`/my-profile/my-order`) :
+               setMessage(<strong className='text-danger'>Something went wrong!</strong>);
+         }
       }
    }
 

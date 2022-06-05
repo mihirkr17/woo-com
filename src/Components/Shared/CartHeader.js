@@ -9,7 +9,7 @@ const CartHeader = ({ user }) => {
             <div className="row">
                <div className="col-lg-1"><span>1</span></div>
                <div className="col-lg-8">
-                  <div className="badge bg-success">Login&nbsp;<FontAwesomeIcon icon={faCheckDouble} /></div><br />
+                  <h6 className="badge bg-success">Login&nbsp;<FontAwesomeIcon icon={faCheckDouble} /></h6><br />
                   <small>Email :{user?.email} <br /> UserName :{user?.displayName}</small>
                </div>
             </div>

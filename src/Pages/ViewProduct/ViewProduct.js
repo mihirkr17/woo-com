@@ -11,6 +11,7 @@ const ViewProduct = () => {
    const { productId } = useParams();
    const [user] = useAuthState(auth);
    const { data: product, loading, refetch } = useFetch(`https://woo-com-serve.herokuapp.com/view-product/${productId}/${user?.email}`);
+   const { data: rating } = useFetch(`https://woo-com-serve.herokuapp.com/product-review/${productId}`);
    const navigate = useNavigate();
    const { msg, setMessage } = useMessage();
 
@@ -53,6 +54,17 @@ const ViewProduct = () => {
       }
    }
 
+   // rating algorithm
+   let weightVal = 0;
+   let countValue = 0;
+   product?.rating.length > 0 && product?.rating.forEach(rat => {
+      const multiWeight = parseInt(rat?.weight) * parseInt(rat?.count);
+      weightVal += multiWeight;
+      countValue += rat?.count;
+   });
+   const ava = weightVal / countValue;
+   const averageRating = ava.toFixed(2);
+
    return (
       <div className='view_product section_default'>
          <div className="container">
@@ -79,11 +91,56 @@ const ViewProduct = () => {
                      </strong>
                      <h5 className="product_title py-3">{product?.title}</h5>
                      <h3>{product?.price}</h3>
-                     <small>{product?.rating?.rate}</small>
+                     <small>{averageRating}/5</small>
                      <p>
                         {product?.description}
                      </p>
                   </article>
+               </div>
+            </div>
+
+            <div className="row">
+               <div className="col-lg-9">
+                  <div className="row mt-5">
+                     <div className="py-1 my-4 card_default">
+                        <h6 className='text-center py-1'>Rating And Review Of {product?.title}</h6>
+                        <div className="row">
+                           <div className="col-lg6">
+                              <div className="card_description">
+                                 <p className='text-warning'>
+                                    <span className="fs-1">
+                                       {averageRating}
+                                    </span>
+                                    <span className="fs-4 text-muted">/5</span>
+                                 </p>
+                                 <div>
+                                    {rating && rating.map(rats => rats?.rating).length} Ratings
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                     {
+                        rating && rating.map((rats, index) => {
+                           const { rating } = rats;
+                           let cName = rating?.rating_customer.lastIndexOf("@");
+                           return (
+                              <div className="col-lg-12 mb-3" key={index}>
+                                 <div className="card_default">
+                                    <div className="card_description">
+                                       <small className='text-warning'>{rating?.rating_point} Out of 5</small>
+                                       <i className='text-muted'>{rating?.rating_customer.slice(0, cName)}</i>
+                                       <small>{rating?.rating_description}</small>
+                                    </div>
+                                 </div>
+                              </div>
+                           )
+                        })
+                     }
+                  </div>
+               </div>
+               <div className="col-lg-3">
+
                </div>
             </div>
          </div>
