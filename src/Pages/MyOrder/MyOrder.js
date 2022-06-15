@@ -13,9 +13,6 @@ const MyOrder = () => {
    const { msg, setMessage } = useMessage();
    const { data, refetch, loading } = useFetch(`https://woo-com-serve.herokuapp.com/my-order/${user?.email}`);
    const { data: rating, refetch: ratingRefetch } = useFetch(`https://woo-com-serve.herokuapp.com/my-review/${user?.email}`);
-   const [rat, setRating] = useState();
-
-   const url = `https://woo-com-serve.herokuapp.com/add-rating/:pId`;
 
    if (loading) return <Spinner></Spinner>;
 
@@ -139,18 +136,21 @@ const MyOrder = () => {
                                                       <td>{total_price} - {total_discount}</td>
                                                       <td>{discount}%/{total_discount}$</td>
                                                       <td>{category}</td>
-                                                      <td>
-                                                         {findRating && findRating.includes(_id.slice(-6) + order?.orderId) ?
-                                                            <Link to={'/'}>Review</Link> :
-                                                            <form onSubmit={ratingHandler} className='d-flex flex-column'>
-                                                               <input type="range" min={1} max={5} step={1} name='rating_point' />
-                                                               <textarea type="text" name='rating_description' placeholder='Write a Review' />
-                                                               <input type="hidden" defaultValue={_id} name='product_id' />
-                                                               <input type="hidden" defaultValue={order?.orderId} name='order_id' />
-                                                               <button className='status_btn'>Add Review</button>
-                                                            </form>
-                                                         }
-                                                      </td>
+                                                      {
+                                                         order?.status === "shipped" ? <td>
+                                                            {findRating && findRating.includes(_id.slice(-6) + order?.orderId) ?
+                                                               <Link to={`/product/${_id}#rating`}>Review</Link> :
+                                                               <form onSubmit={ratingHandler} className='d-flex flex-column'>
+                                                                  <input type="range" min={1} max={5} step={1} name='rating_point' />
+                                                                  <textarea type="text" name='rating_description' placeholder='Write a Review' />
+                                                                  <input type="hidden" defaultValue={_id} name='product_id' />
+                                                                  <input type="hidden" defaultValue={order?.orderId} name='order_id' />
+                                                                  <button className='status_btn'>Add Review</button>
+                                                               </form>
+                                                            }
+                                                         </td> : ""
+                                                      }
+
                                                    </tr>
                                                 )
                                              }) : <tr><td>No Orders Found</td></tr>

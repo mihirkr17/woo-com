@@ -14,21 +14,35 @@ import Purchase from './Pages/Purchase/Purchase';
 import CheckOut from './Pages/CheckOut/CheckOut';
 import MyOrder from './Pages/MyOrder/MyOrder';
 import ManageOrders from './Admin/Dashboard/Pages/ManageOrders';
+import ProductCategory from './Pages/ProductCategory/ProductCategory';
+import AllRecentProduct from './Pages/AllRecentProduct/AllRecentProduct';
+import { useState } from 'react';
+import SearchProduct from './Components/Shared/SearchProduct';
+import MakeSeller from './Auth/MakeSeller';
+import RequireOwner from "./Auth/RequireOwner";
+import Dashboard from './Pages/Dashboard/Dashboard';
 
 function App() {
+  const [query, setQuery] = useState('');
+
   return (
     <div className="App">
-      <NavigationBar></NavigationBar>
+      <NavigationBar setQuery={setQuery}></NavigationBar>
+      <SearchProduct query={query}></SearchProduct>
       <Routes>
         <Route path='/' element={<Home></Home>} ></Route>
         <Route path='/blog' element={<Blog></Blog>} ></Route>
         <Route path='/login' element={<Login></Login>}></Route>
         <Route path='/register' element={<Register></Register>}></Route>
         <Route path='/product/:productId' element={<ViewProduct></ViewProduct>}></Route>
+        <Route path='/product/category/:category' element={<ProductCategory></ProductCategory>}></Route>
+        <Route path='/product/recent/all' element={<AllRecentProduct></AllRecentProduct>}></Route>
         <Route path='/my-cart' element={<RequireAuth><Cart></Cart></RequireAuth>}></Route>
         <Route path='/product/purchase/:productId' element={<RequireAuth><Purchase></Purchase></RequireAuth>}></Route>
         <Route path='/checkout/:orderId' element={<CheckOut></CheckOut>}></Route>
         <Route path='/my-profile/my-order' element={<RequireAuth><MyOrder></MyOrder></RequireAuth>}></Route>
+
+        <Route path='/dashboard' element={<RequireOwner><Dashboard></Dashboard></RequireOwner>}></Route>
 
         {/* // admin dashboard */}
         <Route path='/dashboard/manage-orders' element={<ManageOrders></ManageOrders>}></Route>
