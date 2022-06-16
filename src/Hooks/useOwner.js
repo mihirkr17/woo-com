@@ -1,4 +1,6 @@
+import { signOut } from 'firebase/auth';
 import { useEffect, useState } from 'react';
+import { auth } from '../firebase.init';
 
 const useOwner = (user) => {
    const [owner, setOwner] = useState(false);
@@ -23,8 +25,13 @@ const useOwner = (user) => {
                      authorization: `Bearer ${token}`
                   }
                });
-               const data = await response.json();
-               setOwner(data.owner);
+
+               if (response.status === 401 || response.status === 403) { signOut(auth) };
+
+               if (response.ok) {
+                  const data = await response.json();
+                  setOwner(data.owner);
+               }
             }
          } catch (error) {
             setErr(error);

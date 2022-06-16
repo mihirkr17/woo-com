@@ -18,7 +18,6 @@ import ProductCategory from './Pages/ProductCategory/ProductCategory';
 import AllRecentProduct from './Pages/AllRecentProduct/AllRecentProduct';
 import { useState } from 'react';
 import SearchProduct from './Components/Shared/SearchProduct';
-import MakeSeller from './Auth/MakeSeller';
 import RequireOwner from "./Auth/RequireOwner";
 import Dashboard from './Pages/Dashboard/Dashboard';
 import MyProfile from './Pages/Dashboard/MyProfile';
@@ -51,9 +50,11 @@ function App() {
         <Route path='/dashboard' element={<RequireAuth><Dashboard></Dashboard></RequireAuth>}>
           <Route index element={<MyProfile></MyProfile>}></Route>
           <Route path='manage-orders' element={<ManageOrders></ManageOrders>}></Route>
-          <Route path='manage-users' element={<ManageUsers></ManageUsers>}>
-            <Route index element={<AllUsers></AllUsers>}></Route>
-            <Route path='all-admin' element={<AllAdmin></AllAdmin>}></Route>
+
+          {/* // Only owner route */}
+          <Route path='manage-users' element={<RequireOwner><ManageUsers></ManageUsers></RequireOwner>}>
+            <Route index element={<RequireOwner><AllUsers></AllUsers></RequireOwner>}></Route>
+            <Route path='all-admin' element={<RequireOwner><AllAdmin></AllAdmin></RequireOwner>}></Route>
           </Route>
           <Route path='owner-data' element={<RequireOwner><OwnerData></OwnerData></RequireOwner>}></Route>
         </Route>

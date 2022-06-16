@@ -18,9 +18,12 @@ const Dashboard = () => {
                   <button className='btn btn-sm btn-danger' onClick={() => signOut(auth)}>Log Out</button>
                   <Nav.Link as={NavLink} to='/dashboard'>My profile</Nav.Link>
                   <Nav.Link as={NavLink} to='manage-orders'>Orders</Nav.Link>
-                  <Nav.Link as={NavLink} to='manage-users'>Manage Users</Nav.Link>
+
                   {
-                     owner &&  <Nav.Link as={NavLink} to='owner-data'>Owner</Nav.Link>
+                     owner && <>
+                        <Nav.Link as={NavLink} to='owner-data'>Owner</Nav.Link>
+                        <Nav.Link as={NavLink} to='manage-users'>Manage Users</Nav.Link>
+                     </>
                   }
                </div>
                <div className="col-lg-9">
