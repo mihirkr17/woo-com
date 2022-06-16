@@ -6,9 +6,13 @@ import { Button, Container, Dropdown, Nav, Navbar } from 'react-bootstrap';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { Link, NavLink } from 'react-router-dom';
 import { auth } from '../../firebase.init';
+import useAdmin from '../../Hooks/useAdmin';
+import useOwner from '../../Hooks/useOwner';
 
 const NavigationBar = ({ setQuery }) => {
    const [user] = useAuthState(auth);
+   const [owner] = useOwner(user);
+   const [admin] = useAdmin(user);
 
    return (
       <Navbar bg="light" expand="lg">
@@ -19,13 +23,11 @@ const NavigationBar = ({ setQuery }) => {
             <Navbar.Collapse id="basic-navbar-nav">
                <Nav className="ms-auto">
                   <Nav.Link as={NavLink} to="/">Home</Nav.Link>
-
                   {
-                     !user ? <Nav.Link as={NavLink} to="/login">Login</Nav.Link> :
-                        <>
+                     (owner || admin) && user ? <Nav.Link as={NavLink} to="/dashboard">dashboard</Nav.Link> :
+                        user ? <>
                            <Nav.Link as={NavLink} to='/my-cart'>Cart <FontAwesomeIcon icon={faCartShopping} /> </Nav.Link>
-                           <Nav.Link as={NavLink} to='/dashboard/manage-orders'>Orders</Nav.Link>
-                           <Nav.Link as={NavLink} to="/dashboard">dashboard</Nav.Link>
+
                            <Dropdown>
                               <Dropdown.Toggle className='btn-sm' variant="secondary" id="dropdown-basic">
                                  {user?.displayName}
@@ -35,7 +37,7 @@ const NavigationBar = ({ setQuery }) => {
                                  <Dropdown.Item as={Button} onClick={() => signOut(auth)}>Logout</Dropdown.Item>
                               </Dropdown.Menu>
                            </Dropdown>
-                        </>
+                        </> : <Nav.Link as={NavLink} to="/login">Login</Nav.Link>
                   }
                </Nav>
             </Navbar.Collapse>

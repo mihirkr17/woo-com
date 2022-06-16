@@ -21,6 +21,11 @@ import SearchProduct from './Components/Shared/SearchProduct';
 import MakeSeller from './Auth/MakeSeller';
 import RequireOwner from "./Auth/RequireOwner";
 import Dashboard from './Pages/Dashboard/Dashboard';
+import MyProfile from './Pages/Dashboard/MyProfile';
+import AllUsers from './Pages/Dashboard/AllUsers/outlet/AllUsers';
+import OwnerData from './Pages/Dashboard/Owner/OwnerData';
+import AllAdmin from './Pages/Dashboard/AllUsers/outlet/AllAdmin';
+import ManageUsers from './Pages/Dashboard/AllUsers/ManageUsers';
 
 function App() {
   const [query, setQuery] = useState('');
@@ -42,10 +47,19 @@ function App() {
         <Route path='/checkout/:orderId' element={<CheckOut></CheckOut>}></Route>
         <Route path='/my-profile/my-order' element={<RequireAuth><MyOrder></MyOrder></RequireAuth>}></Route>
 
-        <Route path='/dashboard' element={<RequireOwner><Dashboard></Dashboard></RequireOwner>}></Route>
+        {/* // Owner path */}
+        <Route path='/dashboard' element={<RequireAuth><Dashboard></Dashboard></RequireAuth>}>
+          <Route index element={<MyProfile></MyProfile>}></Route>
+          <Route path='manage-orders' element={<ManageOrders></ManageOrders>}></Route>
+          <Route path='manage-users' element={<ManageUsers></ManageUsers>}>
+            <Route index element={<AllUsers></AllUsers>}></Route>
+            <Route path='all-admin' element={<AllAdmin></AllAdmin>}></Route>
+          </Route>
+          <Route path='owner-data' element={<RequireOwner><OwnerData></OwnerData></RequireOwner>}></Route>
+        </Route>
 
         {/* // admin dashboard */}
-        <Route path='/dashboard/manage-orders' element={<ManageOrders></ManageOrders>}></Route>
+
       </Routes>
       <Footer></Footer>
     </div>

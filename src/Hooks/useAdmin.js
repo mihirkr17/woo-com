@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 
-const useOwner = (user) => {
-   const [owner, setOwner] = useState(false);
-   const [ownerLoading, setOwnerLoading] = useState(false);
+const useAdmin = (user) => {
+   const [admin, setAdmin] = useState(false);
+   const [adminLoading, setAdminLoading] = useState(false);
    const [err, setErr] = useState();
 
    const cookieObj = new URLSearchParams(document.cookie.replaceAll("; ", "&"));
@@ -13,10 +13,10 @@ const useOwner = (user) => {
 
       (async () => {
          try {
-            setOwnerLoading(true);
+            setAdminLoading(true);
             const email = user?.email;
             if (email) {
-               const response = await fetch(`https://woo-com-serve.herokuapp.com/fetch-owner/${email}`, {
+               const response = await fetch(`https://woo-com-serve.herokuapp.com/fetch-admin/${email}`, {
                   method: "GET",
                   headers: {
                      "content-type": "application/json",
@@ -24,12 +24,12 @@ const useOwner = (user) => {
                   }
                });
                const data = await response.json();
-               setOwner(data.owner);
+               setAdmin(data.admin);
             }
          } catch (error) {
             setErr(error);
          } finally {
-            setOwnerLoading(false);
+            setAdminLoading(false);
          }
       })();
 
@@ -38,7 +38,7 @@ const useOwner = (user) => {
       }
    }, [user, token]);
 
-   return [owner, ownerLoading];
+   return [admin, adminLoading];
 };
 
-export default useOwner;
+export default useAdmin;
