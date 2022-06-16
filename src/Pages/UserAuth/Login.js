@@ -4,60 +4,73 @@ import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { auth } from '../../firebase.init';
+import { useMessage } from '../../Hooks/useMessage';
 import { useToken } from '../../Hooks/useToken';
 import SocialAuth from './SocialAuth';
 
 const Login = () => {
+   const { msg: logMsg, setMessage } = useMessage();
    const [signInWithEmailAndPassword, user, loading, error,] = useSignInWithEmailAndPassword(auth);
    const navigate = useNavigate();
    const location = useLocation();
    const [token] = useToken(user);
    let from = location.state?.from?.pathname || '/';
    let msg;
-   
+
    useEffect(() => {
       if (token) navigate(from, { replace: true });
    }, [navigate, token, from]);
 
    if (loading) return <Spinner></Spinner>;
+
    if (error) msg = <strong className="text-danger">{error?.message}</strong>
 
    const handleLogin = async (e) => {
       e.preventDefault();
       let email = e.target.email.value;
       let password = e.target.password.value;
-      await signInWithEmailAndPassword(email, password);
+
+      if (email === "" || password === "") {
+         setMessage(<small><strong className="text-danger py-2">Please fill up all input fields!</strong></small>);
+      } else {
+         await signInWithEmailAndPassword(email, password);
+      }
    }
 
    return (
-      <div>
+      <div className='section_default' style={{ height: "90vh" }}>
          <Container>
             <Row>
-               <div className="col-lg-4 mx-auto text-center">
-                  <h3 className='py-5'>Login to WOO-COM</h3>
-                  {msg}
-                  <Form onSubmit={handleLogin}>
+               <div className="col-lg-4 mx-auto">
+                  <div className="card text-center shadow py-3">
+                     <div className="card-body">
+                        <h3 className='py-5'>Login to WOO-COM</h3>
+                        {msg || logMsg}
+                        <Form onSubmit={handleLogin} className='text-start'>
+                           <Form.Group className="mb-3" controlId="formBasicEmail">
+                              <Form.Label>Email address</Form.Label>
+                              <Form.Control type="email" name='email' autoComplete='off' placeholder="Enter your email" />
+                           </Form.Group>
 
-                     <Form.Group className="mb-3" controlId="formBasicEmail">
-                        <Form.Label>Email address</Form.Label>
-                        <Form.Control type="email" name='email' placeholder="Enter email" />
-                     </Form.Group>
+                           <Form.Group className="mb-3" controlId="formBasicPassword">
+                              <Form.Label>Password</Form.Label>
+                              <Form.Control type="password" name='password' autoComplete='off' placeholder="Enter your password" />
+                           </Form.Group>
+                           <Form.Group>
+                              <Button className='btn-sm' variant="primary" type="submit">
+                                 Login
+                              </Button>
+                           </Form.Group>
+                        </Form>
 
-                     <Form.Group className="mb-3" controlId="formBasicPassword">
-                        <Form.Label>Password</Form.Label>
-                        <Form.Control type="password" name='password' placeholder="Password" />
-                     </Form.Group>
-                     <Form.Group className="mb-3" controlId="formBasicCheckbox">
-                        <Form.Check type="checkbox" label="Check me out" />
-                     </Form.Group>
-                     <Button variant="primary" type="submit">
-                        Submit
-                     </Button>
-                  </Form>
+                        <div className="my-3">
+                           <span>New to Woo-Com ?&nbsp;</span>
+                           <Link to={'/register'}>Register</Link>
+                        </div>
 
-                  <Link to={'/register'}>Go Register</Link>
-
-                  <SocialAuth></SocialAuth>
+                        <SocialAuth></SocialAuth>
+                     </div>
+                  </div>
                </div>
             </Row>
          </Container>

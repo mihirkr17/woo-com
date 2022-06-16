@@ -13,13 +13,13 @@ const SocialAuth = () => {
    const location = useLocation();
    let from = location.state?.from?.pathname || '/';
    let msg;
-   
+
    useEffect(() => {
-      if (token) navigate(from, { replace: true });
+      if (token) { navigate(from, { replace: true }) };
    }, [navigate, token, from]);
 
    if (loading) return <Spinner></Spinner>;
-   if (token) navigate('/');
+
    if (error) msg = <strong className='text-danger'>{error?.message}</strong>;
 
    const socialHandler = async () => {
@@ -29,7 +29,7 @@ const SocialAuth = () => {
    return (
       <div>
          {msg}
-         <Button onClick={socialHandler}>Sign in with Google</Button>
+         <Button variant='info' onClick={socialHandler}>Sign in with Google</Button>
       </div>
    );
 };

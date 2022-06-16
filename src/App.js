@@ -13,18 +13,18 @@ import Cart from './Pages/Cart/Cart';
 import Purchase from './Pages/Purchase/Purchase';
 import CheckOut from './Pages/CheckOut/CheckOut';
 import MyOrder from './Pages/MyOrder/MyOrder';
-import ManageOrders from './Admin/Dashboard/Pages/ManageOrders';
+import ManageOrders from './Admin/ManageOrders/ManageOrders';
 import ProductCategory from './Pages/ProductCategory/ProductCategory';
 import AllRecentProduct from './Pages/AllRecentProduct/AllRecentProduct';
 import { useState } from 'react';
 import SearchProduct from './Components/Shared/SearchProduct';
-import RequireOwner from "./Auth/RequireOwner";
 import Dashboard from './Pages/Dashboard/Dashboard';
 import MyProfile from './Pages/Dashboard/MyProfile';
-import AllUsers from './Pages/Dashboard/AllUsers/outlet/AllUsers';
-import OwnerData from './Pages/Dashboard/Owner/OwnerData';
-import AllAdmin from './Pages/Dashboard/AllUsers/outlet/AllAdmin';
-import ManageUsers from './Pages/Dashboard/AllUsers/ManageUsers';
+import AllUsers from './Owner/ManageUsers/outlet/AllUsers';
+import OwnerData from './Owner/OwnerData/OwnerData';
+import AllAdmin from './Owner/ManageUsers/outlet/AllAdmin';
+import ManageUsers from './Owner/ManageUsers/ManageUsers';
+import RequireOwnerAdmin from './Auth/RequireOwnerAdmin';
 
 function App() {
   const [query, setQuery] = useState('');
@@ -47,16 +47,16 @@ function App() {
         <Route path='/my-profile/my-order' element={<RequireAuth><MyOrder></MyOrder></RequireAuth>}></Route>
 
         {/* // Owner path */}
-        <Route path='/dashboard' element={<RequireAuth><Dashboard></Dashboard></RequireAuth>}>
-          <Route index element={<MyProfile></MyProfile>}></Route>
-          <Route path='manage-orders' element={<ManageOrders></ManageOrders>}></Route>
+        <Route path='/dashboard' element={<RequireAuth><RequireOwnerAdmin><Dashboard></Dashboard></RequireOwnerAdmin></RequireAuth>}>
+          <Route index element={<RequireOwnerAdmin><MyProfile></MyProfile></RequireOwnerAdmin>}></Route>
+          <Route path='manage-orders' element={<RequireOwnerAdmin><ManageOrders></ManageOrders></RequireOwnerAdmin>}></Route>
 
           {/* // Only owner route */}
-          <Route path='manage-users' element={<RequireOwner><ManageUsers></ManageUsers></RequireOwner>}>
-            <Route index element={<RequireOwner><AllUsers></AllUsers></RequireOwner>}></Route>
-            <Route path='all-admin' element={<RequireOwner><AllAdmin></AllAdmin></RequireOwner>}></Route>
+          <Route path='manage-users' element={<RequireOwnerAdmin><ManageUsers></ManageUsers></RequireOwnerAdmin>}>
+            <Route index element={<RequireOwnerAdmin><AllUsers></AllUsers></RequireOwnerAdmin>}></Route>
+            <Route path='all-admin' element={<RequireOwnerAdmin><AllAdmin></AllAdmin></RequireOwnerAdmin>}></Route>
           </Route>
-          <Route path='owner-data' element={<RequireOwner><OwnerData></OwnerData></RequireOwner>}></Route>
+          <Route path='owner-data' element={<RequireOwnerAdmin><OwnerData></OwnerData></RequireOwnerAdmin>}></Route>
         </Route>
 
         {/* // admin dashboard */}

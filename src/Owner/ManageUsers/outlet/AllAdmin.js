@@ -1,10 +1,11 @@
 import React from 'react';
 import { Table } from 'react-bootstrap';
-import Spinner from '../../../../Components/Shared/Spinner/Spinner';
-import { useFetch } from '../../../../Hooks/useFetch';
+import Spinner from '../../../Components/Shared/Spinner/Spinner';
+import { useFetch } from '../../../Hooks/useFetch';
+
 
 const AllAdmin = () => {
-   const { data, loading, err, refetch } = useFetch(`https://woo-com-serve.herokuapp.com/all-users`);
+   const { data, loading } = useFetch(`https://woo-com-serve.herokuapp.com/all-users`);
    if (loading) return <Spinner></Spinner>;
    const filterAdmin = data && data.filter(u => u?.role === "admin");
    return (

@@ -1,12 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { Table } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-import { useFetch } from '../../../Hooks/useFetch';
-import { auth } from '../../../firebase.init';
-import Spinner from '../../../Components/Shared/Spinner/Spinner';
-import { useMessage } from '../../../Hooks/useMessage';
-import Modal from '../../../Components/Modal/Modal';
+import { useMessage } from '../../Hooks/useMessage';
+import Modal from '../../Components/Modal/Modal';
+import { useFetch } from '../../Hooks/useFetch';
+import Spinner from '../../Components/Shared/Spinner/Spinner';
+import { auth } from '../../firebase.init';
 
 const ManageOrders = () => {
    const [user] = useAuthState(auth);
@@ -90,7 +89,7 @@ const ManageOrders = () => {
                                        </td>
                                     </tr>
                                  )
-                              })  : <tr><td>No Pending Order</td></tr>
+                              }) : <tr><td>No Pending Order</td></tr>
                            }
                         </tbody>
                      </Table>
@@ -113,7 +112,7 @@ const ManageOrders = () => {
                         <tbody>
                            {
                               filterPlaced && filterPlaced.length > 0 ? filterPlaced.map((odr, ind) => {
-                                 const { _id, orders } = odr;
+                                 const { orders } = odr;
                                  return (
                                     <tr key={orders?.orderId}>
                                        <td>{orders?.orderId}</td>
@@ -159,7 +158,7 @@ const ManageOrders = () => {
                      <tbody>
                         {
                            filterShipped && filterShipped.map((odr, ind) => {
-                              const { _id, orders } = odr;
+                              const { orders } = odr;
                               return (
                                  <tr key={orders?.orderId}>
                                     <td>{orders?.orderId}</td>

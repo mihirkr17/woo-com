@@ -1,41 +1,41 @@
-import { signOut } from 'firebase/auth';
 import { useEffect, useState } from 'react';
-import { auth } from '../firebase.init';
 
-const useAdmin = (user) => {
-   const [admin, setAdmin] = useState(false);
-   const [adminLoading, setAdminLoading] = useState(false);
+const useAuth = (user) => {
+   const [role, setRole] = useState("");
+   const [roleLoading, setRoleLoading] = useState(false);
    const [err, setErr] = useState();
 
    const cookieObj = new URLSearchParams(document.cookie.replaceAll("; ", "&"));
    const token = cookieObj.get('accessToken');
+
 
    useEffect(() => {
       const controller = new AbortController();
 
       (async () => {
          try {
-            setAdminLoading(true);
+            setRoleLoading(true);
             const email = user?.email;
-            if (email) {
-               const response = await fetch(`https://woo-com-serve.herokuapp.com/fetch-admin/${email}`, {
+
+            if (email && token) {
+               const response = await fetch(`https://woo-com-serve.herokuapp.com/fetch-auth/${email}`, {
                   method: "GET",
                   headers: {
                      "content-type": "application/json",
                      authorization: `Bearer ${token}`
-                  }
+                  },
+                  signal: controller.signal
                });
-               if (response.status === 401 || response.status === 403) { signOut(auth) };
 
                if (response.ok) {
                   const data = await response.json();
-                  setAdmin(data.admin);
+                  setRole(data.role);
                }
             }
          } catch (error) {
             setErr(error);
          } finally {
-            setAdminLoading(false);
+            setRoleLoading(false);
          }
       })();
 
@@ -44,7 +44,7 @@ const useAdmin = (user) => {
       }
    }, [user, token]);
 
-   return [admin, adminLoading];
+   return [role, roleLoading, err];
 };
 
-export default useAdmin;
+export default useAuth;

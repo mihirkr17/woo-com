@@ -6,13 +6,11 @@ import { Button, Container, Dropdown, Nav, Navbar } from 'react-bootstrap';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { Link, NavLink } from 'react-router-dom';
 import { auth } from '../../firebase.init';
-import useAdmin from '../../Hooks/useAdmin';
-import useOwner from '../../Hooks/useOwner';
+import useAuth from '../../Hooks/useAuth';
 
 const NavigationBar = ({ setQuery }) => {
    const [user] = useAuthState(auth);
-   const [owner] = useOwner(user);
-   const [admin] = useAdmin(user);
+   const [role] = useAuth(user);
 
    return (
       <Navbar bg="light" expand="lg">
@@ -24,7 +22,7 @@ const NavigationBar = ({ setQuery }) => {
                <Nav className="ms-auto">
                   <Nav.Link as={NavLink} to="/">Home</Nav.Link>
                   {
-                     (owner || admin) && user ? <Nav.Link as={NavLink} to="/dashboard">dashboard</Nav.Link> :
+                     (role !== "") && user ? <Nav.Link as={NavLink} to="/dashboard">dashboard</Nav.Link> :
                         user ? <>
                            <Nav.Link as={NavLink} to='/my-cart'>Cart <FontAwesomeIcon icon={faCartShopping} /> </Nav.Link>
 

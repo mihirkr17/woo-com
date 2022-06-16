@@ -1,10 +1,10 @@
 import React from 'react';
 import { Table } from 'react-bootstrap';
-import Spinner from '../../../../Components/Shared/Spinner/Spinner';
-import { useFetch } from '../../../../Hooks/useFetch';
+import Spinner from '../../../Components/Shared/Spinner/Spinner';
+import { useFetch } from '../../../Hooks/useFetch';
 
 const AllUsers = () => {
-   const { data, loading, err, refetch } = useFetch(`https://woo-com-serve.herokuapp.com/all-users`);
+   const { data, loading, refetch } = useFetch(`https://woo-com-serve.herokuapp.com/all-users`);
    if (loading) return <Spinner></Spinner>;
 
    const makeAdminHandler = async (userId) => {

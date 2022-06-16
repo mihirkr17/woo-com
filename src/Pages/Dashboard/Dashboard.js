@@ -3,12 +3,15 @@ import React from 'react';
 import { Nav } from 'react-bootstrap';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { NavLink, Outlet } from 'react-router-dom';
+import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { auth } from '../../firebase.init';
-import useOwner from '../../Hooks/useOwner';
+import useAuth from '../../Hooks/useAuth';
 
 const Dashboard = () => {
    const [user] = useAuthState(auth);
-   const [owner, loading] = useOwner(user);
+   const [role, roleLoading] = useAuth(user);
+
+   if (roleLoading) return <Spinner></Spinner>;
 
    return (
       <div className='section_default'>
@@ -20,7 +23,7 @@ const Dashboard = () => {
                   <Nav.Link as={NavLink} to='manage-orders'>Orders</Nav.Link>
 
                   {
-                     owner && <>
+                     role === "owner" && <>
                         <Nav.Link as={NavLink} to='owner-data'>Owner</Nav.Link>
                         <Nav.Link as={NavLink} to='manage-users'>Manage Users</Nav.Link>
                      </>
