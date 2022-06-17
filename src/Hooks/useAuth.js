@@ -8,7 +8,6 @@ const useAuth = (user) => {
    const cookieObj = new URLSearchParams(document.cookie.replaceAll("; ", "&"));
    const token = cookieObj.get('accessToken');
 
-
    useEffect(() => {
       const controller = new AbortController();
 
@@ -30,6 +29,8 @@ const useAuth = (user) => {
                if (response.ok) {
                   const data = await response.json();
                   setRole(data.role);
+               } else {
+                  throw new Error(`${response.status}, ${response.statusText}`);
                }
             }
          } catch (error) {

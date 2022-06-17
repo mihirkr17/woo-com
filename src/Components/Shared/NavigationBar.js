@@ -22,7 +22,7 @@ const NavigationBar = ({ setQuery }) => {
                <Nav className="ms-auto">
                   <Nav.Link as={NavLink} to="/">Home</Nav.Link>
                   {
-                     (role !== "") && user ? <Nav.Link as={NavLink} to="/dashboard">dashboard</Nav.Link> :
+                     ((role === "owner") || (role === "admin")) ? <Nav.Link as={NavLink} to="/dashboard">dashboard</Nav.Link> :
                         user ? <>
                            <Nav.Link as={NavLink} to='/my-cart'>Cart <FontAwesomeIcon icon={faCartShopping} /> </Nav.Link>
 

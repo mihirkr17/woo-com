@@ -47,7 +47,7 @@ function App() {
         <Route path='/my-profile/my-order' element={<RequireAuth><MyOrder></MyOrder></RequireAuth>}></Route>
 
         {/* // Owner path */}
-        <Route path='/dashboard' element={<RequireAuth><RequireOwnerAdmin><Dashboard></Dashboard></RequireOwnerAdmin></RequireAuth>}>
+        <Route path='/dashboard' element={<RequireOwnerAdmin><Dashboard></Dashboard></RequireOwnerAdmin>}>
           <Route index element={<RequireOwnerAdmin><MyProfile></MyProfile></RequireOwnerAdmin>}></Route>
           <Route path='manage-orders' element={<RequireOwnerAdmin><ManageOrders></ManageOrders></RequireOwnerAdmin>}></Route>
 
