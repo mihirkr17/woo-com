@@ -10,15 +10,17 @@ export const useToken = (user) => {
 
          if (email) {
             const response = await fetch(url, {
-               method: "PUT"
+               method: "POST"
             });
 
-            const resData = await response.json();
-            setToken(resData);
-            document.cookie = `accessToken=${resData?.token}`;
+            if (response.ok) {
+               const resData = await response.json();
+               setToken(resData);
+               document.cookie = `accessToken=${resData?.token}`;
+            }
          }
       })();
    }, [user, email]);
 
-   return [token];
+   return { token };
 }
