@@ -10,7 +10,7 @@ import useAuth from '../../Hooks/useAuth';
 
 const NavigationBar = ({ setQuery }) => {
    const [user] = useAuthState(auth);
-   const [role] = useAuth(user);
+   const { role } = useAuth(user);
 
    return (
       <Navbar bg="light" expand="lg">
@@ -22,20 +22,23 @@ const NavigationBar = ({ setQuery }) => {
                <Nav className="ms-auto">
                   <Nav.Link as={NavLink} to="/">Home</Nav.Link>
                   {
-                     ((role === "owner") || (role === "admin")) ? <Nav.Link as={NavLink} to="/dashboard">dashboard</Nav.Link> :
-                        (user && (role !== "owner" && role !== "admin")) ? <>
-                           <Nav.Link as={NavLink} to='/my-cart'>Cart <FontAwesomeIcon icon={faCartShopping} /> </Nav.Link>
-                           <Dropdown>
-                              <Dropdown.Toggle className='btn-sm' variant="secondary" id="dropdown-basic">
-                                 {user?.displayName}
-                              </Dropdown.Toggle>
-                              <Dropdown.Menu>
-                                 <Dropdown.Item as={Link} to='/my-profile/my-order'>My Order</Dropdown.Item>
-                                 <Dropdown.Item as={Button} onClick={() => signOut(auth)}>Logout</Dropdown.Item>
-                              </Dropdown.Menu>
-                           </Dropdown>
-                        </> : (!user && (role !== "owner" && role !== "admin")) && <Nav.Link as={NavLink} to="/login">Login</Nav.Link>
+                     (((role === "owner") || (role === "admin")) && user) &&
+                     <Nav.Link as={NavLink} to="/dashboard">dashboard</Nav.Link>
+                  }{
+                     (user && (role !== "owner" && role !== "admin")) && <>
+                        <Nav.Link as={NavLink} to='/my-cart'>Cart <FontAwesomeIcon icon={faCartShopping} /> </Nav.Link>
+                        <Dropdown>
+                           <Dropdown.Toggle className='btn-sm' variant="secondary" id="dropdown-basic">
+                              {user?.displayName}
+                           </Dropdown.Toggle>
+                           <Dropdown.Menu>
+                              <Dropdown.Item as={Link} to='/my-profile/my-order'>My Order</Dropdown.Item>
+                              <Dropdown.Item as={Button} onClick={() => signOut(auth)}>Logout</Dropdown.Item>
+                           </Dropdown.Menu>
+                        </Dropdown>
+                     </>
                   }
+                  {!user && <Nav.Link as={NavLink} to="/login">Login</Nav.Link>}
                </Nav>
             </Navbar.Collapse>
          </Container>

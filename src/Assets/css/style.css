@@ -14,7 +14,8 @@ html {
   --color-trans-two: #0000001a;
   --color-trans-three: #ffffff2b;
   --color-trans-four: ;
-  --font-primary: "Spline Sans Mono", monospace;
+  --font-primary2: "Spline Sans Mono", monospace;
+  --font-primary: 'Poppins', sans-serif;
   --font-secondary: "Fredoka One", cursive;
   --font-accent: ;
   --size-primary: 0.975rem;

@@ -8,14 +8,14 @@ import useAuth from '../Hooks/useAuth';
 
 const RequireOwnerAdmin = ({ children }) => {
    const [user, loading] = useAuthState(auth);
-   const [role, roleLoading] = useAuth(user);
+   const { role } = useAuth(user);
    const location = useLocation();
 
-   if (loading || roleLoading) {
+   if (loading) {
       return <Spinner></Spinner>;
    }
 
-   if ((role !== "owner") && (role !== "admin") && !user) {
+   if ((role !== "owner" && role !== "admin") && !user) {
       signOut(auth);
       return <Navigate to='/login' state={{ from: location }} replace></Navigate>;
    }

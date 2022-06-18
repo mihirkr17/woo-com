@@ -15,16 +15,16 @@ const ManageOrders = () => {
    const [openModal, setOpenModal] = useState(false);
 
    if (loading) return <Spinner></Spinner>;
-   const seeMoreToggleHandler = async (id) => id === seeMoreToggle ? setSeeMoreToggle(null) : setSeeMoreToggle(id);
+   // const seeMoreToggleHandler = async (id) => id === seeMoreToggle ? setSeeMoreToggle(null) : setSeeMoreToggle(id);
 
-   const cancelOrderHandler = async (orderId) => {
-      if (window.confirm("Want to cancel this order ?")) {
-         const response = await fetch(`https://woo-com-serve.herokuapp.com/cancel-order/${user?.email}/${orderId}`, { method: "DELETE" });
-         if (response.ok) await response.json();
-         refetch();
-         setMessage(<strong className='text-success'>Order Cancelled...</strong>);
-      }
-   }
+   // const cancelOrderHandler = async (orderId) => {
+   //    if (window.confirm("Want to cancel this order ?")) {
+   //       const response = await fetch(`https://woo-com-serve.herokuapp.com/cancel-order/${user?.email}/${orderId}`, { method: "DELETE" });
+   //       if (response.ok) await response.json();
+   //       refetch();
+   //       setMessage(<strong className='text-success'>Order Cancelled...</strong>);
+   //    }
+   // }
 
    const updateOrderStatusHandler = async (id, email, status) => {
       let confirmMsg = status === "placed" ? "Want To Placed This Order" : "Want To Shipped This Order";

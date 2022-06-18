@@ -12,7 +12,7 @@ const Register = () => {
    const [acc, setAcc] = useState(false);
    const [createUserWithEmailAndPassword, user, loading, error] = useCreateUserWithEmailAndPassword(auth);
    const [updateProfile, updating, error2] = useUpdateProfile(auth);
-   const { token } = useToken(user);
+   const [token] = useToken(user);
    const navigate = useNavigate();
    let msg;
 

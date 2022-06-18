@@ -26,6 +26,7 @@ import AllAdmin from './Owner/ManageUsers/outlet/AllAdmin';
 import ManageUsers from './Owner/ManageUsers/ManageUsers';
 import RequireOwnerAdmin from './Auth/RequireOwnerAdmin';
 
+
 function App() {
   const [query, setQuery] = useState('');
 
@@ -46,7 +47,7 @@ function App() {
         <Route path='/checkout/:orderId' element={<CheckOut></CheckOut>}></Route>
         <Route path='/my-profile/my-order' element={<RequireAuth><MyOrder></MyOrder></RequireAuth>}></Route>
 
-        {/* // Owner path */}
+        {/* // Admin path */}
         <Route path='/dashboard' element={<RequireOwnerAdmin><Dashboard></Dashboard></RequireOwnerAdmin>}>
           <Route index element={<RequireOwnerAdmin><MyProfile></MyProfile></RequireOwnerAdmin>}></Route>
           <Route path='manage-orders' element={<RequireOwnerAdmin><ManageOrders></ManageOrders></RequireOwnerAdmin>}></Route>
@@ -58,8 +59,6 @@ function App() {
           </Route>
           <Route path='owner-data' element={<RequireOwnerAdmin><OwnerData></OwnerData></RequireOwnerAdmin>}></Route>
         </Route>
-
-        {/* // admin dashboard */}
 
       </Routes>
       <Footer></Footer>

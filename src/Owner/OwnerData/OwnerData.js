@@ -6,7 +6,7 @@ import useAuth from '../../Hooks/useAuth';
 
 const OwnerData = () => {
    const [user] = useAuthState(auth);
-   const [role] = useAuth(user);
+   const {role} = useAuth(user);
    if (role !== "" && role !== "owner") {
       signOut(auth);
    };

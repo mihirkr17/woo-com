@@ -13,7 +13,7 @@ const Login = () => {
    const [signInWithEmailAndPassword, user, loading, error,] = useSignInWithEmailAndPassword(auth);
    const navigate = useNavigate();
    const location = useLocation();
-   const { token } = useToken(user);
+   const [token] = useToken(user);
    let from = location.state?.from?.pathname || '/';
    let msg;
 

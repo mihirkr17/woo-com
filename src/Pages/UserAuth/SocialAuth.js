@@ -9,7 +9,7 @@ import Spinner from '../../Components/Shared/Spinner/Spinner';
 const SocialAuth = () => {
    const [signInWithGoogle, user, loading, error] = useSignInWithGoogle(auth);
    const navigate = useNavigate();
-   const { token } = useToken(user);
+   const [token] = useToken(user);
    const location = useLocation();
    let from = location.state?.from?.pathname || '/';
    let msg;

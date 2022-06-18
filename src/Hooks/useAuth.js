@@ -1,25 +1,25 @@
 import { signOut } from 'firebase/auth';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { auth } from '../firebase.init';
 
 const useAuth = (user) => {
    const [role, setRole] = useState("");
    const [roleLoading, setRoleLoading] = useState(false);
    const [err, setErr] = useState();
-
-   // get access token from cookies
-   const cookieObj = new URLSearchParams(document.cookie.replaceAll("; ", "&"));
-   const token = cookieObj.get('accessToken');
+   const navigate = useNavigate();
 
    useEffect(() => {
       const controller = new AbortController();
+      // get access token from cookies
+      const cookieObj = new URLSearchParams(document.cookie.replaceAll("; ", "&"));
+      const token = cookieObj.get('accessToken');
+      const email = user?.email;
 
       (async () => {
          try {
             setRoleLoading(true);
-            const email = user?.email;
-
-            if (email && token) {
+            if (email) {
                const response = await fetch(`https://woo-com-serve.herokuapp.com/fetch-auth/${email}`, {
                   method: "GET",
                   headers: {
@@ -30,12 +30,17 @@ const useAuth = (user) => {
                });
                if (response.ok) {
                   const data = await response.json();
-                  
                   setRole(data.role);
                   setRoleLoading(false);
                } else {
                   signOut(auth);
+                  navigate('/');
                }
+            }
+
+            if (!user) {
+               setRole("");
+               setRoleLoading(false);
             }
          } catch (error) {
             setErr(error);
@@ -45,9 +50,9 @@ const useAuth = (user) => {
       return () => {
          controller.abort();
       }
-   }, [user, token]);
+   }, [user, navigate]);
 
-   return [role, roleLoading, err];
+   return { role, roleLoading, err };
 };
 
 export default useAuth;

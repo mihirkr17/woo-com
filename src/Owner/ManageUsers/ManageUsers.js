@@ -1,18 +1,25 @@
 import { signOut } from 'firebase/auth';
 import React from 'react';
+import { useEffect } from 'react';
 import { Nav } from 'react-bootstrap';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { auth } from '../../firebase.init';
 import useAuth from '../../Hooks/useAuth';
 
 
 const ManageUsers = () => {
    const [user] = useAuthState(auth);
-   const [role] = useAuth(user);
-   if (role !== "" && role !== "owner") {
-      signOut(auth);
-   };
+   const {role} = useAuth(user);
+   const navigate = useNavigate();
+
+   useEffect(() => {
+      if (role !== "" && role !== "owner") {
+         signOut(auth);
+         navigate('/');
+         return;
+      };
+   }, [role, navigate]);
 
    return (
       <div className='section_default'>
