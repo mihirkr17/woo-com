@@ -1,10 +1,13 @@
+import { signOut } from 'firebase/auth';
 import { useEffect, useState } from 'react';
+import { auth } from '../firebase.init';
 
 const useAuth = (user) => {
    const [role, setRole] = useState("");
    const [roleLoading, setRoleLoading] = useState(false);
    const [err, setErr] = useState();
 
+   // get access token from cookies
    const cookieObj = new URLSearchParams(document.cookie.replaceAll("; ", "&"));
    const token = cookieObj.get('accessToken');
 
@@ -25,18 +28,17 @@ const useAuth = (user) => {
                   },
                   signal: controller.signal
                });
-
                if (response.ok) {
                   const data = await response.json();
+                  
                   setRole(data.role);
+                  setRoleLoading(false);
                } else {
-                  throw new Error(`${response.status}, ${response.statusText}`);
+                  signOut(auth);
                }
             }
          } catch (error) {
             setErr(error);
-         } finally {
-            setRoleLoading(false);
          }
       })();
 

@@ -23,9 +23,8 @@ const NavigationBar = ({ setQuery }) => {
                   <Nav.Link as={NavLink} to="/">Home</Nav.Link>
                   {
                      ((role === "owner") || (role === "admin")) ? <Nav.Link as={NavLink} to="/dashboard">dashboard</Nav.Link> :
-                        user ? <>
+                        (user && (role !== "owner" && role !== "admin")) ? <>
                            <Nav.Link as={NavLink} to='/my-cart'>Cart <FontAwesomeIcon icon={faCartShopping} /> </Nav.Link>
-
                            <Dropdown>
                               <Dropdown.Toggle className='btn-sm' variant="secondary" id="dropdown-basic">
                                  {user?.displayName}
@@ -35,7 +34,7 @@ const NavigationBar = ({ setQuery }) => {
                                  <Dropdown.Item as={Button} onClick={() => signOut(auth)}>Logout</Dropdown.Item>
                               </Dropdown.Menu>
                            </Dropdown>
-                        </> : <Nav.Link as={NavLink} to="/login">Login</Nav.Link>
+                        </> : (!user && (role !== "owner" && role !== "admin")) && <Nav.Link as={NavLink} to="/login">Login</Nav.Link>
                   }
                </Nav>
             </Navbar.Collapse>

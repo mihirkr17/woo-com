@@ -1,17 +1,14 @@
-import { signOut } from 'firebase/auth';
 import React from 'react';
 import { Nav } from 'react-bootstrap';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { NavLink, Outlet } from 'react-router-dom';
-import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { auth } from '../../firebase.init';
+import { signOut } from 'firebase/auth';
 import useAuth from '../../Hooks/useAuth';
 
 const Dashboard = () => {
    const [user] = useAuthState(auth);
-   const [role, roleLoading] = useAuth(user);
-
-   if (roleLoading) return <Spinner></Spinner>;
+   const [role] = useAuth(user);
 
    return (
       <div className='section_default'>
@@ -23,7 +20,7 @@ const Dashboard = () => {
                   <Nav.Link as={NavLink} to='manage-orders'>Orders</Nav.Link>
 
                   {
-                     role === "owner" && <>
+                     (role === "owner") && <>
                         <Nav.Link as={NavLink} to='owner-data'>Owner</Nav.Link>
                         <Nav.Link as={NavLink} to='manage-users'>Manage Users</Nav.Link>
                      </>
