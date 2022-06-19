@@ -4,6 +4,7 @@ import { auth } from '../../firebase.init';
 import { useFetch } from '../../Hooks/useFetch';
 import Spinner from "../../Components/Shared/Spinner/Spinner";
 import { useState } from 'react';
+import "./MyProfile/MyProfile.css";
 
 const MyProfile = () => {
    const [user] = useAuthState(auth);
@@ -30,9 +31,9 @@ const MyProfile = () => {
       e.preventDefault();
 
       let dataModel = {
-         country : country,
-         dob : dob,
-         age : age
+         country: country,
+         dob: dob,
+         age: age
       }
 
       const response = await fetch(`https://woo-com-serve.herokuapp.com/update-profile-data/${user?.email}`, {
@@ -55,7 +56,7 @@ const MyProfile = () => {
 
             <div className="profile_heder d-flex align-items-center justify-content-between py-3">
                <h5>My profile</h5>
-               <button onClick={() => openEditForm(true)} className='btn btn-sm'>Edit</button>
+               {/* <button onClick={() => openEditForm(true)} className='btn btn-sm'>Edit</button> */}
             </div>
             <div className="row">
                <div className="col-12">
@@ -81,27 +82,41 @@ const MyProfile = () => {
                         </tr>
                         <tr>
                            <th>Country</th>
-                           <td>{data?.country || "empty"}
-                              <form className={`${openEdit === true ? "d-block" : "d-none"}`} onSubmit={updateDocHandler}>
-                                 <input type="text" name="" id="" defaultValue={data?.country} onChange={(e) => setCountry(e.target.value)} />
+                           <td>
+                              <div className="d-flex align-items-center justify-content-between">
+                                 <p>{data?.country || "empty"}</p>
+                                 <button onClick={() => openEditForm(data?.country)} className='bt9_change'>{openEdit === data?.country ? "Cancel" : "Edit"}</button>
+                              </div>
+
+                              <form className={`update_form ${openEdit === data?.country ? "active" : ""}`} onSubmit={updateDocHandler}>
+                                 <input type="text" className='form-control form-control-sm' defaultValue={data?.country} onChange={(e) => setCountry(e.target.value)} />
                                  <button type='submit'>Update</button>
                               </form>
                            </td>
                         </tr>
                         <tr>
                            <th>DOB</th>
-                           <td>{data?.dob || "empty"}
-                              <form className={`${openEdit === true ? "d-block" : "d-none"}`} onSubmit={updateDocHandler}>
-                                 <input type="text" defaultValue={data?.dob} onChange={(e) => setDob(e.target.value)} />
+                           <td>
+                              <div className="d-flex align-items-center justify-content-between">
+                                 <p>{data?.dob || "empty"}</p>
+                                 <button onClick={() => openEditForm(data?.dob)} className='bt9_change'>{openEdit === data?.dob ? "Cancel" : "Edit"}</button>
+                              </div>
+
+                              <form className={`update_form ${openEdit === data?.dob ? "active" : ""}`} onSubmit={updateDocHandler}>
+                                 <input type="date" className='form-control form-control-sm' defaultValue={data?.dob} onChange={(e) => setDob(e.target.value)} />
                                  <button type='submit'>Update</button>
                               </form>
                            </td>
                         </tr>
                         <tr>
                            <th>Age</th>
-                           <td>{data?.age || "empty"}
-                              <form className={`${openEdit === true ? "d-block" : "d-none"}`} onSubmit={updateDocHandler}>
-                                 <input type="text" defaultValue={data?.age} onChange={(e) => setAge(e.target.value)} />
+                           <td>
+                              <div className="d-flex align-items-center justify-content-between">
+                                 <p>{data?.age || "empty"}</p>
+                                 <button onClick={() => openEditForm(data?.age)} className='bt9_change'>{openEdit === data?.age ? "Cancel" : "Edit"}</button>
+                              </div>
+                              <form className={`update_form ${openEdit === data?.age ? "active" : ""}`} onSubmit={updateDocHandler}>
+                                 <input type="number" className='form-control form-control-sm' defaultValue={data?.age} onChange={(e) => setAge(e.target.value)} />
                                  <button type='submit'>Update</button>
                               </form>
                            </td>
