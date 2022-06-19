@@ -13,7 +13,7 @@ const NavigationBar = ({ setQuery }) => {
    const { role } = useAuth(user);
 
    return (
-      <Navbar bg="light" expand="lg">
+      <Navbar bg="light" sticky='top' expand="lg">
          <Container>
             <Navbar.Brand as={NavLink} to="/">Woo-Com</Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />

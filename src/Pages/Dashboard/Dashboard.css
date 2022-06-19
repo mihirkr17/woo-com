@@ -1,0 +1,21 @@
+.d_left {
+   height: 100vh;
+   position: fixed;
+   left: 0;
+   top: 70px;
+   width: 200px;
+   padding: 2rem 1rem;
+   background-color: burlywood;
+   overflow-y: auto;
+}
+
+.d_right {
+   margin-left: 200px;
+   overflow-y: auto;
+}
+
+/* @media (max-width : 567px) {
+   .d_left {
+
+   }
+} */
