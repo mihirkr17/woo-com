@@ -10,9 +10,9 @@ const MyProfile = () => {
    const [openEdit, setOpenEdit] = useState(false);
 
    const { data, loading, refetch } = useFetch(`https://woo-com-serve.herokuapp.com/my-profile/${user?.email}`);
-   const [country, setCountry] = useState("");
-   const [dob, setDob] = useState('');
-   const [age, setAge] = useState('');
+   const [country, setCountry] = useState(data?.country);
+   const [dob, setDob] = useState(data?.dob);
+   const [age, setAge] = useState(data?.age);
 
    if (loading) return <Spinner></Spinner>;
 
@@ -48,8 +48,6 @@ const MyProfile = () => {
          refetch();
       }
    }
-
-   console.log(country);
 
    return (
       <div className='section_default'>
