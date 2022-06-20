@@ -20,7 +20,7 @@ const SearchProduct = ({ query, setQuery }) => {
                         {
                            allProducts && allProducts.filter((f) => (query !== "" ? f?.title.toLowerCase().includes(query.toLowerCase()) : "")).map(productDetails => {
                               return (
-                                 <div className="col-sm-5 col-md-3 col-lg-2" key={productDetails._id} onClick={() => setQuery("")}>
+                                 <div className="col-lg-2" key={productDetails._id} onClick={() => setQuery("")}>
                                     <Product product={productDetails} key={productDetails._id}></Product>
                                  </div>
                               )
