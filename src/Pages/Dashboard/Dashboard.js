@@ -49,6 +49,8 @@ const Dashboard = () => {
                            <Nav.Link as={NavLink} to='manage-users'>Manage Users</Nav.Link>
                         </>
                      }
+                     <Nav.Link as={NavLink} to='add-product'>Add Product</Nav.Link>
+                     <Nav.Link as={NavLink} to='manage-product'>Manage Product</Nav.Link>
                   </div>
                </div>
                <div className={`${responsive < 567 ? "col-12 pb-3" : "d_right"}`}>

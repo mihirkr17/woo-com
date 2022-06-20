@@ -1,10 +1,10 @@
 import React from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { auth } from '../../firebase.init';
-import { useFetch } from '../../Hooks/useFetch';
+import { auth } from '../../../firebase.init';
+import { useFetch } from '../../../Hooks/useFetch';
 import { useState } from 'react';
-import "./MyProfile/MyProfile.css";
-import BtnSpinner from '../../Components/Shared/BtnSpinner/BtnSpinner';
+import "./MyProfile.css";
+import UpdateForm from './Components/UpdateForm';
 
 const MyProfile = () => {
    const [user] = useAuthState(auth);
@@ -52,6 +52,7 @@ const MyProfile = () => {
       }
    }
 
+
    return (
       <div className='section_default'>
          <div className="container">
@@ -89,10 +90,13 @@ const MyProfile = () => {
                                  <button onClick={() => openEditForm(data?.country)} className='bt9_change'>{openEdit === data?.country ? "Cancel" : "Edit"}</button>
                               </div>
 
-                              <form className={`update_form ${openEdit === data?.country ? "active" : ""}`} onSubmit={updateDocHandler}>
-                                 <input type="text" className='form-control form-control-sm' defaultValue={data?.country} onChange={(e) => setCountry(e.target.value)} />
-                                 <button type='submit'>{actionLoading ? <BtnSpinner></BtnSpinner> : "Update"}</button>
-                              </form>
+                              <UpdateForm type={'text'}
+                                 defaultValue={data?.country}
+                                 actionLoading={actionLoading}
+                                 getValue={setCountry}
+                                 updateDocHandler={updateDocHandler}
+                                 openEdit={openEdit}
+                              />
                            </td>
                         </tr>
                         <tr>
@@ -103,10 +107,13 @@ const MyProfile = () => {
                                  <button onClick={() => openEditForm(data?.dob)} className='bt9_change'>{openEdit === data?.dob ? "Cancel" : "Edit"}</button>
                               </div>
 
-                              <form className={`update_form ${openEdit === data?.dob ? "active" : ""}`} onSubmit={updateDocHandler}>
-                                 <input type="date" className='form-control form-control-sm' defaultValue={data?.dob} onChange={(e) => setDob(e.target.value)} />
-                                 <button type='submit'>Update</button>
-                              </form>
+                              <UpdateForm type={'date'}
+                                 defaultValue={data?.dob}
+                                 actionLoading={actionLoading}
+                                 getValue={setDob}
+                                 updateDocHandler={updateDocHandler}
+                                 openEdit={openEdit}
+                              />
                            </td>
                         </tr>
                         <tr>
@@ -116,10 +123,14 @@ const MyProfile = () => {
                                  <p>{data?.age || "empty"}</p>
                                  <button onClick={() => openEditForm(data?.age)} className='bt9_change'>{openEdit === data?.age ? "Cancel" : "Edit"}</button>
                               </div>
-                              <form className={`update_form ${openEdit === data?.age ? "active" : ""}`} onSubmit={updateDocHandler}>
-                                 <input type="number" className='form-control form-control-sm' defaultValue={data?.age} onChange={(e) => setAge(e.target.value)} />
-                                 <button type='submit'>Update</button>
-                              </form>
+
+                              <UpdateForm type={'number'}
+                                 defaultValue={data?.age}
+                                 actionLoading={actionLoading}
+                                 getValue={setAge}
+                                 updateDocHandler={updateDocHandler}
+                                 openEdit={openEdit}
+                              />
                            </td>
                         </tr>
                      </tbody>

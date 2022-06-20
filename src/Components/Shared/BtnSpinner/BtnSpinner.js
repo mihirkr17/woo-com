@@ -1,10 +1,10 @@
 import React from 'react';
 
-const BtnSpinner = () => {
+const BtnSpinner = ({ text }) => {
    return (
       <div>
-         <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-         <span class="visually-hidden">Loading...</span>
+         <span class="spinner-border spinner-border-sm" style={{ marginRight : "5px" }} role="status" aria-hidden="true"></span>
+         {text || "Loading"}
       </div>
    );
 };

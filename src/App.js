@@ -19,12 +19,14 @@ import AllRecentProduct from './Pages/AllRecentProduct/AllRecentProduct';
 import { useState } from 'react';
 import SearchProduct from './Components/SearchProduct/SearchProduct';
 import Dashboard from './Pages/Dashboard/Dashboard';
-import MyProfile from './Pages/Dashboard/MyProfile';
+import MyProfile from './Pages/Dashboard/MyProfile/MyProfile';
 import AllUsers from './Owner/ManageUsers/outlet/AllUsers';
 import OwnerData from './Owner/OwnerData/OwnerData';
 import AllAdmin from './Owner/ManageUsers/outlet/AllAdmin';
 import ManageUsers from './Owner/ManageUsers/ManageUsers';
 import RequireOwnerAdmin from './Auth/RequireOwnerAdmin';
+import AddProduct from './Pages/Dashboard/AddProduct/AddProduct';
+import ManageProduct from './Pages/Dashboard/ManageProduct/ManageProduct';
 
 
 function App() {
@@ -51,6 +53,8 @@ function App() {
         <Route path='/dashboard' element={<RequireOwnerAdmin><Dashboard></Dashboard></RequireOwnerAdmin>}>
           <Route index element={<RequireOwnerAdmin><MyProfile></MyProfile></RequireOwnerAdmin>}></Route>
           <Route path='manage-orders' element={<RequireOwnerAdmin><ManageOrders></ManageOrders></RequireOwnerAdmin>}></Route>
+          <Route path='add-product' element={<RequireOwnerAdmin><AddProduct></AddProduct></RequireOwnerAdmin>}></Route>
+          <Route path='manage-product' element={<RequireOwnerAdmin><ManageProduct></ManageProduct></RequireOwnerAdmin>}></Route>
 
           {/* // Only owner route */}
           <Route path='manage-users' element={<RequireOwnerAdmin><ManageUsers></ManageUsers></RequireOwnerAdmin>}>
