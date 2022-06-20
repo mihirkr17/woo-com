@@ -17,7 +17,7 @@ const NavigationBar = ({ setQuery }) => {
          <Container>
             <Navbar.Brand as={NavLink} to="/">Woo-Com</Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
-            <Nav.Item><input type="search" placeholder='Search product' onChange={(e) => setQuery(e.target.value)} /></Nav.Item>
+            <Nav.Item><input type="search" className='form-control form-control-sm' placeholder='Search product' onChange={(e) => setQuery(e.target.value)} /></Nav.Item>
             <Navbar.Collapse id="basic-navbar-nav">
                <Nav className="ms-auto">
                   <Nav.Link as={NavLink} to="/">Home</Nav.Link>

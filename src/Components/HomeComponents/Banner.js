@@ -1,17 +1,23 @@
 import React from 'react';
+import { useEffect } from 'react';
+import { useState } from 'react';
 import { Carousel } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 const Banner = ({ data }) => {
+   const [randomProduct, setRandomProduct] = useState([]);
 
-   let randomProduct = [];
-   if (data) {
-      for (let i = 0; i < 3; i++) {
-         let idx = Math.floor(Math.random() * data.length);
-         randomProduct.push(data[idx]);
-         data.splice(idx, 1);
+   useEffect(() => {
+      let p = [];
+      if (data) {
+         for (let i = 0; i < 3; i++) {
+            let idx = Math.floor(Math.random() * data.length);
+            p.push(data[idx]);
+            data.splice(idx, 1);
+         }
+         setRandomProduct(p);
       }
-   }
+   }, [data])
 
    return (
       <div className="section_default">

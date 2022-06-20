@@ -1,7 +1,7 @@
 import React from 'react';
 import { useEffect } from 'react';
 import { useState } from 'react';
-import { unstable_HistoryRouter, useLocation, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import Product from '../../Components/HomeComponents/HomeStoreComponents/Product';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { useFetch } from '../../Hooks/useFetch';
@@ -11,10 +11,6 @@ const ProductCategory = () => {
    const { data: productByCategory, loading } = useFetch(`https://woo-com-serve.herokuapp.com/product-category/${category}`);
    const [filters, setFilters] = useState('best_match');
    const [products, setProducts] = useState([]);
-   const location = useLocation();
-   const loc = location.pathname.split("/");
-
-   if (loading) <Spinner></Spinner>;
 
 
    // filter product by price
@@ -37,6 +33,9 @@ const ProductCategory = () => {
       }
 
    }, [productByCategory, filters]);
+
+
+   if (loading) return <Spinner></Spinner>;
 
 
    return (

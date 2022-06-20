@@ -10,7 +10,7 @@ import useAuth from '../../Hooks/useAuth';
 
 const ManageUsers = () => {
    const [user] = useAuthState(auth);
-   const {role} = useAuth(user);
+   const { role } = useAuth(user);
    const navigate = useNavigate();
 
    useEffect(() => {

@@ -17,7 +17,7 @@ import ManageOrders from './Admin/ManageOrders/ManageOrders';
 import ProductCategory from './Pages/ProductCategory/ProductCategory';
 import AllRecentProduct from './Pages/AllRecentProduct/AllRecentProduct';
 import { useState } from 'react';
-import SearchProduct from './Components/Shared/SearchProduct';
+import SearchProduct from './Components/SearchProduct/SearchProduct';
 import Dashboard from './Pages/Dashboard/Dashboard';
 import MyProfile from './Pages/Dashboard/MyProfile';
 import AllUsers from './Owner/ManageUsers/outlet/AllUsers';
@@ -33,7 +33,7 @@ function App() {
   return (
     <div className="App">
       <NavigationBar setQuery={setQuery}></NavigationBar>
-      <SearchProduct query={query}></SearchProduct>
+      <SearchProduct query={query} setQuery={setQuery}></SearchProduct>
       <Routes>
         <Route path='/' element={<Home></Home>} ></Route>
         <Route path='/blog' element={<Blog></Blog>} ></Route>

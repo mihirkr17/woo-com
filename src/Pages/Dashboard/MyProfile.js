@@ -2,20 +2,18 @@ import React from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../../firebase.init';
 import { useFetch } from '../../Hooks/useFetch';
-import Spinner from "../../Components/Shared/Spinner/Spinner";
 import { useState } from 'react';
 import "./MyProfile/MyProfile.css";
+import BtnSpinner from '../../Components/Shared/BtnSpinner/BtnSpinner';
 
 const MyProfile = () => {
    const [user] = useAuthState(auth);
    const [openEdit, setOpenEdit] = useState(false);
-
-   const { data, loading, refetch } = useFetch(`https://woo-com-serve.herokuapp.com/my-profile/${user?.email}`);
+   const { data, refetch } = useFetch(`https://woo-com-serve.herokuapp.com/my-profile/${user?.email}`);
    const [country, setCountry] = useState(data?.country);
    const [dob, setDob] = useState(data?.dob);
    const [age, setAge] = useState(data?.age);
-
-   if (loading) return <Spinner></Spinner>;
+   const [actionLoading, setActionLoading] = useState(false);
 
    // open edit form
    const openEditForm = async (params) => {
@@ -29,6 +27,7 @@ const MyProfile = () => {
    // common function for updating single value
    const updateDocHandler = async (e) => {
       e.preventDefault();
+      setActionLoading(true);
 
       let dataModel = {
          country: country,
@@ -45,8 +44,11 @@ const MyProfile = () => {
       });
 
       if (response.ok) {
-         const d = await response.json();
+         setActionLoading(false);
+         await response.json();
          refetch();
+      } else {
+         setActionLoading(false);
       }
    }
 
@@ -56,7 +58,6 @@ const MyProfile = () => {
 
             <div className="profile_heder d-flex align-items-center justify-content-between py-3">
                <h5>My profile</h5>
-               {/* <button onClick={() => openEditForm(true)} className='btn btn-sm'>Edit</button> */}
             </div>
             <div className="row">
                <div className="col-12">
@@ -90,7 +91,7 @@ const MyProfile = () => {
 
                               <form className={`update_form ${openEdit === data?.country ? "active" : ""}`} onSubmit={updateDocHandler}>
                                  <input type="text" className='form-control form-control-sm' defaultValue={data?.country} onChange={(e) => setCountry(e.target.value)} />
-                                 <button type='submit'>Update</button>
+                                 <button type='submit'>{actionLoading ? <BtnSpinner></BtnSpinner> : "Update"}</button>
                               </form>
                            </td>
                         </tr>
