@@ -65,7 +65,7 @@ const Cart = () => {
          }
 
          if (window.confirm("Buy Now")) {
-            const response = await fetch(`http://localhost:5000/set-order/${user?.email}`, {
+            const response = await fetch(`https://woo-com-serve.herokuapp.com/set-order/${user?.email}`, {
                method: "POST",
                headers: {
                   "content-type": "application/json"

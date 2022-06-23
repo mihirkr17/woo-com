@@ -10,7 +10,7 @@ const MyOrder = () => {
    const user = useAuthUser();
    const [p, setP] = useState(0);
    const { msg, setMessage } = useMessage();
-   const { data, refetch, loading } = useFetch(`http://localhost:5000/my-order/${user?.email}`);
+   const { data, refetch, loading } = useFetch(`https://woo-com-serve.herokuapp.com/my-order/${user?.email}`);
    const { data: rating, refetch: ratingRefetch } = useFetch(`https://woo-com-serve.herokuapp.com/my-review/${user?.email}`);
 
    if (loading) return <Spinner></Spinner>;

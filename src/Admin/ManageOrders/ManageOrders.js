@@ -19,8 +19,8 @@ const ManageOrders = () => {
    useEffect(() => {
       if (role) {
          setUrl(
-            role === "admin" ? `http://localhost:5000/manage-orders?email=${user?.email}` :
-               `http://localhost:5000/manage-orders`
+            role === "admin" ? `https://woo-com-serve.herokuapp.com/manage-orders?email=${user?.email}` :
+               `https://woo-com-serve.herokuapp.com/manage-orders`
          )
       }
    }, [role, user?.email]);
@@ -30,7 +30,7 @@ const ManageOrders = () => {
 
    const cancelOrderHandler = async (email, orderId) => {
       if (window.confirm("Want to cancel this order ?")) {
-         const response = await fetch(`http://localhost:5000/cancel-order/${email}/${orderId}`, { method: "DELETE" });
+         const response = await fetch(`https://woo-com-serve.herokuapp.com/cancel-order/${email}/${orderId}`, { method: "DELETE" });
          if (response.ok) await response.json();
          refetch();
          setMessage(<strong className='text-success'>Order Cancelled...</strong>);
@@ -41,7 +41,7 @@ const ManageOrders = () => {
 
       let confirmMsg = status === "placed" ? "Want To Placed This Order" : "Want To Shipped This Order";
       if (window.confirm(confirmMsg)) {
-         const response = await fetch(`http://localhost:5000/update-order-status/${status}/${uEmail}/${id}`, { method: "PUT" });
+         const response = await fetch(`https://woo-com-serve.herokuapp.com/update-order-status/${status}/${uEmail}/${id}`, { method: "PUT" });
          if (response.ok) await response.json();
          refetch();
       }

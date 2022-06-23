@@ -12,7 +12,7 @@ const CartItem = ({ product: cart, refetch, setMessage, user, loading }) => {
       let price = parseInt(cart?.price) * parseInt(quantity);
       let discount_amount_total = parseInt(cart?.discount_amount_fixed) * parseInt(quantity);
 
-      const response = await fetch(`http://localhost:5000/up-cart-qty-ttl-price/${cart?._id}/${user?.email}`, {
+      const response = await fetch(`https://woo-com-serve.herokuapp.com/up-cart-qty-ttl-price/${cart?._id}/${user?.email}`, {
          method: "PUT",
          headers: {
             'content-type': 'application/json'
