@@ -1,18 +1,17 @@
 import React, { useState } from 'react';
-import { useAuthState } from 'react-firebase-hooks/auth';
 import { useNavigate } from 'react-router-dom';
 import CartAddress from '../../Components/Shared/CartAddress';
 import CartHeader from '../../Components/Shared/CartHeader';
 import CartItem from '../../Components/Shared/CartItem';
 import CartPayment from '../../Components/Shared/CartPayment';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
-import { auth } from '../../firebase.init';
 import { useFetch } from '../../Hooks/useFetch';
 import { useMessage } from '../../Hooks/useMessage';
+import { useAuthUser } from '../../lib/UserProvider';
 import "./Cart.css";
 
 const Cart = () => {
-   const [user] = useAuthState(auth);
+   const user = useAuthUser();
    const { data, loading, refetch } = useFetch(`https://woo-com-serve.herokuapp.com/my-cart-items/${user?.email}`);
    const { msg, setMessage } = useMessage();
    const [step, setStep] = useState(false);
@@ -20,10 +19,9 @@ const Cart = () => {
 
    if (loading) return <Spinner></Spinner>;
 
-
-   let totalPrice = data?.product && data?.product.map(p => p?.total_price).reduce((p, c) => p + c, 0);
+   let totalPrice = data?.product && data?.product.map(p => parseInt(p?.price) * parseInt(p?.quantity)).reduce((p, c) => p + c, 0);
    let totalQuantity = data?.product && data?.product.map(p => p?.quantity).reduce((p, c) => p + c, 0);
-   let discount = data?.product && data?.product.map(p => p?.total_discount).reduce((p, c) => p + c, 0);
+   let discount = data?.product && data?.product.map(p => parseInt(p?.discount_amount_fixed) * parseInt(p?.quantity)).reduce((p, c) => p + c, 0);
    let totalAmount = (totalPrice - discount).toFixed(2);
 
    const buyBtnHandler = async (e) => {
@@ -37,45 +35,42 @@ const Cart = () => {
       } else {
          let payment_mode = e.target.payment.value;
          let productArr = [];
-         let orderId = Math.floor(Math.random() * 1000000000);
+         let products = data && data?.product;
 
-         let d = data && data?.product;
-         for (let i = 0; i < d.length; i++) {
-            let elem = d[i];
+         for (let i = 0; i < products.length; i++) {
+            let elem = products[i];
+            let orderId = Math.floor(Math.random() * 1000000000);
+
             let product = {
-               product_name: elem.title,
-               price: elem.price,
-               image: elem.image,
-               final_price: elem.final_price,
-               quantity: elem.quantity,
-               discount: elem.discount,
+               orderId: orderId,
+               user_email: user?.email,
                _id: elem._id,
-               total_price : elem.total_price,
-               total_discount : elem.total_discount,
-               category : elem.category
+               product_name: elem.title,
+               image: elem.image,
+               category: elem.category,
+               quantity: elem.quantity,
+               price: elem.price,
+               price_fixed: elem.price_fixed,
+               price_total: elem.price_total,
+               discount: elem.discount,
+               discount_amount_fixed: elem.discount_amount_fixed,
+               discount_amount_total: elem.discount_amount_total,
+               seller: elem.seller,
+               address: data?.address && data?.address,
+               payment_mode: payment_mode,
+               status: "pending",
+               time_pending: new Date().toLocaleString()
             }
-            productArr.push(product);
+            productArr = [...productArr, product];
          }
 
-         let orderList = {
-            user_email: user?.email,
-            orderId: orderId,
-            product: productArr,
-            total_product: totalQuantity,
-            total_amount: totalAmount,
-            address: data?.address && data?.address,
-            payment_mode: payment_mode,
-            status: "pending",
-            time_pending : new Date().toLocaleString()
-         };
-
          if (window.confirm("Buy Now")) {
-            const response = await fetch(`https://woo-com-serve.herokuapp.com/set-order/${user?.email}`, {
+            const response = await fetch(`http://localhost:5000/set-order/${user?.email}`, {
                method: "POST",
                headers: {
                   "content-type": "application/json"
                },
-               body: JSON.stringify(orderList)
+               body: JSON.stringify({ product: productArr })
             });
 
             response.ok ? await response.json() && navigate(`/my-profile/my-order`) :

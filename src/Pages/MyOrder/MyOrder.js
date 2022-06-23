@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
 import { useFetch } from '../../Hooks/useFetch';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { auth } from '../../firebase.init';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { Table } from 'react-bootstrap';
 import { useMessage } from '../../Hooks/useMessage';
 import { Link } from 'react-router-dom';
+import { useAuthUser } from '../../lib/UserProvider';
 
 const MyOrder = () => {
-   const [user] = useAuthState(auth);
+   const user = useAuthUser();
    const [p, setP] = useState(0);
    const { msg, setMessage } = useMessage();
-   const { data, refetch, loading } = useFetch(`https://woo-com-serve.herokuapp.com/my-order/${user?.email}`);
+   const { data, refetch, loading } = useFetch(`http://localhost:5000/my-order/${user?.email}`);
    const { data: rating, refetch: ratingRefetch } = useFetch(`https://woo-com-serve.herokuapp.com/my-review/${user?.email}`);
 
    if (loading) return <Spinner></Spinner>;
+
 
    const showHandler = async (id) => {
       if (id === p) {
@@ -82,20 +82,20 @@ const MyOrder = () => {
             <p className='text-center'>{data?.orders && data?.orders.length > 0 ? "Total : " + data?.orders.length + " Orders" : "You Have No Orders In Your History"}</p>
             <div className="row">
                {
-                  data?.orders ? data?.orders.map(order => {
+                  data && data.map(order => {
                      return (
                         <div className="col-12 mb-3" key={order?.orderId}>
                            <div className="card_default">
 
                               <div className="card_description">
                                  <div className="d-flex align-items-center justify-content-between flex-wrap">
-                                    <small className='text-dark'>OrderID : <i className='text-info'>#{order?.orderId}</i></small>
-                                    <small>Total Amount : {order?.total_amount}$</small>
-                                    <small className='text-dark py-2 mx-1'>Payment Mode : <i>{order?.payment_mode}</i></small>
-                                    <small className='text-dark py-2 mx-1'>Status : <i className='text-success'>{order?.status}</i></small>
+                                    <small className='text-dark'>OrderID : <i className='text-info'>#{order?.orders?.product?.orderId}</i></small>
+                                    <small>Total Amount : {order?.orders?.product?.total_amount}$</small>
+                                    <small className='text-dark py-2 mx-1'>Payment Mode : <i>{order?.orders?.product?.payment_mode}</i></small>
+                                    <small className='text-dark py-2 mx-1'>Status : <i className='text-success'>{order?.orders?.product?.status}</i></small>
                                     {
                                        order?.status === "pending" ?
-                                          <button className='badge bg-danger ms-3' onClick={() => cancelOrderHandler(order?.orderId)}>Cancel</button> :
+                                          <button className='badge bg-danger ms-3' onClick={() => cancelOrderHandler(order?.orders?.product?.orderId)}>Cancel</button> :
                                           ""
                                     }
 
@@ -103,8 +103,8 @@ const MyOrder = () => {
 
 
                                  <article>
-                                    <button className='btn btn-sm' onClick={() => showHandler(order?.orderId)}>{p === order?.orderId ? "Hide" : "See"}&nbsp;Order Items</button>
-                                    <Table style={p === order?.orderId ? { display: "block" } : { display: "none" }} striped responsive>
+                                    <button className='btn btn-sm' onClick={() => showHandler(order?.orders?.product?.orderId)}>{p === order?.orders?.product?.orderId ? "Hide" : "See"}&nbsp;Order Items</button>
+                                    <Table style={p === order?.orders?.product?.orderId ? { display: "block" } : { display: "none" }} striped responsive>
                                        <thead>
                                           <tr>
                                              <th>Product</th>
@@ -118,7 +118,35 @@ const MyOrder = () => {
                                           </tr>
                                        </thead>
                                        <tbody>
-                                          {
+                                          <tr>
+                                             <td>
+                                                {
+                                                   <img src={order?.orders?.product?.image} style={{ width: "55px", height: "55px" }} alt="product_image" />
+                                                }
+                                             </td>
+                                             <td><Link to={`/product/${order?.orders?.product?._id}`}>{order?.orders?.product?.product_name}</Link></td>
+                                             <td>{order?.orders?.product?.price}</td>
+                                             <td>{order?.orders?.product?.quantity}</td>
+                                             <td>{order?.orders?.product?.final_price}</td>
+                                             <td>{order?.orders?.product?.total_price} - {order?.orders?.product?.total_discount}</td>
+                                             <td>{order?.orders?.product?.discount}%/{order?.orders?.product?.total_discount}$</td>
+                                             <td>{order?.orders?.product?.category}</td>
+                                             {
+                                                order?.orders?.product?.status === "shipped" ? <td>
+                                                   {findRating && findRating.includes(order?.orders?.product?._id.slice(-6) + order?.orderId) ?
+                                                      <Link to={`/product/${order?.orders?.product?._id}#rating`}>Review</Link> :
+                                                      <form onSubmit={ratingHandler} className='d-flex flex-column'>
+                                                         <input type="range" min={1} max={5} step={1} name='rating_point' />
+                                                         <textarea type="text" name='rating_description' placeholder='Write a Review' />
+                                                         <input type="hidden" defaultValue={order?.orders?.product?._id} name='product_id' />
+                                                         <input type="hidden" defaultValue={order?.orderId} name='order_id' />
+                                                         <button className='status_btn'>Add Review</button>
+                                                      </form>
+                                                   }
+                                                </td> : ""
+                                             }
+                                          </tr>
+                                          {/* {
                                              order ? order?.product.map((product) => {
                                                 const { _id, product_name, price, image, quantity, final_price, category, discount, total_price, total_discount } = product;
 
@@ -154,7 +182,7 @@ const MyOrder = () => {
                                                    </tr>
                                                 )
                                              }) : <tr><td>No Orders Found</td></tr>
-                                          }
+                                          } */}
                                        </tbody>
                                     </Table>
 
@@ -163,7 +191,7 @@ const MyOrder = () => {
                            </div>
                         </div>
                      )
-                  }).reverse() : ""
+                  }).reverse()
                }
             </div>
          </div>

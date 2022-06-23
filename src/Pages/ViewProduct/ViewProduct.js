@@ -3,14 +3,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { useFetch } from '../../Hooks/useFetch';
 import "./ViewProduct.css";
-import { useAuthState } from 'react-firebase-hooks/auth'
-import { auth } from '../../firebase.init';
 import { useMessage } from '../../Hooks/useMessage';
 import Product from '../../Components/HomeComponents/HomeStoreComponents/Product';
+import { useAuthUser } from '../../lib/UserProvider';
 
 const ViewProduct = () => {
    const { productId } = useParams();
-   const [user] = useAuthState(auth);
+   const user = useAuthUser();
    const { data: product, loading } = useFetch(`https://woo-com-serve.herokuapp.com/view-product/${productId}/${user?.email}`);
    const { data: rating } = useFetch(`https://woo-com-serve.herokuapp.com/product-review/${productId}`);
    const { data: productByCategory } = useFetch(`https://woo-com-serve.herokuapp.com/product-category/${product?.category}`);
@@ -22,18 +21,22 @@ const ViewProduct = () => {
 
    const addToCartHandler = async (product, params) => {
 
+      let quantity = 1;
       let productPrice = parseInt(product?.price);
       let productDiscount = parseInt(product?.discount) || 0;
-      let discount = (productDiscount / 100) * productPrice;
-      let total_price = productPrice - discount;
+      let discount_amount_fixed = (productDiscount / 100) * productPrice;
+      let discount_amount_total = discount_amount_fixed * quantity;
+      let price_fixed = productPrice - discount_amount_fixed;
 
-      product['quantity'] = parseInt(product?.quantity) || 1;
-      product['total_price'] = productPrice
+
       product['user_email'] = user?.email;
+      product['quantity'] = quantity;
+      product['price'] = productPrice;
+      product['price_fixed'] = price_fixed;
+      product['price_total'] = (productPrice * quantity) - discount_amount_total;
       product['discount'] = parseInt(product?.discount) || 0;
-      product['total_discount'] = discount;
-      product['final_price'] = total_price;
-      product['final_discount'] = discount;
+      product['discount_amount_fixed'] = discount_amount_fixed;
+      product['discount_amount_total'] = discount_amount_total;
 
       const response = await fetch(`https://woo-com-serve.herokuapp.com/my-cart/${user?.email}`, {
          method: "PUT",

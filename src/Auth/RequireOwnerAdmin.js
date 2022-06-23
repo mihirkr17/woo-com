@@ -1,25 +1,26 @@
 import React from 'react';
 import { signOut } from 'firebase/auth';
-import { useAuthState } from 'react-firebase-hooks/auth';
 import { Navigate, useLocation } from 'react-router-dom';
-import Spinner from '../Components/Shared/Spinner/Spinner';
 import { auth } from '../firebase.init';
 import useAuth from '../Hooks/useAuth';
+import { useAuthUser } from '../lib/UserProvider';
 
 const RequireOwnerAdmin = ({ children }) => {
-   const [user, loading] = useAuthState(auth);
+   const user = useAuthUser();
    const { role } = useAuth(user);
    const location = useLocation();
 
-   if (loading) {
-      return <Spinner></Spinner>;
+   if (!user) {
+      return <Navigate to={'/login'} state={{ from: location }} replace></Navigate>;
    }
 
-   if ((role !== "owner" && role !== "admin") && !user) {
-      signOut(auth);
-      return <Navigate to='/login' state={{ from: location }} replace></Navigate>;
+   if (role) {
+      if (role !== "owner" && role !== "admin" && role === "user") {
+         signOut(auth);
+         return <Navigate to={'/login'} state={{ from: location }} replace></Navigate>
+      }
+      return children;
    }
-   return children;
 };
 
 export default RequireOwnerAdmin;

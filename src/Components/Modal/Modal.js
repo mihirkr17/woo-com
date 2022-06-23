@@ -2,6 +2,7 @@ import React from 'react';
 import "./Modal.css";
 
 const Modal = ({ data, closeModal }) => {
+   const { orderId, user_email, payment_mode, price_total, status, quantity, time_pending, address, discount, discount_amount_fixed, price } = data;
    return (
       <div className='modal_c' style={data ? { display: "block" } : { display: "none" }}>
          <div className="modal_body card_default card_description">
@@ -17,31 +18,39 @@ const Modal = ({ data, closeModal }) => {
                      <tbody>
                         <tr>
                            <th>OrderID</th>
-                           <td>{data?.orderId}</td>
+                           <td>{orderId}</td>
                         </tr>
                         <tr>
                            <th>Order Email</th>
-                           <td>{data?.user_email}</td>
+                           <td>{user_email}</td>
+                        </tr>
+                        <tr>
+                           <th>Price</th>
+                           <td>{price}$</td>
+                        </tr>
+                        <tr>
+                           <th>Quantity</th>
+                           <td>{quantity}</td>
+                        </tr>
+                        <tr>
+                           <th>Discount</th>
+                           <td>{discount}%</td>
                         </tr>
                         <tr>
                            <th>Total Amount</th>
-                           <td>{data?.total_amount}$</td>
+                           <td>{price_total - discount_amount_fixed}$ Total amount (with minus discount)</td>
                         </tr>
                         <tr>
                            <th>Payment Mode</th>
-                           <td>{data?.payment_mode}</td>
-                        </tr>
-                        <tr>
-                           <th>Total Product</th>
-                           <td>{data?.total_product}</td>
+                           <td>{payment_mode}</td>
                         </tr>
                         <tr>
                            <th>Status</th>
-                           <td>{data?.status}</td>
+                           <td>{status}</td>
                         </tr>
                         <tr>
                            <th>Order Start Time</th>
-                           <td>{data?.time_pending}</td>
+                           <td>{time_pending}</td>
                         </tr>
                         {
                            data?.time_placed ?
@@ -59,27 +68,27 @@ const Modal = ({ data, closeModal }) => {
                         }
                         <tr>
                            <th>Order Customer Name</th>
-                           <td>{data?.address?.name}</td>
+                           <td>{address?.name}</td>
                         </tr>
                         <tr>
                            <th>Order Customer Village</th>
-                           <td>{data?.address?.village}</td>
+                           <td>{address?.village}</td>
                         </tr>
                         <tr>
                            <th>Order Customer City</th>
-                           <td>{data?.address?.city}</td>
+                           <td>{address?.city}</td>
                         </tr>
                         <tr>
                            <th>Order Customer Country</th>
-                           <td>{data?.address?.country}</td>
+                           <td>{address?.country}</td>
                         </tr>
                         <tr>
                            <th>Order Customer Zip</th>
-                           <td>{data?.address?.zip}</td>
+                           <td>{address?.zip}</td>
                         </tr>
                         <tr>
                            <th>Order Customer Phone</th>
-                           <td>{data?.address?.phone}</td>
+                           <td>{address?.phone}</td>
                         </tr>
                      </tbody>
                   </table>

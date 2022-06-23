@@ -7,9 +7,18 @@ const AllUsers = () => {
    const { data, loading, refetch } = useFetch(`https://woo-com-serve.herokuapp.com/all-users`);
    if (loading) return <Spinner></Spinner>;
 
+   const cookieObj = new URLSearchParams(document.cookie.replaceAll("; ", "&"));
+   const token = cookieObj.get('accessToken');
+
    const makeAdminHandler = async (userId) => {
       if (window.confirm("Want to give permission 'admin'")) {
-         const response = await fetch(`https://woo-com-serve.herokuapp.com/make-admin/${userId}`, {method : "PUT"});
+         const response = await fetch(`https://woo-com-serve.herokuapp.com/make-admin/${userId}`, {
+            method : "PUT",
+            headers: {
+               "content-type": "application/json",
+               authorization: `Bearer ${token}`
+            }
+      });
          if (await response.json()) refetch(); 
       }
    }

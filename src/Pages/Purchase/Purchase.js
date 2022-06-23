@@ -1,18 +1,17 @@
 import React, { useState } from 'react';
-import { useAuthState } from 'react-firebase-hooks/auth';
 import { useNavigate, useParams } from 'react-router-dom';
 import CartAddress from '../../Components/Shared/CartAddress';
 import CartHeader from '../../Components/Shared/CartHeader';
 import CartItem from '../../Components/Shared/CartItem';
 import CartPayment from '../../Components/Shared/CartPayment';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
-import { auth } from '../../firebase.init';
 import { useFetch } from '../../Hooks/useFetch';
 import { useMessage } from '../../Hooks/useMessage';
+import { useAuthUser } from '../../lib/UserProvider';
 
 const Purchase = () => {
    const { productId } = useParams();
-   const [user] = useAuthState(auth);
+   const user = useAuthUser();
 
    const { data: cart, loading, refetch } = useFetch(`https://woo-com-serve.herokuapp.com/my-cart-items/${user?.email}`);
    const { data: cart2 } = useFetch(`https://woo-com-serve.herokuapp.com/my-cart-item/${productId}/${user?.email}`);

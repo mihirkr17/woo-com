@@ -10,14 +10,14 @@ const CartItem = ({ product: cart, refetch, setMessage, user, loading }) => {
       let quantity = params === "dec" ? cart?.quantity - 1 : cart?.quantity + 1;
 
       let price = parseInt(cart?.price) * parseInt(quantity);
-      let totalDiscount = parseInt(cart?.final_discount) * parseInt(quantity);
+      let discount_amount_total = parseInt(cart?.discount_amount_fixed) * parseInt(quantity);
 
-      const response = await fetch(`https://woo-com-serve.herokuapp.com/up-cart-qty-ttl-price/${cart?._id}/${user?.email}`, {
+      const response = await fetch(`http://localhost:5000/up-cart-qty-ttl-price/${cart?._id}/${user?.email}`, {
          method: "PUT",
          headers: {
             'content-type': 'application/json'
          },
-         body: JSON.stringify({ quantity, total_price: price, total_discount: totalDiscount })
+         body: JSON.stringify({ quantity, price_total : price, discount_amount_total })
       })
 
       if (response.ok) await response.json(); refetch();
@@ -59,7 +59,7 @@ const CartItem = ({ product: cart, refetch, setMessage, user, loading }) => {
                      <p className="card_title"><Link to={`/product/${cart?._id}`}>{cart?.title}</Link></p>
                      <small>
                         <strike className='text-muted'>{cart?.price}</strike>&nbsp;
-                        <big className='text-success'>{cart?.final_price}$</big>&nbsp;{cart?.discount + "% Off"}
+                        <big className='text-success'>{cart?.price_fixed}$</big>&nbsp;{cart?.discount + "% Off"}
                      </small>
                   </div>
                   <div className="remove_btn col-1 text-end">

@@ -1,16 +1,20 @@
-import { signOut } from 'firebase/auth';
-import React from 'react';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { auth } from '../../firebase.init';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import useAuth from '../../Hooks/useAuth';
+import { useAuthUser } from '../../lib/UserProvider';
 
 const OwnerData = () => {
-   const [user] = useAuthState(auth);
-   const {role} = useAuth(user);
-   if (role !== "" && role !== "owner") {
-      signOut(auth);
-   };
-   
+   const user = useAuthUser();
+   const { role } = useAuth(user);
+   const navigate = useNavigate();
+
+   useEffect(() => {
+      if ((role && (role !== "owner" && role !== "admin")) && !user) {
+         navigate('/');
+         return;
+      };
+   }, [navigate, role, user]);
+
    return (
       <div>
          this is owner data

@@ -1,13 +1,12 @@
 import React from 'react';
 import { useEffect } from 'react';
 import { useState } from 'react';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { auth } from '../../../firebase.init';
 import useAuth from '../../../Hooks/useAuth';
 import { useFetch } from '../../../Hooks/useFetch';
+import { useAuthUser } from '../../../lib/UserProvider';
 
 const ManageProduct = () => {
-   const [user] = useAuthState(auth);
+   const user = useAuthUser();
    const { role } = useAuth(user);
    const [product, setProduct] = useState([]);
    const [items, setItems] = useState(0);

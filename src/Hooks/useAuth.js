@@ -30,7 +30,12 @@ const useAuth = (user) => {
                });
                if (response.ok) {
                   const data = await response.json();
-                  setRole(data.role);
+                  if (data?.role) {
+                     setRole(data.role);
+                  } else {
+                     setRole({role : "user"})
+                  }
+                  
                   setRoleLoading(false);
                } else {
                   signOut(auth);

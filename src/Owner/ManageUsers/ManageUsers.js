@@ -1,25 +1,23 @@
-import { signOut } from 'firebase/auth';
 import React from 'react';
 import { useEffect } from 'react';
 import { Nav } from 'react-bootstrap';
-import { useAuthState } from 'react-firebase-hooks/auth';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { auth } from '../../firebase.init';
 import useAuth from '../../Hooks/useAuth';
+import { useAuthUser } from '../../lib/UserProvider';
 
 
 const ManageUsers = () => {
-   const [user] = useAuthState(auth);
+   const user = useAuthUser();
    const { role } = useAuth(user);
    const navigate = useNavigate();
 
+   // if role is not owner then redirect to dashboard
    useEffect(() => {
-      if (role !== "" && role !== "owner") {
-         signOut(auth);
-         navigate('/');
+      if (role && role !== "owner") {
+         navigate('/dashboard');
          return;
       };
-   }, [role, navigate]);
+   }, [navigate, role, user]);
 
    return (
       <div className='section_default'>

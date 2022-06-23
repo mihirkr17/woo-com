@@ -1,13 +1,12 @@
 import React from 'react';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { auth } from '../../../firebase.init';
 import { useFetch } from '../../../Hooks/useFetch';
 import { useState } from 'react';
 import "./MyProfile.css";
 import UpdateForm from './Components/UpdateForm';
+import { useAuthUser } from '../../../lib/UserProvider';
 
 const MyProfile = () => {
-   const [user] = useAuthState(auth);
+   const user = useAuthUser();
    const [openEdit, setOpenEdit] = useState(false);
    const { data, refetch } = useFetch(`https://woo-com-serve.herokuapp.com/my-profile/${user?.email}`);
    const [country, setCountry] = useState(data?.country);

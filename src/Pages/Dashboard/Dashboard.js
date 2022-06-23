@@ -1,27 +1,17 @@
 import React from 'react';
 import { Nav } from 'react-bootstrap';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { auth } from '../../firebase.init';
-import { signOut } from 'firebase/auth';
+import { NavLink, Outlet } from 'react-router-dom';
 import useAuth from '../../Hooks/useAuth';
 import { useEffect } from 'react';
 import "./Dashboard.css";
 import { useState } from 'react';
+import { useAuthUser, useSignOut } from '../../lib/UserProvider';
 
 const Dashboard = () => {
-   const [user] = useAuthState(auth);
+   const user = useAuthUser();
    const { role } = useAuth(user);
-   const navigate = useNavigate();
    const [responsive, setResponsive] = useState(window.innerWidth);
 
-   useEffect(() => {
-      if ((role && (role !== "owner" && role !== "admin")) && !user) {
-         signOut(auth);
-         navigate('/');
-         return;
-      };
-   }, [navigate, role, user]);
 
    useEffect(() => {
       function reportWindowSize() {
@@ -38,7 +28,7 @@ const Dashboard = () => {
          <div className="container">
             <div className={`${responsive < 567 ? "row" : "dashboard"}`}>
                <div className={`${responsive < 567 ? "col-12 pb-3" : "d_left"}`}>
-                  <button className='btn btn-sm btn-danger' onClick={() => signOut(auth) && navigate('/')}>Log Out</button>
+                  <button className='btn btn-sm btn-danger' onClick={useSignOut}>Log Out</button>
                   <div className="d_link">
                      <Nav.Link as={NavLink} to='/dashboard'>My profile</Nav.Link>
                      <Nav.Link as={NavLink} to='manage-orders'>Orders</Nav.Link>

@@ -1,15 +1,13 @@
 import { faCartShopping } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { signOut } from 'firebase/auth';
 import React from 'react';
 import { Button, Container, Dropdown, Nav, Navbar } from 'react-bootstrap';
-import { useAuthState } from 'react-firebase-hooks/auth';
 import { Link, NavLink } from 'react-router-dom';
-import { auth } from '../../firebase.init';
 import useAuth from '../../Hooks/useAuth';
+import { useAuthUser, useSignOut } from '../../lib/UserProvider';
 
 const NavigationBar = ({ setQuery }) => {
-   const [user] = useAuthState(auth);
+   const user = useAuthUser();
    const { role } = useAuth(user);
 
    return (
@@ -33,7 +31,7 @@ const NavigationBar = ({ setQuery }) => {
                            </Dropdown.Toggle>
                            <Dropdown.Menu>
                               <Dropdown.Item as={Link} to='/my-profile/my-order'>My Order</Dropdown.Item>
-                              <Dropdown.Item as={Button} onClick={() => signOut(auth)}>Logout</Dropdown.Item>
+                              <Dropdown.Item as={Button} onClick={useSignOut}>Logout</Dropdown.Item>
                            </Dropdown.Menu>
                         </Dropdown>
                      </>
