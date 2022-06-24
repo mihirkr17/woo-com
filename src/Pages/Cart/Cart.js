@@ -26,6 +26,8 @@ const Cart = () => {
 
    const buyBtnHandler = async (e) => {
       e.preventDefault();
+
+      let buyAlert = window.confirm("Buy Now");
       if (data?.address?.select_address === false) {
          setMessage(<strong className='text-danger'>Please Select Delivery Address!</strong>);
       } else if (data?.address === null) {
@@ -34,7 +36,7 @@ const Cart = () => {
          setMessage(<strong className='text-danger'>Select Atleast One Product For Order!</strong>);
       } else {
          let payment_mode = e.target.payment.value;
-         let productArr = [];
+
          let products = data && data?.product;
 
          for (let i = 0; i < products.length; i++) {
@@ -61,20 +63,19 @@ const Cart = () => {
                status: "pending",
                time_pending: new Date().toLocaleString()
             }
-            productArr = [...productArr, product];
-         }
 
-         if (window.confirm("Buy Now")) {
-            const response = await fetch(`https://woo-com-serve.herokuapp.com/set-order/${user?.email}`, {
-               method: "POST",
-               headers: {
-                  "content-type": "application/json"
-               },
-               body: JSON.stringify({ product: productArr })
-            });
+            if (buyAlert) {
+               const response = await fetch(`https://woo-com-serve.herokuapp.com/set-order/${user?.email}`, {
+                  method: "POST",
+                  headers: {
+                     "content-type": "application/json"
+                  },
+                  body: JSON.stringify({ ...product })
+               });
 
-            response.ok ? await response.json() && navigate(`/my-profile/my-order`) :
-               setMessage(<strong className='text-danger'>Something went wrong!</strong>);
+               response.ok ? await response.json() && navigate(`/my-profile/my-order`) :
+                  setMessage(<strong className='text-danger'>Something went wrong!</strong>);
+            }
          }
       }
    }

@@ -25,7 +25,6 @@ const ManageOrders = () => {
       }
    }, [role, user?.email]);
 
-
    if (loading) return <Spinner></Spinner>;
 
    const cancelOrderHandler = async (email, orderId) => {
@@ -48,9 +47,9 @@ const ManageOrders = () => {
    }
 
 
-   let filterPlaced = data && data.filter(odr => odr?.orders?.product?.status === "placed").reverse();
-   let filterPending = data && data.filter(odr => odr?.orders?.product?.status === "pending").reverse();
-   let filterShipped = data && data.filter(odr => odr?.orders?.product?.status === "shipped").reverse();
+   let filterPlaced = data && data.filter(odr => odr?.orders?.status === "placed").reverse();
+   let filterPending = data && data.filter(odr => odr?.orders?.status === "pending").reverse();
+   let filterShipped = data && data.filter(odr => odr?.orders?.status === "shipped").reverse();
 
 
    return (
@@ -80,7 +79,7 @@ const ManageOrders = () => {
                               <tbody>
                                  {
                                     filterPending && filterPending.map((odr) => {
-                                       const { orderId, user_email, payment_mode, price_total, status } = odr?.orders?.product;
+                                       const { orderId, user_email, payment_mode, price_total, status } = odr?.orders;
                                        return (
                                           <tr key={orderId}>
                                              <td>{orderId}</td>
@@ -89,7 +88,7 @@ const ManageOrders = () => {
                                              <td>{price_total}$</td>
                                              <td>{status}</td>
                                              <td>{
-                                                <button disabled={odr?.product?.status === "shipped" ? true : false} className="status_btn"
+                                                <button disabled={status === "shipped" ? true : false} className="status_btn"
                                                    onClick={() => updateOrderStatusHandler(
                                                       user_email,
                                                       orderId,
@@ -99,7 +98,7 @@ const ManageOrders = () => {
                                                 </button>
                                              }</td>
                                              <td>
-                                                <button className="status_btn" onClick={() => setOpenModal(true && odr?.orders?.product)}>Details</button>
+                                                <button className="status_btn" onClick={() => setOpenModal(true && odr?.orders)}>Details</button>
                                              </td>
                                              <td>
                                                 <button onClick={() => cancelOrderHandler(user_email, orderId)}>Cancel</button>
@@ -135,7 +134,7 @@ const ManageOrders = () => {
                               <tbody>
                                  {
                                     filterPlaced && filterPlaced.map((odr) => {
-                                       const { orderId, user_email, payment_mode, price_total, status } = odr?.orders?.product;
+                                       const { orderId, user_email, payment_mode, price_total, status } = odr?.orders;
                                        return (
                                           <tr key={orderId}>
                                              <td>{orderId}</td>
@@ -144,7 +143,7 @@ const ManageOrders = () => {
                                              <td>{price_total}$</td>
                                              <td>{status}</td>
                                              <td>{
-                                                <button disabled={odr?.product?.status === "shipped" ? true : false} className="status_btn"
+                                                <button disabled={status === "shipped" ? true : false} className="status_btn"
                                                    onClick={() => updateOrderStatusHandler(
                                                       user_email,
                                                       orderId,
@@ -154,7 +153,7 @@ const ManageOrders = () => {
                                                 </button>
                                              }</td>
                                              <td>
-                                                <button className="status_btn" onClick={() => setOpenModal(true && odr?.orders?.product)}>Details</button>
+                                                <button className="status_btn" onClick={() => setOpenModal(true && odr?.orders)}>Details</button>
                                              </td>
                                           </tr>
                                        )
@@ -185,7 +184,7 @@ const ManageOrders = () => {
                            <tbody>
                               {
                                  filterShipped && filterShipped.map((odr, ind) => {
-                                    const { orderId, user_email, payment_mode, price_total, status } = odr?.orders?.product;
+                                    const { orderId, user_email, payment_mode, price_total, status } = odr?.orders;
                                     return (
                                        <tr key={orderId}>
                                           <td>{orderId}</td>
@@ -194,7 +193,7 @@ const ManageOrders = () => {
                                           <td>{price_total}$</td>
                                           <td>{status}</td>
                                           <td>
-                                             <button className="status_btn" onClick={() => setOpenModal(true && odr?.orders?.product)}>Details</button>
+                                             <button className="status_btn" onClick={() => setOpenModal(true && odr?.orders)}>Details</button>
                                           </td>
                                        </tr>
                                     )

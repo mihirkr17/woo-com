@@ -13,8 +13,6 @@ const CheckOut = () => {
 
    console.log(data);
 
-   console.log(data);
-
    return (
       <div className='section_default'>
          <div className="container">
