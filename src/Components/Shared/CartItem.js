@@ -17,10 +17,10 @@ const CartItem = ({ product: cart, refetch, setMessage, user, loading }) => {
          headers: {
             'content-type': 'application/json'
          },
-         body: JSON.stringify({ quantity, price_total : price, discount_amount_total })
+         body: JSON.stringify({ quantity, price_total: price, discount_amount_total })
       })
 
-      if (response.ok) await response.json(); refetch();
+      if (response.ok) { await response.json(); refetch() };
    }
 
    const removeItemFromCartHandler = async (cart) => {
@@ -31,7 +31,7 @@ const CartItem = ({ product: cart, refetch, setMessage, user, loading }) => {
             method: "DELETE"
          });
 
-         if(response.ok) await response.json();
+         if (response.ok) await response.json();
          setMessage(`Successfully remove ${title} from your cart`);
          refetch();
       }

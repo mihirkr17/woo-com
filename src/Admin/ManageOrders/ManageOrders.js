@@ -52,6 +52,41 @@ const ManageOrders = () => {
    let filterShipped = data && data.filter(odr => odr?.orders?.status === "shipped").reverse();
 
 
+   // earning algorithm
+   let arr = [];
+
+   if (filterShipped) {
+      for (let i = 0; i < filterShipped.length; i++) {
+         let elem = parseInt(filterShipped[i].orders?.price_fixed);
+         let discount = parseInt(filterShipped[i].orders?.discount_amount_total);
+         let priceTotal = parseInt(filterShipped[i].orders?.price_total) - discount;
+         let quantity = parseInt(filterShipped[i].orders?.quantity);
+
+         if (elem > 50) {
+            let c = (elem * 3) / 100;
+            let f = c * quantity;
+            c = priceTotal - f;
+            arr = [...arr, c];
+         } else if (elem > 100) {
+            let c = (elem * 4) / 100;
+            let f = c * quantity;
+            c = priceTotal - f;
+            arr = [...arr, c];
+         } else if (elem > 200) {
+            let c = (elem * 6) / 100;
+            let f = c * quantity;
+            c = priceTotal - f;
+            arr = [...arr, c];
+         } else {
+            let c = (elem * 1) / 100;
+            let f = c * quantity;
+            c = priceTotal - f;
+            arr = [...arr, c];
+         }
+      }
+   }
+
+
    return (
       <div className='section_default'>
          <div className="container">
@@ -70,7 +105,7 @@ const ManageOrders = () => {
                               <thead>
                                  <tr>
                                     <th>Order Id</th>
-                                    <th>Email</th>
+                                    <th>Customer Email</th>
                                     <th>Mode</th>
                                     <th>Amount</th>
                                     <th>Status</th>
@@ -82,7 +117,7 @@ const ManageOrders = () => {
                                        const { orderId, user_email, payment_mode, price_total, status } = odr?.orders;
                                        return (
                                           <tr key={orderId}>
-                                             <td>{orderId}</td>
+                                             <td># <span className="text-info">{orderId}</span> </td>
                                              <td>{user_email}</td>
                                              <td>{payment_mode}</td>
                                              <td>{price_total}$</td>
@@ -101,7 +136,7 @@ const ManageOrders = () => {
                                                 <button className="status_btn" onClick={() => setOpenModal(true && odr?.orders)}>Details</button>
                                              </td>
                                              <td>
-                                                <button onClick={() => cancelOrderHandler(user_email, orderId)}>Cancel</button>
+                                                <button className='badge bg-danger' onClick={() => cancelOrderHandler(user_email, orderId)}>Cancel Order</button>
                                              </td>
                                           </tr>
                                        )
@@ -125,7 +160,7 @@ const ManageOrders = () => {
                               <thead>
                                  <tr>
                                     <th>Order Id</th>
-                                    <th>Email</th>
+                                    <th>Customer Email</th>
                                     <th>Mode</th>
                                     <th>Amount</th>
                                     <th>Status</th>
@@ -137,7 +172,7 @@ const ManageOrders = () => {
                                        const { orderId, user_email, payment_mode, price_total, status } = odr?.orders;
                                        return (
                                           <tr key={orderId}>
-                                             <td>{orderId}</td>
+                                             <td># <span className="text-info">{orderId}</span> </td>
                                              <td>{user_email}</td>
                                              <td>{payment_mode}</td>
                                              <td>{price_total}$</td>
@@ -169,13 +204,23 @@ const ManageOrders = () => {
                </div>
                <div className="col-12 card_default card_description">
                   <h6>All Shipped Orders</h6>
+                  <h6>Total Sell : {filterShipped && filterShipped.length}&nbsp;Products</h6>
+                  <h6>Total Selling Price : &nbsp;
+                     {filterShipped && filterShipped.map(p => parseInt(p?.orders?.price_total) - parseInt(p?.orders?.discount_amount_total)).reduce((p, c) => p + c, 0)}
+                     &nbsp;$
+                  </h6>
+                  <h6>
+                     Total Earn : {
+                        arr && arr.reduce((p, c) => p + c, 0)
+                     }&nbsp;$
+                  </h6>
                   {
                      filterShipped && filterShipped.length >= 0 ?
                         <Table striped responsive>
                            <thead>
                               <tr>
                                  <th>Order Id</th>
-                                 <th>Email</th>
+                                 <th>Customer Email</th>
                                  <th>Payment Mode</th>
                                  <th>Amount</th>
                                  <th>Status</th>
@@ -187,7 +232,7 @@ const ManageOrders = () => {
                                     const { orderId, user_email, payment_mode, price_total, status } = odr?.orders;
                                     return (
                                        <tr key={orderId}>
-                                          <td>{orderId}</td>
+                                          <td># <span className="text-info">{orderId}</span> </td>
                                           <td>{user_email}</td>
                                           <td>{payment_mode}</td>
                                           <td>{price_total}$</td>

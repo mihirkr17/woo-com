@@ -12,22 +12,17 @@ import { useAuthUser } from '../../lib/UserProvider';
 const Purchase = () => {
    const { productId } = useParams();
    const user = useAuthUser();
-
-   const { data: cart, loading, refetch } = useFetch(`https://woo-com-serve.herokuapp.com/my-cart-items/${user?.email}`);
-   const { data: cart2 } = useFetch(`https://woo-com-serve.herokuapp.com/my-cart-item/${productId}/${user?.email}`);
+   const { data: cart, refetch, loading } = useFetch(`https://woo-com-serve.herokuapp.com/my-cart-item/${productId}/${user?.email}`);
    const { msg, setMessage } = useMessage("");
    const navigate = useNavigate();
    const [step, setStep] = useState(false);
 
    if (msg !== '') return navigate('/');
    if (loading) return <Spinner></Spinner>;
-   // console.log(cart2);
 
-
-   let product = cart && cart?.product && cart?.product.find(p => p._id === productId);
-   let totalPrice = product && parseInt(product?.total_price);
-   let totalQuantity = product && product?.quantity;
-   let discount = product && parseInt(product?.total_discount);
+   let totalPrice = cart && parseInt(cart?.product?.price) * parseInt(cart?.product?.quantity);
+   let totalQuantity = cart && parseInt(cart?.product?.quantity);
+   let discount = cart && parseInt(cart?.product?.discount_amount_fixed) * totalQuantity;
    let totalAmount = (totalPrice - discount).toFixed(2);
 
 
@@ -36,30 +31,26 @@ const Purchase = () => {
       let payment_mode = e.target.payment.value;
       let orderId = Math.floor(Math.random() * 1000000000);
 
-      let pp = {
-         product_name: product.title,
-         price: product.price,
-         image: product.image,
-         final_price: product.final_price,
-         quantity: product.quantity,
-         discount: product.discount,
-         _id: product._id,
-         total_price: product.total_price,
-         total_discount: product.total_discount,
-         category : product.category
-      }
-
-      let order = {
-         user_email: user?.email,
+      let products = {
          orderId: orderId,
-         product: [pp],
-         total_product: totalQuantity,
-         total_amount: totalAmount,
+         user_email: user?.email,
+         _id: cart?.product._id,
+         product_name: cart?.product.title,
+         image: cart?.product.image,
+         category: cart?.product.category,
+         quantity: cart?.product.quantity,
+         price: cart?.product.price,
+         price_fixed: cart?.product.price_fixed,
+         price_total: cart?.product.price_total,
+         discount: cart?.product.discount,
+         discount_amount_fixed: cart?.product.discount_amount_fixed,
+         discount_amount_total: cart?.product.discount_amount_total,
+         seller: cart?.product.seller,
          address: cart?.address && cart?.address,
          payment_mode: payment_mode,
          status: "pending",
          time_pending: new Date().toLocaleString()
-      };
+      }
 
       if (window.confirm("Buy Now")) {
          const response = await fetch(`https://woo-com-serve.herokuapp.com/set-order/${user?.email}`, {
@@ -67,7 +58,7 @@ const Purchase = () => {
             headers: {
                "content-type": "application/json"
             },
-            body: JSON.stringify(order)
+            body: JSON.stringify({ ...products })
          });
 
          response.ok ? await response.json() && navigate(`/my-profile/my-order`) :
@@ -89,7 +80,7 @@ const Purchase = () => {
                      </div>
 
                      <div className="col-12 my-3">
-                        <CartItem product={product} refetch={refetch} user={user} setMessage={setMessage}></CartItem>
+                        <CartItem product={cart?.product} refetch={refetch} user={user} setMessage={setMessage}></CartItem>
                      </div>
                   </div>
                </div>

@@ -61,7 +61,7 @@ const MyOrder = () => {
       if (response.ok) {
          setActLoading(false);
          const resData = await response.json();
-         ratingRefetch();
+         resData && ratingRefetch();
       }
    }
 

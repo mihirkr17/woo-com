@@ -2,7 +2,7 @@ import React from 'react';
 import "./Modal.css";
 
 const Modal = ({ data, closeModal }) => {
-   const { orderId, user_email, payment_mode, price_total, status, quantity, time_pending, address, discount, discount_amount_fixed, price } = data;
+   const { orderId, user_email, payment_mode, image, price_total, status, quantity, time_pending, address, discount, discount_amount_fixed, price } = data;
    return (
       <div className='modal_c' style={data ? { display: "block" } : { display: "none" }}>
          <div className="modal_body card_default card_description">
@@ -16,6 +16,12 @@ const Modal = ({ data, closeModal }) => {
                         </tr>
                      </thead>
                      <tbody>
+                        <tr>
+                           <th>Product</th>
+                           <td>
+                              <img src={image} alt="" style={{ width: "55px", height: "55px" }} />
+                           </td>
+                        </tr>
                         <tr>
                            <th>OrderID</th>
                            <td>{orderId}</td>
@@ -38,7 +44,7 @@ const Modal = ({ data, closeModal }) => {
                         </tr>
                         <tr>
                            <th>Total Amount</th>
-                           <td>{price_total - discount_amount_fixed}$ Total amount (with minus discount)</td>
+                           <td>{(price_total - discount_amount_fixed).toFixed(2)}$ Total amount (with minus discount)</td>
                         </tr>
                         <tr>
                            <th>Payment Mode</th>

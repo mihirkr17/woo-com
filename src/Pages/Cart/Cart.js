@@ -36,7 +36,6 @@ const Cart = () => {
          setMessage(<strong className='text-danger'>Select Atleast One Product For Order!</strong>);
       } else {
          let payment_mode = e.target.payment.value;
-
          let products = data && data?.product;
 
          for (let i = 0; i < products.length; i++) {

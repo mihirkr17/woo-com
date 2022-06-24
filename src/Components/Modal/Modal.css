@@ -8,6 +8,7 @@
    background-color: #000000c4;
    z-index: 999999;
    transition: all 0.6s linear;
+   overflow: auto;
 }
 
 .modal_body {
@@ -16,9 +17,7 @@
    top: 50%;
    left: 50%;
    transform: translate(-50%, -50%);
-
 }
-
 
 .modal_body .modal_close {
    align-self: flex-end;
