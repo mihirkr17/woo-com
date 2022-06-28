@@ -5,7 +5,7 @@ const Modal = ({ data, closeModal }) => {
    const { orderId, user_email, payment_mode, image, price_total, status, quantity, time_pending, address, discount, discount_amount_fixed, price } = data;
    return (
       <div className='modal_c' style={data ? { display: "block" } : { display: "none" }}>
-         <div className="modal_body card_default card_description">
+         <div className="modal_body card_description">
             <button className="modal_close" onClick={closeModal}>x</button>
             <div className="modal_wrapper">
                <div className="modal_text">

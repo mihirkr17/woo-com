@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { useCreateUserWithEmailAndPassword, useUpdateProfile } from 'react-firebase-hooks/auth';
 import { Link, useNavigate } from 'react-router-dom';
-import Spinner from '../Components/Shared/Spinner/Spinner';
+import BtnSpinner from "../Components/Shared/BtnSpinner/BtnSpinner";
 import { auth } from '../firebase.init';
 import { useMessage } from '../Hooks/useMessage';
 import { useToken } from '../Hooks/useToken';
@@ -20,7 +20,6 @@ const Register = () => {
       if (token) navigate('/login');
    }, [navigate, token]);
 
-   if (loading || updating) return <Spinner></Spinner>;
    if (error || error2) msg = <strong className="text-danger">{error?.message}</strong>
 
    const handleRegister = async (e) => {
@@ -66,7 +65,7 @@ const Register = () => {
                            </Form.Group>
                            <Form.Group>
                               <Button variant="primary" className='btn-sm' disabled={acc === false ? true : false} type="submit">
-                                 Register
+                                 {loading || updating ? <BtnSpinner text={"Registering..."}></BtnSpinner> : "Register"}
                               </Button>
                            </Form.Group>
                         </Form>

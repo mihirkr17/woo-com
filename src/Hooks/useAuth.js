@@ -33,9 +33,9 @@ const useAuth = (user) => {
                   if (data?.role) {
                      setRole(data.role);
                   } else {
-                     setRole({role : "user"})
+                     setRole({ role: "user" })
                   }
-                  
+
                   setRoleLoading(false);
                } else {
                   signOut(auth);
@@ -52,9 +52,8 @@ const useAuth = (user) => {
          }
       })();
 
-      return () => {
-         controller.abort();
-      }
+      return () => controller?.abort();
+
    }, [user, navigate]);
 
    return { role, roleLoading, err };

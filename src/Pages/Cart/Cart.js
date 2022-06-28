@@ -41,10 +41,47 @@ const Cart = () => {
          for (let i = 0; i < products.length; i++) {
             let elem = products[i];
             let orderId = Math.floor(Math.random() * 1000000000);
+            let priceFixed = parseFloat(elem?.price_fixed);
+            let productQuantity = parseInt(elem?.quantity);
+
+            let commission = 0;
+            let commision_rate = 0;
+
+            if (priceFixed > 50) {
+               commission = (priceFixed * 3) / 100;
+               commision_rate = commission;
+               commission = commission * productQuantity;
+            } else if (priceFixed > 100) {
+               commission = (priceFixed * 6) / 100;
+               commision_rate = commission;
+               commission = commission * productQuantity;
+            } else if (priceFixed > 150) {
+               commission = (priceFixed * 9) / 100;
+               commision_rate = commission;
+               commission = commission * productQuantity;
+            } else if (priceFixed > 200) {
+               commission = (priceFixed * 12) / 100;
+               commision_rate = commission;
+               commission = commission * productQuantity;
+            } else if (priceFixed > 250) {
+               commission = (priceFixed * 15) / 100;
+               commision_rate = commission;
+               commission = commission * productQuantity;
+            } else if (priceFixed > 300) {
+               commission = (priceFixed * 18) / 100;
+               commision_rate = commission;
+               commission = commission * productQuantity;
+            } else {
+               commission = (priceFixed * 1.5) / 100;
+               commision_rate = commission;
+               commission = commission * productQuantity;
+            }
 
             let product = {
                orderId: orderId,
                user_email: user?.email,
+               owner_commission_rate : parseFloat(commision_rate.toFixed(2)),
+               owner_commission : parseFloat(commission.toFixed(2)),
                _id: elem._id,
                product_name: elem.title,
                image: elem.image,

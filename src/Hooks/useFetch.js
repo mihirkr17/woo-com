@@ -25,9 +25,8 @@ export const useFetch = (url) => {
          }
       })();
 
-      return () => {
-         controller.abort();
-      }
+      return () => controller?.abort();
+      
    }, [url, ref]);
 
    return { data, loading, err, refetch };

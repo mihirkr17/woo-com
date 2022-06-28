@@ -6,6 +6,8 @@ import "./ViewProduct.css";
 import { useMessage } from '../../Hooks/useMessage';
 import Product from '../../Components/HomeComponents/HomeStoreComponents/Product';
 import { useAuthUser } from '../../lib/UserProvider';
+import { Interweave } from 'interweave';
+
 
 const ViewProduct = () => {
    const { productId } = useParams();
@@ -61,7 +63,7 @@ const ViewProduct = () => {
    // rating algorithm
    let weightVal = 0;
    let countValue = 0;
-   product?.rating.length > 0 && product?.rating.forEach(rat => {
+   product?.rating && product?.rating.length > 0 && product?.rating.forEach(rat => {
       const multiWeight = parseInt(rat?.weight) * parseInt(rat?.count);
       weightVal += multiWeight;
       countValue += rat?.count;
@@ -72,6 +74,9 @@ const ViewProduct = () => {
    const productDiscount = product?.discount || 0;
    const dis = (productDiscount / 100) * product?.price;
    const finalPrice = product?.price - dis;
+
+   // const descr = product?.description;
+   // console.log(parse(descr && descr));
 
    return (
       <div className='view_product section_default'>
@@ -103,10 +108,8 @@ const ViewProduct = () => {
                      <small><strike>{product?.price}</strike> - <span>{product?.discount}%</span></small>&nbsp;
                      <big className='text-success'>{finalPrice.toFixed(2)}$</big><br />
                      <small className='text-warning'>Rating : {averageRating || 0}/5</small>
-                     <p className='pt-4'>
-                        <strong>Specification :</strong>
-                        {product?.description}
-                     </p>
+                     {/* <div className='pt-4 product_spec' dangerouslySetInnerHTML={{ __html : product?.description }}></div> */}
+                     <Interweave className='pt-4 product_spec' content={product?.description} />
                   </article>
                </div>
             </div>

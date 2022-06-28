@@ -27,6 +27,7 @@ import ManageUsers from './Owner/ManageUsers/ManageUsers';
 import RequireOwnerAdmin from './Auth/RequireOwnerAdmin';
 import AddProduct from './Pages/Dashboard/AddProduct/AddProduct';
 import ManageProduct from './Pages/Dashboard/ManageProduct/ManageProduct';
+import MyDashboard from './Pages/Dashboard/MyDashboard/MyDashboard';
 
 
 function App() {
@@ -51,7 +52,8 @@ function App() {
 
         {/* // Admin path */}
         <Route path='/dashboard' element={<RequireOwnerAdmin><Dashboard></Dashboard></RequireOwnerAdmin>}>
-          <Route index element={<RequireOwnerAdmin><MyProfile></MyProfile></RequireOwnerAdmin>}></Route>
+          <Route index element={<RequireOwnerAdmin><MyDashboard></MyDashboard></RequireOwnerAdmin>}></Route>
+          <Route path='my-profile' element={<RequireOwnerAdmin><MyProfile></MyProfile></RequireOwnerAdmin>}></Route>
           <Route path='manage-orders' element={<RequireOwnerAdmin><ManageOrders></ManageOrders></RequireOwnerAdmin>}></Route>
           <Route path='add-product' element={<RequireOwnerAdmin><AddProduct></AddProduct></RequireOwnerAdmin>}></Route>
           <Route path='manage-product' element={<RequireOwnerAdmin><ManageProduct></ManageProduct></RequireOwnerAdmin>}></Route>

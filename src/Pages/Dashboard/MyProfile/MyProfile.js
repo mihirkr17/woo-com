@@ -58,6 +58,7 @@ const MyProfile = () => {
 
             <div className="profile_heder d-flex align-items-center justify-content-between py-3">
                <h5>My profile</h5>
+               <p>Balance : ${data?.total_earn || 0}</p>
             </div>
             <div className="row">
                <div className="col-12">
@@ -130,6 +131,12 @@ const MyProfile = () => {
                                  updateDocHandler={updateDocHandler}
                                  openEdit={openEdit}
                               />
+                           </td>
+                        </tr>
+                        <tr>
+                           <th>Total Earn</th>
+                           <td>
+                              ${data?.total_earn}
                            </td>
                         </tr>
                      </tbody>

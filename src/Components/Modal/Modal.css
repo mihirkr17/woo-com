@@ -8,7 +8,6 @@
    background-color: #000000c4;
    z-index: 999999;
    transition: all 0.6s linear;
-   overflow: auto;
 }
 
 .modal_body {
@@ -17,6 +16,11 @@
    top: 50%;
    left: 50%;
    transform: translate(-50%, -50%);
+   max-height: 70vh;
+   overflow: auto;
+   background-color: azure;
+   padding: 0.7rem;
+   border-radius: 10px;
 }
 
 .modal_body .modal_close {

@@ -4,6 +4,7 @@ export const useToken = (user) => {
    const [token, setToken] = useState(null);
 
    useEffect(() => {
+      const controller = new AbortController();
       const email = user?.user?.email;
       (async () => {
          const url = `https://woo-com-serve.herokuapp.com/user/${email}`;
@@ -11,7 +12,8 @@ export const useToken = (user) => {
          try {
             if (email) {
                const response = await fetch(url, {
-                  method: "PUT"
+                  method: "PUT",
+                  signal: controller.signal
                });
 
                if (response.ok) {
@@ -24,6 +26,8 @@ export const useToken = (user) => {
             throw new Error(`Something went wrong ${error}`);
          }
       })();
+
+      return () => controller?.abort();
    }, [user]);
 
    return [token];

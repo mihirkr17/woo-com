@@ -43,3 +43,9 @@
 .bt9_change:hover {
    background-color: #f36507;
 }
+
+.profile_heder > p{
+   padding: 0.5rem 1rem;
+   background-color: aquamarine;
+   border-radius: 20px;
+}

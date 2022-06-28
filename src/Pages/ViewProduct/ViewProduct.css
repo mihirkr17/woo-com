@@ -13,3 +13,11 @@
    width: 70%;
    height: auto;
 }
+
+.product_spec {
+   display: block;
+}
+
+.product_spec li {
+   list-style: circle;
+}

@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Button, Container, Form, Row } from 'react-bootstrap';
 import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import Spinner from '../../Components/Shared/Spinner/Spinner';
+import BtnSpinner from '../../Components/Shared/BtnSpinner/BtnSpinner';
 import { auth } from '../../firebase.init';
 import { useMessage } from '../../Hooks/useMessage';
 import { useToken } from '../../Hooks/useToken';
@@ -20,8 +20,6 @@ const Login = () => {
    useEffect(() => {
       if (token) navigate(from, { replace: true });
    }, [navigate, token, from]);
-
-   if (loading) return <Spinner></Spinner>;
 
    if (error) msg = <strong className="text-danger">{error?.message}</strong>
 
@@ -58,7 +56,7 @@ const Login = () => {
                            </Form.Group>
                            <Form.Group>
                               <Button className='btn-sm' variant="primary" type="submit">
-                                 Login
+                                 {loading ? <BtnSpinner text={"Signing..."}></BtnSpinner> : "Login"}
                               </Button>
                            </Form.Group>
                         </Form>
