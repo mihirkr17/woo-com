@@ -2,8 +2,10 @@ import { signOut } from 'firebase/auth';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../firebase.init';
+import { useBASE_URL } from '../lib/BaseUrlProvider';
 
 const useAuth = (user) => {
+   const BASE_URL = useBASE_URL();
    const [role, setRole] = useState("");
    const [roleLoading, setRoleLoading] = useState(false);
    const [err, setErr] = useState();
@@ -20,7 +22,7 @@ const useAuth = (user) => {
          try {
             setRoleLoading(true);
             if (email) {
-               const response = await fetch(`https://woo-com-serve.herokuapp.com/fetch-auth/${email}`, {
+               const response = await fetch(`${BASE_URL}fetch-auth/${email}`, {
                   method: "GET",
                   headers: {
                      "content-type": "application/json",
@@ -54,7 +56,7 @@ const useAuth = (user) => {
 
       return () => controller?.abort();
 
-   }, [user, navigate]);
+   }, [user, navigate, BASE_URL]);
 
    return { role, roleLoading, err };
 };

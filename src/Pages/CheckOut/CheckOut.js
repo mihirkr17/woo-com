@@ -2,10 +2,12 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { useFetch } from '../../Hooks/useFetch';
+import { useBASE_URL } from '../../lib/BaseUrlProvider';
 
 const CheckOut = () => {
+   const BASE_URL = useBASE_URL();
    const { orderId } = useParams();
-   const {data, refetch, loading} = useFetch(`https://woo-com-serve.herokuapp.com/get-orderlist/${orderId}`);
+   const {data, loading} = useFetch(`${BASE_URL}get-orderlist/${orderId}`);
 
    if (loading) {
       return <Spinner></Spinner>;

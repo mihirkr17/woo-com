@@ -1,28 +1,24 @@
-import React, { useEffect } from 'react';
-import { useState } from 'react';
-import useAuth from '../../../Hooks/useAuth';
+import React from 'react';
+import Spinner from '../../../Components/Shared/Spinner/Spinner';
 import { useFetch } from '../../../Hooks/useFetch';
+import { useBASE_URL } from '../../../lib/BaseUrlProvider';
 import { useAuthUser } from '../../../lib/UserProvider';
 
 const MyDashboard = () => {
+   const BASE_URL = useBASE_URL();
    const user = useAuthUser();
-   const { role } = useAuth(user);
-   const [url, setUrl] = useState("");
 
-   const {data, loading, refetch} = useFetch(url);
+   const { data, loading } = useFetch(`${BASE_URL}my-profile/${user?.email}`);
+   if (loading) return <Spinner></Spinner>;
 
-   useEffect(() => {
-      if (role) {
-         setUrl(
-            role === "admin" ? `https://woo-com-serve.herokuapp.com/fetch-earning?email=${user?.email}` :
-               `https://woo-com-serve.herokuapp.com/manage-orders`
-         )
-      }
-   }, [role, user?.email]);
    return (
       <div className='section_default'>
-         <div className="row">
-
+         <div className="container">
+            <div className="row">
+               <div className="col-12">
+                  <p>{data && data?.email}</p>
+               </div>
+            </div>
          </div>
       </div>
    );

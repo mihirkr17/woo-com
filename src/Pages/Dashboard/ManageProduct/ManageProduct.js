@@ -3,17 +3,21 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 import useAuth from '../../../Hooks/useAuth';
 import { useFetch } from '../../../Hooks/useFetch';
+import { useBASE_URL } from '../../../lib/BaseUrlProvider';
 import { useAuthUser } from '../../../lib/UserProvider';
 
 const ManageProduct = () => {
+   const BASE_URL = useBASE_URL();
    const user = useAuthUser();
    const { role } = useAuth(user);
    const [product, setProduct] = useState([]);
    const [items, setItems] = useState(0);
    const [page, setPage] = useState(0);
-   const [url2, setUrl2] = useState("");
+   let url2 = role && role === "admin" ? `${BASE_URL}api/product-count?email=${user?.email}` :
+      `${BASE_URL}api/product-count`
    const { data: counter } = useFetch(url2);
-   const [url, setUrl] = useState("");
+   let url = role && role === "admin" ? `${BASE_URL}api/products?email=${user?.email}&page=${page}&items=${5}` :
+      `${BASE_URL}api/products?page=${page}&items=${5}`;
    const { data: products } = useFetch(url);
 
    useEffect(() => {
@@ -27,22 +31,6 @@ const ManageProduct = () => {
          setItems(pages);
       }
    }, [counter]);
-
-
-   useEffect(() => {
-      setUrl(
-         role && role === "admin" ? `https://woo-com-serve.herokuapp.com/api/products?email=${user?.email}&page=${page}&items=${5}` :
-            `https://woo-com-serve.herokuapp.com/api/products?page=${page}&items=${5}`
-      );
-   }, [items, page, role, user?.email]);
-
-
-   useEffect(() => {
-      setUrl2(
-         role && role === "admin" ? `https://woo-com-serve.herokuapp.com/api/product-count?email=${user?.email}` :
-            `https://woo-com-serve.herokuapp.com/api/product-count`
-      );
-   }, [items, page, role, user?.email]);
 
 
 

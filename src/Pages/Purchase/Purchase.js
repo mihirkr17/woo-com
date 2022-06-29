@@ -7,12 +7,15 @@ import CartPayment from '../../Components/Shared/CartPayment';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { useFetch } from '../../Hooks/useFetch';
 import { useMessage } from '../../Hooks/useMessage';
+import { useBASE_URL } from '../../lib/BaseUrlProvider';
 import { useAuthUser } from '../../lib/UserProvider';
 
+
 const Purchase = () => {
+   const BASE_URL = useBASE_URL();
    const { productId } = useParams();
    const user = useAuthUser();
-   const { data: cart, refetch, loading } = useFetch(`https://woo-com-serve.herokuapp.com/my-cart-item/${productId}/${user?.email}`);
+   const { data: cart, refetch, loading } = useFetch(`${BASE_URL + productId}/${user?.email}`);
    const { msg, setMessage } = useMessage("");
    const navigate = useNavigate();
    const [step, setStep] = useState(false);
@@ -30,10 +33,47 @@ const Purchase = () => {
       e.preventDefault();
       let payment_mode = e.target.payment.value;
       let orderId = Math.floor(Math.random() * 1000000000);
+      let priceFixed = parseFloat(cart?.product?.price_fixed);
+      let productQuantity = parseInt(cart?.product?.quantity);
+
+      let commission = 0;
+      let commission_rate = 0;
+
+      if (priceFixed > 50) {
+         commission = (priceFixed * 3) / 100;
+         commission_rate = commission;
+         commission = commission * productQuantity;
+      } else if (priceFixed > 100) {
+         commission = (priceFixed * 6) / 100;
+         commission_rate = commission;
+         commission = commission * productQuantity;
+      } else if (priceFixed > 150) {
+         commission = (priceFixed * 9) / 100;
+         commission_rate = commission;
+         commission = commission * productQuantity;
+      } else if (priceFixed > 200) {
+         commission = (priceFixed * 12) / 100;
+         commission_rate = commission;
+         commission = commission * productQuantity;
+      } else if (priceFixed > 250) {
+         commission = (priceFixed * 15) / 100;
+         commission_rate = commission;
+         commission = commission * productQuantity;
+      } else if (priceFixed > 300) {
+         commission = (priceFixed * 18) / 100;
+         commission_rate = commission;
+         commission = commission * productQuantity;
+      } else {
+         commission = (priceFixed * 1.5) / 100;
+         commission_rate = commission;
+         commission = commission * productQuantity;
+      }
 
       let products = {
          orderId: orderId,
          user_email: user?.email,
+         owner_commission_rate: parseFloat(commission_rate.toFixed(2)),
+         owner_commission: parseFloat(commission.toFixed(2)),
          _id: cart?.product._id,
          product_name: cart?.product.title,
          image: cart?.product.image,
@@ -53,7 +93,7 @@ const Purchase = () => {
       }
 
       if (window.confirm("Buy Now")) {
-         const response = await fetch(`https://woo-com-serve.herokuapp.com/set-order/${user?.email}`, {
+         const response = await fetch(`${BASE_URL}set-order/${user?.email}`, {
             method: "POST",
             headers: {
                "content-type": "application/json"

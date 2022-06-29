@@ -2,9 +2,11 @@ import React from 'react';
 import Product from '../../Components/HomeComponents/HomeStoreComponents/Product';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { useFetch } from '../../Hooks/useFetch';
+import { useBASE_URL } from '../../lib/BaseUrlProvider';
 
 const AllRecentProduct = () => {
-   const { data, loading } = useFetch('https://woo-com-serve.herokuapp.com/products/');
+   const BASE_URL = useBASE_URL();
+   const { data, loading } = useFetch(`${BASE_URL}products/`);
    if (loading) {return <Spinner></Spinner>};
    return (
       <div className="section_default bg-secondary">

@@ -5,8 +5,11 @@ import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { useMessage } from "../../../Hooks/useMessage";
 import { useAuthUser } from "../../../lib/UserProvider";
+import { useBASE_URL } from '../../../lib/BaseUrlProvider';
+
 
 const AddProduct = () => {
+   const BASE_URL = useBASE_URL();
    const user = useAuthUser();
    const [desc, setDescription] = useState("");
    const { msg, setMessage } = useMessage();
@@ -44,7 +47,7 @@ const AddProduct = () => {
       if (title === "" || image === "" || description === "" || category === "" || price === "" || discount === "") {
          setMessage(<p className='text-danger'><small><strong>Required All Input Fields !</strong></small></p>);
       } else {
-         const response = await fetch(`https://woo-com-serve.herokuapp.com/add-product`, {
+         const response = await fetch(`${BASE_URL}add-product`, {
             method: "POST",
             headers: {
                "content-type": "application/json"

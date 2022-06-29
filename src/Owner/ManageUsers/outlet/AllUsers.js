@@ -2,9 +2,11 @@ import React from 'react';
 import { Table } from 'react-bootstrap';
 import Spinner from '../../../Components/Shared/Spinner/Spinner';
 import { useFetch } from '../../../Hooks/useFetch';
+import { useBASE_URL } from '../../../lib/BaseUrlProvider';
 
 const AllUsers = () => {
-   const { data, loading, refetch } = useFetch(`https://woo-com-serve.herokuapp.com/all-users`);
+   const BASE_URL = useBASE_URL();
+   const { data, loading, refetch } = useFetch(`${BASE_URL}all-users`);
    if (loading) return <Spinner></Spinner>;
 
    const cookieObj = new URLSearchParams(document.cookie.replaceAll("; ", "&"));
@@ -12,7 +14,7 @@ const AllUsers = () => {
 
    const makeAdminHandler = async (userId) => {
       if (window.confirm("Want to give permission 'admin'")) {
-         const response = await fetch(`https://woo-com-serve.herokuapp.com/make-admin/${userId}`, {
+         const response = await fetch(`${BASE_URL}make-admin/${userId}`, {
             method : "PUT",
             headers: {
                "content-type": "application/json",

@@ -2,8 +2,10 @@ import { faClose } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useBASE_URL } from '../../lib/BaseUrlProvider';
 
 const CartItem = ({ product: cart, refetch, setMessage, user, loading }) => {
+   const BASE_URL = useBASE_URL();
 
    const quantityHandler = async (cart, params) => {
 
@@ -12,7 +14,7 @@ const CartItem = ({ product: cart, refetch, setMessage, user, loading }) => {
       let price = parseInt(cart?.price) * parseInt(quantity);
       let discount_amount_total = parseInt(cart?.discount_amount_fixed) * parseInt(quantity);
 
-      const response = await fetch(`https://woo-com-serve.herokuapp.com/up-cart-qty-ttl-price/${cart?._id}/${user?.email}`, {
+      const response = await fetch(`${BASE_URL}up-cart-qty-ttl-price/${cart?._id}/${user?.email}`, {
          method: "PUT",
          headers: {
             'content-type': 'application/json'
@@ -27,7 +29,7 @@ const CartItem = ({ product: cart, refetch, setMessage, user, loading }) => {
       const { _id, title } = cart;
 
       if (window.confirm("Want to remove this item from your cart ?")) {
-         const response = await fetch(`https://woo-com-serve.herokuapp.com/delete-cart-item/${_id}/${user?.email}`, {
+         const response = await fetch(`${BASE_URL}delete-cart-item/${_id}/${user?.email}`, {
             method: "DELETE"
          });
 

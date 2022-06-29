@@ -4,11 +4,14 @@ import { useState } from 'react';
 import "./MyProfile.css";
 import UpdateForm from './Components/UpdateForm';
 import { useAuthUser } from '../../../lib/UserProvider';
+import { useBASE_URL } from '../../../lib/BaseUrlProvider';
+
 
 const MyProfile = () => {
+   const BASE_URL = useBASE_URL();
    const user = useAuthUser();
    const [openEdit, setOpenEdit] = useState(false);
-   const { data, refetch } = useFetch(`https://woo-com-serve.herokuapp.com/my-profile/${user?.email}`);
+   const { data, refetch } = useFetch(`${BASE_URL}my-profile/${user?.email}`);
    const [country, setCountry] = useState(data?.country);
    const [dob, setDob] = useState(data?.dob);
    const [age, setAge] = useState(data?.age);
@@ -34,7 +37,7 @@ const MyProfile = () => {
          age: age
       }
 
-      const response = await fetch(`https://woo-com-serve.herokuapp.com/update-profile-data/${user?.email}`, {
+      const response = await fetch(`${BASE_URL}update-profile-data/${user?.email}`, {
          method: "PUT",
          headers: {
             "content-type": "application/json"

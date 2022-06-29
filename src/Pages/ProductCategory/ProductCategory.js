@@ -5,10 +5,12 @@ import { useParams } from 'react-router-dom';
 import Product from '../../Components/HomeComponents/HomeStoreComponents/Product';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { useFetch } from '../../Hooks/useFetch';
+import { useBASE_URL } from '../../lib/BaseUrlProvider';
 
 const ProductCategory = () => {
+   const BASE_URL = useBASE_URL();
    const { category } = useParams();
-   const { data: productByCategory, loading } = useFetch(`https://woo-com-serve.herokuapp.com/product-category/${category}`);
+   const { data: productByCategory, loading } = useFetch(`${BASE_URL}product-category/${category}`);
    const [filters, setFilters] = useState('best_match');
    const [products, setProducts] = useState([]);
 

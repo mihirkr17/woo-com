@@ -7,14 +7,16 @@ import { useMessage } from '../../Hooks/useMessage';
 import Product from '../../Components/HomeComponents/HomeStoreComponents/Product';
 import { useAuthUser } from '../../lib/UserProvider';
 import { Interweave } from 'interweave';
+import { useBASE_URL } from "../../lib/BaseUrlProvider";
 
 
 const ViewProduct = () => {
+   const BASE_URL = useBASE_URL();
    const { productId } = useParams();
    const user = useAuthUser();
-   const { data: product, loading } = useFetch(`https://woo-com-serve.herokuapp.com/view-product/${productId}/${user?.email}`);
-   const { data: rating } = useFetch(`https://woo-com-serve.herokuapp.com/product-review/${productId}`);
-   const { data: productByCategory } = useFetch(`https://woo-com-serve.herokuapp.com/product-category/${product?.category}`);
+   const { data: product, loading } = useFetch(`${BASE_URL}view-product/${productId}/${user?.email}`);
+   const { data: rating } = useFetch(`${BASE_URL}product-review/${productId}`);
+   const { data: productByCategory } = useFetch(`${BASE_URL}product-category/${product?.category}`);
    const navigate = useNavigate();
    const { msg, setMessage } = useMessage();
 
@@ -25,22 +27,15 @@ const ViewProduct = () => {
 
       let quantity = 1;
       let productPrice = parseInt(product?.price);
-      let productDiscount = parseInt(product?.discount) || 0;
-      let discount_amount_fixed = (productDiscount / 100) * productPrice;
+      let discount_amount_fixed = parseFloat(product?.discount_amount_fixed)
       let discount_amount_total = discount_amount_fixed * quantity;
-      let price_fixed = productPrice - discount_amount_fixed;
-
 
       product['user_email'] = user?.email;
       product['quantity'] = quantity;
-      product['price'] = productPrice;
-      product['price_fixed'] = price_fixed;
       product['price_total'] = (productPrice * quantity) - discount_amount_total;
-      product['discount'] = parseInt(product?.discount) || 0;
-      product['discount_amount_fixed'] = discount_amount_fixed;
       product['discount_amount_total'] = discount_amount_total;
 
-      const response = await fetch(`https://woo-com-serve.herokuapp.com/my-cart/${user?.email}`, {
+      const response = await fetch(`${BASE_URL}my-cart/${user?.email}`, {
          method: "PUT",
          headers: {
             'content-type': 'application/json'
@@ -74,9 +69,6 @@ const ViewProduct = () => {
    const productDiscount = product?.discount || 0;
    const dis = (productDiscount / 100) * product?.price;
    const finalPrice = product?.price - dis;
-
-   // const descr = product?.description;
-   // console.log(parse(descr && descr));
 
    return (
       <div className='view_product section_default'>

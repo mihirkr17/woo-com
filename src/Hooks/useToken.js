@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
+import { useBASE_URL } from "../lib/BaseUrlProvider";
 
 export const useToken = (user) => {
+   const BASE_URL = useBASE_URL();
    const [token, setToken] = useState(null);
 
    useEffect(() => {
       const controller = new AbortController();
       const email = user?.user?.email;
       (async () => {
-         const url = `https://woo-com-serve.herokuapp.com/user/${email}`;
+         const url = `${BASE_URL}user/${email}`;
 
          try {
             if (email) {
@@ -28,7 +30,7 @@ export const useToken = (user) => {
       })();
 
       return () => controller?.abort();
-   }, [user]);
+   }, [user, BASE_URL]);
 
    return [token];
 }

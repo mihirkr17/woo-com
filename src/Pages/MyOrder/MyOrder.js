@@ -5,12 +5,15 @@ import { useMessage } from '../../Hooks/useMessage';
 import { Link } from 'react-router-dom';
 import { useAuthUser } from '../../lib/UserProvider';
 import BtnSpinner from '../../Components/Shared/BtnSpinner/BtnSpinner';
+import { useBASE_URL } from '../../lib/BaseUrlProvider';
+
 
 const MyOrder = () => {
+   const BASE_URL = useBASE_URL();
    const user = useAuthUser();
    const { msg, setMessage } = useMessage();
-   const { data, refetch, loading } = useFetch(`https://woo-com-serve.herokuapp.com/my-order/${user?.email}`);
-   const { data: rating, refetch: ratingRefetch } = useFetch(`https://woo-com-serve.herokuapp.com/my-review/${user?.email}`);
+   const { data, refetch, loading } = useFetch(`${BASE_URL}my-order/${user?.email}`);
+   const { data: rating, refetch: ratingRefetch } = useFetch(`${BASE_URL}my-review/${user?.email}`);
    const [actLoading, setActLoading] = useState(false);
    const [ratPoint, setRatPoint] = useState("5");
 
@@ -18,7 +21,7 @@ const MyOrder = () => {
 
    const cancelOrderHandler = async (orderId) => {
       if (window.confirm("Want to cancel this order ?")) {
-         const response = await fetch(`https://woo-com-serve.herokuapp.com/cancel-order/${user?.email}/${orderId}`, {
+         const response = await fetch(`${BASE_URL}cancel-order/${user?.email}/${orderId}`, {
             method: "DELETE"
          });
          if (response.ok) {
@@ -50,7 +53,7 @@ const MyOrder = () => {
          rating_id: ratingId
       }
 
-      const response = await fetch(`https://woo-com-serve.herokuapp.com/add-rating/${userEmail}`, {
+      const response = await fetch(`${BASE_URL}add-rating/${userEmail}`, {
          method: "PUT",
          headers: {
             "content-type": "application/json"

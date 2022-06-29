@@ -1,8 +1,10 @@
 import { faCheckDouble, faTriangleExclamation, faPlus, faPenAlt, faClose } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
+import { useBASE_URL } from '../../lib/BaseUrlProvider';
 
 const CartAddress = ({ refetch, addr, user, step, setStep }) => {
+   const BASE_URL = useBASE_URL();
 
    const addAddressHandler = async (e) => {
       e.preventDefault();
@@ -16,7 +18,7 @@ const CartAddress = ({ refetch, addr, user, step, setStep }) => {
       let final = { name, village, city, country, phone, zip };
       final["select_address"] = false;
 
-      const response = await fetch(`https://woo-com-serve.herokuapp.com/add-address/${user?.email}`, {
+      const response = await fetch(`${BASE_URL}add-address/${user?.email}`, {
          method: "PUT",
          headers: {
             'content-type': 'application/json'
@@ -30,7 +32,7 @@ const CartAddress = ({ refetch, addr, user, step, setStep }) => {
    const selectAddress = async (selectAddress) => {
       let select_address = selectAddress === true ? false : true;
 
-      const response = await fetch(`https://woo-com-serve.herokuapp.com/select-address/${user?.email}`, {
+      const response = await fetch(`${BASE_URL}select-address/${user?.email}`, {
          method: "PUT",
          headers: {
             'content-type': 'application/json'
@@ -43,7 +45,7 @@ const CartAddress = ({ refetch, addr, user, step, setStep }) => {
 
    const removeAddressHandler = async () => {
       if (window.confirm("Want to remove address ?")) {
-         const response = await fetch(`https://woo-com-serve.herokuapp.com/delete-address/${user?.email}`, {
+         const response = await fetch(`${BASE_URL}delete-address/${user?.email}`, {
             method: "DELETE"
          });
          if (response.ok) return await response.json() && refetch();

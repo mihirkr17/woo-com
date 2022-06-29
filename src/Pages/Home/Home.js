@@ -6,9 +6,11 @@ import HomeStore from '../../Components/HomeComponents/HomeStore';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
 import CategoryHeader from '../../Components/HomeComponents/CategoryHeader';
 import RecentProducts from '../../Components/HomeComponents/RecentProducts';
+import { useBASE_URL } from '../../lib/BaseUrlProvider';
 
 const Home = () => {
-   const { data, loading } = useFetch('https://woo-com-serve.herokuapp.com/products/');
+   const BASE_URL = useBASE_URL();
+   const { data, loading } = useFetch(`${BASE_URL}products/`);
 
    if (loading) return <Spinner></Spinner>;
 
