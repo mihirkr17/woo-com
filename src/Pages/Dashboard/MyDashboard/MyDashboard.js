@@ -8,7 +8,7 @@ const MyDashboard = () => {
    const BASE_URL = useBASE_URL();
    const user = useAuthUser();
 
-   const { data, loading } = useFetch(`${BASE_URL}my-profile/${user?.email}`);
+   const { data, loading } = useFetch(`${BASE_URL}my-profile/${user.email}`);
    if (loading) return <Spinner></Spinner>;
 
    return (

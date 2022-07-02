@@ -1,21 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Col, Form, Row } from 'react-bootstrap';
 import "./AddProduct.css";
-import { CKEditor } from '@ckeditor/ckeditor5-react';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { useMessage } from "../../../Hooks/useMessage";
 import { useAuthUser } from "../../../lib/UserProvider";
 import { useBASE_URL } from '../../../lib/BaseUrlProvider';
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 
 const AddProduct = () => {
    const BASE_URL = useBASE_URL();
    const user = useAuthUser();
-   const [desc, setDescription] = useState("");
+   const [desc, setDescription] = useState("Hello CKEditor V5");
    const { msg, setMessage } = useMessage();
    const [inputValue, setInputValue] = useState({ price: "", discount: "" });
    const [discount_amount_fixed, setDiscount_amount_fixed] = useState(0);
    const [price_fixed, setPrice_fixed] = useState(0);
+   const newDate = new Date();
 
    const handleInput = (e) => {
       const values = e.target.value;
@@ -59,7 +60,8 @@ const AddProduct = () => {
                discount: parseFloat(discount),
                discount_amount_fixed,
                rating,
-               seller
+               seller,
+               createAt: newDate.toLocaleString()
             })
          });
 
@@ -92,19 +94,18 @@ const AddProduct = () => {
 
                <Form.Group>
                   <Form.Label>Product Description</Form.Label>
-                  <CKEditor
-                     editor={ClassicEditor}
+                  <CKEditor editor={ClassicEditor}
                      data={desc}
                      onChange={(event, editor) => {
                         const data = editor.getData();
-                        setDescription(data);
+                        return setDescription(data);
                      }}
                   />
                </Form.Group>
 
 
                <Row className="my-3">
-                  <Form.Group as={Col} controlId="formGridCategory">
+                  <Form.Group controlId="formGridCategory">
                      <Form.Label>Product Category</Form.Label>
                      <Form.Select name='category'>
                         <option>Choose...</option>

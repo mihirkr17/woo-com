@@ -8,12 +8,15 @@ import Product from '../../Components/HomeComponents/HomeStoreComponents/Product
 import { useAuthUser } from '../../lib/UserProvider';
 import { Interweave } from 'interweave';
 import { useBASE_URL } from "../../lib/BaseUrlProvider";
+import useAuth from '../../Hooks/useAuth';
 
 
 const ViewProduct = () => {
    const BASE_URL = useBASE_URL();
    const { productId } = useParams();
    const user = useAuthUser();
+   const { role } = useAuth(user);
+
    const { data: product, loading } = useFetch(`${BASE_URL}view-product/${productId}/${user?.email}`);
    const { data: rating } = useFetch(`${BASE_URL}product-review/${productId}`);
    const { data: productByCategory } = useFetch(`${BASE_URL}product-category/${product?.category}`);
@@ -58,7 +61,7 @@ const ViewProduct = () => {
    // rating algorithm
    let weightVal = 0;
    let countValue = 0;
-   product?.rating && product?.rating.length > 0 && product?.rating.forEach(rat => {
+   product?.rating && product?.rating.length > 0 && product.rating.forEach(rat => {
       const multiWeight = parseInt(rat?.weight) * parseInt(rat?.count);
       weightVal += multiWeight;
       countValue += rat?.count;
@@ -80,15 +83,18 @@ const ViewProduct = () => {
                      <div className="product_image">
                         <img src={product?.image} style={{ height: "50vh" }} alt="" />
                      </div>
-                     <div className="d-flex align-items-center justify-content-evenly py-3 mt-4">
-                        {
-                           product?.cardHandler === false ?
-                              <button className='btn btn-primary' onClick={() => addToCartHandler(product)}>Add To Cart</button> :
-                              <button className='btn btn-primary' onClick={() => navigate('/my-cart')}>Go To Cart</button>
-                        }
+                     {
+                        role !== "owner" && <div className="d-flex align-items-center justify-content-center py-3 mt-4">
+                           {
+                              product?.cardHandler === false ?
+                                 <button className='btn btn-primary' onClick={() => addToCartHandler(product)}>Add To Cart</button> :
+                                 <button className='btn btn-primary' onClick={() => navigate('/my-cart')}>Go To Cart</button>
+                           }
 
-                        <button className='btn btn-warning' onClick={() => addToCartHandler(product, "buy")}>Buy Now</button>
-                     </div>
+                           <button className='btn btn-warning ms-4' onClick={() => addToCartHandler(product, "buy")}>Buy Now</button>
+                        </div>
+                     }
+
                   </div>
                </div>
                <div className="col-lg-7 pb-3">

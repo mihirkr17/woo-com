@@ -42,7 +42,7 @@ const AllUsers = () => {
                         data && data.map((usr, ind) => {
                            return (
                               <tr key={ind}>
-                                 <td>{usr?.email}</td>
+                                 <td>{usr.email}</td>
                                  <td>{usr?.role}</td>
                                  <td>
                                     {

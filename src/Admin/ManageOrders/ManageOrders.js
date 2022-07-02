@@ -24,7 +24,7 @@ const ManageOrders = () => {
    const [placeOrder, setPlaceOrder] = useState([]);
    const [shipOrder, setShipOrder] = useState([]);
 
-   // Filtering orders by seller
+   // Filtering orders by status
    useEffect(() => {
       if (data) {
          setPendingOrders(data.filter(odr => odr?.orders?.status === "pending").reverse());
@@ -110,7 +110,7 @@ const ManageOrders = () => {
                      <h6>Shipped Orders ({shipOrder.length})</h6>
                      <div className="py-1" style={{ maxHeight: "300px", overflowY: "auto" }}>
                         {
-                           loading ? <Spinner /> : shipOrder.length >= 0 ?
+                           loading ? <Spinner /> : shipOrder.length > 0 ?
                               <OrderTable
                                  orderList={shipOrder}
                                  setOpenModal={setOpenModal}

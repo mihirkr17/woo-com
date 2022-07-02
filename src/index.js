@@ -9,15 +9,13 @@ import BaseUrlProvider from './lib/BaseUrlProvider';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <BaseUrlProvider>
-        <UserProvider>
-          <App />
-        </UserProvider>
-      </BaseUrlProvider>
-    </BrowserRouter>
-  </React.StrictMode>
+  <BrowserRouter>
+    <BaseUrlProvider>
+      <UserProvider>
+        <App />
+      </UserProvider>
+    </BaseUrlProvider>
+  </BrowserRouter>
 );
 
 // If you want to start measuring performance in your app, pass a function
