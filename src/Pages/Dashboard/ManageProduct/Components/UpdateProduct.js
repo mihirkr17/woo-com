@@ -1,21 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Col, Form, Row } from 'react-bootstrap';
-import "./AddProduct.css";
-import { useMessage } from "../../../Hooks/useMessage";
-import { useAuthUser } from "../../../lib/UserProvider";
-import { useBASE_URL } from '../../../lib/BaseUrlProvider';
-import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import React, { useEffect, useState } from 'react';
+import { Button, Col, Form, Row } from 'react-bootstrap';
+import { useMessage } from '../../../../Hooks/useMessage';
+import { useBASE_URL } from '../../../../lib/BaseUrlProvider';
+import { useAuthUser } from '../../../../lib/UserProvider';
 
-
-const AddProduct = () => {
+const UpdateProduct = ({ data, refetch }) => {
    const BASE_URL = useBASE_URL();
    const user = useAuthUser();
-   const [desc, setDescription] = useState("Hello CKEditor V5");
+   const [desc, setDescription] = useState(data?.description || "CKEditor v5");
    const { msg, setMessage } = useMessage();
-   const [inputValue, setInputValue] = useState({ price: "", discount: "" });
-   const [discount_amount_fixed, setDiscount_amount_fixed] = useState(0);
-   const [price_fixed, setPrice_fixed] = useState(0);
+   const [inputValue, setInputValue] = useState({ price: data?.price, discount: data?.discount });
+   const [discount_amount_fixed, setDiscount_amount_fixed] = useState(data?.discount_amount_fixed);
+   const [price_fixed, setPrice_fixed] = useState(data?.price_fixed);
    const newDate = new Date();
 
    const handleInput = (e) => {
@@ -49,8 +47,8 @@ const AddProduct = () => {
       if (title === "" || image === "" || description === "" || category === "" || price === "" || discount === "") {
          setMessage(<p className='text-danger'><small><strong>Required All Input Fields !</strong></small></p>);
       } else {
-         const response = await fetch(`${BASE_URL}add-product`, {
-            method: "POST",
+         const response = await fetch(`${BASE_URL}api/update-product/${data?._id}`, {
+            method: "PUT",
             headers: {
                "content-type": "application/json"
             },
@@ -62,15 +60,15 @@ const AddProduct = () => {
                discount_amount_fixed,
                rating,
                seller,
-               createAt: newDate.toLocaleString(),
+               modifiedAt: newDate.toLocaleString(),
                available: parseInt(available)
             })
          });
 
          if (response.ok) {
             await response.json();
-            setMessage(<p className='text-success'><small><strong>Product Added Successfully</strong></small></p>);
-            e.target.reset();
+            refetch();
+            setMessage(<p className='text-success'><small><strong>Product Upa Successfully</strong></small></p>);
          }
       }
    }
@@ -84,12 +82,12 @@ const AddProduct = () => {
                <Row className="mb-3">
                   <Form.Group as={Col} controlId="formGridTitle">
                      <Form.Label>Product Title</Form.Label>
-                     <Form.Control name="title" type="text" placeholder="Title" />
+                     <Form.Control name="title" type="text" defaultValue={data?.title || ""} placeholder="Title" />
                   </Form.Group>
 
                   <Form.Group as={Col} controlId="formGridImage">
                      <Form.Label>Product Image</Form.Label>
-                     <Form.Control name="image" type="text" placeholder="Image Link" />
+                     <Form.Control name="image" defaultValue={data?.image || ""} type="text" placeholder="Image Link" />
                   </Form.Group>
                </Row>
 
@@ -110,7 +108,7 @@ const AddProduct = () => {
                   <Form.Group controlId="formGridCategory">
                      <Form.Label>Product Category</Form.Label>
                      <Form.Select name='category'>
-                        <option>Choose...</option>
+                        <option value={data?.category}>{data?.category}</option>
                         <option value="men's clothing">men's clothing</option>
                         <option value="women's clothing">women's clothing</option>
                         <option value="jewelry">jewelry</option>
@@ -129,8 +127,7 @@ const AddProduct = () => {
                   </Form.Group>
                </Row>
 
-               <Row>
-
+               <Row className="my-3">
                   <Form.Group as={Col} controlId="formGridPrice">
                      <Form.Label>Price Fixed</Form.Label>
                      <Form.Control disabled defaultValue={price_fixed || inputValue?.price} key={price_fixed || inputValue?.price}></Form.Control>
@@ -144,16 +141,17 @@ const AddProduct = () => {
 
                <Form.Group className="mb-3" id="formGridStock">
                   <Form.Label>Update Stock</Form.Label>
-                  <Form.Control name='available' type='number' />
+                  <Form.Control name='available' defaultValue={data?.available || ""} type='number' />
                </Form.Group>
-               {msg}
+
                <Button variant="primary" type="submit">
-                  Add Product
+                  Update Product
                </Button>
             </Form>
+            {msg}
          </div>
       </div>
    );
 };
 
-export default AddProduct;
+export default UpdateProduct;

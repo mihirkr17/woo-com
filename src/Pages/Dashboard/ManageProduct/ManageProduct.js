@@ -6,6 +6,7 @@ import { useBASE_URL } from '../../../lib/BaseUrlProvider';
 import { useAuthUser } from '../../../lib/UserProvider';
 import FilterOption from '../../../Shared/FilterOption';
 import { useMessage } from '../../../Hooks/useMessage';
+import UpdateProductModal from './Components/UpdateProductModal';
 
 const ManageProduct = () => {
    const { msg, setMessage } = useMessage();
@@ -21,6 +22,7 @@ const ManageProduct = () => {
    const { data: products, loading, refetch } = useFetch(url);
    const [searchValue, setSearchValue] = useState("");
    const [filterCategory, setFilterCategory] = useState("all");
+   const [openModal, setOpenModal] = useState(false);
 
    useEffect(() => {
       let url;
@@ -104,7 +106,7 @@ const ManageProduct = () => {
                                     <td>{p?.category}</td>
                                     <td>{p?.seller}</td>
                                     <td>
-                                       <button className="btn btn-sm btn-info me-2">Edit</button>
+                                       <button className="btn btn-sm btn-info me-2" onClick={() => setOpenModal(true && p)}>Edit</button>
                                        <button className='btn btn-sm btn-danger' onClick={() => productDeleteHandler(p?._id)}>Delete</button>
                                     </td>
                                  </tr>
@@ -123,8 +125,14 @@ const ManageProduct = () => {
                            }
                         </div>
                      }
+                     <UpdateProductModal
+                        modalOpen={openModal}
+                        modalClose={() => setOpenModal(false)}
+                        refetch={refetch}
+                     />
                   </>
             }
+
          </div>
 
       </div>
