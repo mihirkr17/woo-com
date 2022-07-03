@@ -7,13 +7,13 @@ import { useBASE_URL } from '../../../lib/BaseUrlProvider';
 
 const AllAdmin = () => {
    const BASE_URL = useBASE_URL();
-   const { data, loading } = useFetch(`${BASE_URL}all-users`);
+   const { data, loading } = useFetch(`${BASE_URL}api/manage-user?uTyp=admin`);
    if (loading) return <Spinner></Spinner>;
-   const filterAdmin = data && data.filter(u => u?.role === "admin");
+
    return (
       <div>
          {
-            filterAdmin && filterAdmin.length > 0 ?
+            data && data.length > 0 ?
                <Table striped responsive>
                   <thead>
                      <tr>
@@ -23,7 +23,7 @@ const AllAdmin = () => {
                   </thead>
                   <tbody>
                      {
-                        filterAdmin && filterAdmin.map((usr, ind) => {
+                        data && data.map((usr, ind) => {
                            return (
                               <tr key={ind}>
                                  <td>{usr?.email}</td>

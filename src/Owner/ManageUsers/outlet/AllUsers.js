@@ -6,8 +6,9 @@ import { useBASE_URL } from '../../../lib/BaseUrlProvider';
 
 const AllUsers = () => {
    const BASE_URL = useBASE_URL();
-   const { data, loading, refetch } = useFetch(`${BASE_URL}all-users`);
+   const { data, loading, refetch } = useFetch(`${BASE_URL}api/manage-user?uTyp=user`);
    if (loading) return <Spinner></Spinner>;
+   console.log(data)
 
    const cookieObj = new URLSearchParams(document.cookie.replaceAll("; ", "&"));
    const token = cookieObj.get('accessToken');
@@ -42,7 +43,7 @@ const AllUsers = () => {
                         data && data.map((usr, ind) => {
                            return (
                               <tr key={ind}>
-                                 <td>{usr.email}</td>
+                                 <td><p style={{ cursor : "pointer" }}>{usr.email}</p></td>
                                  <td>{usr?.role}</td>
                                  <td>
                                     {
