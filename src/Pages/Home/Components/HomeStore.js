@@ -1,9 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Product from './HomeStoreComponents/Product';
+import Product from '../../../Shared/Product';
 
 const HomeStore = ({ data }) => {
-
    return (
       <section className='section_default'>
          <div className="d-flex justify-content-between py-2">

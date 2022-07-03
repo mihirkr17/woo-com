@@ -4,18 +4,17 @@ import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { useFetch } from '../../Hooks/useFetch';
 import "./ViewProduct.css";
 import { useMessage } from '../../Hooks/useMessage';
-import Product from '../../Components/HomeComponents/HomeStoreComponents/Product';
 import { useAuthUser } from '../../lib/UserProvider';
-import { Interweave } from 'interweave';
 import { useBASE_URL } from "../../lib/BaseUrlProvider";
-import useAuth from '../../Hooks/useAuth';
+import Product from '../../Shared/Product';
+import { averageRating } from "../../Shared/averageRating";
+import ProductModel from '../../Shared/ProductModel';
 
 
 const ViewProduct = () => {
    const BASE_URL = useBASE_URL();
    const { productId } = useParams();
    const user = useAuthUser();
-   const { role } = useAuth(user);
 
    const { data: product, loading } = useFetch(`${BASE_URL}view-product/${productId}/${user?.email}`);
    const { data: rating } = useFetch(`${BASE_URL}product-review/${productId}`);
@@ -58,60 +57,11 @@ const ViewProduct = () => {
       }
    }
 
-   // rating algorithm
-   let weightVal = 0;
-   let countValue = 0;
-   product?.rating && product?.rating.length > 0 && product.rating.forEach(rat => {
-      const multiWeight = parseInt(rat?.weight) * parseInt(rat?.count);
-      weightVal += multiWeight;
-      countValue += rat?.count;
-   });
-   const ava = weightVal / countValue;
-   const averageRating = ava.toFixed(2);
-
-   const productDiscount = product?.discount || 0;
-   const dis = (productDiscount / 100) * product?.price;
-   const finalPrice = product?.price - dis;
-
    return (
       <div className='view_product section_default'>
          <div className="container">
             {msg}
-            <div className="row mb-5">
-               <div className="col-lg-5 pb-3">
-                  <div className="view_product_sidebar">
-                     <div className="product_image">
-                        <img src={product?.image} style={{ height: "50vh" }} alt="" />
-                     </div>
-                     {
-                        role !== "owner" && <div className="d-flex align-items-center justify-content-center py-3 mt-4">
-                           {
-                              product?.cardHandler === false ?
-                                 <button className='btn btn-primary' onClick={() => addToCartHandler(product)}>Add To Cart</button> :
-                                 <button className='btn btn-primary' onClick={() => navigate('/my-cart')}>Go To Cart</button>
-                           }
-
-                           <button className='btn btn-warning ms-4' onClick={() => addToCartHandler(product, "buy")}>Buy Now</button>
-                        </div>
-                     }
-
-                  </div>
-               </div>
-               <div className="col-lg-7 pb-3">
-                  <article className="product_description">
-                     <strong className="badge bg-primary">
-                        {product?.category}
-                     </strong>
-                     <h5 className="product_title py-3">{product?.title}</h5>
-                     <small><strike>{product?.price}</strike> - <span>{product?.discount}%</span></small>&nbsp;
-                     <big className='text-success'>{finalPrice.toFixed(2)}$</big><br />
-                     <small className='text-warning'>Rating : {averageRating || 0}/5</small>
-                     {/* <div className='pt-4 product_spec' dangerouslySetInnerHTML={{ __html : product?.description }}></div> */}
-                     <Interweave className='pt-4 product_spec' content={product?.description} />
-                  </article>
-               </div>
-            </div>
-
+            <ProductModel product={product} addToCartHandler={addToCartHandler}></ProductModel>
             <div className="row pt-5">
                <div className="col-lg-9">
                   <h5 id='rating' className='text-center py-1'>Rating And Review Of {product?.title}</h5>
@@ -122,7 +72,7 @@ const ViewProduct = () => {
                               <div className="p-4">
                                  <p className='text-warning'>
                                     <span className="fs-1">
-                                       {averageRating}
+                                       {averageRating(product?.rating) || 0}
                                     </span>
                                     <span className="fs-4 text-muted">/5</span>
                                  </p>

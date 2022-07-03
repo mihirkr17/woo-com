@@ -1,37 +1,23 @@
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Button, Col, Form, Row } from 'react-bootstrap';
-import { useMessage } from '../../../../Hooks/useMessage';
+import { usePrice } from '../../../../Hooks/usePrice';
 import { useBASE_URL } from '../../../../lib/BaseUrlProvider';
-import { useAuthUser } from '../../../../lib/UserProvider';
 
-const UpdateProduct = ({ data, refetch }) => {
+const ProductUpdate = ({ data, refetch, modalClose, setMessage }) => {
    const BASE_URL = useBASE_URL();
-   const user = useAuthUser();
    const [desc, setDescription] = useState(data?.description || "CKEditor v5");
-   const { msg, setMessage } = useMessage();
    const [inputValue, setInputValue] = useState({ price: data?.price, discount: data?.discount });
-   const [discount_amount_fixed, setDiscount_amount_fixed] = useState(data?.discount_amount_fixed);
-   const [price_fixed, setPrice_fixed] = useState(data?.price_fixed);
    const newDate = new Date();
+   const { price_fixed, discount_amount_fixed } = usePrice(inputValue.price, inputValue.discount);
 
    const handleInput = (e) => {
       const values = e.target.value;
       setInputValue({ ...inputValue, [e.target.name]: values });
    }
 
-   useEffect(() => {
-      let price = parseFloat(inputValue.price);
-      let discount = parseFloat(inputValue.discount);
-
-      let discount_amount_fixed = (price * discount) / 100;
-      setDiscount_amount_fixed(discount_amount_fixed);
-      let price_fixed = price - discount_amount_fixed;
-      setPrice_fixed(price_fixed);
-   }, [inputValue.price, inputValue.discount]);
-
-   const addProductHandler = async (e) => {
+   const updateProductHandler = async (e) => {
       e.preventDefault();
 
       let title = e.target.title.value;
@@ -40,12 +26,11 @@ const UpdateProduct = ({ data, refetch }) => {
       let category = e.target.category.value;
       let price = inputValue.price;
       let discount = inputValue.discount;
-      let seller = user?.email;
-      let rating = [];
       let available = e.target.available.value;
 
       if (title === "" || image === "" || description === "" || category === "" || price === "" || discount === "") {
-         setMessage(<p className='text-danger'><small><strong>Required All Input Fields !</strong></small></p>);
+         window.alert("Required All Input Fields !");
+         return;
       } else {
          const response = await fetch(`${BASE_URL}api/update-product/${data?._id}`, {
             method: "PUT",
@@ -58,27 +43,25 @@ const UpdateProduct = ({ data, refetch }) => {
                price_fixed,
                discount: parseFloat(discount),
                discount_amount_fixed,
-               rating,
-               seller,
                modifiedAt: newDate.toLocaleString(),
                available: parseInt(available)
             })
          });
 
          if (response.ok) {
-            await response.json();
-            refetch();
-            setMessage(<p className='text-success'><small><strong>Product Upa Successfully</strong></small></p>);
+            const resData = await response.json();
+            resData && refetch();
+            modalClose();
+            setMessage(<p className='text-success'><small><strong>{resData?.message}</strong></small></p>);
          }
       }
    }
 
    return (
+
       <div className='section_default'>
          <div className="container">
-            <h5 className='text-center pb-4'>Add Product</h5>
-
-            <Form onSubmit={addProductHandler}>
+            <Form onSubmit={updateProductHandler}>
                <Row className="mb-3">
                   <Form.Group as={Col} controlId="formGridTitle">
                      <Form.Label>Product Title</Form.Label>
@@ -102,7 +85,6 @@ const UpdateProduct = ({ data, refetch }) => {
                      }}
                   />
                </Form.Group>
-
 
                <Row className="my-3">
                   <Form.Group controlId="formGridCategory">
@@ -139,19 +121,22 @@ const UpdateProduct = ({ data, refetch }) => {
                   </Form.Group>
                </Row>
 
+
                <Form.Group className="mb-3" id="formGridStock">
                   <Form.Label>Update Stock</Form.Label>
-                  <Form.Control name='available' defaultValue={data?.available || ""} type='number' />
+                  <Form.Control name='available' className='form-control-sm' defaultValue={data?.available || ""} type='number' />
+                  <small className="p-1 text-muted">
+                     Warning : If you set it to 0 then product will be stock out
+                  </small>
                </Form.Group>
 
                <Button variant="primary" type="submit">
                   Update Product
                </Button>
             </Form>
-            {msg}
          </div>
       </div>
    );
 };
 
-export default UpdateProduct;
+export default ProductUpdate;

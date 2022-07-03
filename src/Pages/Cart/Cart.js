@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import CartAddress from '../../Components/Shared/CartAddress';
-import CartHeader from '../../Components/Shared/CartHeader';
-import CartItem from '../../Components/Shared/CartItem';
-import CartPayment from '../../Components/Shared/CartPayment';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { useFetch } from '../../Hooks/useFetch';
 import { useMessage } from '../../Hooks/useMessage';
 import { useBASE_URL } from '../../lib/BaseUrlProvider';
 import { useAuthUser } from '../../lib/UserProvider';
+import CartAddress from '../../Shared/CartComponents/CartAddress';
+import CartHeader from '../../Shared/CartComponents/CartHeader';
+import CartItem from '../../Shared/CartComponents/CartItem';
+import CartPayment from '../../Shared/CartComponents/CartPayment';
 import "./Cart.css";
 
 
@@ -84,8 +84,8 @@ const Cart = () => {
             let product = {
                orderId: orderId,
                user_email: user?.email,
-               owner_commission_rate : parseFloat(commission_rate.toFixed(2)),
-               owner_commission : parseFloat(commission.toFixed(2)),
+               owner_commission_rate: parseFloat(commission_rate.toFixed(2)),
+               owner_commission: parseFloat(commission.toFixed(2)),
                _id: elem._id,
                product_name: elem.title,
                image: elem.image,

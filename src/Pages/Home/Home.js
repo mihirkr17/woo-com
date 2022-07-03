@@ -1,11 +1,11 @@
 import React from 'react';
 import { useFetch } from '../../Hooks/useFetch';
-import Banner from '../../Components/HomeComponents/Banner';
+import Banner from './Components/Banner';
 import { Container } from 'react-bootstrap';
-import HomeStore from '../../Components/HomeComponents/HomeStore';
+import HomeStore from './Components/HomeStore';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
-import CategoryHeader from '../../Components/HomeComponents/CategoryHeader';
-import RecentProducts from '../../Components/HomeComponents/RecentProducts';
+import CategoryHeader from './Components/CategoryHeader';
+import RecentProducts from './Components/RecentProducts';
 import { useBASE_URL } from '../../lib/BaseUrlProvider';
 
 const Home = () => {

@@ -6,11 +6,15 @@ import { useBASE_URL } from '../../../lib/BaseUrlProvider';
 import { useAuthUser } from '../../../lib/UserProvider';
 import FilterOption from '../../../Shared/FilterOption';
 import { useMessage } from '../../../Hooks/useMessage';
-import UpdateProductModal from './Components/UpdateProductModal';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faPenAlt, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import ProductDetailsModal from './Components/ProductDetailsModal';
+import ProductUpdateModal from './Components/ProductUpdateModal';
+import { Table } from 'react-bootstrap';
 
 const ManageProduct = () => {
    const { msg, setMessage } = useMessage();
-   const BASE_URL = 'http://localhost:5000/' //useBASE_URL(); //
+   const BASE_URL = useBASE_URL();
    const user = useAuthUser();
    const { role } = useAuth(user);
    const [items, setItems] = useState(0);
@@ -23,6 +27,7 @@ const ManageProduct = () => {
    const [searchValue, setSearchValue] = useState("");
    const [filterCategory, setFilterCategory] = useState("all");
    const [openModal, setOpenModal] = useState(false);
+   const [productDetailsModal, setProductDetailsModal] = useState(false);
 
    useEffect(() => {
       let url;
@@ -68,14 +73,14 @@ const ManageProduct = () => {
       <div className='section_default'>
          <div className="container">
             <div className="product_header">
-               <div className="pt-2 pb-4 d-flex justify-content-between align-items-center flex-wrap">
-                  <h5>My Products</h5>
-                  <div>
+               <div className="d-flex justify-content-between align-items-center flex-wrap">
+                  <h5 className='py-3'>My Products</h5>
+                  <div className='py-3'>
                      <span>Filter By :&nbsp;</span>
                      <FilterOption options={categories} filterHandler={setFilterCategory} />
                   </div>
 
-                  <div>
+                  <div className='py-3'>
                      <input type="search" className='form-control form-control-sm' placeholder='Search product by name...' onChange={(e) => setSearchValue(e.target.value)} />
                   </div>
                </div>
@@ -85,7 +90,7 @@ const ManageProduct = () => {
             {
                loading ? <Spinner /> :
                   <>
-                     <table className='table table-responsive'>
+                     <Table responsive>
                         <thead>
                            <tr>
                               <th>Product</th>
@@ -102,18 +107,25 @@ const ManageProduct = () => {
                                     <td>{
                                        <img src={p?.image} style={{ width: "45px", height: "45px" }} alt="" />
                                     }</td>
-                                    <td>{p?.title}</td>
+                                    <td><p style={{ cursor : "pointer" }} title={`View ${p?.title}`} onClick={() => setProductDetailsModal(true && p)}>{p?.title.length > 50 ? p?.title.slice(0, 50) + "..." : p?.title}</p></td>
                                     <td>{p?.category}</td>
                                     <td>{p?.seller}</td>
                                     <td>
-                                       <button className="btn btn-sm btn-info me-2" onClick={() => setOpenModal(true && p)}>Edit</button>
-                                       <button className='btn btn-sm btn-danger' onClick={() => productDeleteHandler(p?._id)}>Delete</button>
+                                       <button className="btn btn-sm m-1" title={`View ${p?.title}`} onClick={() => setProductDetailsModal(true && p)}>
+                                          <FontAwesomeIcon icon={faEye} />
+                                       </button>
+                                       <button className="btn btn-sm m-1" title={`Update ${p?.title}`} onClick={() => setOpenModal(true && p)}>
+                                          <FontAwesomeIcon icon={faPenAlt} />
+                                       </button>
+                                       <button className='btn btn-sm m-1' title={`Delete ${p?.title}`} onClick={() => productDeleteHandler(p?._id)}>
+                                          <FontAwesomeIcon icon={faTrashAlt} />
+                                       </button>
                                     </td>
                                  </tr>
                               )
                            })}
                         </tbody>
-                     </table>
+                     </Table>
                      {
                         <div className="py-3 text-center">
                            {
@@ -125,10 +137,15 @@ const ManageProduct = () => {
                            }
                         </div>
                      }
-                     <UpdateProductModal
+                     <ProductUpdateModal
                         modalOpen={openModal}
                         modalClose={() => setOpenModal(false)}
                         refetch={refetch}
+                        setMessage={setMessage}
+                     />
+                     <ProductDetailsModal
+                        modalOpen={productDetailsModal}
+                        modalClose={() => setProductDetailsModal(false)}
                      />
                   </>
             }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button, Col, Form, Row } from 'react-bootstrap';
 import "./AddProduct.css";
 import { useMessage } from "../../../Hooks/useMessage";
@@ -6,6 +6,7 @@ import { useAuthUser } from "../../../lib/UserProvider";
 import { useBASE_URL } from '../../../lib/BaseUrlProvider';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import { usePrice } from '../../../Hooks/usePrice';
 
 
 const AddProduct = () => {
@@ -14,24 +15,13 @@ const AddProduct = () => {
    const [desc, setDescription] = useState("Hello CKEditor V5");
    const { msg, setMessage } = useMessage();
    const [inputValue, setInputValue] = useState({ price: "", discount: "" });
-   const [discount_amount_fixed, setDiscount_amount_fixed] = useState(0);
-   const [price_fixed, setPrice_fixed] = useState(0);
    const newDate = new Date();
+   const { price_fixed, discount_amount_fixed } = usePrice(inputValue.price, inputValue.discount);
 
    const handleInput = (e) => {
       const values = e.target.value;
       setInputValue({ ...inputValue, [e.target.name]: values });
    }
-
-   useEffect(() => {
-      let price = parseFloat(inputValue.price);
-      let discount = parseFloat(inputValue.discount);
-
-      let discount_amount_fixed = (price * discount) / 100;
-      setDiscount_amount_fixed(discount_amount_fixed);
-      let price_fixed = price - discount_amount_fixed;
-      setPrice_fixed(price_fixed);
-   }, [inputValue.price, inputValue.discount]);
 
    const addProductHandler = async (e) => {
       e.preventDefault();

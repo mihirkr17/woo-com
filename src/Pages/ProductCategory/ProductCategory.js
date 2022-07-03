@@ -2,10 +2,10 @@ import React from 'react';
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import Product from '../../Components/HomeComponents/HomeStoreComponents/Product';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { useFetch } from '../../Hooks/useFetch';
 import { useBASE_URL } from '../../lib/BaseUrlProvider';
+import Product from '../../Shared/Product';
 
 const ProductCategory = () => {
    const BASE_URL = useBASE_URL();

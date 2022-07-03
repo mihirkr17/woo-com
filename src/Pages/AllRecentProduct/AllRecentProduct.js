@@ -1,5 +1,5 @@
 import React from 'react';
-import Product from '../../Components/HomeComponents/HomeStoreComponents/Product';
+import Product from '../../Shared/Product';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { useFetch } from '../../Hooks/useFetch';
 import { useBASE_URL } from '../../lib/BaseUrlProvider';

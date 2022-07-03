@@ -1,7 +1,7 @@
 import React from 'react';
 import { useFetch } from '../../Hooks/useFetch';
 import { useBASE_URL } from '../../lib/BaseUrlProvider';
-import Product from '../HomeComponents/HomeStoreComponents/Product';
+import Product from '../../Shared/Product';
 import Spinner from '../Shared/Spinner/Spinner';
 import "./SearchProduct.css";
 
