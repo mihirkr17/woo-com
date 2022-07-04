@@ -29,6 +29,7 @@ import RequireOwnerAdmin from './Auth/RequireOwnerAdmin';
 import AddProduct from './Pages/Dashboard/AddProduct/AddProduct';
 import ManageProduct from './Pages/Dashboard/ManageProduct/ManageProduct';
 import MyDashboard from './Pages/Dashboard/MyDashboard/MyDashboard';
+import CheckoutSingle from './Pages/CheckOut/CheckoutSingle';
 
 
 function App() {
@@ -48,7 +49,8 @@ function App() {
         <Route path='/product/recent/all' element={<AllRecentProduct></AllRecentProduct>}></Route>
         <Route path='/my-cart' element={<RequireAuth><Cart></Cart></RequireAuth>}></Route>
         <Route path='/product/purchase/:productId' element={<RequireAuth><Purchase></Purchase></RequireAuth>}></Route>
-        <Route path='/checkout/:orderId' element={<CheckOut></CheckOut>}></Route>
+        <Route path='/my-cart/checkout/:cartId' element={<RequireAuth><CheckOut></CheckOut></RequireAuth>}></Route>
+        <Route path='/my-cart/checkout-single/:productId' element={<RequireAuth><CheckoutSingle></CheckoutSingle></RequireAuth>}></Route>
         <Route path='/my-profile/my-order' element={<RequireAuth><MyOrder></MyOrder></RequireAuth>}></Route>
 
         {/* // Admin path */}

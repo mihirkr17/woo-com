@@ -6,7 +6,7 @@
    padding: 0.3rem;
 }
 
-.cart_img img{
+.cart_img img {
    width: 50px;
 }
 
@@ -16,4 +16,35 @@
    padding: 0.3rem;
    justify-content: center;
    flex-direction: column;
+}
+
+.address_card {
+   position: relative;
+   background-color: white;
+   cursor: pointer;
+   transition: all 0.4s linear;
+   padding: 0.2rem 0.5rem;
+   margin: 0.6rem 0;
+}
+
+.address_card:hover {
+   background-color: #afafaf;
+}
+
+.address_card::before {
+   content: "";
+   top: 0;
+   right: 0;
+   border-right: 30px solid transparent;
+   border-bottom: 30px solid transparent;
+   position: absolute;
+}
+
+.address_card.selected {
+   background-color: whitesmoke;
+   border: 1px solid #129d03;
+}
+
+.address_card.selected::before {
+   border-right: 30px solid #129d03;
 }
