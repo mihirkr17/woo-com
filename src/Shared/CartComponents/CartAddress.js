@@ -19,7 +19,7 @@ const CartAddress = ({ refetch, addr, user, step, setStep }) => {
       } else {
          setStep(false)
       }
-      
+
    }, [addr, setStep]);
 
 
@@ -96,78 +96,78 @@ const CartAddress = ({ refetch, addr, user, step, setStep }) => {
    }
 
    return (
-      <div className="card_default">
-         <div className="card_description">
-            <div className="row">
-               <div className="col-lg-1"><span>2</span></div>
-               <div className="col-lg-11">
-                  <div className="d-flex align-items-center justify-content-between flex-wrap w-100">
-                     <span className='badge bg-success'>Delivery Address</span>
-                     <button onClick={() => setOpenAddressForm(true)} title="Add New Address" className="ms-2 badge bg-danger">
-                        <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>
-                     </button>
-                  </div>
-                  <div className="py-2">
-                     <div className="row">
-                        {
-                           addr && addr.map(address => {
-                              const { addressId, select_address, name, village, city, country, phone, zip } = address;
-         
-                              return (
-                                 <div className="col-12" key={addressId}>
-                                    <div className="row">
-                                       <div className="col-10">
-                                          <address onClick={() => selectAddressHandler(addressId, select_address)}>
-                                             <div className={`address_card ${select_address ? "selected" : ""}`}>
-                                                {
-                                                   <div style={{ wordBreak: "break-word" }} className={`${select_address ? '' : 'text-muted'}`}>
-                                                      <h6><b className='me-3'>{name}</b>{select_address && <FontAwesomeIcon icon={faCheckCircle} />}</h6>
-                                                      <p>
-                                                         <small>{village}, {city}, {country}, {zip}</small> <br />
-                                                         <small>Phone : {phone}</small>
-                                                      </p>
-                                                   </div>
-                                                }
-                                             </div>
-                                          </address>
-                                       </div>
-                                       <div className="col-2 d-flex align-items-center flex-column justify-content-center">
-                                          <button className='badge bg-primary'
-                                             style={openAddressUpdateForm === false ? { display: "block" } : { display: "none" }}
-                                             onClick={() => setOpenAddressUpdateForm(true && address)}>
-                                             {address && <FontAwesomeIcon icon={faPenAlt} />}
-                                          </button>
-                                          <button onClick={() => deleteAddressHandler(addressId)} className="badge bg-danger mt-3"><FontAwesomeIcon icon={faClose}></FontAwesomeIcon></button>
-                                       </div>
+      <div className="cart_card">
+         <div className="row">
+            <div className="col-lg-12">
+               <div className="d-flex align-items-center justify-content-between flex-wrap w-100">
+                  <h6 className=''>Delivery Address</h6>
+                  <button onClick={() => setOpenAddressForm(true)} title="Add New Address" className="ms-2 badge bg-primary">
+                     <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>
+                  </button>
+     
+               </div>
+                            <hr />
+               <div className="py-2">
+                  <div className="row">
+                     {
+                        addr && addr.map(address => {
+                           const { addressId, select_address, name, village, city, country, phone, zip } = address;
+
+                           return (
+                              <div className="col-12" key={addressId}>
+                                 <div className="row">
+                                    <div className="col-10">
+                                       <address title={select_address ? "Selected" : 'Select This Address'} onClick={() => selectAddressHandler(addressId, select_address)}>
+                                          <div className={`address_card ${select_address ? "selected" : ""}`}>
+                                             {
+                                                <div style={{ wordBreak: "break-word" }} className={`${select_address ? '' : 'text-muted'}`}>
+                                                   <small><b className='me-3'>{name}</b>{select_address && <FontAwesomeIcon icon={faCheckCircle} />}</small>
+                                                   <p>
+                                                      <small>{village}, {city}, {country}, {zip}</small> <br />
+                                                      <small>Phone : {phone}</small>
+                                                   </p>
+                                                </div>
+                                             }
+                                          </div>
+                                       </address>
+                                    </div>
+                                    <div className="col-2 d-flex align-items-center flex-column justify-content-center">
+                                       <button className='btn btn-sm'
+                                          style={openAddressUpdateForm === false ? { display: "block" } : { display: "none" }}
+                                          onClick={() => setOpenAddressUpdateForm(true && address)}>
+                                          {address && <FontAwesomeIcon icon={faPenAlt} />}
+                                       </button>
+                                       <button onClick={() => deleteAddressHandler(addressId)} className="btn btn-sm mt-3"><FontAwesomeIcon icon={faClose}></FontAwesomeIcon></button>
                                     </div>
                                  </div>
+                              </div>
 
-                              )
-                           })
-                        }
-
-
-                     </div>
-                     {
-                        openAddressForm === true ?
-                           <AddressForm
-                              setOpenAddressForm={setOpenAddressForm}
-                              addAddressHandler={addAddressHandler}
-                           />
-                           : ""
+                           )
+                        })
                      }
-                     {
-                        openAddressUpdateForm ?
-                           <AddressUpdateForm
-                              setOpenAddressUpdateForm={setOpenAddressUpdateForm}
-                              addr={openAddressUpdateForm}
-                              updateAddressHandler={updateAddressHandler} /> :
-                           ""
-                     }
+
+
                   </div>
+                  {
+                     openAddressForm === true ?
+                        <AddressForm
+                           setOpenAddressForm={setOpenAddressForm}
+                           addAddressHandler={addAddressHandler}
+                        />
+                        : ""
+                  }
+                  {
+                     openAddressUpdateForm ?
+                        <AddressUpdateForm
+                           setOpenAddressUpdateForm={setOpenAddressUpdateForm}
+                           addr={openAddressUpdateForm}
+                           updateAddressHandler={updateAddressHandler} /> :
+                        ""
+                  }
                </div>
             </div>
          </div>
+
       </div>
    );
 };

@@ -4,7 +4,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useBASE_URL } from '../../lib/BaseUrlProvider';
 
-const CartItem = ({ product: cart, refetch, setMessage, user, loading }) => {
+const CartItem = ({ product: cart, refetch, setMessage, user, checkOut }) => {
    const BASE_URL = useBASE_URL();
 
    const quantityHandler = async (cart, params) => {
@@ -46,11 +46,14 @@ const CartItem = ({ product: cart, refetch, setMessage, user, loading }) => {
             <div className="cart_img d-flex align-items-center justify-content-center">
                <img src={cart?.image} alt="" />
             </div>
-            <div className="ms-2 cart_btn">
-               <button className='badge bg-primary my-1' disabled={cart?.quantity <= 1 ? true : false} onClick={(e) => quantityHandler(cart, "dec")}>-</button>
-               <span className='border px-2'>{cart?.quantity} </span>
-               <button className='badge bg-primary my-1' onClick={(e) => quantityHandler(cart, "inc")}>+</button>
-            </div>
+            {
+               !checkOut && <div className="ms-2 cart_btn">
+                  <button className='badge bg-primary my-1' disabled={cart?.quantity <= 1 ? true : false} onClick={(e) => quantityHandler(cart, "dec")}>-</button>
+                  <span className='border px-2'>{cart?.quantity} </span>
+                  <button className='badge bg-primary my-1' onClick={(e) => quantityHandler(cart, "inc")}>+</button>
+               </div>
+            }
+
          </div>
 
          <div className="row w-100 card_description">
@@ -64,9 +67,11 @@ const CartItem = ({ product: cart, refetch, setMessage, user, loading }) => {
                         <big className='text-success'>{cart?.price_fixed}$</big>&nbsp;{cart?.discount + "% Off"}
                      </small>
                   </div>
-                  <div className="remove_btn col-1 text-end">
-                     <button className='btn btn-sm' onClick={() => removeItemFromCartHandler(cart)}><FontAwesomeIcon icon={faClose} /></button>
-                  </div>
+                  {
+                     !checkOut && <div className="remove_btn col-1 text-end">
+                        <button className='btn btn-sm' onClick={() => removeItemFromCartHandler(cart)}><FontAwesomeIcon icon={faClose} /></button>
+                     </div>
+                  }
                </div>
             </div>
 

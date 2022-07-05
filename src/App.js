@@ -30,14 +30,14 @@ import AddProduct from './Pages/Dashboard/AddProduct/AddProduct';
 import ManageProduct from './Pages/Dashboard/ManageProduct/ManageProduct';
 import MyDashboard from './Pages/Dashboard/MyDashboard/MyDashboard';
 import CheckoutSingle from './Pages/CheckOut/CheckoutSingle';
-
+import CartProvider from './lib/CartProvider';
 
 function App() {
   const [query, setQuery] = useState('');
-
+  const [cartProductCount, setCartProductCount] = useState(0);
   return (
     <div className="App">
-      <NavigationBar setQuery={setQuery}></NavigationBar>
+      <CartProvider><NavigationBar setQuery={setQuery} cartProductCount={cartProductCount}></NavigationBar></CartProvider>
       <SearchProduct query={query} setQuery={setQuery}></SearchProduct>
       <Routes>
         <Route path='/' element={<Home></Home>} ></Route>
@@ -47,9 +47,9 @@ function App() {
         <Route path='/product/:productId' element={<ViewProduct></ViewProduct>}></Route>
         <Route path='/product/category/:category' element={<ProductCategory></ProductCategory>}></Route>
         <Route path='/product/recent/all' element={<AllRecentProduct></AllRecentProduct>}></Route>
-        <Route path='/my-cart' element={<RequireAuth><Cart></Cart></RequireAuth>}></Route>
+        <Route path='/my-cart' element={<RequireAuth><CartProvider><Cart setCartProductCount={setCartProductCount}></Cart></CartProvider></RequireAuth>}></Route>
         <Route path='/product/purchase/:productId' element={<RequireAuth><Purchase></Purchase></RequireAuth>}></Route>
-        <Route path='/my-cart/checkout/:cartId' element={<RequireAuth><CheckOut></CheckOut></RequireAuth>}></Route>
+        <Route path='/my-cart/checkout/:cartId' element={<RequireAuth><CartProvider><CheckOut></CheckOut></CartProvider></RequireAuth>}></Route>
         <Route path='/my-cart/checkout-single/:productId' element={<RequireAuth><CheckoutSingle></CheckoutSingle></RequireAuth>}></Route>
         <Route path='/my-profile/my-order' element={<RequireAuth><MyOrder></MyOrder></RequireAuth>}></Route>
 

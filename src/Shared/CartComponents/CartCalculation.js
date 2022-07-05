@@ -1,14 +1,22 @@
 import React from 'react';
+import "./CartCalculation.css";
 
-const CartCalculation = ({ product }) => {
+const CartCalculation = ({ product, headTitle }) => {
    return (
-      <div className="card_default">
-         <div className="card_description">
-            <div className="text-truncate pb-2">Price Details</div>
-            <pre>Total Price({product?.totalQuantity || 0}) : {product?.totalPrice + "$" || 0}</pre>
-            <pre>Discount : -{product?.totalDiscount + "$" || 0}</pre>
+      <div className="cart_card">
+         <h6>{headTitle ? headTitle : "Price Details"}</h6>
+         <hr />
+         <div className="py-3 cart_card_body">
+            <p><span>Total Price({product?.totalQuantity || 0})</span> <span>{product?.totalPrice || 0}&nbsp;$</span></p>
+            <p><span>Discount Price</span><span>-{product?.totalDiscount || 0}&nbsp;$</span></p>
             <hr />
-            <code>Total Amount : {product?.totalAmount() + "$" || 0}</code>
+            <p><span>Total Amount</span><span>{product?.totalAmount() || 0}&nbsp;$</span></p>
+            <p className='py-2 px-1 border rounded mt-3'>
+               <small>
+                  <i>Your total Saving amount on this order&nbsp;</i>
+               </small>
+               <small className="text-info">{product?.totalDiscount}&nbsp;$</small>
+            </p>
          </div>
       </div>
    );
