@@ -36,7 +36,7 @@ const ManageOrders = () => {
    // Cancel the order if any wrong 
    const cancelOrderHandler = async (email, orderId) => {
       if (window.confirm("Want to cancel this order ?")) {
-         const response = await fetch(`${BASE_URL + email}/${orderId}`, { method: "DELETE" });
+         const response = await fetch(`${BASE_URL}api/remove-order/${user?.email}/${orderId}`, { method: "DELETE" });
          if (response.ok) await response.json();
          refetch();
          setMessage(<strong className='text-success'>Order Cancelled...</strong>);

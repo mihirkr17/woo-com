@@ -5,10 +5,11 @@ import React from 'react';
 const CartHeader = ({ user }) => {
    return (
       <div className="cart_card">
+         <h6>Login Details</h6>
+         <hr />
          <div className="row">
-            <div className="col-lg-1"><span>1</span></div>
-            <div className="col-lg-8">
-               <h6 className="badge bg-success">Login&nbsp;<FontAwesomeIcon icon={faCheckDouble} /></h6><br />
+            <div className="col-lg-12">
+               
                <small>Email : {user?.email} <br /> Username : {user?.displayName}</small>
             </div>
          </div>

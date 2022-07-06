@@ -104,9 +104,9 @@ const CartAddress = ({ refetch, addr, user, step, setStep }) => {
                   <button onClick={() => setOpenAddressForm(true)} title="Add New Address" className="ms-2 badge bg-primary">
                      <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>
                   </button>
-     
+
                </div>
-                            <hr />
+               <hr />
                <div className="py-2">
                   <div className="row">
                      {
@@ -114,7 +114,7 @@ const CartAddress = ({ refetch, addr, user, step, setStep }) => {
                            const { addressId, select_address, name, village, city, country, phone, zip } = address;
 
                            return (
-                              <div className="col-12" key={addressId}>
+                              <div className="col-lg-6" key={addressId}>
                                  <div className="row">
                                     <div className="col-10">
                                        <address title={select_address ? "Selected" : 'Select This Address'} onClick={() => selectAddressHandler(addressId, select_address)}>
@@ -144,9 +144,15 @@ const CartAddress = ({ refetch, addr, user, step, setStep }) => {
 
                            )
                         })
+
                      }
-
-
+                     {
+                        addr.length === 0 && <>
+                           <button onClick={() => setOpenAddressForm(true)} title="Insert Your Address" className="btn mb-3">
+                              Insert Your Address
+                           </button>
+                        </>
+                     }
                   </div>
                   {
                      openAddressForm === true ?

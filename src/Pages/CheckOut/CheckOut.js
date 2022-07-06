@@ -50,6 +50,7 @@ const CheckOut = () => {
             price: elem.price,
             price_fixed: elem.price_fixed,
             price_total: elem.price_total,
+            price_total_amount: (parseFloat(elem.price_fixed) * parseInt(elem.quantity)),
             discount: elem.discount,
             discount_amount_fixed: elem.discount_amount_fixed,
             discount_amount_total: elem.discount_amount_total,
@@ -84,23 +85,26 @@ const CheckOut = () => {
             </div>
             {msg}
             <div className="row">
-               <div className="col-lg-8">
-                  <address className='cart_card'>
-                     <h6>Selected Address</h6>
-                     <hr />
-                     <div className="address_card">
-                        {
-                           <div style={{ wordBreak: "break-word" }}>
-                              <h6><b className='me-3'>{selectedAddress?.name}</b>{selectedAddress?.select_address && <FontAwesomeIcon icon={faCheckCircle} />}</h6>
-                              <p>
-                                 <small>{selectedAddress?.village}, {selectedAddress?.city}, {selectedAddress?.country}, {selectedAddress?.zip}</small> <br />
-                                 <small>Phone : {selectedAddress?.phone}</small>
-                              </p>
-                           </div>
-                        }
-                     </div>
-                  </address>
-                  <div className="cart_card mb-3">
+               <div className="col-lg-8 mb-3">
+                  <div>
+                     <address className='cart_card'>
+                        <h6>Selected Address</h6>
+                        <hr />
+                        <div className="address_card">
+                           {
+                              <div style={{ wordBreak: "break-word" }}>
+                                 <h6><b className='me-3'>{selectedAddress?.name}</b>{selectedAddress?.select_address && <FontAwesomeIcon icon={faCheckCircle} />}</h6>
+                                 <p>
+                                    <small>{selectedAddress?.village}, {selectedAddress?.city}, {selectedAddress?.country}, {selectedAddress?.zip}</small> <br />
+                                    <small>Phone : {selectedAddress?.phone}</small>
+                                 </p>
+                              </div>
+                           }
+                        </div>
+                     </address>
+                  </div>
+                  <br />
+                  <div className="cart_card">
                      <h6>Order Summary</h6>
                      <hr />
                      <div className="row">
@@ -113,11 +117,11 @@ const CheckOut = () => {
                         }
                      </div>
                   </div>
-
-                  <CartPayment buyBtnHandler={buyBtnHandler}></CartPayment>
                </div>
-               <div className="col-lg-4">
+               <div className="col-lg-4 mb-3">
                   <CartCalculation product={cartCalculate(data?.product)} headTitle={"Order Details"}></CartCalculation>
+                  <br />
+                  <CartPayment buyBtnHandler={buyBtnHandler}></CartPayment>
                </div>
             </div>
          </div>

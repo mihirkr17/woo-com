@@ -6,6 +6,9 @@ import { Link } from 'react-router-dom';
 import { useAuthUser } from '../../lib/UserProvider';
 import BtnSpinner from '../../Components/Shared/BtnSpinner/BtnSpinner';
 import { useBASE_URL } from '../../lib/BaseUrlProvider';
+import "./MyOrder.css";
+import FilterOption from "../../Shared/FilterOption";
+import { useEffect } from 'react';
 
 
 const MyOrder = () => {
@@ -16,12 +19,39 @@ const MyOrder = () => {
    const { data: rating, refetch: ratingRefetch } = useFetch(`${BASE_URL}my-review/${user?.email}`);
    const [actLoading, setActLoading] = useState(false);
    const [ratPoint, setRatPoint] = useState("5");
+   const [reason, setReason] = useState("");
+   const [openCancelForm, setOpenCancelForm] = useState(false);
+   const [openReviewForm, setOpenReviewForm] = useState(false);
+   const [filterOrder, setFilterOrder] = useState("");
+   const [orderItems, setOrderItems] = useState([]);
 
-   if (loading) return <Spinner></Spinner>;
+   useEffect(() => {
+      if (filterOrder === "" || filterOrder === "all") {
+         setOrderItems(data && data.orders)
+      } else {
+         setOrderItems(data && data.orders.filter(p => p?.status === filterOrder))
+      }
+   }, [data, filterOrder]);
 
-   const cancelOrderHandler = async (orderId) => {
+   const openCancelFormHandler = (orderId) => {
+      if (orderId === openCancelForm) {
+         setOpenCancelForm(false);
+      } else {
+         setOpenCancelForm(orderId);
+      }
+   }
+
+   const openReviewFormHandler = (orderId) => {
+      if (orderId === openReviewForm) {
+         setOpenReviewForm(false);
+      } else {
+         setOpenReviewForm(orderId);
+      }
+   }
+
+   const removeOrderHandler = async (orderId) => {
       if (window.confirm("Want to cancel this order ?")) {
-         const response = await fetch(`${BASE_URL}cancel-order/${user?.email}/${orderId}`, {
+         const response = await fetch(`${BASE_URL}api/remove-order/${user?.email}/${orderId}`, {
             method: "DELETE"
          });
          if (response.ok) {
@@ -33,7 +63,6 @@ const MyOrder = () => {
    }
 
    const findRating = rating && rating.map(items => items?.rating?.rating_id);
-
    const ratingHandler = async (e) => {
       e.preventDefault();
       setActLoading(true);
@@ -68,6 +97,34 @@ const MyOrder = () => {
       }
    }
 
+   const handleCancelOrder = async (e) => {
+      e.preventDefault();
+      let cancel_reason = reason;
+      let status = "canceled";
+      let orderId = e.target.orderId.value;
+      let time_canceled = new Date().toLocaleString();
+
+      if (cancel_reason === "Choose Reason" || cancel_reason === "") {
+         setMessage(<strong className='text-success'>Please Select Cancel Reason...</strong>);
+         return;
+      } else {
+         const response = await fetch(`${BASE_URL}api/cancel-my-order/${user?.email}/${orderId}`, {
+            method: "PUT",
+            headers: {
+               "content-type": "application/json"
+            },
+            body: JSON.stringify({ status, cancel_reason, time_canceled })
+         });
+
+         if (response.ok) {
+            const resData = await response.json();
+            refetch();
+            setMessage(<strong className='text-success'>{resData?.message}</strong>);
+         }
+      }
+   }
+
+   if (loading) return <Spinner></Spinner>;
    return (
       <div className='section_default'>
          <div className="container">
@@ -75,64 +132,158 @@ const MyOrder = () => {
             <h3 className="py-4 text-center">
                My All Orders
             </h3>
-            <p className='text-center'>{data?.orders && data?.orders.length > 0 ? "Total : " + data?.orders.length + " Orders" : "You Have No Orders In Your History"}</p>
+
             <div className="row">
-               {
-                  data && data.orders.map(order => {
+               <div className="col-lg-2">
+                  <h6>Filter Order</h6>
+                  <FilterOption
+                     options={["all", "pending", "placed", "shipped"]}
+                     filterHandler={setFilterOrder}
+                  />
+               </div>
+               <div className="col-lg-10">
+                  <h6>{data?.orders && data?.orders.length > 0 ? "Total : " + data?.orders.length + " Orders" : "You Have No Orders In Your History"}</h6>
+                  <div className="row">
+                     {
+                        orderItems && orderItems.length > 0 ? orderItems.map(order => {
+                           const { product_name, quantity, payment_mode, discount, status, orderId,
+                              price_total_amount, image, _id, seller, category, cancel_reason, time_canceled, time_pending, time_placed, time_shipped } = order;
 
-                     return (
-                        <div className="col-12 mb-3" key={order?.orderId}>
-                           <div className="card_default">
+                           return (
+                              <div className="col-12 mb-3" key={orderId}>
+                                 <div className="order_card">
 
-                              <div className="card_description">
-                                 <div className="d-flex align-items-center justify-content-between flex-wrap">
-                                    <small className='text-dark'>OrderID : <i className='text-info'>#{order?.orderId}</i></small>
-                                    <small>Total Amount : {order?.price_total}$</small>
-                                    <small className='text-dark py-2 mx-1'>Payment Mode : <i>{order?.payment_mode}</i></small>
-                                    <small className='text-dark py-2 mx-1'>Status : <i className='text-success'>{order?.status}</i></small>
-                                    {
-                                       order?.status === "pending" ?
-                                          <button className='badge bg-danger ms-3' onClick={() => cancelOrderHandler(order?.orderId)}>Cancel Order</button> :
-                                          ""
-                                    }
-                                 </div>
-                                 <div className="d-flex align-items-center justify-content-center flex-wrap">
+                                    <div className="">
+                                       <div className="row">
+                                          <div className="col-lg-1">
+                                             <div className="w-100 text-center h-100 d-flex align-items-center justify-content-center">
+                                                <img src={image} alt="" style={{ width: "75px", height: "75px" }} />
+                                             </div>
+                                          </div>
+                                          <div className="col-lg-11">
+                                             <div className="row">
+                                                <div className="col-lg-5">
+                                                   <p>
+                                                      {product_name.length > 30 ? product_name.slice(0, 30) + "..." : product_name} <br />
+                                                      <small className="text-muted">
+                                                         Seller : {seller} <br />
+                                                         Category : {category} <br />
+                                                         Payment Mode : {payment_mode}
+                                                      </small>
+                                                   </p>
+                                                </div>
 
-                                    <div className="col-lg-6">
-                                       <div className="">
-                                          <img src={order?.image} alt="" style={{ width: "50px", height: "50px" }} />
+                                                <div className="col-lg-3">
+                                                   <p>
+                                                      {price_total_amount}&nbsp;$ <br />
+                                                      <small className="text-muted">
+                                                         {"Discount : " + discount + "%"} <br />
+                                                         {"Qty : " + quantity}
+                                                      </small>
+                                                   </p>
+                                                </div>
+
+                                                <div className="col-lg-4">
+                                                   {
+                                                      status === "canceled" && <>
+                                                         <p>
+                                                            <small className="text-muted">
+                                                               {"Order Status : " + status} <br />
+                                                               {"Reason : " + cancel_reason} <br />
+                                                               {"Cancel Time : " + time_canceled}
+                                                            </small>
+                                                         </p>
+                                                         <div className="text-end">
+                                                            <button className='btn btn-sm text-uppercase text-muted' onClick={() => removeOrderHandler(orderId)}>Remove</button>
+                                                         </div>
+                                                      </>
+                                                   }
+                                                   {
+                                                      status === "pending" ?
+                                                         <>
+                                                            <p>
+                                                               <small className="text-muted">
+                                                                  {"Order Status : "}<i className="text-success">{status}</i> <br />
+                                                                  {"Order Time : " + time_pending}
+                                                               </small>
+                                                            </p>
+                                                            <button className="btn btn-sm text-danger" onClick={() => openCancelFormHandler(orderId)} style={openCancelForm !== orderId ? { display: "block" } : { display: "none" }}>
+                                                               Cancel Order
+                                                            </button>
+                                                            <div className="py-4" style={openCancelForm === orderId ? { display: "block" } : { display: "none" }}>
+                                                               <form onSubmit={handleCancelOrder} >
+                                                                  <label htmlFor="reason">Select Reason</label>
+                                                                  <div className="form-group d-flex">
+
+                                                                     <FilterOption
+                                                                        options={[
+                                                                           "Choose Reason",
+                                                                           "I want to order a different product",
+                                                                           "I am getting better price",
+                                                                           "I want to re-order using promo code",
+                                                                           "I placed the order by mistake"
+                                                                        ]} filterHandler={setReason} />
+                                                                     <input type="hidden" name="orderId" defaultValue={orderId} />
+                                                                     <button type="submit" className="btn btn-sm btn-danger">Cancel</button>
+                                                                  </div>
+                                                               </form>
+                                                               <button className='btn btn-sm' onClick={() => openCancelFormHandler(false)} style={openCancelForm === orderId ? { display: "block" } : { display: "none" }}>Back</button>
+                                                            </div>
+                                                         </> :
+                                                         status === "placed" ? <p>
+                                                            <small className="text-muted">
+                                                               {"Order Status : "}<i className="text-success">{status}</i> <br />
+                                                               {"Order Time : " + time_pending} <br />
+                                                               {"Order Placed Time : " + time_placed}
+                                                            </small>
+                                                         </p> :
+                                                            status === "shipped" ?
+                                                               <>
+                                                                  <p>
+                                                                     <small className="text-muted">
+                                                                        {"Order Status : "}<i className="text-success">{status}</i> <br />
+                                                                        {"Order Time : " + time_pending} <br />
+                                                                        {"Order Placed Time : " + time_placed} <br />
+                                                                        {"Order Shipped Time : " + time_shipped}
+                                                                     </small>
+                                                                  </p>
+                                                                  <div className='d-flex align-items-center justify-content-end' >
+                                                                     {findRating && findRating.includes(_id.slice(-6) + orderId) ? <Link to={`/product/${_id}#rating`}>Review</Link> :
+                                                                        <>
+                                                                           <button className="btn btn-sm text-danger" onClick={() => openReviewFormHandler(orderId)} style={openReviewForm !== orderId ? { display: "block" } : { display: "none" }}>
+                                                                              Add Review
+                                                                           </button>
+                                                                           <div className="text-center p-3" style={openReviewForm === orderId ? { display: "block" } : { display: "none" }}>
+                                                                              <form onSubmit={ratingHandler} className='d-flex flex-column'>
+                                                                                 <input type="text" disabled defaultValue={ratPoint} key={ratPoint} />
+                                                                                 <input type="range" min={1} max={5} step={1} name='rating_point' className='my-2' onChange={(e) => setRatPoint(e.target.value, orderId)} />
+                                                                                 <textarea type="text" name='rating_description' className='form-control form-control-sm' placeholder='Write a Review' />
+                                                                                 <input type="hidden" defaultValue={_id} name='product_id' />
+                                                                                 <input type="hidden" defaultValue={orderId} name='order_id' />
+                                                                                 <button className='btn btn-sm btn-primary mt-2'>{actLoading === true ? <BtnSpinner text={"Adding Review..."}></BtnSpinner> : "Add Review"}</button>
+                                                                              </form>
+                                                                              <button className='btn btn-sm' onClick={() => openReviewFormHandler(false)} style={openReviewForm === orderId ? { display: "block" } : { display: "none" }}>Back</button>
+                                                                           </div>
+                                                                        </>
+
+                                                                     }
+                                                                  </div>
+                                                               </> : ""
+                                                   }
+                                                </div>
+                                             </div>
+                                          </div>
                                        </div>
                                     </div>
-
-                                    <div className="col-lg-6">
-                                       {
-                                          order?.status === "shipped" ? <div className='d-flex align-items-center justify-content-end'>
-                                             {findRating && findRating.includes(order?._id.slice(-6) + order?.orderId) ?
-                                                <Link to={`/product/${order?._id}#rating`}>Review</Link> :
-                                                <div className="text-center p-3">
-                                                   <form onSubmit={ratingHandler} className='d-flex flex-column'>
-                                                      <input type="text" disabled defaultValue={ratPoint} key={ratPoint} />
-                                                      <input type="range" min={1} max={5} step={1} name='rating_point' className='my-2' onChange={(e) => setRatPoint(e.target.value, order?.orderId)} />
-                                                      <textarea type="text" name='rating_description' className='form-control form-control-sm' placeholder='Write a Review' />
-                                                      <input type="hidden" defaultValue={order?._id} name='product_id' />
-                                                      <input type="hidden" defaultValue={order?.orderId} name='order_id' />
-                                                      <button className='btn btn-sm btn-primary mt-2'>{actLoading === true ? <BtnSpinner text={"Adding Review..."}></BtnSpinner> : "Add Review"}</button>
-                                                   </form>
-                                                </div>
-                                             }
-                                          </div> : ""
-                                       }
-                                    </div>
-
                                  </div>
-
                               </div>
-                           </div>
-                        </div>
-                     )
-                  }).reverse()
-               }
+                           )
+                        }).reverse() : <p>No Orders Available</p>
+                     }
+                  </div>
+               </div>
             </div>
+
          </div>
       </div >
    );

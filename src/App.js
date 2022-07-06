@@ -30,14 +30,21 @@ import AddProduct from './Pages/Dashboard/AddProduct/AddProduct';
 import ManageProduct from './Pages/Dashboard/ManageProduct/ManageProduct';
 import MyDashboard from './Pages/Dashboard/MyDashboard/MyDashboard';
 import CheckoutSingle from './Pages/CheckOut/CheckoutSingle';
-import CartProvider from './lib/CartProvider';
+import CartProvider, { useCart } from './lib/CartProvider';
+import { useEffect } from 'react';
+import SearchOrder from './Pages/MyOrder/Components/SearchOrder';
 
 function App() {
+  const { productLength } = useCart();
   const [query, setQuery] = useState('');
   const [cartProductCount, setCartProductCount] = useState(0);
+  useEffect(() => {
+    setCartProductCount(productLength)
+  }, [productLength]);
+
   return (
     <div className="App">
-      <CartProvider><NavigationBar setQuery={setQuery} cartProductCount={cartProductCount}></NavigationBar></CartProvider>
+      <NavigationBar setQuery={setQuery} cartProductCount={cartProductCount}></NavigationBar>
       <SearchProduct query={query} setQuery={setQuery}></SearchProduct>
       <Routes>
         <Route path='/' element={<Home></Home>} ></Route>
@@ -48,9 +55,9 @@ function App() {
         <Route path='/product/category/:category' element={<ProductCategory></ProductCategory>}></Route>
         <Route path='/product/recent/all' element={<AllRecentProduct></AllRecentProduct>}></Route>
         <Route path='/my-cart' element={<RequireAuth><CartProvider><Cart setCartProductCount={setCartProductCount}></Cart></CartProvider></RequireAuth>}></Route>
-        <Route path='/product/purchase/:productId' element={<RequireAuth><Purchase></Purchase></RequireAuth>}></Route>
+        <Route path='/product/purchase/:productId' element={<RequireAuth><CartProvider><Purchase setCartProductCount={setCartProductCount}></Purchase></CartProvider></RequireAuth>}></Route>
         <Route path='/my-cart/checkout/:cartId' element={<RequireAuth><CartProvider><CheckOut></CheckOut></CartProvider></RequireAuth>}></Route>
-        <Route path='/my-cart/checkout-single/:productId' element={<RequireAuth><CheckoutSingle></CheckoutSingle></RequireAuth>}></Route>
+        <Route path='/my-cart/checkout-single/:productId' element={<RequireAuth><CartProvider><CheckoutSingle></CheckoutSingle></CartProvider></RequireAuth>}></Route>
         <Route path='/my-profile/my-order' element={<RequireAuth><MyOrder></MyOrder></RequireAuth>}></Route>
 
         {/* // Admin path */}

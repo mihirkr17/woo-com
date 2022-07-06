@@ -18,13 +18,13 @@ const Cart = ({ setCartProductCount }) => {
    const [step, setStep] = useState(false);
    const navigate = useNavigate();
    const { data, loading, refetch, productLength } = useCart();
+   console.log(data);
 
    useEffect(() => {
       setCartProductCount(productLength);
    }, [setCartProductCount, productLength]);
 
    if (loading) return <Spinner></Spinner>;
-
 
    const goCheckoutPage = async (id) => {
       navigate(`/my-cart/checkout/${id}`);
@@ -35,45 +35,39 @@ const Cart = ({ setCartProductCount }) => {
          <div className="container">
             <p><strong className='text-danger'>{msg}</strong></p>
             <div className="row">
-               <div className="col-lg-8">
-                  <div className="row">
-                     <div className="col-12 mb-3">
-                        <CartHeader user={user}></CartHeader>
-                     </div>
-                     <div className="col-12 my-3">
-                        <div className="cart_card">
-                           <h6>Total In Cart ({(productLength) || 0})</h6>
-                           <hr />
-                           {
-                              data && data?.product ? data?.product.map(product => {
-                                 return (
-                                    <CartItem key={product?._id} user={user} product={product} refetch={refetch} setMessage={setMessage}></CartItem>
-                                 )
-                              }) :
-                                 <div className="card_default">
-                                    <div className="card_description">
-                                       <h3 className="cart_title">No Product Available In Your Cart</h3>
-                                    </div>
-                                 </div>
-                           }
-                        </div>
-                     </div>
+               <div className="col-lg-8 mb-3">
+                  <CartAddress refetch={refetch} addr={data?.address ? data?.address : []} user={user} step={step} setStep={setStep}></CartAddress>
+                  <br />
+                  <div className="cart_card">
+                     <h6>Total In Cart ({(productLength) || 0})</h6>
+                     <hr />
+                     {
+                        data && data?.product ? data?.product.map(product => {
+                           return (
+                              <CartItem key={product?._id} user={user} product={product} refetch={refetch} setMessage={setMessage}></CartItem>
+                           )
+                        }) :
+                           <div className="card_default">
+                              <div className="card_description">
+                                 <h3 className="cart_title">No Product Available In Your Cart</h3>
+                              </div>
+                           </div>
+                     }
                   </div>
                </div>
-               <div className="col-lg-4">
-                  <div className="row">
-                     <div className="col-12 mb-3">
-                        <CartCalculation product={cartCalculate(data?.product)}></CartCalculation>
-                     </div>
-                     <div className="col-12 mb-3">
-                        <CartAddress refetch={refetch} addr={data?.address ? data?.address : ""} user={user} step={step} setStep={setStep}></CartAddress>
-                     </div>
-                     <div className="col-12 text-center">
-                        <button className='btn btn-info btn-sm w-100' onClick={() => goCheckoutPage(data?._id)}
-                           disabled={(step === true) && (data?.product.length > 0) ? false : true}>
-                           Checkout
-                        </button>
-                     </div>
+               <div className="col-lg-4 mb-3">
+                  <CartHeader user={user}></CartHeader>
+                  <br />
+                  <CartCalculation product={cartCalculate(data?.product)}></CartCalculation>
+                  <br />
+                  <div className="text-center">
+                     {(data?.address && data?.address.length === 0) && <small className="my-2 p-1">Please Insert Your Address</small>}
+                     {((data?.address.length > 0) && (step === false)) && <small className="my-2 p-1">Select Your Address</small>}
+                     {(data?.product.length === 0) && <small className="my-2 p-1">Please Add Product To Your Cart</small>}
+                     <button className='btn btn-info btn-sm w-100' onClick={() => goCheckoutPage(data?._id)}
+                        disabled={(step === true) && (data?.product.length > 0) ? false : true}>
+                        Checkout
+                     </button>
                   </div>
                </div>
             </div>

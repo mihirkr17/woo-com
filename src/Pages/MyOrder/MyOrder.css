@@ -1,0 +1,14 @@
+.order_card {
+   padding: 0.6rem;
+   border: 1px solid #f6f6f6;
+   box-shadow: 0 0 5px 0 #0000004d;
+   border-radius: 3px;
+}
+
+.order_card:hover {
+   box-shadow: 0 0 10px 0 #0000005d;
+}
+
+.order_card small{
+   font-size: 12px;
+}

@@ -3,9 +3,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
-import { useFetch } from '../../Hooks/useFetch';
 import { useMessage } from '../../Hooks/useMessage';
 import { useBASE_URL } from '../../lib/BaseUrlProvider';
+import { useCart } from '../../lib/CartProvider';
 import { useAuthUser } from '../../lib/UserProvider';
 import { cartCalculate } from '../../Shared/cartCalculate';
 import CartCalculation from '../../Shared/CartComponents/CartCalculation';
@@ -20,7 +20,8 @@ const CheckoutSingle = () => {
    const navigate = useNavigate();
    const { msg, setMessage } = useMessage();
 
-   const { data: cart, loading } = useFetch(`${BASE_URL}my-cart-item/${productId}/${user?.email}`);
+   const { data: cart, loading } = useCart();
+   const product = cart?.product.find(p => p?._id === productId);
 
    if (loading) return <Spinner></Spinner>
    const selectedAddress = cart && cart?.address.find(a => a?.select_address === true); //finding selected address to checkout page
@@ -29,8 +30,8 @@ const CheckoutSingle = () => {
       e.preventDefault();
       let payment_mode = e.target.payment.value;
       let orderId = Math.floor(Math.random() * 1000000000);
-      let priceFixed = parseFloat(cart?.product?.price_fixed);
-      let productQuantity = parseInt(cart?.product?.quantity);
+      let priceFixed = parseFloat(product?.price_fixed);
+      let productQuantity = parseInt(product?.quantity);
       const { commission, commission_rate } = commissionRate(priceFixed, productQuantity)
 
       let products = {
@@ -38,18 +39,19 @@ const CheckoutSingle = () => {
          user_email: user?.email,
          owner_commission_rate: parseFloat(commission_rate.toFixed(2)),
          owner_commission: parseFloat(commission.toFixed(2)),
-         _id: cart?.product._id,
-         product_name: cart?.product.title,
-         image: cart?.product.image,
-         category: cart?.product.category,
-         quantity: cart?.product.quantity,
-         price: cart?.product.price,
-         price_fixed: cart?.product.price_fixed,
-         price_total: cart?.product.price_total,
-         discount: cart?.product.discount,
-         discount_amount_fixed: cart?.product.discount_amount_fixed,
-         discount_amount_total: cart?.product.discount_amount_total,
-         seller: cart?.product.seller,
+         _id: product._id,
+         product_name: product.title,
+         image: product.image,
+         category: product.category,
+         quantity: product.quantity,
+         price: product.price,
+         price_fixed: product.price_fixed,
+         price_total: product.price_total,
+         price_total_amount: (parseFloat(product.price_fixed) * parseInt(product.quantity)),
+         discount: product.discount,
+         discount_amount_fixed: product.discount_amount_fixed,
+         discount_amount_total: product.discount_amount_total,
+         seller: product.seller,
          address: cart?.address && cart?.address,
          payment_mode: payment_mode,
          status: "pending",
@@ -79,36 +81,39 @@ const CheckoutSingle = () => {
             </div>
             {msg}
             <div className="row">
-               <div className="col-lg-8">
-                  <address className='cart_card'>
-                     <h6>Selected Address</h6>
-                     <hr />
-                     <div className="address_card">
-                        {
-                           <div style={{ wordBreak: "break-word" }}>
-                              <h6><b className='me-3'>{selectedAddress?.name}</b>{selectedAddress?.select_address && <FontAwesomeIcon icon={faCheckCircle} />}</h6>
-                              <p>
-                                 <small>{selectedAddress?.village}, {selectedAddress?.city}, {selectedAddress?.country}, {selectedAddress?.zip}</small> <br />
-                                 <small>Phone : {selectedAddress?.phone}</small>
-                              </p>
-                           </div>
-                        }
-                     </div>
-                  </address>
-                  <div className="cart_card mb-3">
+               <div className="col-lg-8 mb-3">
+                  <div>
+                     <address className='cart_card'>
+                        <h6>Selected Address</h6>
+                        <hr />
+                        <div className="address_card">
+                           {
+                              <div style={{ wordBreak: "break-word" }}>
+                                 <h6><b className='me-3'>{selectedAddress?.name}</b>{selectedAddress?.select_address && <FontAwesomeIcon icon={faCheckCircle} />}</h6>
+                                 <p>
+                                    <small>{selectedAddress?.village}, {selectedAddress?.city}, {selectedAddress?.country}, {selectedAddress?.zip}</small> <br />
+                                    <small>Phone : {selectedAddress?.phone}</small>
+                                 </p>
+                              </div>
+                           }
+                        </div>
+                     </address>
+                  </div>
+                  <br />
+                  <div className="cart_card">
                      <h6>Order Summary</h6>
                      <hr />
                      <div className="row">
                         {
-                           <CartItem checkOut={true} product={cart?.product}></CartItem>
+                           <CartItem checkOut={true} product={product}></CartItem>
                         }
                      </div>
                   </div>
-
-                  <CartPayment buyBtnHandler={buyBtnHandler}></CartPayment>
                </div>
-               <div className="col-lg-4">
-                  <CartCalculation product={cartCalculate([cart?.product])} headTitle={"Order Details"}></CartCalculation>
+               <div className="col-lg-4 mb-3">
+                  <CartCalculation product={cartCalculate([product])} headTitle={"Order Details"}></CartCalculation>
+                  <br />
+                  <CartPayment buyBtnHandler={buyBtnHandler}></CartPayment>
                </div>
             </div>
          </div>
