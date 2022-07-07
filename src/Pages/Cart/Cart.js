@@ -18,7 +18,6 @@ const Cart = ({ setCartProductCount }) => {
    const [step, setStep] = useState(false);
    const navigate = useNavigate();
    const { data, loading, refetch, productLength } = useCart();
-   console.log(data);
 
    useEffect(() => {
       setCartProductCount(productLength);
