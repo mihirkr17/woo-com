@@ -20,11 +20,11 @@ const ProductModel = ({ product, addToCartHandler }) => {
                   (role !== "owner" && role !== "admin") && <div className="d-flex align-items-center justify-content-center py-3 mt-4">
                      {
                         product?.cardHandler === false ?
-                           <button className='btn btn-primary' onClick={() => addToCartHandler(product)}>Add To Cart</button> :
+                           <button className='btn btn-primary' disabled={product?.stock === "out" ? true : false} onClick={() => addToCartHandler(product)}>Add To Cart</button> :
                            <button className='btn btn-primary' onClick={() => navigate('/my-cart')}>Go To Cart</button>
                      }
 
-                     <button className='btn btn-warning ms-4' onClick={() => addToCartHandler(product, "buy")}>Buy Now</button>
+                     <button className='btn btn-warning ms-4' disabled={product?.stock === "out" ? true : false} onClick={() => addToCartHandler(product, "buy")}>Buy Now</button>
                   </div>
                }
 
@@ -38,7 +38,8 @@ const ProductModel = ({ product, addToCartHandler }) => {
                <h5 className="product_title py-3">{product?.title}</h5>
                <small><strike>{product?.price}</strike> - <span>{product?.discount}%</span></small>&nbsp;
                <big className='text-success'>${product?.price_fixed}</big><br />
-               <small className='text-warning'>Rating : {averageRating(product?.rating) || 0}/5</small>
+               <small className='text-warning'>Rating : {averageRating(product?.rating) || 0}/5</small><br />
+               <small className='text-muted'><i>{product?.stock === "out" ? "Out of Stock" : "Hurry, Only " + product?.available + " Left !"} </i></small>
                <Interweave className='pt-4 product_spec' content={product?.description} />
             </article>
          </div>

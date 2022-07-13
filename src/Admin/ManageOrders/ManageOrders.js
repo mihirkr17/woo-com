@@ -44,7 +44,7 @@ const ManageOrders = () => {
    }
 
    // Update the order status by seller or admin
-   const updateOrderStatusHandler = async (userEmail, orderId, status, ownerCommission = 0, totalEarn = 0) => {
+   const updateOrderStatusHandler = async (userEmail, orderId, status, ownerCommission = 0, totalEarn = 0, productId, quantity) => {
 
       let confirmMsg = status === "placed" ? "Want To Placed This Order" : "Want To Shipped This Order";
       let successMsg = status === "placed" ? "Order Successfully Placed" : "Order Successfully Shipped";
@@ -57,7 +57,7 @@ const ManageOrders = () => {
             headers: {
                "content-type": "application/json"
             },
-            body: JSON.stringify({ ownerCommission, totalEarn, seller_email: user?.email })
+            body: JSON.stringify({ ownerCommission, totalEarn, seller_email: user?.email, productId, quantity })
          });
          if (response.ok) await response.json();
          setMessage(<p className='text-success'><small><strong>{successMsg}</strong></small></p>);

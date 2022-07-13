@@ -28,6 +28,8 @@ const ProductUpdate = ({ data, refetch, modalClose, setMessage }) => {
       let discount = inputValue.discount;
       let available = e.target.available.value;
 
+      available = available === "" ? 0 : available;
+
       if (title === "" || image === "" || description === "" || category === "" || price === "" || discount === "") {
          window.alert("Required All Input Fields !");
          return;

@@ -16,14 +16,13 @@ const ViewProduct = () => {
    const { productId } = useParams();
    const user = useAuthUser();
 
-   const { data: product, loading } = useFetch(`${BASE_URL}view-product/${productId}/${user?.email}`);
+   const { data: product, loading } = useFetch(`${BASE_URL}api/fetch-single-product/${productId}/${user?.email}`);
    const { data: rating } = useFetch(`${BASE_URL}product-review/${productId}`);
    const { data: productByCategory } = useFetch(`${BASE_URL}product-category/${product?.category}`);
    const navigate = useNavigate();
    const { msg, setMessage } = useMessage();
 
    if (loading) return <Spinner></Spinner>;
-
 
    const addToCartHandler = async (product, params) => {
 
@@ -37,22 +36,24 @@ const ViewProduct = () => {
       product['price_total'] = (productPrice * quantity) - discount_amount_total;
       product['discount_amount_total'] = discount_amount_total;
 
-      const response = await fetch(`${BASE_URL}my-cart/${user?.email}`, {
-         method: "PUT",
-         headers: {
-            'content-type': 'application/json'
-         },
-         body: JSON.stringify(product)
-      });
+      if (product?.stock === "in") {
+         const response = await fetch(`${BASE_URL}api/add-to-cart/${user?.email}`, {
+            method: "PUT",
+            headers: {
+               'content-type': 'application/json'
+            },
+            body: JSON.stringify(product)
+         });
 
-      const resData = await response.json();
+         const resData = response.ok && await response.json();
 
-      if (resData) {
-         setMessage(resData?.message);
-         if (params === "buy") {
-            navigate(`/product/purchase/${product?._id}`);
-         } else {
-            navigate('/my-cart');
+         if (resData) {
+            setMessage(resData?.message);
+            if (params === "buy") {
+               navigate(`/product/purchase/${product?._id}`);
+            } else {
+               navigate('/my-cart');
+            }
          }
       }
    }

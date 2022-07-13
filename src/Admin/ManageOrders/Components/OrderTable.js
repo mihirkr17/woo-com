@@ -17,16 +17,15 @@ const OrderTable = ({ orderList, updateOrderStatusHandler, cancelOrderHandler, s
          <tbody>
             {
                orderList && orderList.map((odr) => {
-                  const { orderId, user_email, payment_mode, price_total, status, owner_commission, discount_amount_total } = odr?.orders;
-                  let discount = parseFloat(discount_amount_total);
-                  let priceTotal = parseFloat(price_total) - discount;
-                  let total_earn = priceTotal - parseFloat(owner_commission)
+                  const { orderId, user_email, payment_mode, status, owner_commission, discount_amount_total, _id, quantity, price_total_amount } = odr?.orders;
+
+                  let total_earn = price_total_amount - parseFloat(owner_commission);
                   return (
                      <tr key={orderId}>
                         <td># <span className="text-info">{orderId}</span> </td>
                         <td>{user_email}</td>
                         <td>{payment_mode}</td>
-                        <td>{price_total}$</td>
+                        <td>{price_total_amount}$</td>
                         <td>{status}</td>
                         {
                            updateOrderStatusHandler &&
@@ -37,7 +36,9 @@ const OrderTable = ({ orderList, updateOrderStatusHandler, cancelOrderHandler, s
                                     orderId,
                                     status,
                                     status === "placed" && parseFloat(owner_commission.toFixed(2)),
-                                    status === "placed" && parseFloat(total_earn.toFixed(2))
+                                    status === "placed" && parseFloat(total_earn.toFixed(2)),
+                                    _id,
+                                    quantity
                                  )}>
                                  {status === "pending" ? "Place Now" : status === "placed" ? "Ship Now" : ""}
                               </button>

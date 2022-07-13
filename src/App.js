@@ -32,7 +32,6 @@ import MyDashboard from './Pages/Dashboard/MyDashboard/MyDashboard';
 import CheckoutSingle from './Pages/CheckOut/CheckoutSingle';
 import CartProvider, { useCart } from './lib/CartProvider';
 import { useEffect } from 'react';
-import SearchOrder from './Pages/MyOrder/Components/SearchOrder';
 
 function App() {
   const { productLength } = useCart();

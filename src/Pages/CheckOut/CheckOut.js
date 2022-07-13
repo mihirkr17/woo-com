@@ -30,7 +30,7 @@ const CheckOut = () => {
       e.preventDefault();
       let buyAlert = window.confirm("Buy Now");
       let payment_mode = e.target.payment.value;
-      let products = data && data?.product;
+      let products = data && data?.product.filter(p => p?.stock === "in");
 
       for (let i = 0; i < products.length; i++) {
          let elem = products[i];
@@ -109,7 +109,7 @@ const CheckOut = () => {
                      <hr />
                      <div className="row">
                         {
-                           data && data?.product.map((cart, index) => {
+                           data && data?.product.filter(p => p?.stock === "in").map((cart, index) => {
                               return (
                                  <CartItem checkOut={true} product={cart} key={index}></CartItem>
                               )
