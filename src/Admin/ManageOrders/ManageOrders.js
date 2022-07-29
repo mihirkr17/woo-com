@@ -12,11 +12,12 @@ import { useBASE_URL } from '../../lib/BaseUrlProvider';
 const ManageOrders = () => {
    const BASE_URL = useBASE_URL();
    const user = useAuthUser();
-   const { role } = useAuth(user);
+   const { role, userInfo } = useAuth(user);
    const { msg, setMessage } = useMessage();
 
-   let url = role === "admin" ? `${BASE_URL}manage-orders?email=${user?.email}` :
-      `${BASE_URL}manage-orders`;
+   let url = role === "admin" ? `${BASE_URL}manage-orders?seller=${userInfo?.seller}` :
+      userInfo?.isSeller ? `${BASE_URL}manage-orders?seller=${userInfo?.seller}` :
+         `${BASE_URL}manage-orders`;
 
    const { data, refetch, loading } = useFetch(url);
    const [openModal, setOpenModal] = useState(false);

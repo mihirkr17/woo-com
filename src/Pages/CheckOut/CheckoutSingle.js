@@ -1,11 +1,11 @@
 import { faCheckCircle, faLeftLong } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useCart } from '../../App';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { useMessage } from '../../Hooks/useMessage';
 import { useBASE_URL } from '../../lib/BaseUrlProvider';
-import { useCart } from '../../lib/CartProvider';
 import { useAuthUser } from '../../lib/UserProvider';
 import { cartCalculate } from '../../Shared/cartCalculate';
 import CartCalculation from '../../Shared/CartComponents/CartCalculation';
@@ -16,12 +16,10 @@ import { commissionRate } from '../../Shared/commissionRate';
 const CheckoutSingle = () => {
    const BASE_URL = useBASE_URL();
    const user = useAuthUser();
-   const { productId } = useParams();
    const navigate = useNavigate();
    const { msg, setMessage } = useMessage();
-
-   const { data: cart, loading } = useCart();
-   const product = cart?.product.find(p => p?._id === productId);
+   const { cart, loading } = useCart();
+   const product = cart && cart?.buy_product;
 
    if (loading) return <Spinner></Spinner>
    const selectedAddress = cart && cart?.address.find(a => a?.select_address === true); //finding selected address to checkout page
@@ -105,13 +103,13 @@ const CheckoutSingle = () => {
                      <hr />
                      <div className="row">
                         {
-                           <CartItem checkOut={true} product={product}></CartItem>
+                           <CartItem checkOut={true} cartTypes={"buy"} product={cart && cart?.buy_product}></CartItem>
                         }
                      </div>
                   </div>
                </div>
                <div className="col-lg-4 mb-3">
-                  <CartCalculation product={cartCalculate([product])} headTitle={"Order Details"}></CartCalculation>
+                  <CartCalculation product={cartCalculate([cart && cart?.buy_product])} headTitle={"Order Details"}></CartCalculation>
                   <br />
                   <CartPayment buyBtnHandler={buyBtnHandler}></CartPayment>
                </div>

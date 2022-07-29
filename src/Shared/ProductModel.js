@@ -1,11 +1,14 @@
 import { Interweave } from 'interweave';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import BtnSpinner from '../Components/Shared/BtnSpinner/BtnSpinner';
 import useAuth from '../Hooks/useAuth';
 import { useAuthUser } from '../lib/UserProvider';
 import { averageRating } from "./averageRating";
+import { faCartShopping } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-const ProductModel = ({ product, addToCartHandler }) => {
+const ProductModel = ({ product, addToCartHandler, addCartLoading, buyLoading }) => {
    const navigate = useNavigate();
    const user = useAuthUser();
    const { role } = useAuth(user);
@@ -20,11 +23,17 @@ const ProductModel = ({ product, addToCartHandler }) => {
                   (role !== "owner" && role !== "admin") && <div className="d-flex align-items-center justify-content-center py-3 mt-4">
                      {
                         product?.cardHandler === false ?
-                           <button className='btn btn-primary' disabled={product?.stock === "out" ? true : false} onClick={() => addToCartHandler(product)}>Add To Cart</button> :
-                           <button className='btn btn-primary' onClick={() => navigate('/my-cart')}>Go To Cart</button>
+                           <button className='addToCartBtn' disabled={product?.stock === "out" ? true : false} onClick={() => addToCartHandler(product, "toCart")}>
+                              {addCartLoading ? <BtnSpinner text={"Adding..."}></BtnSpinner> : <><FontAwesomeIcon icon={faCartShopping}/> Add To Cart</>}
+                           </button> :
+                           <button className='addToCartBtn' onClick={() => navigate('/my-cart')}>
+                              Go To Cart
+                           </button>
                      }
 
-                     <button className='btn btn-warning ms-4' disabled={product?.stock === "out" ? true : false} onClick={() => addToCartHandler(product, "buy")}>Buy Now</button>
+                     <button className='ms-4 buyBtn' disabled={product?.stock === "out" ? true : false} onClick={() => addToCartHandler(product, "buy")}>
+                        {buyLoading ? <BtnSpinner text={"Buying..."}></BtnSpinner> :  <> Buy Now</>}
+                     </button>
                   </div>
                }
 

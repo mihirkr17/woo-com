@@ -6,16 +6,16 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
 import UserProvider from './lib/UserProvider';
 import BaseUrlProvider from './lib/BaseUrlProvider';
-import CartProvider from './lib/CartProvider';
+import JWTProvider from './lib/JWTProvider';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <BrowserRouter>
     <BaseUrlProvider>
       <UserProvider>
-        <CartProvider>
-          <App />
-        </CartProvider>
+        <JWTProvider>
+            <App />
+        </JWTProvider>
       </UserProvider>
     </BaseUrlProvider>
   </BrowserRouter>

@@ -7,7 +7,7 @@ import { useAuthUser } from '../lib/UserProvider';
 
 const RequireOwnerAdmin = ({ children }) => {
    const user = useAuthUser();
-   const { role } = useAuth(user);
+   const { role, userInfo } = useAuth(user);
    const location = useLocation();
 
    if (!user) {
@@ -15,7 +15,7 @@ const RequireOwnerAdmin = ({ children }) => {
    }
 
    if (role) {
-      if (role !== "owner" && role !== "admin" && role === "user") {
+      if (role !== "owner" && role !== "admin" && role === "user" && role !== "seller") {
          signOut(auth);
          return <Navigate to={'/login'} state={{ from: location }} replace></Navigate>
       }

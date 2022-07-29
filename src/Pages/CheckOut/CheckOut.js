@@ -2,10 +2,10 @@ import { faCheckCircle, faLeftLong } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useCart } from '../../App';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { useMessage } from '../../Hooks/useMessage';
 import { useBASE_URL } from '../../lib/BaseUrlProvider';
-import { useCart } from '../../lib/CartProvider';
 import { useAuthUser } from '../../lib/UserProvider';
 import { cartCalculate } from '../../Shared/cartCalculate';
 import CartCalculation from '../../Shared/CartComponents/CartCalculation';
@@ -18,19 +18,19 @@ const CheckOut = () => {
    const user = useAuthUser();
    const navigate = useNavigate();
    const { msg, setMessage } = useMessage()
-   const { data, loading } = useCart();
+   const { loading, cart } = useCart();
 
    if (loading) {
       return <Spinner></Spinner>;
    }
 
-   const selectedAddress = data && data?.address.find(a => a?.select_address === true); //finding selected address to checkout page
+   const selectedAddress = cart.address && cart?.address.find(a => a?.select_address === true); //finding selected address to checkout page
 
    const buyBtnHandler = async (e) => {
       e.preventDefault();
       let buyAlert = window.confirm("Buy Now");
       let payment_mode = e.target.payment.value;
-      let products = data && data?.product.filter(p => p?.stock === "in");
+      let products = cart?.product && cart?.product.filter(p => p?.stock === "in");
 
       for (let i = 0; i < products.length; i++) {
          let elem = products[i];
@@ -109,9 +109,9 @@ const CheckOut = () => {
                      <hr />
                      <div className="row">
                         {
-                           data && data?.product.filter(p => p?.stock === "in").map((cart, index) => {
+                           cart?.product && cart?.product.filter(p => p?.stock === "in").map((cart, index) => {
                               return (
-                                 <CartItem checkOut={true} product={cart} key={index}></CartItem>
+                                 <CartItem cartTypes={"toCart"} checkOut={true} product={cart} key={index}></CartItem>
                               )
                            })
                         }
@@ -119,7 +119,7 @@ const CheckOut = () => {
                   </div>
                </div>
                <div className="col-lg-4 mb-3">
-                  <CartCalculation product={cartCalculate(data?.product)} headTitle={"Order Details"}></CartCalculation>
+                  <CartCalculation product={cartCalculate(cart?.product)} headTitle={"Order Details"}></CartCalculation>
                   <br />
                   <CartPayment buyBtnHandler={buyBtnHandler}></CartPayment>
                </div>

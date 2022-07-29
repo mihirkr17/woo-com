@@ -7,9 +7,14 @@ import { useBASE_URL } from '../lib/BaseUrlProvider';
 const useAuth = (user) => {
    const BASE_URL = useBASE_URL();
    const [role, setRole] = useState("");
+   const [userInfo, setUserInfo] = useState(null || {} || []);
    const [roleLoading, setRoleLoading] = useState(false);
    const [err, setErr] = useState();
    const navigate = useNavigate();
+   const [ref, setRef] = useState(false);
+
+   let refetch;
+   refetch = () => setRef(e => !e);
 
    useEffect(() => {
       const controller = new AbortController();
@@ -32,6 +37,7 @@ const useAuth = (user) => {
                });
                if (response.ok) {
                   const data = await response.json();
+                  setUserInfo(data?.result);
                   if (data?.role) {
                      setRole(data.role);
                   } else {
@@ -48,6 +54,7 @@ const useAuth = (user) => {
             if (!user) {
                setRole("");
                setRoleLoading(false);
+               setUserInfo(null);
             }
          } catch (error) {
             setErr(error);
@@ -56,9 +63,9 @@ const useAuth = (user) => {
 
       return () => controller?.abort();
 
-   }, [user, navigate, BASE_URL]);
+   }, [user, navigate, BASE_URL, ref]);
 
-   return { role, roleLoading, err };
+   return { role, roleLoading, err, userInfo, refetch };
 };
 
 export default useAuth;

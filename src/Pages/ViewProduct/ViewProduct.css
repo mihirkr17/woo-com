@@ -21,3 +21,38 @@
 .product_spec li {
    list-style: circle;
 }
+
+.buyBtn {
+   background-color: #fb641b;
+   padding: 0.6rem 1.5rem;
+   border-radius: 3px;
+   color: white;
+   font-weight: 500;
+   font-size: 0.875rem;
+   border: none;
+   letter-spacing: 1px;
+   text-transform: uppercase;
+   transition: all 0.4s linear;
+}
+
+.buyBtn:hover {
+   background-color: #cc4502;
+}
+
+.addToCartBtn {
+   background-color: #ff9f00;
+   padding: 0.6rem 1.5rem;
+   border-radius: 3px;
+   color: white;
+   font-size: 0.875rem;
+   border: none;
+   letter-spacing: 1px;
+   text-transform: uppercase;
+   font-weight: 500;
+   transition: all 0.4s linear;
+}
+
+.addToCartBtn:hover {
+   background-color: #c57a00;
+}
+

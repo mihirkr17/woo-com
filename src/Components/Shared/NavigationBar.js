@@ -3,13 +3,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { Button, Container, Dropdown, Nav, Navbar } from 'react-bootstrap';
 import { Link, NavLink } from 'react-router-dom';
+import { useCart } from '../../App';
 import useAuth from '../../Hooks/useAuth';
 import { useAuthUser, useSignOut } from '../../lib/UserProvider';
 import "./NavigationBar.css";
 
-const NavigationBar = ({ setQuery, cartProductCount }) => {
+const NavigationBar = ({ setQuery }) => {
    const user = useAuthUser();
-   const { role } = useAuth(user);
+   const { role, userInfo } = useAuth(user);
+   const { cartProductCount } = useCart();
 
    return (
       <Navbar bg="light" sticky='top' expand="lg">
@@ -21,10 +23,12 @@ const NavigationBar = ({ setQuery, cartProductCount }) => {
                <Nav className="ms-auto">
                   <Nav.Link as={NavLink} className="nav_link" to="/">Home</Nav.Link>
                   {
-                     (((role === "owner") || (role === "admin")) && user) &&
+                     (((role === "owner") || (role === "admin") || (role === "seller") || (userInfo?.isSeller)) && user) &&
                      <Nav.Link as={NavLink} className="nav_link" to="/dashboard">dashboard</Nav.Link>
-                  }{
-                     (user && (role !== "owner" && role !== "admin")) && <>
+                  }
+                  {
+                     (user && (role !== "owner" && role !== "admin" && role !== "seller")) && <>
+                        <Nav.Link as={NavLink} className="nav_link" to="/sell-online">Become a Seller</Nav.Link>
                         <Nav.Link as={NavLink} className="nav_link cart_link" to='/my-cart'>Cart <FontAwesomeIcon icon={faCartShopping}></FontAwesomeIcon>
                            <div className="bg-info cart_badge">{cartProductCount}</div>
                         </Nav.Link>

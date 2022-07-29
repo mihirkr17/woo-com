@@ -25,7 +25,7 @@ const ManageUsers = () => {
 
    // if role is not owner then redirect to dashboard
    useEffect(() => {
-      if (role && role !== "owner") {
+      if (role && (role !== "owner" && role !== "admin")) {
          navigate('/dashboard');
          return;
       };
@@ -39,7 +39,10 @@ const ManageUsers = () => {
                <div className="col-12">
                   <div className="d-flex align-items-center justify-content-center manage_user_header">
                      <Nav.Link as={NavLink} className={act === "manage-users" ? "link_active" : ""} to='/dashboard/manage-users'>All Users</Nav.Link>
-                     <Nav.Link as={NavLink} className={act === "all-admin" ? "link_active" : ""} to='all-admin'>All Admin</Nav.Link>
+                     {role === "owner" &&
+                        <Nav.Link as={NavLink} className={act === "all-admin" ? "link_active" : ""} to='all-admin'>All Admin</Nav.Link>
+                     }
+                     <Nav.Link as={NavLink} className={act === "all-seller" ? "link_active" : ""} to='all-seller'>All Seller</Nav.Link>
                   </div>
                </div>
                <div className="col-12">

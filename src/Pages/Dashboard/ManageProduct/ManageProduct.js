@@ -16,11 +16,11 @@ const ManageProduct = () => {
    const { msg, setMessage } = useMessage();
    const BASE_URL = useBASE_URL();
    const user = useAuthUser();
-   const { role } = useAuth(user);
+   const { role, userInfo } = useAuth(user);
    const [items, setItems] = useState(0);
    const [page, setPage] = useState(0);
    const [url, setUrl] = useState("");
-   let url2 = role && role === "admin" ? `${BASE_URL}api/product-count?email=${user?.email}` :
+   let url2 = userInfo && userInfo?.seller ? `${BASE_URL}api/product-count?seller=${userInfo?.seller}` :
       `${BASE_URL}api/product-count`
    const { data: counter, refetch: counterRefetch } = useFetch(url2);
    const { data: products, loading, refetch } = useFetch(url);
@@ -28,19 +28,20 @@ const ManageProduct = () => {
    const [filterCategory, setFilterCategory] = useState("all");
    const [openModal, setOpenModal] = useState(false);
    const [productDetailsModal, setProductDetailsModal] = useState(false);
+   console.log(counter);
 
    useEffect(() => {
       let url;
       const setTimeUrl = setTimeout(() => {
-         if (role && role === "admin") {
-            url = `${BASE_URL}api/manage-product?email=${user?.email}&page=${page}&items=${8}&category=${filterCategory}&search=${searchValue}`
-         } else {
+         if (userInfo?.seller) {
+            url = `${BASE_URL}api/manage-product?seller=${userInfo?.seller}&page=${page}&items=${8}&category=${filterCategory}&search=${searchValue}`
+         }  else {
             url = `${BASE_URL}api/manage-product?page=${page}&items=${8}&category=${filterCategory}&search=${searchValue}`
          }
          setUrl(url);
       }, 200);
       return () => clearTimeout(setTimeUrl);
-   }, [BASE_URL, role, page, user?.email, searchValue, filterCategory]);
+   }, [BASE_URL, page, userInfo?.seller, searchValue, filterCategory]);
 
    useEffect(() => {
       if (searchValue.length > 0 || filterCategory !== "all") {

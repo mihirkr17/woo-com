@@ -2,29 +2,12 @@ import React from 'react';
 import { Table } from 'react-bootstrap';
 import Spinner from '../../../Components/Shared/Spinner/Spinner';
 import { useFetch } from '../../../Hooks/useFetch';
-import { useJWT } from '../../../Hooks/useJWT';
 import { useBASE_URL } from '../../../lib/BaseUrlProvider';
 
-
-const AllAdmin = () => {
+const AllSeller = () => {
    const BASE_URL = useBASE_URL();
-   const token = useJWT();
-   const { data, loading, refetch } = useFetch(`${BASE_URL}api/manage-user?uTyp=admin`);
+   const { data, loading } = useFetch(`${BASE_URL}api/manage-user?uTyp=seller`);
    if (loading) return <Spinner></Spinner>;
-
-   const demoteToUserHandler = async (userId) => {
-      if (window.confirm("Demote to user ?")) {
-         const response = await fetch(`${BASE_URL}api/demote-to-user/${userId}`, {
-            method: "PUT",
-            headers: {
-               "content-type": "application/json",
-               authorization: `Bearer ${token}`
-            }
-         });
-         if (await response.json()) refetch();
-      }
-   }
-
    return (
       <div>
          {
@@ -34,6 +17,7 @@ const AllAdmin = () => {
                      <tr>
                         <th>Email</th>
                         <th>Role</th>
+                        <th>Action</th>
                      </tr>
                   </thead>
                   <tbody>
@@ -41,20 +25,20 @@ const AllAdmin = () => {
                         data && data.map((usr, ind) => {
                            return (
                               <tr key={ind}>
-                                 <td>{usr?.email}</td>
+                                 <td><p style={{ cursor: "pointer" }}>{usr.email}</p></td>
                                  <td>{usr?.role}</td>
                                  <td>
-                                    <button className='btn btn-sm btn-warning' onClick={() => demoteToUserHandler(usr?._id)}>Demote To User</button>
+
                                  </td>
                               </tr>
                            )
                         })
                      }
                   </tbody>
-               </Table> : <p className='text-center py-2'><span>No Admin Found</span></p>
+               </Table> : <p className='text-center py-2'><span>No User Found</span></p>
          }
       </div>
    );
 };
 
-export default AllAdmin;
+export default AllSeller;

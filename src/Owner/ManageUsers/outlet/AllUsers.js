@@ -1,28 +1,31 @@
 import React from 'react';
 import { Table } from 'react-bootstrap';
 import Spinner from '../../../Components/Shared/Spinner/Spinner';
+import useAuth from '../../../Hooks/useAuth';
 import { useFetch } from '../../../Hooks/useFetch';
+import { useJWT } from '../../../Hooks/useJWT';
 import { useBASE_URL } from '../../../lib/BaseUrlProvider';
+import { useAuthUser } from '../../../lib/UserProvider';
 
 const AllUsers = () => {
    const BASE_URL = useBASE_URL();
+   const token = useJWT();
+   const user = useAuthUser();
+   const { role } = useAuth(user);
    const { data, loading, refetch } = useFetch(`${BASE_URL}api/manage-user?uTyp=user`);
-   if (loading) return <Spinner></Spinner>;
-   console.log(data)
 
-   const cookieObj = new URLSearchParams(document.cookie.replaceAll("; ", "&"));
-   const token = cookieObj.get('accessToken');
+   if (loading) return <Spinner></Spinner>;
 
    const makeAdminHandler = async (userId) => {
       if (window.confirm("Want to give permission 'admin'")) {
          const response = await fetch(`${BASE_URL}make-admin/${userId}`, {
-            method : "PUT",
+            method: "PUT",
             headers: {
                "content-type": "application/json",
                authorization: `Bearer ${token}`
             }
-      });
-         if (await response.json()) refetch(); 
+         });
+         if (await response.json()) refetch();
       }
    }
 
@@ -35,7 +38,10 @@ const AllUsers = () => {
                      <tr>
                         <th>Email</th>
                         <th>Role</th>
-                        <th>Action</th>
+                        {
+                           role === "owner" &&
+                           <th>Action</th>
+                        }
                      </tr>
                   </thead>
                   <tbody>
@@ -43,13 +49,13 @@ const AllUsers = () => {
                         data && data.map((usr, ind) => {
                            return (
                               <tr key={ind}>
-                                 <td><p style={{ cursor : "pointer" }}>{usr.email}</p></td>
+                                 <td><p style={{ cursor: "pointer" }}>{usr.email}</p></td>
                                  <td>{usr?.role}</td>
                                  <td>
                                     {
-                                       usr?.role !== "admin" && <button onClick={() => makeAdminHandler(usr?._id)} className="btn btn-sm">
-                                       Make Admin
-                                    </button>
+                                       role === "owner" && <button onClick={() => makeAdminHandler(usr?._id)} className="btn btn-sm btn-primary">
+                                          Make Admin
+                                       </button>
                                     }
                                  </td>
                               </tr>

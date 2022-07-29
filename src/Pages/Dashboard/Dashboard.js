@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import "./Dashboard.css";
 import { useState } from 'react';
 import { useAuthUser, useSignOut } from '../../lib/UserProvider';
+import { useSellerChecker } from '../../lib/SellerCheckProvider';
 
 const Dashboard = () => {
    const user = useAuthUser();
@@ -13,6 +14,7 @@ const Dashboard = () => {
    const [responsive, setResponsive] = useState(window.innerWidth);
    const location = useLocation();
    const [act, setAct] = useState("");
+   const { state } = useSellerChecker();
 
    useEffect(() => {
       const pathArr = location.pathname.split("/");
@@ -43,13 +45,21 @@ const Dashboard = () => {
                   <div className="d_link">
                      <Nav.Link as={NavLink} className={act === "dashboard" ? "active_link" : ""} to='/dashboard'>Dashboard</Nav.Link>
                      <Nav.Link as={NavLink} className={act === "my-profile" ? "active_link" : ""} to='my-profile'>My Profile</Nav.Link>
-                     <Nav.Link as={NavLink} className={act === "add-product" ? "active_link" : ""} to='add-product'>Add Product</Nav.Link>
+                     {
+                        role === "seller" &&
+                        <Nav.Link as={NavLink} className={act === "add-product" ? "active_link" : ""} to='add-product'>Add Product</Nav.Link>
+                     }
                      <Nav.Link as={NavLink} className={act === "manage-orders" ? "active_link" : ""} to='manage-orders'>Manage Orders</Nav.Link>
                      <Nav.Link as={NavLink} className={act === "manage-product" ? "active_link" : ""} to='manage-product'>Manage Product</Nav.Link>
                      {
                         (role === "owner") && <>
                            <Nav.Link as={NavLink} className={act === "owner-data" ? "active_link" : ""} to='owner-data'>Owner</Nav.Link>
+                        </>
+                     }
+                     {
+                        (role === "admin" || role === "owner") && <>
                            <Nav.Link as={NavLink} className={act === "manage-users" ? "active_link" : ""} to='manage-users'>Manage Users</Nav.Link>
+                           <Nav.Link as={NavLink} className={act === "check-seller" ? "active_link" : ""} to='check-seller'>Check Seller {state?.slLength}</Nav.Link>
                         </>
                      }
                   </div>

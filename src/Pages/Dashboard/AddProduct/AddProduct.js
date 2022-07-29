@@ -7,11 +7,13 @@ import { useBASE_URL } from '../../../lib/BaseUrlProvider';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { usePrice } from '../../../Hooks/usePrice';
+import useAuth from '../../../Hooks/useAuth';
 
 
 const AddProduct = () => {
    const BASE_URL = useBASE_URL();
    const user = useAuthUser();
+   const { userInfo } = useAuth(user);
    const [desc, setDescription] = useState("Hello CKEditor V5");
    const { msg, setMessage } = useMessage();
    const [inputValue, setInputValue] = useState({ price: "", discount: "" });
@@ -32,7 +34,7 @@ const AddProduct = () => {
       let category = e.target.category.value;
       let price = inputValue.price;
       let discount = inputValue.discount;
-      let seller = user?.email;
+      let seller = userInfo?.seller;
       let rating = [];
       let available = e.target.available.value;
 

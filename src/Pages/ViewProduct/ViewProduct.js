@@ -9,23 +9,30 @@ import { useBASE_URL } from "../../lib/BaseUrlProvider";
 import Product from '../../Shared/Product';
 import { averageRating } from "../../Shared/averageRating";
 import ProductModel from '../../Shared/ProductModel';
+import { useCart } from '../../App';
+import { useState } from 'react';
 
 
 const ViewProduct = () => {
    const BASE_URL = useBASE_URL();
    const { productId } = useParams();
    const user = useAuthUser();
-
-   const { data: product, loading } = useFetch(`${BASE_URL}api/fetch-single-product/${productId}/${user?.email}`);
+   const { refetch } = useCart();
+   const { data: product, loading, refetch: productRefetch } = useFetch(`${BASE_URL}api/fetch-single-product/${productId}/${user?.email}`);
    const { data: rating } = useFetch(`${BASE_URL}product-review/${productId}`);
    const { data: productByCategory } = useFetch(`${BASE_URL}product-category/${product?.category}`);
    const navigate = useNavigate();
    const { msg, setMessage } = useMessage();
+   const [addCartLoading, setAddCartLoading] = useState(false);
+   const [buyLoading, setBuyLoading] = useState(false);
 
    if (loading) return <Spinner></Spinner>;
 
    const addToCartHandler = async (product, params) => {
 
+      const url = params === "buy" ? `${BASE_URL}api/add-buy-product/${user?.email}` :
+         `${BASE_URL}api/add-to-cart/${user?.email}`;
+         
       let quantity = 1;
       let productPrice = parseInt(product?.price);
       let discount_amount_fixed = parseFloat(product?.discount_amount_fixed)
@@ -37,7 +44,13 @@ const ViewProduct = () => {
       product['discount_amount_total'] = discount_amount_total;
 
       if (product?.stock === "in") {
-         const response = await fetch(`${BASE_URL}api/add-to-cart/${user?.email}`, {
+         if (params === "buy") {
+            setBuyLoading(true);
+         } else {
+            setAddCartLoading(true);
+         }
+
+         const response = await fetch(url, {
             method: "PUT",
             headers: {
                'content-type': 'application/json'
@@ -46,12 +59,16 @@ const ViewProduct = () => {
          });
 
          const resData = response.ok && await response.json();
-
          if (resData) {
+            refetch();
+            productRefetch();
             setMessage(resData?.message);
+
             if (params === "buy") {
+               setBuyLoading(false);
                navigate(`/product/purchase/${product?._id}`);
             } else {
+               setAddCartLoading(false);
                navigate('/my-cart');
             }
          }
@@ -62,7 +79,7 @@ const ViewProduct = () => {
       <div className='view_product section_default'>
          <div className="container">
             {msg}
-            <ProductModel product={product} addToCartHandler={addToCartHandler}></ProductModel>
+            <ProductModel product={product} buyLoading={buyLoading} addCartLoading={addCartLoading} addToCartHandler={addToCartHandler}></ProductModel>
             <div className="row pt-5">
                <div className="col-lg-9">
                   <h5 id='rating' className='text-center py-1'>Rating And Review Of {product?.title}</h5>
