@@ -22,7 +22,7 @@ const CheckoutSingle = () => {
    const product = cart && cart?.buy_product;
 
    if (loading) return <Spinner></Spinner>
-   const selectedAddress = cart && cart?.address.find(a => a?.select_address === true); //finding selected address to checkout page
+   const selectedAddress = cart && cart?.address && cart?.address.find(a => a?.select_address === true); //finding selected address to checkout page
 
    const buyBtnHandler = async (e) => {
       e.preventDefault();
@@ -50,7 +50,7 @@ const CheckoutSingle = () => {
          discount_amount_fixed: product.discount_amount_fixed,
          discount_amount_total: product.discount_amount_total,
          seller: product.seller,
-         address: cart?.address && cart?.address,
+         address:  selectedAddress,
          payment_mode: payment_mode,
          status: "pending",
          time_pending: new Date().toLocaleString()

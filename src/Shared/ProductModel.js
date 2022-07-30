@@ -20,7 +20,7 @@ const ProductModel = ({ product, addToCartHandler, addCartLoading, buyLoading })
                   <img src={product?.image} style={{ height: "50vh" }} alt="" />
                </div>
                {
-                  (role !== "owner" && role !== "admin") && <div className="d-flex align-items-center justify-content-center py-3 mt-4">
+                  (role !== "owner" && role !== "admin" && role !== "seller") && <div className="d-flex align-items-center justify-content-center py-3 mt-4">
                      {
                         product?.cardHandler === false ?
                            <button className='addToCartBtn' disabled={product?.stock === "out" ? true : false} onClick={() => addToCartHandler(product, "toCart")}>

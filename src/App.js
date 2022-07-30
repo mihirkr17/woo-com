@@ -36,20 +36,33 @@ import SellerCheckProvider from './lib/SellerCheckProvider';
 import { useBASE_URL } from './lib/BaseUrlProvider';
 import { useAuthUser } from './lib/UserProvider';
 import { useFetch } from './Hooks/useFetch';
+import CheckOrder from './Pages/Dashboard/CheckOrder/CheckOrder';
+import useAuth from './Hooks/useAuth';
 
 // Declare Cart Context
 export const CartContext = createContext();
+
+// Declare order context
+export const OrderContext = createContext();
 
 function App() {
   const BASE_URL = useBASE_URL();
   const [query, setQuery] = useState('');
   const user = useAuthUser();
+  const { role, userInfo } = useAuth(user);
 
   // fetching cart information and data from mongodb
-  const { data : cart, loading, refetch } = useFetch(user && `${BASE_URL}my-cart-items/${user?.email}`);
+  const { data: cart, loading, refetch } = useFetch(user && `${BASE_URL}my-cart-items/${user?.email}`);
+
+
+  let url = role === "seller" ? `${BASE_URL}manage-orders?seller=${userInfo?.seller}` :
+    `${BASE_URL}manage-orders`;
+  // fetching order information and data from mongodb
+  const { data: order, loading: orderLoading, refetch: orderRefetch } = useFetch(url);
+
   return (
     // Wrapping with Cart Provider
-    <CartContext.Provider value={{ cart, loading, refetch, cartProductCount: cart?.product && (cart?.product.length || 0)}}>
+    <CartContext.Provider value={{ cart, loading, refetch, cartProductCount: cart?.product && (cart?.product.length || 0) }}>
       <NavigationBar setQuery={setQuery}></NavigationBar>
       <SearchProduct query={query} setQuery={setQuery}></SearchProduct>
       <Routes>
@@ -68,13 +81,20 @@ function App() {
         <Route path='/sell-online' element={<RequireAuth><SellOnline></SellOnline></RequireAuth>}></Route>
 
         {/* // Admin path */}
-        <Route path='/dashboard' element={<RequireOwnerAdmin><SellerCheckProvider><Dashboard></Dashboard></SellerCheckProvider> </RequireOwnerAdmin>}>
+        <Route path='/dashboard' element={<RequireOwnerAdmin>
+          <SellerCheckProvider>
+            <OrderContext.Provider value={{ order, orderLoading, orderRefetch, orderCount: order ? order.length : 0 }}>
+              <Dashboard></Dashboard>
+            </OrderContext.Provider>
+          </SellerCheckProvider>
+        </RequireOwnerAdmin>}>
           <Route index element={<RequireOwnerAdmin><MyDashboard></MyDashboard></RequireOwnerAdmin>}></Route>
           <Route path='my-profile' element={<RequireOwnerAdmin><MyProfile></MyProfile></RequireOwnerAdmin>}></Route>
           <Route path='manage-orders' element={<RequireOwnerAdmin><ManageOrders></ManageOrders></RequireOwnerAdmin>}></Route>
           <Route path='add-product' element={<RequireOwnerAdmin><AddProduct></AddProduct></RequireOwnerAdmin>}></Route>
           <Route path='manage-product' element={<RequireOwnerAdmin><ManageProduct></ManageProduct></RequireOwnerAdmin>}></Route>
           <Route path='check-seller' element={<RequireOwnerAdmin><CheckSeller></CheckSeller></RequireOwnerAdmin>}></Route>
+          <Route path='check-order' element={<RequireOwnerAdmin><CheckOrder></CheckOrder></RequireOwnerAdmin>}></Route>
 
           {/* // Only owner route */}
           <Route path='manage-users' element={<RequireOwnerAdmin><ManageUsers></ManageUsers></RequireOwnerAdmin>}>
@@ -91,4 +111,5 @@ function App() {
   );
 }
 export const useCart = () => useContext(CartContext);
+export const useOrder = () => useContext(OrderContext);
 export default App;

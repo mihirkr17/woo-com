@@ -1,25 +1,19 @@
 import React, { useState } from 'react';
 import { useMessage } from '../../Hooks/useMessage';
 import Modal from './Components/Modal/Modal';
-import { useFetch } from '../../Hooks/useFetch';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { useAuthUser } from '../../lib/UserProvider';
 import { useEffect } from 'react';
-import useAuth from '../../Hooks/useAuth';
 import OrderTable from './Components/OrderTable';
 import { useBASE_URL } from '../../lib/BaseUrlProvider';
+import { useOrder } from '../../App';
 
 const ManageOrders = () => {
    const BASE_URL = useBASE_URL();
    const user = useAuthUser();
-   const { role, userInfo } = useAuth(user);
    const { msg, setMessage } = useMessage();
+   const { order, orderRefetch, orderLoading } = useOrder();
 
-   let url = role === "admin" ? `${BASE_URL}manage-orders?seller=${userInfo?.seller}` :
-      userInfo?.isSeller ? `${BASE_URL}manage-orders?seller=${userInfo?.seller}` :
-         `${BASE_URL}manage-orders`;
-
-   const { data, refetch, loading } = useFetch(url);
    const [openModal, setOpenModal] = useState(false);
    const [pendingOrders, setPendingOrders] = useState([]);
    const [placeOrder, setPlaceOrder] = useState([]);
@@ -27,25 +21,25 @@ const ManageOrders = () => {
 
    // Filtering orders by status
    useEffect(() => {
-      if (data) {
-         setPendingOrders(data.filter(odr => odr?.orders?.status === "pending").reverse());
-         setPlaceOrder(data.filter(odr => odr?.orders?.status === "placed").reverse())
-         setShipOrder(data.filter(odr => odr?.orders?.status === "shipped").reverse());
+      if (order) {
+         setPendingOrders(order.filter(odr => odr?.orders?.status === "pending").reverse());
+         setPlaceOrder(order.filter(odr => odr?.orders?.status === "placed").reverse())
+         setShipOrder(order.filter(odr => odr?.orders?.status === "shipped").reverse());
       }
-   }, [data]);
+   }, [order]);
 
    // Cancel the order if any wrong 
    const cancelOrderHandler = async (email, orderId) => {
       if (window.confirm("Want to cancel this order ?")) {
          const response = await fetch(`${BASE_URL}api/remove-order/${user?.email}/${orderId}`, { method: "DELETE" });
          if (response.ok) await response.json();
-         refetch();
+         orderRefetch();
          setMessage(<strong className='text-success'>Order Cancelled...</strong>);
       }
    }
 
    // Update the order status by seller or admin
-   const updateOrderStatusHandler = async (userEmail, orderId, status, ownerCommission = 0, totalEarn = 0, productId, quantity) => {
+   const updateOrderStatusHandler = async (userEmail, orderId, status, ownerCommission = 0, totalEarn = 0, productId, quantity, seller) => {
 
       let confirmMsg = status === "placed" ? "Want To Placed This Order" : "Want To Shipped This Order";
       let successMsg = status === "placed" ? "Order Successfully Placed" : "Order Successfully Shipped";
@@ -58,11 +52,11 @@ const ManageOrders = () => {
             headers: {
                "content-type": "application/json"
             },
-            body: JSON.stringify({ ownerCommission, totalEarn, seller_email: user?.email, productId, quantity })
+            body: JSON.stringify({ ownerCommission, totalEarn : parseFloat(totalEarn), productId, quantity, seller })
          });
          if (response.ok) await response.json();
          setMessage(<p className='text-success'><small><strong>{successMsg}</strong></small></p>);
-         refetch();
+         orderRefetch();
       }
    }
 
@@ -79,7 +73,7 @@ const ManageOrders = () => {
                      <h6>Pending Orders ({pendingOrders.length})</h6>
                      <div className="py-1" style={{ maxHeight: "300px", overflowY: "auto" }}>
                         {
-                           loading ? <Spinner /> : pendingOrders.length > 0 ?
+                           orderLoading ? <Spinner /> : pendingOrders.length > 0 ?
                               <OrderTable
                                  orderList={pendingOrders}
                                  updateOrderStatusHandler={updateOrderStatusHandler}
@@ -95,7 +89,7 @@ const ManageOrders = () => {
                      <h6>Placed Orders ({placeOrder.length})</h6>
                      <div className="py-1" style={{ maxHeight: "300px", overflowY: "auto" }}>
                         {
-                           loading ? <Spinner /> : placeOrder.length > 0 ?
+                           orderLoading ? <Spinner /> : placeOrder.length > 0 ?
                               <OrderTable
                                  orderList={placeOrder}
                                  updateOrderStatusHandler={updateOrderStatusHandler}
@@ -111,7 +105,7 @@ const ManageOrders = () => {
                      <h6>Shipped Orders ({shipOrder.length})</h6>
                      <div className="py-1" style={{ maxHeight: "300px", overflowY: "auto" }}>
                         {
-                           loading ? <Spinner /> : shipOrder.length > 0 ?
+                           orderLoading ? <Spinner /> : shipOrder.length > 0 ?
                               <OrderTable
                                  orderList={shipOrder}
                                  setOpenModal={setOpenModal}

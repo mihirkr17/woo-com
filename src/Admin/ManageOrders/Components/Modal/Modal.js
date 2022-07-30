@@ -2,7 +2,6 @@ import React from 'react';
 import "./Modal.css";
 
 const Modal = ({ data, closeModal }) => {
-   console.log(data);
    const { orderId, user_email, payment_mode, image, price_fixed, status, quantity, time_pending, address, seller, discount, discount_amount_fixed, price, price_total_amount } = data;
    return (
       <div className='modal_c' style={data ? { display: "block" } : { display: "none" }}>

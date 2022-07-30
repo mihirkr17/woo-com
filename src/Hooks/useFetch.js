@@ -15,6 +15,11 @@ export const useFetch = (url) => {
          try {
             setLoading(true);
             const response = await fetch(url, { signal: controller?.signal });
+
+            if (response.status === 400) {
+               window.location.reload();
+            }
+            
             if (response.status >= 200 && response.status <= 299) {
                setData(await response.json());
             }
