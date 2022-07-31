@@ -1,24 +1,31 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useFetch } from '../../../Hooks/useFetch';
+import { useBASE_URL } from '../../../lib/BaseUrlProvider';
 import Product from '../../../Shared/Product';
 
-const RecentProducts = ({ data }) => {
+const RecommendedProducts = () => {
+   const BASE_URL = useBASE_URL();
+   const { data, loading } = useFetch(`${BASE_URL}api/products/recommended`);
+
    return (
-      <div className="section_default my-3">
-         <div className='container'>
+      <div className='section_default'>
+         <div className="container">
             <div className="d-flex justify-content-between py-2">
-               <h5 className="py-2">Recent Products</h5>
+               <h5 className="py-2">Recommended For You</h5>
                <Link to={`/product/recent/all`} className='btn btn-sm'>See More</Link>
             </div>
             <div className="row">
                {
-                  data && data.map((product, index) => {
+                  data && data.sort((a, b) => {
+                     return b["top_sell"] - a["top_sell"]
+                  }).map((product, index) => {
                      return (
                         <div className="col-lg-2" key={index}>
                            <Product product={product}></Product>
                         </div>
                      )
-                  }).reverse().slice(0, 6)
+                  }).slice(0, 6)
                }
             </div>
          </div>
@@ -26,4 +33,4 @@ const RecentProducts = ({ data }) => {
    );
 };
 
-export default RecentProducts;
+export default RecommendedProducts;

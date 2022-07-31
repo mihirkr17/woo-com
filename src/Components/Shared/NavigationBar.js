@@ -14,9 +14,9 @@ const NavigationBar = ({ setQuery }) => {
    const { cartProductCount } = useCart();
 
    return (
-      <Navbar bg="light" sticky='top' expand="lg">
+      <Navbar sticky='top' className='navigation_bar' expand="lg">
          <Container>
-            <Navbar.Brand as={NavLink} to="/">Woo-Com</Navbar.Brand>
+            <Navbar.Brand className="nav_link" as={NavLink} to="/">Woo-Com</Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Nav.Item><input type="search" className='form-control form-control-sm' placeholder='Search product' onChange={(e) => setQuery(e.target.value)} /></Nav.Item>
             <Navbar.Collapse id="basic-navbar-nav">

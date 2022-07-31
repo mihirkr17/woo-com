@@ -19,6 +19,7 @@ const AddProduct = () => {
    const [inputValue, setInputValue] = useState({ price: "", discount: "" });
    const newDate = new Date();
    const { price_fixed, discount_amount_fixed } = usePrice(inputValue.price, inputValue.discount);
+   const [category, setCategory] = useState("");
 
    const handleInput = (e) => {
       const values = e.target.value;
@@ -31,14 +32,14 @@ const AddProduct = () => {
       let title = e.target.title.value;
       let image = e.target.image.value;
       let description = desc;
-      let category = e.target.category.value;
+      let sub_category = e.target.sub_category.value;
       let price = inputValue.price;
       let discount = inputValue.discount;
       let seller = userInfo?.seller;
       let rating = [];
       let available = e.target.available.value;
 
-      if (title === "" || image === "" || description === "" || category === "" || price === "" || discount === "") {
+      if (title === "" || image === "" || description === "" || category === "" || sub_category === "" || price === "" || discount === "") {
          setMessage(<p className='text-danger'><small><strong>Required All Input Fields !</strong></small></p>);
       } else {
          const response = await fetch(`${BASE_URL}add-product`, {
@@ -49,6 +50,7 @@ const AddProduct = () => {
             body: JSON.stringify({
                title, image, description,
                category, price: parseFloat(price),
+               sub_category,
                price_fixed,
                discount: parseFloat(discount),
                discount_amount_fixed,
@@ -67,11 +69,15 @@ const AddProduct = () => {
       }
    }
 
+   const categories = ["fashion", "electronics"];
+   const fashionCategories = ["men's clothing", "women's clothing", "jewelry"];
+   const electronicCategories = ["mobile parts", "laptop parts", "desktop parts"];
+   const subCategories = category === "fashion" ? fashionCategories : category === "electronics" ? electronicCategories : []
+
    return (
       <div className='section_default'>
          <div className="container">
             <h5 className='text-center pb-4'>Add Product</h5>
-
             <Form onSubmit={addProductHandler}>
                <Row className="mb-3">
                   <Form.Group as={Col} controlId="formGridTitle">
@@ -84,7 +90,6 @@ const AddProduct = () => {
                      <Form.Control name="image" type="text" placeholder="Image Link" />
                   </Form.Group>
                </Row>
-
 
                <Form.Group>
                   <Form.Label>Product Description</Form.Label>
@@ -99,14 +104,31 @@ const AddProduct = () => {
 
 
                <Row className="my-3">
+
                   <Form.Group controlId="formGridCategory">
                      <Form.Label>Product Category</Form.Label>
-                     <Form.Select name='category'>
-                        <option>Choose...</option>
-                        <option value="men's clothing">men's clothing</option>
-                        <option value="women's clothing">women's clothing</option>
-                        <option value="jewelry">jewelry</option>
-                        <option value="electronics">electronics</option>
+                     <Form.Select name='category' onChange={(e) => setCategory(e.target.value)}>
+                        <option value="">Choose Category...</option>
+                        {
+                           categories && categories.map((items, index) => {
+                              return (
+                                 <option value={items} key={index}>{items.toUpperCase()}</option>
+                              )
+                           })
+                        }
+                     </Form.Select>
+                  </Form.Group>
+
+                  <Form.Group controlId="formGridSubCategory">
+                     <Form.Label>Product Sub Category</Form.Label>
+                     <Form.Select name='sub_category'>
+                        {
+                           subCategories && subCategories.map((items, index) => {
+                              return (
+                                 <option value={items} key={index}>{items.toUpperCase()}</option>
+                              )
+                           })
+                        }
                      </Form.Select>
                   </Form.Group>
 

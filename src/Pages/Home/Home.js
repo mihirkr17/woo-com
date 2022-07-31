@@ -7,6 +7,7 @@ import Spinner from '../../Components/Shared/Spinner/Spinner';
 import CategoryHeader from './Components/CategoryHeader';
 import RecentProducts from './Components/RecentProducts';
 import { useBASE_URL } from '../../lib/BaseUrlProvider';
+import RecommendedProducts from './Components/RecommendedProducts';
 
 const Home = () => {
    const BASE_URL = useBASE_URL();
@@ -16,9 +17,10 @@ const Home = () => {
 
    return (
       <section className='home__section'>
-         <CategoryHeader data={data}></CategoryHeader>
+         <CategoryHeader thisFor={"home"}></CategoryHeader>
          <Banner data={data}></Banner>
          <RecentProducts data={data}></RecentProducts>
+         <RecommendedProducts></RecommendedProducts>
          <Container>
             <HomeStore data={data}></HomeStore>
          </Container>

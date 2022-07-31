@@ -28,7 +28,6 @@ const ManageProduct = () => {
    const [filterCategory, setFilterCategory] = useState("all");
    const [openModal, setOpenModal] = useState(false);
    const [productDetailsModal, setProductDetailsModal] = useState(false);
-   console.log(counter);
 
    useEffect(() => {
       let url;
