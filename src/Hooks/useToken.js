@@ -18,6 +18,10 @@ export const useToken = (user) => {
                   signal: controller.signal
                });
 
+               if (response.status === 400) {
+                  return window.location.reload();
+               }
+
                if (response.ok) {
                   const resData = await response.json();
                   setToken(resData);
