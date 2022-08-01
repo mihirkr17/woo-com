@@ -6,12 +6,13 @@ import UpdateForm from './Components/UpdateForm';
 import { useAuthUser } from '../../../lib/UserProvider';
 import { useBASE_URL } from '../../../lib/BaseUrlProvider';
 import useAuth from '../../../Hooks/useAuth';
+import Spinner from '../../../Components/Shared/Spinner/Spinner';
 
 
 const MyProfile = () => {
    const BASE_URL = useBASE_URL();
    const user = useAuthUser();
-   const { role, userInfo } = useAuth(user);
+   const { role, userInfo, authLoading, authRefetch } = useAuth();
    const [openEdit, setOpenEdit] = useState(false);
    const { data, refetch } = useFetch(`${BASE_URL}my-profile/${user?.email}`);
    const [country, setCountry] = useState(data?.country);
@@ -47,6 +48,7 @@ const MyProfile = () => {
          setActionLoading(false);
          await response.json();
          refetch();
+         authRefetch();
       } else {
          setActionLoading(false);
       }
@@ -69,7 +71,7 @@ const MyProfile = () => {
       return await apiReq(inputValues);
    }
 
-
+   if (authLoading) return <Spinner></Spinner>;
    return (
       <div className='section_default'>
          <div className="container">
@@ -137,38 +139,40 @@ const MyProfile = () => {
                               />
                            </td>
                         </tr>
-                        {
+                        {/* {
                            age && <tr>
                               <th>Age</th>
                               <td>{age || 0}</td>
                            </tr>
-                        }
+                        } */}
 
                      </tbody>
                   </table>
                </div>
-               <div className="col-12">
-                  <div className="card">
-                     <div className="card-body">
-                        <h6>Seller Information :</h6>
-                        <article>
-                           <small>
-                              <strong>Display Name : </strong> {userInfo?.seller} <span className="text-muted">(Not change able)</span> <br />
-                           </small>
-                           <address>
-                              <small><strong>Village : </strong>{userInfo?.seller_address?.seller_village}</small><br />
-                              <small><strong>District : </strong>{userInfo?.seller_address?.seller_district}</small><br />
-                              <small><strong>Country : </strong>{userInfo?.seller_address?.seller_country}</small><br />
-                              <small><strong>Zip Code : </strong>{userInfo?.seller_address?.seller_zip}</small><br />
-                              <small><strong>Registered Phone : </strong>{userInfo?.seller_phone}</small> <br />
-                           </address>
-                           <small><strong>Total Product : </strong>{(myProductCount && myProductCount.count) || 0}</small><br />
-                           <small><strong>Total Earn : </strong>{userInfo?.total_earn || 0}&nbsp;$</small><br />
-                           <small><strong>Total Sold Product : </strong>{userInfo?.success_sell || 0}&nbsp;Items</small>
-                        </article>
+               {
+                  role === "seller" && <div className="col-12">
+                     <div className="card">
+                        <div className="card-body">
+                           <h6>Seller Information :</h6>
+                           <article>
+                              <small>
+                                 <strong>Display Name : </strong> {userInfo?.seller} <span className="text-muted">(Not change able)</span> <br />
+                              </small>
+                              <address>
+                                 <small><strong>Village : </strong>{userInfo?.seller_address?.seller_village}</small><br />
+                                 <small><strong>District : </strong>{userInfo?.seller_address?.seller_district}</small><br />
+                                 <small><strong>Country : </strong>{userInfo?.seller_address?.seller_country}</small><br />
+                                 <small><strong>Zip Code : </strong>{userInfo?.seller_address?.seller_zip}</small><br />
+                                 <small><strong>Registered Phone : </strong>{userInfo?.seller_phone}</small> <br />
+                              </address>
+                              <small><strong>Total Product : </strong>{(myProductCount && myProductCount.count) || 0}</small><br />
+                              <small><strong>Total Earn : </strong>{userInfo?.total_earn || 0}&nbsp;$</small><br />
+                              <small><strong>Total Sold Product : </strong>{userInfo?.success_sell || 0}&nbsp;Items</small>
+                           </article>
+                        </div>
                      </div>
                   </div>
-               </div>
+               }
             </div>
          </div>
       </div>

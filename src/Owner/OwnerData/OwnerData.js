@@ -5,7 +5,7 @@ import { useAuthUser } from '../../lib/UserProvider';
 
 const OwnerData = () => {
    const user = useAuthUser();
-   const { role } = useAuth(user);
+   const { role } = useAuth();
    const navigate = useNavigate();
 
    useEffect(() => {

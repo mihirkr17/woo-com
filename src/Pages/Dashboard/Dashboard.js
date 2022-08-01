@@ -5,13 +5,12 @@ import useAuth from '../../Hooks/useAuth';
 import { useEffect } from 'react';
 import "./Dashboard.css";
 import { useState } from 'react';
-import { useAuthUser, useSignOut } from '../../lib/UserProvider';
+import { useSignOut } from '../../lib/UserProvider';
 import { useSellerChecker } from '../../lib/SellerCheckProvider';
 import { useOrder } from '../../App';
 
 const Dashboard = () => {
-   const user = useAuthUser();
-   const { role, userInfo } = useAuth(user);
+   const { role } = useAuth();
    const [responsive, setResponsive] = useState(window.innerWidth);
    const location = useLocation();
    const [act, setAct] = useState("");

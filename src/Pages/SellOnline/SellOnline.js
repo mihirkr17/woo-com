@@ -8,7 +8,7 @@ import { useAuthUser } from '../../lib/UserProvider';
 const SellOnline = () => {
    const BASE_URL = useBASE_URL();
    const user = useAuthUser();
-   const { userInfo, refetch } = useAuth(user);
+   const { userInfo, refetch } = useAuth();
    const { msg, setMessage } = useMessage();
    const [categories, setCategories] = useState({ category: [] });
 

@@ -27,11 +27,14 @@ const CheckSeller = () => {
             }
          });
 
+         const resData = await response.json();
+
          if (response.ok) {
-            const resData = await response.json();
             resData && refetch();
             setModals(false);
-            dispatch({type: "INIT_CHECKER", payload: { data, slLength: data.length}});
+            dispatch({ type: "INIT_CHECKER", payload: { data, slLength: data.length } });
+         } else {
+            console.log(resData?.message);
          }
       }
    }

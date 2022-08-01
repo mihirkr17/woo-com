@@ -52,7 +52,7 @@ function App() {
   const BASE_URL = useBASE_URL();
   const [query, setQuery] = useState('');
   const user = useAuthUser();
-  const { role, userInfo } = useAuth(user);
+  const { role, userInfo } = useAuth();
 
   // fetching product
   const { data: products, loading: productLoading } = useFetch(`${BASE_URL}products/`);

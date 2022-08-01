@@ -7,25 +7,28 @@ export const useToken = (user) => {
 
    useEffect(() => {
       const controller = new AbortController();
-      const email = user?.user?.email;
+    
       (async () => {
-         const url = `${BASE_URL}user/${email}`;
-
          try {
-            if (email) {
+            if (user) {
+               const email = user?.user?.email;
+               const url = `${BASE_URL}api/sign-user/${email}`;
                const response = await fetch(url, {
                   method: "PUT",
                   signal: controller.signal
                });
+
+               const resData = await response.json();
 
                if (response.status === 400) {
                   return window.location.reload();
                }
 
                if (response.ok) {
-                  const resData = await response.json();
                   setToken(resData);
-                  document.cookie = `accessToken=${resData?.token}`;
+                  if (resData && resData?.token) {
+                     document.cookie = `accessToken=${resData?.token}`;
+                  }
                }
             }
          } catch (error) {

@@ -3,15 +3,13 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import BtnSpinner from '../Components/Shared/BtnSpinner/BtnSpinner';
 import useAuth from '../Hooks/useAuth';
-import { useAuthUser } from '../lib/UserProvider';
 import { averageRating } from "./averageRating";
 import { faCartShopping } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const ProductModel = ({ product, addToCartHandler, addCartLoading, buyLoading }) => {
    const navigate = useNavigate();
-   const user = useAuthUser();
-   const { role } = useAuth(user);
+   const { role } = useAuth();
    return (
       <div className="row mb-5">
          <div className="col-lg-5 pb-3">

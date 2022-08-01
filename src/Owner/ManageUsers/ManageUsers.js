@@ -9,7 +9,7 @@ import "./ManageUsers.css";
 
 const ManageUsers = () => {
    const user = useAuthUser();
-   const { role } = useAuth(user);
+   const { role } = useAuth();
    const navigate = useNavigate();
    const location = useLocation();
    const [act, setAct] = useState("");

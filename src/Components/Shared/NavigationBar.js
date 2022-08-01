@@ -10,7 +10,7 @@ import "./NavigationBar.css";
 
 const NavigationBar = ({ setQuery }) => {
    const user = useAuthUser();
-   const { role, userInfo } = useAuth(user);
+   const { role, userInfo } = useAuth();
    const { cartProductCount } = useCart();
 
    return (

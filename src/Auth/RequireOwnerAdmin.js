@@ -7,7 +7,7 @@ import { useAuthUser } from '../lib/UserProvider';
 
 const RequireOwnerAdmin = ({ children }) => {
    const user = useAuthUser();
-   const { role, userInfo } = useAuth(user);
+   const { role } = useAuth();
    const location = useLocation();
 
    if (!user) {

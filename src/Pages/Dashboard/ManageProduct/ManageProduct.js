@@ -3,7 +3,6 @@ import Spinner from '../../../Components/Shared/Spinner/Spinner';
 import useAuth from '../../../Hooks/useAuth';
 import { useFetch } from '../../../Hooks/useFetch';
 import { useBASE_URL } from '../../../lib/BaseUrlProvider';
-import { useAuthUser } from '../../../lib/UserProvider';
 import FilterOption from '../../../Shared/FilterOption';
 import { useMessage } from '../../../Hooks/useMessage';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -15,8 +14,7 @@ import { Table } from 'react-bootstrap';
 const ManageProduct = () => {
    const { msg, setMessage } = useMessage();
    const BASE_URL = useBASE_URL();
-   const user = useAuthUser();
-   const { role, userInfo } = useAuth(user);
+   const { role, userInfo } = useAuth();
    const [items, setItems] = useState(0);
    const [page, setPage] = useState(0);
    const [url, setUrl] = useState("");

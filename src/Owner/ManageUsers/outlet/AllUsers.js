@@ -5,13 +5,11 @@ import useAuth from '../../../Hooks/useAuth';
 import { useFetch } from '../../../Hooks/useFetch';
 import { useJWT } from '../../../Hooks/useJWT';
 import { useBASE_URL } from '../../../lib/BaseUrlProvider';
-import { useAuthUser } from '../../../lib/UserProvider';
 
 const AllUsers = () => {
    const BASE_URL = useBASE_URL();
    const token = useJWT();
-   const user = useAuthUser();
-   const { role } = useAuth(user);
+   const { role } = useAuth();
    const { data, loading, refetch } = useFetch(`${BASE_URL}api/manage-user?uTyp=user`);
 
    if (loading) return <Spinner></Spinner>;

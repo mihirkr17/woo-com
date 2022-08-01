@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Button, Col, Form, Row } from 'react-bootstrap';
 import "./AddProduct.css";
 import { useMessage } from "../../../Hooks/useMessage";
-import { useAuthUser } from "../../../lib/UserProvider";
 import { useBASE_URL } from '../../../lib/BaseUrlProvider';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
@@ -12,8 +11,7 @@ import useAuth from '../../../Hooks/useAuth';
 
 const AddProduct = () => {
    const BASE_URL = useBASE_URL();
-   const user = useAuthUser();
-   const { userInfo } = useAuth(user);
+   const { userInfo } = useAuth();
    const [desc, setDescription] = useState("Hello CKEditor V5");
    const { msg, setMessage } = useMessage();
    const [inputValue, setInputValue] = useState({ price: "", discount: "" });
