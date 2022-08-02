@@ -15,12 +15,12 @@ import { useState } from 'react';
 
 const ViewProduct = () => {
    const BASE_URL = useBASE_URL();
-   const { productId } = useParams();
+   const { product_slug } = useParams();
    const user = useAuthUser();
    const { refetch } = useCart();
-   const { data: product, loading, refetch: productRefetch } = useFetch(`${BASE_URL}api/fetch-single-product/${productId}/${user?.email}`);
-   const { data: rating } = useFetch(`${BASE_URL}product-review/${productId}`);
-   const { data: productByCategory } = useFetch(`${BASE_URL}product-category/${product?.category}`);
+   const { data: product, loading, refetch: productRefetch } = useFetch(`${BASE_URL}api/fetch-single-product/${product_slug}/${user?.email}`);
+   const { data: rating } = useFetch(`${BASE_URL}product-review/${product?._id}`);
+   const { data: productByCategory } = useFetch(`${BASE_URL}api/product-by-category?sub_category=${product?.sub_category}`);
    const navigate = useNavigate();
    const { msg, setMessage } = useMessage();
    const [addCartLoading, setAddCartLoading] = useState(false);

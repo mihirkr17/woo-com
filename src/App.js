@@ -38,6 +38,7 @@ import { useAuthUser } from './lib/UserProvider';
 import { useFetch } from './Hooks/useFetch';
 import CheckOrder from './Pages/Dashboard/CheckOrder/CheckOrder';
 import useAuth from './Hooks/useAuth';
+import ProductSubCategory from './Pages/ProductSubCategory/ProductSubCategory';
 
 // Declare Product Context
 export const ProductContext = createContext();
@@ -76,8 +77,11 @@ function App() {
           <Route path='/blog' element={<Blog></Blog>} ></Route>
           <Route path='/login' element={<Login></Login>}></Route>
           <Route path='/register' element={<Register></Register>}></Route>
-          <Route path='/product/:productId' element={<ViewProduct></ViewProduct>}></Route>
-          <Route path='/product/category/:category/:sub_category' element={<ProductCategory></ProductCategory>}></Route>
+
+          <Route path='/:category/:sub_category/:product_slug' element={<ViewProduct></ViewProduct>}></Route>
+          <Route path='/:category' element={<ProductCategory></ProductCategory>}></Route>
+          <Route path='/:category/:sub_category' element={<ProductSubCategory></ProductSubCategory>}></Route>
+
           <Route path='/product/recent/all' element={<AllRecentProduct></AllRecentProduct>}></Route>
           <Route path='/my-cart' element={<RequireAuth><Cart></Cart></RequireAuth>}></Route>
           <Route path='/product/purchase/:productId' element={<RequireAuth><Purchase></Purchase></RequireAuth>}></Route>

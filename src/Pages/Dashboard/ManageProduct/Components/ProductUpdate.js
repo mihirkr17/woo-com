@@ -1,6 +1,7 @@
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import React, { useState } from 'react';
+import { useEffect } from 'react';
 import { Button, Col, Form, Row } from 'react-bootstrap';
 import { usePrice } from '../../../../Hooks/usePrice';
 import { useBASE_URL } from '../../../../lib/BaseUrlProvider';
@@ -11,11 +12,21 @@ const ProductUpdate = ({ data, refetch, modalClose, setMessage }) => {
    const [inputValue, setInputValue] = useState({ price: data?.price, discount: data?.discount });
    const newDate = new Date();
    const { price_fixed, discount_amount_fixed } = usePrice(inputValue.price, inputValue.discount);
+   const [category, setCategory] = useState(data?.category);
+   const [categories, setCategories] = useState([]);
+   const [subCategories, setSubCategories] = useState([]);
 
    const handleInput = (e) => {
       const values = e.target.value;
       setInputValue({ ...inputValue, [e.target.name]: values });
    }
+
+   const slugMaker = (string) => {
+      return string.toLowerCase()
+         .replace(/ /g, '-')
+         .replace(/[^\w-]+/g, '');
+   }
+
 
    const updateProductHandler = async (e) => {
       e.preventDefault();
@@ -23,10 +34,12 @@ const ProductUpdate = ({ data, refetch, modalClose, setMessage }) => {
       let title = e.target.title.value;
       let image = e.target.image.value;
       let description = desc;
-      let category = e.target.category.value;
+      let sub_category = e.target.sub_category.value;
       let price = inputValue.price;
       let discount = inputValue.discount;
       let available = e.target.available.value;
+      let slug = slugMaker(title);
+      let brand = e.target.brand.value;
 
       available = available === "" ? 0 : available;
 
@@ -40,8 +53,8 @@ const ProductUpdate = ({ data, refetch, modalClose, setMessage }) => {
                "content-type": "application/json"
             },
             body: JSON.stringify({
-               title, image, description,
-               category, price: parseFloat(price),
+               title, slug, brand, image, description,
+               category, sub_category, price: parseFloat(price),
                price_fixed,
                discount: parseFloat(discount),
                discount_amount_fixed,
@@ -58,6 +71,17 @@ const ProductUpdate = ({ data, refetch, modalClose, setMessage }) => {
          }
       }
    }
+
+   useEffect(() => {
+      const categories = ["fashion", "electronics"];
+      const fashionCategories = ["men's-clothing", "women's-clothing", "jewelry"];
+      const electronicCategories = ["mobile-parts", "laptop-parts", "desktop-parts"];
+      const subCategories = category && data?.category === "fashion" ? fashionCategories : category && data?.category === "electronics" ? electronicCategories : []
+      setCategories(categories);
+      setSubCategories(subCategories);
+   }, [category, data?.category]);
+
+
 
    return (
 
@@ -89,14 +113,39 @@ const ProductUpdate = ({ data, refetch, modalClose, setMessage }) => {
                </Form.Group>
 
                <Row className="my-3">
-                  <Form.Group controlId="formGridCategory">
+                  <Form.Group as={Col} controlId="formGridBrand">
+                     <Form.Label>Product Brand</Form.Label>
+                     <Form.Control name="brand" type="text" defaultValue={data?.brand && data?.brand} placeholder="Brand Name..." key={data?.brand && data?.brand} />
+                  </Form.Group>
+               </Row>
+
+               <Row className="my-3">
+
+                  <Form.Group as={Col} controlId="formGridCategory">
                      <Form.Label>Product Category</Form.Label>
-                     <Form.Select name='category'>
-                        <option value={data?.category}>{data?.category}</option>
-                        <option value="men's clothing">men's clothing</option>
-                        <option value="women's clothing">women's clothing</option>
-                        <option value="jewelry">jewelry</option>
-                        <option value="electronics">electronics</option>
+                     <Form.Select name='category' onChange={(e) => setCategory(e.target.value)}>
+                        <option value={data?.category && data?.category}>{data?.category && data?.category.toUpperCase()}</option>
+                        {
+                           categories && categories.map((items, index) => {
+                              return (
+                                 <option value={items} key={index}>{items.toUpperCase()}</option>
+                              )
+                           })
+                        }
+                     </Form.Select>
+                  </Form.Group>
+
+                  <Form.Group as={Col} controlId="formGridSubCategory">
+                     <Form.Label>Product Sub Category</Form.Label>
+                     <Form.Select name='sub_category'>
+                        {data?.sub_category && <option value={data?.sub_category}>{data?.sub_category.toUpperCase()}</option>}
+                        {
+                           subCategories && subCategories.map((items, index) => {
+                              return (
+                                 <option value={items} key={index}>{items.toUpperCase()}</option>
+                              )
+                           })
+                        }
                      </Form.Select>
                   </Form.Group>
 

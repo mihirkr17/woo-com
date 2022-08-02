@@ -3,14 +3,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 import { Button, Modal } from 'react-bootstrap';
 import Spinner from '../../../Components/Shared/Spinner/Spinner';
-import { useJWT } from '../../../Hooks/useJWT';
 import { useBASE_URL } from '../../../lib/BaseUrlProvider';
 import { useSellerChecker } from '../../../lib/SellerCheckProvider';
 
 const CheckSeller = () => {
    const BASE_URL = useBASE_URL();
    const [modals, setModals] = useState(false);
-   const token = useJWT();
+   const token = new URLSearchParams(document.cookie.replaceAll("; ", "&")).get('accessToken');;
    const { state, dispatch, refetch, loading } = useSellerChecker();
    const data = state?.data;
 

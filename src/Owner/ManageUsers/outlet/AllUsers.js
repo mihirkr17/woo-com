@@ -3,12 +3,11 @@ import { Table } from 'react-bootstrap';
 import Spinner from '../../../Components/Shared/Spinner/Spinner';
 import useAuth from '../../../Hooks/useAuth';
 import { useFetch } from '../../../Hooks/useFetch';
-import { useJWT } from '../../../Hooks/useJWT';
 import { useBASE_URL } from '../../../lib/BaseUrlProvider';
 
 const AllUsers = () => {
    const BASE_URL = useBASE_URL();
-   const token = useJWT();
+   const token = new URLSearchParams(document.cookie.replaceAll("; ", "&")).get('accessToken');;
    const { role } = useAuth();
    const { data, loading, refetch } = useFetch(`${BASE_URL}api/manage-user?uTyp=user`);
 

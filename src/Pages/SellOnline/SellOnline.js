@@ -131,13 +131,13 @@ const SellOnline = () => {
                            <div className="row">
                               <div className="col-12">
                                  <label htmlFor='men_cloth'>
-                                    <input type="checkbox" className='me-3' name="men_cloth" id="men_cloth" value="men's clothing" onChange={handleChange} />
+                                    <input type="checkbox" className='me-3' name="men_cloth" id="men_cloth" value="men's-clothing" onChange={handleChange} />
                                     Men Clothing
                                  </label>
                               </div>
                               <div className="col-12">
                                  <label htmlFor="women_cloth">
-                                    <input type="checkbox" className='me-3' name="women_cloth" id="women_cloth" value="women's clothing" onChange={handleChange} />
+                                    <input type="checkbox" className='me-3' name="women_cloth" id="women_cloth" value="women's-clothing" onChange={handleChange} />
                                     Women Clothing
                                  </label>
                               </div>

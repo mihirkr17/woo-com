@@ -6,10 +6,12 @@ import useAuth from '../Hooks/useAuth';
 import { averageRating } from "./averageRating";
 import { faCartShopping } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Breadcrumbs from './Breadcrumbs';
 
 const ProductModel = ({ product, addToCartHandler, addCartLoading, buyLoading }) => {
    const navigate = useNavigate();
    const { role } = useAuth();
+
    return (
       <div className="row mb-5">
          <div className="col-lg-5 pb-3">
@@ -22,7 +24,7 @@ const ProductModel = ({ product, addToCartHandler, addCartLoading, buyLoading })
                      {
                         product?.cardHandler === false ?
                            <button className='addToCartBtn' disabled={product?.stock === "out" ? true : false} onClick={() => addToCartHandler(product, "toCart")}>
-                              {addCartLoading ? <BtnSpinner text={"Adding..."}></BtnSpinner> : <><FontAwesomeIcon icon={faCartShopping}/> Add To Cart</>}
+                              {addCartLoading ? <BtnSpinner text={"Adding..."}></BtnSpinner> : <><FontAwesomeIcon icon={faCartShopping} /> Add To Cart</>}
                            </button> :
                            <button className='addToCartBtn' onClick={() => navigate('/my-cart')}>
                               Go To Cart
@@ -30,7 +32,7 @@ const ProductModel = ({ product, addToCartHandler, addCartLoading, buyLoading })
                      }
 
                      <button className='ms-4 buyBtn' disabled={product?.stock === "out" ? true : false} onClick={() => addToCartHandler(product, "buy")}>
-                        {buyLoading ? <BtnSpinner text={"Buying..."}></BtnSpinner> :  <> Buy Now</>}
+                        {buyLoading ? <BtnSpinner text={"Buying..."}></BtnSpinner> : <> Buy Now</>}
                      </button>
                   </div>
                }
@@ -39,6 +41,7 @@ const ProductModel = ({ product, addToCartHandler, addCartLoading, buyLoading })
          </div>
          <div className="col-lg-7 pb-3">
             <article className="product_description">
+               <Breadcrumbs></Breadcrumbs>
                <strong className="badge bg-primary">
                   {product?.category}
                </strong>

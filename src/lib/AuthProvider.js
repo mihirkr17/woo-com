@@ -17,16 +17,16 @@ const AuthProvider = ({ children }) => {
    const [err, setErr] = useState();
    const navigate = useNavigate();
    const [ref, setRef] = useState(false);
+   const cookieObj = new URLSearchParams(document.cookie.replaceAll("; ", "&"));
+   const token = cookieObj.get('accessToken');
 
    let authRefetch;
    authRefetch = () => setRef(e => !e);
 
    useEffect(() => {
       const controller = new AbortController();
-      (async () => {
+      token && (async () => {
          try {
-            const cookieObj = new URLSearchParams(document.cookie.replaceAll("; ", "&"));
-            const token = cookieObj.get('accessToken');
             setAuthLoading(true);
 
             if (user && token) {
@@ -41,10 +41,12 @@ const AuthProvider = ({ children }) => {
 
                const data = await response.json();
 
+               console.log(data?.message, token);
+
                if (response.status === 401) {
                   document.cookie = 'accessToken=""; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;'
                   signOut(auth);
-                  window.location.reload();
+                  // window.location.reload();
                }
 
                if (response.ok) {
@@ -72,7 +74,7 @@ const AuthProvider = ({ children }) => {
 
       return () => controller?.abort();
 
-   }, [user, navigate, BASE_URL, ref]);
+   }, [token, user, navigate, BASE_URL, ref]);
 
    return (
       <AuthContext.Provider value={{ role, authLoading, err, userInfo, authRefetch }}>

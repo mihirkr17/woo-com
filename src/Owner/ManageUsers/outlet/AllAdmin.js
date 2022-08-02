@@ -2,13 +2,12 @@ import React from 'react';
 import { Table } from 'react-bootstrap';
 import Spinner from '../../../Components/Shared/Spinner/Spinner';
 import { useFetch } from '../../../Hooks/useFetch';
-import { useJWT } from '../../../Hooks/useJWT';
 import { useBASE_URL } from '../../../lib/BaseUrlProvider';
 
 
 const AllAdmin = () => {
    const BASE_URL = useBASE_URL();
-   const token = useJWT();
+   const token = new URLSearchParams(document.cookie.replaceAll("; ", "&")).get('accessToken');;
    const { data, loading, refetch } = useFetch(`${BASE_URL}api/manage-user?uTyp=admin`);
    if (loading) return <Spinner></Spinner>;
 

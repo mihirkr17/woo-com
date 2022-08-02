@@ -11,8 +11,8 @@ const CategoryHeader = ({ thisFor }) => {
    const [category, setCategory] = useState([]);
 
    useEffect(() => {
-      const fashionSubCategory = ["men's clothing", "women's clothing", "jewelry"];
-      const electronicSubCategories = ["mobile parts", "laptop parts", "desktop parts"];
+      const fashionSubCategory = ["men's-clothing", "women's-clothing", "jewelry"];
+      const electronicSubCategories = ["mobile-parts", "laptop-parts", "desktop-parts"];
       let pp = (sCategory === "electronics") ? electronicSubCategories : (sCategory === "fashion") ? fashionSubCategory : [];
       setCategory(pp);
    }, [sCategory]);

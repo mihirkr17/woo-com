@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import Modal from '../../../Admin/ManageOrders/Components/Modal/Modal';
 import { useOrder } from '../../../App';
-import { useJWT } from '../../../Hooks/useJWT';
 import { useBASE_URL } from '../../../lib/BaseUrlProvider';
 
 const CheckOrder = () => {
    const BASE_URL = useBASE_URL();
    const { order, orderRefetch } = useOrder();
-   const token = useJWT();
+   const token = new URLSearchParams(document.cookie.replaceAll("; ", "&")).get('accessToken');;
    const [openModal, setOpenModal] = useState(false);
 
    const orderDispatchHandler = async (orderId, user_email) => {

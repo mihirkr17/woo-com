@@ -10,9 +10,11 @@ export const UserContext = createContext();
 
 const UserProvider = ({ children }) => {
    const [user, loading] = useAuthState(auth);
+
    if (loading) {
       return <Spinner></Spinner>;
    }
+
    return (
       <UserContext.Provider value={user}>
          {children}
@@ -21,6 +23,9 @@ const UserProvider = ({ children }) => {
 };
 
 export const useAuthUser = () => useContext(UserContext);
-export const useSignOut = () => signOut(auth);
+export const useSignOut = () => {
+   document.cookie = 'accessToken=""; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+   return signOut(auth);
+}
 
 export default UserProvider;

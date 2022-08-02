@@ -24,6 +24,12 @@ const AddProduct = () => {
       setInputValue({ ...inputValue, [e.target.name]: values });
    }
 
+   const slugMaker = (string) => {
+      return string.toLowerCase()
+         .replace(/ /g, '-')
+         .replace(/[^\w-]+/g, '');
+   }
+
    const addProductHandler = async (e) => {
       e.preventDefault();
 
@@ -36,8 +42,11 @@ const AddProduct = () => {
       let seller = userInfo?.seller;
       let rating = [];
       let available = e.target.available.value;
+      let brand = e.target.brand.value;
 
-      if (title === "" || image === "" || description === "" || category === "" || sub_category === "" || price === "" || discount === "") {
+      let slug = slugMaker(title);
+
+      if (title === "" || image === "" || description === "" || category === "" || sub_category === "" || price === "" || discount === "" || brand === "") {
          setMessage(<p className='text-danger'><small><strong>Required All Input Fields !</strong></small></p>);
       } else {
          const response = await fetch(`${BASE_URL}add-product`, {
@@ -46,7 +55,7 @@ const AddProduct = () => {
                "content-type": "application/json"
             },
             body: JSON.stringify({
-               title, image, description,
+               title, slug, brand, image, description,
                category, price: parseFloat(price),
                sub_category,
                price_fixed,
@@ -68,8 +77,8 @@ const AddProduct = () => {
    }
 
    const categories = ["fashion", "electronics"];
-   const fashionCategories = ["men's clothing", "women's clothing", "jewelry"];
-   const electronicCategories = ["mobile parts", "laptop parts", "desktop parts"];
+   const fashionCategories = ["men's-clothing", "women's-clothing", "jewelry"];
+   const electronicCategories = ["mobile-parts", "laptop-parts", "desktop-parts"];
    const subCategories = category === "fashion" ? fashionCategories : category === "electronics" ? electronicCategories : []
 
    return (
@@ -100,10 +109,16 @@ const AddProduct = () => {
                   />
                </Form.Group>
 
+               <Row className="my-3">
+                  <Form.Group as={Col} controlId="formGridBrand">
+                     <Form.Label>Product Brand</Form.Label>
+                     <Form.Control name="brand" type="text" placeholder="Brand Name..." />
+                  </Form.Group>
+               </Row>
+
 
                <Row className="my-3">
-
-                  <Form.Group controlId="formGridCategory">
+                  <Form.Group as={Col} controlId="formGridCategory">
                      <Form.Label>Product Category</Form.Label>
                      <Form.Select name='category' onChange={(e) => setCategory(e.target.value)}>
                         <option value="">Choose Category...</option>
@@ -117,7 +132,7 @@ const AddProduct = () => {
                      </Form.Select>
                   </Form.Group>
 
-                  <Form.Group controlId="formGridSubCategory">
+                  <Form.Group as={Col} controlId="formGridSubCategory">
                      <Form.Label>Product Sub Category</Form.Label>
                      <Form.Select name='sub_category'>
                         {
@@ -142,7 +157,6 @@ const AddProduct = () => {
                </Row>
 
                <Row>
-
                   <Form.Group as={Col} controlId="formGridPrice">
                      <Form.Label>Price Fixed</Form.Label>
                      <Form.Control disabled defaultValue={price_fixed || inputValue?.price} key={price_fixed || inputValue?.price}></Form.Control>
