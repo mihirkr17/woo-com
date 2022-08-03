@@ -9,7 +9,7 @@ const Product = ({ product }) => {
                <img src={product?.image} alt='' />
             </div>
             <article className='card_description'>
-               <h6 className='card_title'>{product?.title.length > 20 ? product?.title.slice(0, 20) + "..." : product?.title}</h6>
+               <h6 className='card_title'>{product?.title && product?.title.length > 20 ? product?.title.slice(0, 20) + "..." : product?.title}</h6>
                <div className='card_list'>
                   <small className='text-muted'>Brand : {product?.brand}</small>
                   <big>${product?.price_fixed}</big>

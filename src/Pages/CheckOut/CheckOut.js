@@ -24,7 +24,7 @@ const CheckOut = () => {
       return <Spinner></Spinner>;
    }
 
-   const selectedAddress = cart.address && cart?.address.find(a => a?.select_address === true); //finding selected address to checkout page
+   const selectedAddress = cart && cart.address && cart?.address.find(a => a?.select_address === true); //finding selected address to checkout page
 
    const buyBtnHandler = async (e) => {
       e.preventDefault();
@@ -44,8 +44,11 @@ const CheckOut = () => {
             owner_commission: parseFloat(commission.toFixed(2)),
             _id: elem._id,
             product_name: elem.title,
+            slug: elem?.slug,
+            brand: elem?.brand,
             image: elem.image,
             category: elem.category,
+            sub_category: elem?.sub_category,
             quantity: elem.quantity,
             price: elem.price,
             price_fixed: elem.price_fixed,

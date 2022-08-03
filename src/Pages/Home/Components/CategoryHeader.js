@@ -5,10 +5,13 @@ import { Link } from 'react-router-dom';
 import "./CategoryHeader.css";
 import fashion from "../../../Assets/Images/fashion.png";
 import electronicsImage from "../../../Assets/Images/electronics.png";
+import { useCategories } from '../../../Hooks/useCategories';
 
 const CategoryHeader = ({ thisFor }) => {
    const [sCategory, setSCategory] = useState("");
    const [category, setCategory] = useState([]);
+   const {subCategories} = useCategories(sCategory);
+   
 
    useEffect(() => {
       const fashionSubCategory = ["men's-clothing", "women's-clothing", "jewelry"];
@@ -51,10 +54,10 @@ const CategoryHeader = ({ thisFor }) => {
                      <div className="card-body">
                         <ul>
                            {
-                              category && category.map((c, i) => {
+                              subCategories && subCategories.map((c, i) => {
                                  return (
                                     <li key={i} className="mb-2">
-                                       <Nav.Item as={Link} to={`/product/category/${sCategory}/${c}`}>
+                                       <Nav.Item as={Link} to={`/${sCategory}/${c}`}>
                                           {c}
                                        </Nav.Item>
                                     </li>

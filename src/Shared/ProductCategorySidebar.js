@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ProductCategorySiderbar = () => {
+const ProductCategorySidebar = () => {
    return (
       <div>
          
@@ -8,4 +8,4 @@ const ProductCategorySiderbar = () => {
    );
 };
 
-export default ProductCategorySiderbar;
+export default ProductCategorySidebar;

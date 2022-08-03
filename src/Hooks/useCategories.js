@@ -1,24 +1,19 @@
 import { useEffect, useState } from "react";
 
-export const useCategories = (category, data = {}) => {
-   const [categories, setCategories] = useState([]);
+export const useCategories = (category, dataCategory) => {
    const [subCategories, setSubCategories] = useState([]);
+   const categories = ["fashion", "electronics"];
 
    useEffect(() => {
-      const categories = ["fashion", "electronics"];
+
       const fashionCategories = ["men's-clothing", "women's-clothing", "jewelry"];
       const electronicCategories = ["mobile-parts", "laptop-parts", "desktop-parts"];
-      let subCategories;
 
-      if (data && category) {
-         subCategories = category && data?.category === "fashion" ? fashionCategories : category && data?.category === "electronics" ? electronicCategories : []
-      } else {
-         subCategories = category === "fashion" ? fashionCategories : category === "electronics" ? electronicCategories : []
-      }
-     
-      setCategories(categories);
-      setSubCategories(subCategories);
-   }, [category, data]);
+      let subCategories = (category || dataCategory) === "fashion" ? fashionCategories :
+         (category || dataCategory) === "electronics" ? electronicCategories : [];
+
+      return setSubCategories(subCategories);
+   }, [category, dataCategory]);
 
    return { categories, subCategories }
 }

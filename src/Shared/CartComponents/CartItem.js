@@ -8,7 +8,7 @@ import { useBASE_URL } from '../../lib/BaseUrlProvider';
 
 const CartItem = ({ product: cartProduct, setMessage, refetch, user, checkOut, cartTypes }) => {
    const BASE_URL = useBASE_URL();
-   const { data: product } = useFetch((user && cartProduct && cartTypes === "toCart") && `${BASE_URL}api/fetch-single-product/${cartProduct && cartProduct?._id}/${user?.email}`);
+   const { data: product } = useFetch((user && cartProduct && cartTypes === "toCart") && `${BASE_URL}api/fetch-single-product/${cartProduct?.slug && cartProduct?.slug}/${user?.email}`);
 
    // update the cartProduct && cartProduct product status by product 
    useEffect(() => {

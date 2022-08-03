@@ -2,15 +2,13 @@ import { Interweave } from 'interweave';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import BtnSpinner from '../Components/Shared/BtnSpinner/BtnSpinner';
-import useAuth from '../Hooks/useAuth';
-import { averageRating } from "./averageRating";
 import { faCartShopping } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Breadcrumbs from './Breadcrumbs';
+import { averageRating } from './common';
 
-const ProductModel = ({ product, addToCartHandler, addCartLoading, buyLoading }) => {
+const ProductModel = ({ product, addToCartHandler, addCartLoading, buyLoading, showFor }) => {
    const navigate = useNavigate();
-   const { role } = useAuth();
 
    return (
       <div className="row mb-5">
@@ -20,7 +18,7 @@ const ProductModel = ({ product, addToCartHandler, addCartLoading, buyLoading })
                   <img src={product?.image} style={{ height: "50vh" }} alt="" />
                </div>
                {
-                  (role !== "owner" && role !== "admin" && role !== "seller") && <div className="d-flex align-items-center justify-content-center py-3 mt-4">
+                  (showFor === "user") && <div className="d-flex align-items-center justify-content-center py-3 mt-4">
                      {
                         product?.cardHandler === false ?
                            <button className='addToCartBtn' disabled={product?.stock === "out" ? true : false} onClick={() => addToCartHandler(product, "toCart")}>
@@ -41,7 +39,7 @@ const ProductModel = ({ product, addToCartHandler, addCartLoading, buyLoading })
          </div>
          <div className="col-lg-7 pb-3">
             <article className="product_description">
-               <Breadcrumbs></Breadcrumbs>
+               {(showFor === "user") && <Breadcrumbs></Breadcrumbs>}
                <strong className="badge bg-primary">
                   {product?.category}
                </strong>
@@ -49,7 +47,8 @@ const ProductModel = ({ product, addToCartHandler, addCartLoading, buyLoading })
                <small><strike>{product?.price}</strike> - <span>{product?.discount}%</span></small>&nbsp;
                <big className='text-success'>${product?.price_fixed}</big><br />
                <small className='text-warning'>Rating : {averageRating(product?.rating) || 0}/5</small><br />
-               <small className='text-muted'><i>{product?.stock === "out" ? "Out of Stock" : "Hurry, Only " + product?.available + " Left !"} </i></small>
+               <small className='text-muted'><i>{product?.stock === "out" ? "Out of Stock" : "Hurry, Only " + product?.available + " Left !"} </i></small><br />
+               <small className='text-muted'>Seller : {product?.seller}</small>
                <Interweave className='pt-4 product_spec' content={product?.description} />
             </article>
          </div>

@@ -1,3 +1,9 @@
+export const slugMaker = (string) => {
+   return string.toLowerCase()
+      .replace(/ /g, '-')
+      .replace(/[^\w-]+/g, '');
+}
+
 export const averageRating = (rating) => {
    let weightVal = 0;
    let countValue = 0;

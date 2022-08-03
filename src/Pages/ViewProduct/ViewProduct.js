@@ -7,10 +7,10 @@ import { useMessage } from '../../Hooks/useMessage';
 import { useAuthUser } from '../../lib/UserProvider';
 import { useBASE_URL } from "../../lib/BaseUrlProvider";
 import Product from '../../Shared/Product';
-import { averageRating } from "../../Shared/averageRating";
 import ProductModel from '../../Shared/ProductModel';
 import { useCart } from '../../App';
 import { useState } from 'react';
+import { averageRating } from '../../Shared/common';
 
 
 const ViewProduct = () => {
@@ -19,7 +19,6 @@ const ViewProduct = () => {
    const user = useAuthUser();
    const { refetch } = useCart();
    const { data: product, loading, refetch: productRefetch } = useFetch(`${BASE_URL}api/fetch-single-product/${product_slug}/${user?.email}`);
-   const { data: rating } = useFetch(`${BASE_URL}product-review/${product?._id}`);
    const { data: productByCategory } = useFetch(`${BASE_URL}api/product-by-category?sub_category=${product?.sub_category}`);
    const navigate = useNavigate();
    const { msg, setMessage } = useMessage();
@@ -27,6 +26,8 @@ const ViewProduct = () => {
    const [buyLoading, setBuyLoading] = useState(false);
 
    if (loading) return <Spinner></Spinner>;
+
+   console.log(product);
 
    const addToCartHandler = async (product, params) => {
 
@@ -79,7 +80,7 @@ const ViewProduct = () => {
       <div className='view_product section_default'>
          <div className="container">
             {msg}
-            <ProductModel product={product} buyLoading={buyLoading} addCartLoading={addCartLoading} addToCartHandler={addToCartHandler}></ProductModel>
+            <ProductModel showFor={"user"} product={product} buyLoading={buyLoading} addCartLoading={addCartLoading} addToCartHandler={addToCartHandler}></ProductModel>
             <div className="row pt-5">
                <div className="col-lg-9">
                   <h5 id='rating' className='text-center py-1'>Rating And Review Of {product?.title}</h5>
@@ -95,23 +96,23 @@ const ViewProduct = () => {
                                     <span className="fs-4 text-muted">/5</span>
                                  </p>
                                  <div>
-                                    {rating && rating.map(rats => rats?.rating).length} Ratings
+                                    {product?.reviews && product?.reviews.length} Reviews
                                  </div>
                               </div>
                            </div>
                         </div>
                      </div>
                      {
-                        rating && rating.length > 0 ? rating.map((rats, index) => {
-                           const { rating } = rats;
-                           let cName = rating?.rating_customer.lastIndexOf("@");
+                        product?.reviews && product?.reviews.length > 0 ? product?.reviews.map((rats, index) => {
+                           
+                           let cName = rats?.rating_customer && rats?.rating_customer.lastIndexOf("@");
                            return (
                               <div className="col-lg-12 mb-3" key={index}>
                                  <div className="card_default">
                                     <div className="card_description">
-                                       <small className='text-warning'>{rating?.rating_point} Out of 5</small>
-                                       <i className='text-muted'>{rating?.rating_customer.slice(0, cName)}</i>
-                                       <small>{rating?.rating_description}</small>
+                                       <small className='text-warning'>{rats?.rating_point && rats?.rating_point} Out of 5</small>
+                                       <i className='text-muted'>{rats?.rating_customer && rats?.rating_customer.slice(0, cName)}</i>
+                                       <small>{rats?.rating_description &&  rats?.rating_description}</small>
                                     </div>
                                  </div>
                               </div>

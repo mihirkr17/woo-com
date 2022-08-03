@@ -16,7 +16,6 @@ const MyOrder = () => {
    const user = useAuthUser();
    const { msg, setMessage } = useMessage();
    const { data, refetch, loading } = useFetch(`${BASE_URL}my-order/${user?.email}`);
-   const { data: rating, refetch: ratingRefetch } = useFetch(`${BASE_URL}my-review/${user?.email}`);
    const [actLoading, setActLoading] = useState(false);
    const [ratPoint, setRatPoint] = useState("5");
    const [reason, setReason] = useState("");
@@ -62,7 +61,7 @@ const MyOrder = () => {
       }
    }
 
-   const findRating = rating && rating.map(items => items?.rating?.rating_id);
+
    const ratingHandler = async (e) => {
       e.preventDefault();
       setActLoading(true);
@@ -71,29 +70,26 @@ const MyOrder = () => {
       let productId = e.target.product_id.value;
       let userEmail = user?.email;
       let orderId = e.target.order_id.value;
-      let ratingId = productId.slice(-6) + orderId;
+      let ratingId = Math.floor(Math.random() * 1000000);
 
-
-      let rating = {
-         product_id: productId,
-         rating_customer: userEmail,
-         rating_point: ratingPoint,
-         rating_description: ratingDesc,
-         rating_id: ratingId
+      let review = {
+         ratingId, orderId: parseInt(orderId), rating_customer: userEmail, rating_point: ratingPoint, rating_description: ratingDesc
       }
 
-      const response = await fetch(`${BASE_URL}add-rating/${userEmail}`, {
+      const response = await fetch(`${BASE_URL}api/add-product-rating/${productId}/${userEmail}`, {
          method: "PUT",
          headers: {
             "content-type": "application/json"
          },
-         body: JSON.stringify(rating)
-      })
+         body: JSON.stringify({ ...review })
+      });
+
+      const resData = await response.json();
 
       if (response.ok) {
+         setMessage(<p className='text-success'><small><strong>{resData?.message}</strong></small></p>);
          setActLoading(false);
-         const resData = await response.json();
-         resData && ratingRefetch();
+         refetch()
       }
    }
 
@@ -147,8 +143,7 @@ const MyOrder = () => {
                      {
                         orderItems && orderItems.length > 0 ? orderItems.map(order => {
                            const { product_name, quantity, payment_mode, discount, status, orderId,
-                              price_total_amount, image, _id, seller, category, cancel_reason, time_canceled, time_pending, time_placed, time_shipped } = order;
-
+                              price_total_amount, image, _id, seller, category, sub_category, cancel_reason, time_canceled, time_pending, time_placed, time_shipped, isRating, slug } = order;
                            return (
                               <div className="col-12 mb-3" key={orderId}>
                                  <div className="order_card">
@@ -248,7 +243,7 @@ const MyOrder = () => {
                                                                      </small>
                                                                   </p>
                                                                   <div className='d-flex align-items-center justify-content-end' >
-                                                                     {findRating && findRating.includes(_id.slice(-6) + orderId) ? <Link to={`/product/${_id}#rating`}>Review</Link> :
+                                                                     {isRating ? <Link to={`/${category}/${sub_category}/${slug}#rating`}>Review</Link> :
                                                                         <>
                                                                            <button className="btn btn-sm text-danger" onClick={() => openReviewFormHandler(orderId)} style={openReviewForm !== orderId ? { display: "block" } : { display: "none" }}>
                                                                               Add Review

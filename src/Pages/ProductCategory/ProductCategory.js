@@ -13,15 +13,12 @@ import "./ProductCategory.css";
 const ProductCategory = () => {
    const BASE_URL = useBASE_URL();
    const { category } = useParams();
-   const [url, setUrl] = useState(category);
+   const [url, setUrl] = useState("");
    const { data: productByCategory, loading } = useFetch(`${BASE_URL + url}`);
    const [filters, setFilters] = useState('best_match');
    const [brands, setBrands] = useState({ brand: [] });
    const [getBrand, setGetBrand] = useState(["all"]);
    const [products, setProducts] = useState([]);
-
-   // console.log(products);
-
 
    useEffect(() => {
       if (productByCategory) {
@@ -34,7 +31,6 @@ const ProductCategory = () => {
 
    // filter product by price
    useEffect(() => {
-
       let filterUrl;
 
       if (category && filters) {
@@ -76,42 +72,51 @@ const ProductCategory = () => {
       <div className="section_default">
          <CategoryHeader></CategoryHeader>
          <div className='container'>
-            <Breadcrumbs></Breadcrumbs>
-            <div className="p-2 border">
-               <h5>{category}</h5>
-               <small className="badge bg-primary">{category}</small>
-            </div>
-            <div className="category_header py-4">
-               <div className="sort_price">
-                  <span>Sort By </span>
-                  <select name="filter" id="" onChange={(e) => setFilters(e.target.value)}>
-                     <option value="best_match">Best Match</option>
-                     <option value="lowest">Lowest</option>
-                     <option value="highest">Highest</option>
-                  </select>
+
+            <div className="category_head">
+               <Breadcrumbs></Breadcrumbs>
+               <div className="p-2 border-bottom">
+                  <h5>{category}</h5>
+                  <small className="badge bg-primary">{category}</small>
                </div>
+            </div>
 
-               <div className='my-3'>
-                  <small><strong>Choose By Brands</strong></small>
-                  <div className="row">
-                     {
-                        getBrand && getBrand.map((b, i) => {
-                           // console.log(b);
-                           return (
-                              <div className="col-12" key={i}>
-                                 <label htmlFor={b} >
-                                    <input type="checkbox" className='me-3' name={b} id={b} value={b} onChange={handleChange} />
-                                    {b}
-                                 </label>
-                              </div>
+            <div className="row" style={{ position: "relative", height: "77vh" }}>
+               <div className="category_left_side col-lg-2 border-end">
+                  <div className="category_header py-4">
+                     <div className="sort_price">
+                        <span>Sort By </span>
+                        <select name="filter" id="" onChange={(e) => setFilters(e.target.value)}>
+                           <option value="best_match">Best Match</option>
+                           <option value="lowest">Lowest</option>
+                           <option value="highest">Highest</option>
+                        </select>
+                     </div>
 
-                           )
-                        })
-                     }
+                     <div className='my-3'>
+                        <small><strong>Choose By Brands</strong></small>
+                        <div className="row">
+                           {
+                              getBrand && getBrand.map((b, i) => {
+                                 // console.log(b);
+                                 return (
+                                    <div className="col-12" key={i}>
+                                       <label htmlFor={b} >
+                                          <input type="checkbox" className='me-3' name={b} id={b} value={b} onChange={handleChange} />
+                                          {b}
+                                       </label>
+                                    </div>
+
+                                 )
+                              })
+                           }
+                        </div>
+                     </div>
                   </div>
+
                </div>
-            </div>
-            <div className="row">
+               <div className="category_right_side col-lg-10">
+               <div className="row">
                {
                   loading ? <Spinner /> : products && products.map(p => {
                      return (
@@ -122,6 +127,11 @@ const ProductCategory = () => {
                   })
                }
             </div>
+               </div>
+            </div>
+
+
+            
          </div>
       </div>
    );

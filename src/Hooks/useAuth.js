@@ -18,14 +18,20 @@ const useAuth = () => {
    authRefetch = () => setRef(e => !e);
 
    useEffect(() => {
+      if (!token) {
+         signOut(auth);
+      }
+   }, [token]);
+
+
+   useEffect(() => {
 
       const controller = new AbortController();
-      if (!token) return;
-      token && (async () => {
+       (async () => {
          try {
             setAuthLoading(true);
 
-            if (user && token) {
+            if (token) {
                const response = await fetch(`${BASE_URL}api/fetch-auth-user`, {
                   method: "GET",
                   headers: {
@@ -37,12 +43,7 @@ const useAuth = () => {
 
                const data = await response.json();
 
-               if (response.status === 401) {
-                  document.cookie = 'accessToken=""; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-                  signOut(auth);
-               }
-
-               if (response.ok) {
+               if (response.status >= 200 && response.status <= 299) {
                   const userData = data && data?.result;
 
                   if (userData) {
@@ -50,17 +51,23 @@ const useAuth = () => {
                      setUserInfo(userData);
                   }
                   setAuthLoading(false);
+               } else {
+                  setAuthLoading(false);
+                  document.cookie = 'accessToken=;';
+                  signOut(auth);
                }
             }
-
+          
             if (!user) {
                setRole("");
                setAuthLoading(false);
-               setUserInfo(null);
+               setUserInfo({});
             }
 
          } catch (error) {
             setErr(error);
+         } finally {
+            setAuthLoading(false);
          }
       })();
 
