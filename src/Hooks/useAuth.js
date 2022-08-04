@@ -1,79 +1,67 @@
-import { signOut } from 'firebase/auth';
 import { useEffect, useState } from 'react';
-import { auth } from '../firebase.init';
 import { useBASE_URL } from '../lib/BaseUrlProvider';
-import { useAuthUser } from '../lib/UserProvider';
+import { loggedOut } from '../Shared/common';
 
-const useAuth = () => {
+const useAuth = (user) => {
    const BASE_URL = useBASE_URL();
-   const user = useAuthUser();
    const [role, setRole] = useState("");
    const [userInfo, setUserInfo] = useState(null || {} || []);
    const [authLoading, setAuthLoading] = useState(false);
    const [err, setErr] = useState();
    const [ref, setRef] = useState(false);
-   const token = new URLSearchParams(document.cookie.replaceAll("; ", "&")).get('accessToken');
 
    let authRefetch;
    authRefetch = () => setRef(e => !e);
 
    useEffect(() => {
-      if (!token) {
-         signOut(auth);
-      }
-   }, [token]);
 
+      // const controller = new AbortController();
+      const runFunc = setTimeout(() => {
+         (async () => {
+            try {
+               if (user) {
+                  setAuthLoading(true);
 
-   useEffect(() => {
+                  const response = await fetch(`${BASE_URL}api/fetch-auth-user`, {
+                     method: "GET",
+                     withCredentials: true,
+                     credentials: "include",
+                     // signal: controller.signal
+                  });
 
-      const controller = new AbortController();
-       (async () => {
-         try {
-            setAuthLoading(true);
+                  const data = await response.json();
 
-            if (token) {
-               const response = await fetch(`${BASE_URL}api/fetch-auth-user`, {
-                  method: "GET",
-                  headers: {
-                     "content-type": "application/json",
-                     authorization: `Bearer ${token}`
-                  },
-                  signal: controller.signal
-               });
+                  if (response.status >= 200 && response.status <= 299) {
+                     const userData = data && data?.result;
 
-               const data = await response.json();
-
-               if (response.status >= 200 && response.status <= 299) {
-                  const userData = data && data?.result;
-
-                  if (userData) {
-                     setRole(userData?.role);
-                     setUserInfo(userData);
+                     if (userData) {
+                        setRole(userData?.role);
+                        setUserInfo(userData);
+                     }
+                     setAuthLoading(false);
+                  } else {
+                     setAuthLoading(false);
+                     await loggedOut();
                   }
-                  setAuthLoading(false);
-               } else {
-                  setAuthLoading(false);
-                  document.cookie = 'accessToken=;';
-                  signOut(auth);
                }
-            }
-          
-            if (!user) {
-               setRole("");
+
+               if (!user) {
+                  setRole("");
+                  setAuthLoading(false);
+                  setUserInfo({});
+               }
+
+            } catch (error) {
+               setErr(error);
+            } finally {
                setAuthLoading(false);
-               setUserInfo({});
             }
+         })()
+      }, 1000);
 
-         } catch (error) {
-            setErr(error);
-         } finally {
-            setAuthLoading(false);
-         }
-      })();
+      return () => clearTimeout(runFunc);
 
-      return () => controller?.abort();
-
-   }, [BASE_URL, user, token, ref]);
+   }, [BASE_URL, user, ref]);
 
    return { role, authLoading, err, userInfo, authRefetch };
 };

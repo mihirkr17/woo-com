@@ -10,11 +10,13 @@ import { faEye, faPenAlt, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import ProductDetailsModal from './Components/ProductDetailsModal';
 import ProductUpdateModal from './Components/ProductUpdateModal';
 import { Table } from 'react-bootstrap';
+import { useAuthUser } from '../../../App';
 
 const ManageProduct = () => {
    const { msg, setMessage } = useMessage();
    const BASE_URL = useBASE_URL();
-   const { role, userInfo } = useAuth();
+   const user = useAuthUser();
+   const { role, userInfo } = useAuth(user);
    const [items, setItems] = useState(0);
    const [page, setPage] = useState(0);
    const [url, setUrl] = useState("");

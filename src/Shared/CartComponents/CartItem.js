@@ -1,44 +1,11 @@
 import { faClose } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
-import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useFetch } from '../../Hooks/useFetch';
 import { useBASE_URL } from '../../lib/BaseUrlProvider';
 
 const CartItem = ({ product: cartProduct, setMessage, refetch, user, checkOut, cartTypes }) => {
    const BASE_URL = useBASE_URL();
-   const { data: product } = useFetch((user && cartProduct && cartTypes === "toCart") && `${BASE_URL}api/fetch-single-product/${cartProduct?.slug && cartProduct?.slug}/${user?.email}`);
-
-   // update the cartProduct && cartProduct product status by product 
-   useEffect(() => {
-      (user && cartProduct && cartTypes === "toCart") && (async () => {
-         let quantity = cartProduct && cartProduct?.quantity;
-         let productPrice = parseInt(product?.price);
-         let discount_amount_fixed = parseFloat(product?.discount_amount_fixed)
-         let discount_amount_total = discount_amount_fixed * quantity;
-         let discount = parseInt(product?.discount);
-         let price_total = (productPrice * quantity) - discount_amount_total;
-         let price_fixed = product?.price_fixed;
-         let stock = product?.stock;
-         let available = product?.available;
-         let modifiedAt = product?.modifiedAt;
-
-         const response = await fetch(user?.email && `${BASE_URL}api/update-cart-items/${user?.email}/${cartProduct && cartProduct?._id}`, {
-            method: "PUT",
-            headers: {
-               'content-type': 'application/json'
-            },
-            body: JSON.stringify({
-               quantity, price: productPrice, discount_amount_fixed,
-               discount_amount_total, discount, price_total, price_fixed,
-               stock, available, modifiedAt
-            })
-         });
-
-         if (response.ok) await response.json();
-      })();
-   }, [user, product, cartProduct, BASE_URL, cartTypes])
 
    // update product quantity handler
    const quantityHandler = async (cp, action) => {
@@ -102,6 +69,7 @@ const CartItem = ({ product: cartProduct, setMessage, refetch, user, checkOut, c
                            <big className='text-success'>{cartProduct && cartProduct?.price_fixed}$</big>&nbsp;{cartProduct && cartProduct?.discount + "% Off"}
                         </small>
                         <small className="text-muted">Qty : {cartProduct && cartProduct?.quantity}</small>
+                        <small className="text-muted">Seller : {cartProduct && cartProduct?.seller}</small>
                         <small className="text-muted"> Stock : {cartProduct && cartProduct?.stock}({cartProduct && cartProduct?.available})</small>
                      </div>
                   </div>

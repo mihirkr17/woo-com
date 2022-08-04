@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuthUser } from '../../App';
 import useAuth from '../../Hooks/useAuth';
-import { useAuthUser } from '../../lib/UserProvider';
+
 
 const OwnerData = () => {
    const user = useAuthUser();
-   const { role } = useAuth();
+   const { role } = useAuth(user);
    const navigate = useNavigate();
 
    useEffect(() => {

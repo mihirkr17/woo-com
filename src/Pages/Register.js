@@ -5,20 +5,21 @@ import { Link, useNavigate } from 'react-router-dom';
 import BtnSpinner from "../Components/Shared/BtnSpinner/BtnSpinner";
 import { auth } from '../firebase.init';
 import { useMessage } from '../Hooks/useMessage';
-import { useToken } from '../Hooks/useToken';
+import { useSignIn } from '../Hooks/useSignIn';
+// import { useToken } from '../Hooks/useToken';
 
 const Register = () => {
    const { msg: regMsg, setMessage } = useMessage();
    const [acc, setAcc] = useState(false);
    const [createUserWithEmailAndPassword, user, loading, error] = useCreateUserWithEmailAndPassword(auth);
    const [updateProfile, updating, error2] = useUpdateProfile(auth);
-   const [token] = useToken(user);
+   const [isLogged] = useSignIn(user);
    const navigate = useNavigate();
    let msg;
 
    useEffect(() => {
-      if (token) navigate('/login');
-   }, [navigate, token]);
+      if (isLogged) navigate('/login');
+   }, [navigate, isLogged]);
 
    if (error || error2) msg = <strong className="text-danger">{error?.message}</strong>
 

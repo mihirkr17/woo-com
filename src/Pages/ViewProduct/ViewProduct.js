@@ -4,11 +4,10 @@ import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { useFetch } from '../../Hooks/useFetch';
 import "./ViewProduct.css";
 import { useMessage } from '../../Hooks/useMessage';
-import { useAuthUser } from '../../lib/UserProvider';
 import { useBASE_URL } from "../../lib/BaseUrlProvider";
 import Product from '../../Shared/Product';
 import ProductModel from '../../Shared/ProductModel';
-import { useCart } from '../../App';
+import { useAuthUser, useCart } from '../../App';
 import { useState } from 'react';
 import { averageRating } from '../../Shared/common';
 
@@ -27,22 +26,36 @@ const ViewProduct = () => {
 
    if (loading) return <Spinner></Spinner>;
 
-   console.log(product);
-
    const addToCartHandler = async (product, params) => {
 
       const url = params === "buy" ? `${BASE_URL}api/add-buy-product/${user?.email}` :
          `${BASE_URL}api/add-to-cart/${user?.email}`;
-         
+
       let quantity = 1;
       let productPrice = parseInt(product?.price);
       let discount_amount_fixed = parseFloat(product?.discount_amount_fixed)
       let discount_amount_total = discount_amount_fixed * quantity;
 
-      product['user_email'] = user?.email;
-      product['quantity'] = quantity;
-      product['price_total'] = (productPrice * quantity) - discount_amount_total;
-      product['discount_amount_total'] = discount_amount_total;
+      let cartProduct = {
+         _id: product._id,
+         title: product.title,
+         slug: product.slug,
+         brand: product.brand,
+         image: product.image,
+         category: product.category,
+         sub_category: product.sub_category,
+         quantity: quantity,
+         price: productPrice,
+         price_total: (productPrice * quantity) - discount_amount_total,
+         price_fixed: product.price_fixed,
+         discount: product.discount,
+         discount_amount_fixed: discount_amount_fixed,
+         discount_amount_total: discount_amount_total,
+         stock: product?.stock,
+         available: product.available,
+         user_email: user?.email,
+         seller: product?.seller
+      }
 
       if (product?.stock === "in") {
          if (params === "buy") {
@@ -56,7 +69,7 @@ const ViewProduct = () => {
             headers: {
                'content-type': 'application/json'
             },
-            body: JSON.stringify(product)
+            body: JSON.stringify(cartProduct)
          });
 
          const resData = response.ok && await response.json();
@@ -104,7 +117,7 @@ const ViewProduct = () => {
                      </div>
                      {
                         product?.reviews && product?.reviews.length > 0 ? product?.reviews.map((rats, index) => {
-                           
+
                            let cName = rats?.rating_customer && rats?.rating_customer.lastIndexOf("@");
                            return (
                               <div className="col-lg-12 mb-3" key={index}>
@@ -112,7 +125,7 @@ const ViewProduct = () => {
                                     <div className="card_description">
                                        <small className='text-warning'>{rats?.rating_point && rats?.rating_point} Out of 5</small>
                                        <i className='text-muted'>{rats?.rating_customer && rats?.rating_customer.slice(0, cName)}</i>
-                                       <small>{rats?.rating_description &&  rats?.rating_description}</small>
+                                       <small>{rats?.rating_description && rats?.rating_description}</small>
                                     </div>
                                  </div>
                               </div>

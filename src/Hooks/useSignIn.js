@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
-import { useBASE_URL } from "../lib/BaseUrlProvider";
+import { useEffect, useState } from 'react';
+import { useBASE_URL } from '../lib/BaseUrlProvider';
 
-export const useToken = (user) => {
+export const useSignIn = (user) => {
    const BASE_URL = useBASE_URL();
-   const [token, setToken] = useState(null);
+   const [isLogged, setIsLogged] = useState(false);
 
    useEffect(() => {
       const controller = new AbortController();
@@ -27,9 +27,8 @@ export const useToken = (user) => {
                }
 
                if (response.ok) {
-                  setToken(resData);
-                  if (resData && resData?.token) {
-                     document.cookie = `accessToken=${resData?.token}`;
+                  if (resData) {
+                     setIsLogged(true);
                   }
                }
             }
@@ -41,5 +40,5 @@ export const useToken = (user) => {
       return () => controller?.abort();
    }, [user, BASE_URL]);
 
-   return [token];
-}
+   return [isLogged];
+};

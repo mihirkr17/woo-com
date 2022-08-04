@@ -77,7 +77,7 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch })
          const response = await fetch(requestType?.url, {
             method: requestType?.method,
             headers: {
-               "content-type": "application/json"
+               "Content-Type": "application/json"
             },
             body: JSON.stringify(product)
          });

@@ -5,12 +5,14 @@ import useAuth from '../../Hooks/useAuth';
 import { useEffect } from 'react';
 import "./Dashboard.css";
 import { useState } from 'react';
-import { useSignOut } from '../../lib/UserProvider';
 import { useSellerChecker } from '../../lib/SellerCheckProvider';
-import { useOrder } from '../../App';
+import { useAuthUser, useOrder } from '../../App';
+import { loggedOut } from '../../Shared/common';
+
 
 const Dashboard = () => {
-   const { role } = useAuth();
+   const user = useAuthUser();
+   const { role } = useAuth(user);
    const [responsive, setResponsive] = useState(window.innerWidth);
    const location = useLocation();
    const [act, setAct] = useState("");
@@ -42,7 +44,7 @@ const Dashboard = () => {
          <div className="container">
             <div className={`${responsive < 567 ? "row" : "dashboard"}`}>
                <div className={`${responsive < 567 ? "col-12 pb-3" : "d_left card_default card_description"}`}>
-                  <button className='btn btn-sm btn-danger' onClick={useSignOut}>Log Out</button>
+                  <button className='btn btn-sm btn-danger' onClick={async () => loggedOut()}>Log Out</button>
                   <div className="d_link">
                      <Nav.Link as={NavLink} className={act === "dashboard" ? "active_link" : ""} to='/dashboard'>Dashboard</Nav.Link>
                      <Nav.Link as={NavLink} className={act === "my-profile" ? "active_link" : ""} to='my-profile'>My Profile</Nav.Link>

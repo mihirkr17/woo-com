@@ -1,13 +1,14 @@
 import React from 'react';
-import { signOut } from 'firebase/auth';
 import { Navigate, useLocation } from 'react-router-dom';
-import { auth } from '../firebase.init';
+import { useAuthUser } from '../App';
+import Spinner from '../Components/Shared/Spinner/Spinner';
 import useAuth from '../Hooks/useAuth';
-import { useAuthUser } from '../lib/UserProvider';
+// import { useAuthUser } from '../lib/UserProvider';
+import { loggedOut } from '../Shared/common';
 
 const RequireOwnerAdmin = ({ children }) => {
    const user = useAuthUser();
-   const { role } = useAuth();
+   const { role } = useAuth(user);
    const location = useLocation();
 
    if (!user) {
@@ -16,7 +17,7 @@ const RequireOwnerAdmin = ({ children }) => {
 
    if (role) {
       if (role !== "owner" && role !== "admin" && role === "user" && role !== "seller") {
-         signOut(auth);
+         (async () => loggedOut())();
          return <Navigate to={'/login'} state={{ from: location }} replace></Navigate>
       }
       return children;

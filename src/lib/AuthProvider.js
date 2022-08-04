@@ -33,7 +33,7 @@ const AuthProvider = ({ children }) => {
                const response = await fetch(`${BASE_URL}api/fetch-auth-user`, {
                   method: "GET",
                   headers: {
-                     "content-type": "application/json",
+                     "Content-Type": "application/json",
                      authorization: `Bearer ${token}`
                   },
                   signal: controller.signal

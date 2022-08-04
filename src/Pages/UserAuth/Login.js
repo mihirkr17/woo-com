@@ -5,7 +5,8 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import BtnSpinner from '../../Components/Shared/BtnSpinner/BtnSpinner';
 import { auth } from '../../firebase.init';
 import { useMessage } from '../../Hooks/useMessage';
-import { useToken } from '../../Hooks/useToken';
+import { useSignIn } from '../../Hooks/useSignIn';
+// import { useToken } from '../../Hooks/useToken';
 import SocialAuth from './SocialAuth';
 
 const Login = () => {
@@ -13,13 +14,13 @@ const Login = () => {
    const [signInWithEmailAndPassword, user, loading, error,] = useSignInWithEmailAndPassword(auth);
    const navigate = useNavigate();
    const location = useLocation();
-   const [token] = useToken(user);
+   const [isLogged] = useSignIn(user);
    let from = location.state?.from?.pathname || '/';
    let msg;
 
    useEffect(() => {
-      if (token) navigate(from, { replace: true });
-   }, [navigate, token, from]);
+      if (isLogged) navigate(from, { replace: true });
+   }, [navigate, isLogged, from]);
 
    if (error) msg = <strong className="text-danger">{error?.message}</strong>
 

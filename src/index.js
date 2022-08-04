@@ -4,16 +4,16 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
-import UserProvider from './lib/UserProvider';
+// import UserProvider from './lib/UserProvider';
 import BaseUrlProvider from './lib/BaseUrlProvider';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <BrowserRouter>
     <BaseUrlProvider>
-      <UserProvider>
+      {/* <UserProvider> */}
         <App />
-      </UserProvider>
+      {/* </UserProvider> */}
     </BaseUrlProvider>
   </BrowserRouter>
 );

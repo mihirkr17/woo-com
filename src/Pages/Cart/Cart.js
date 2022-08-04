@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useCart } from '../../App';
+import { useAuthUser, useCart } from '../../App';
 import { useMessage } from '../../Hooks/useMessage';
-import { useAuthUser } from '../../lib/UserProvider';
 import { cartCalculate } from '../../Shared/cartCalculate';
 import CartAddress from '../../Shared/CartComponents/CartAddress';
 import CartCalculation from '../../Shared/CartComponents/CartCalculation';

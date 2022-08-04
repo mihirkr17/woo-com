@@ -1,7 +1,10 @@
+import { signOut } from 'firebase/auth';
+import { auth } from '../firebase.init';
+
 export const slugMaker = (string) => {
    return string.toLowerCase()
       .replace(/ /g, '-')
-      .replace(/[^\w-]+/g, '');
+      .replace(/[^\w-]+/g, '').trim();
 }
 
 export const averageRating = (rating) => {
@@ -16,3 +19,19 @@ export const averageRating = (rating) => {
    const average = parseFloat(ava.toFixed(2));
    return average;
 }
+
+export const loggedOut = async () => {
+   signOut(auth);
+   const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/sign-out`, {
+      method: "GET",
+      withCredentials: true,
+      credentials: "include",
+      headers: {
+         "Content-Type": "application/json",
+      },
+   });
+   const resData = await response.json();
+   if (response.ok) {
+      
+   }
+};

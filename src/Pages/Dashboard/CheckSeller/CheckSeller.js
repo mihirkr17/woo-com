@@ -9,7 +9,7 @@ import { useSellerChecker } from '../../../lib/SellerCheckProvider';
 const CheckSeller = () => {
    const BASE_URL = useBASE_URL();
    const [modals, setModals] = useState(false);
-   const token = new URLSearchParams(document.cookie.replaceAll("; ", "&")).get('accessToken');;
+   // const token = new URLSearchParams(document.cookie.replaceAll("; ", "&")).get('accessToken');
    const { state, dispatch, refetch, loading } = useSellerChecker();
    const data = state?.data;
 
@@ -20,9 +20,10 @@ const CheckSeller = () => {
       if (window.confirm("Make Seller ?")) {
          const response = await fetch(`${BASE_URL}api/permit-seller-request/${userId}`, {
             method: "PUT",
+            withCredentials: true,
+            credentials: "include",
             headers: {
-               "content-type": "application/json",
-               authorization: `Bearer ${token}`
+               "Content-Type": "application/json"
             }
          });
 

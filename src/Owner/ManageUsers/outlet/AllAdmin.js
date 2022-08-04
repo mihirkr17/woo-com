@@ -7,7 +7,7 @@ import { useBASE_URL } from '../../../lib/BaseUrlProvider';
 
 const AllAdmin = () => {
    const BASE_URL = useBASE_URL();
-   const token = new URLSearchParams(document.cookie.replaceAll("; ", "&")).get('accessToken');;
+   // const token = new URLSearchParams(document.cookie.replaceAll("; ", "&")).get('accessToken');
    const { data, loading, refetch } = useFetch(`${BASE_URL}api/manage-user?uTyp=admin`);
    if (loading) return <Spinner></Spinner>;
 
@@ -15,9 +15,10 @@ const AllAdmin = () => {
       if (window.confirm("Demote to user ?")) {
          const response = await fetch(`${BASE_URL}api/demote-to-user/${userId}`, {
             method: "PUT",
+            withCredentials: true,
+            credentials: "include",
             headers: {
-               "content-type": "application/json",
-               authorization: `Bearer ${token}`
+               "Content-Type": "application/json"
             }
          });
          if (await response.json()) refetch();

@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useCart } from '../../App';
+import { useAuthUser, useCart } from '../../App';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { useMessage } from '../../Hooks/useMessage';
-import { useAuthUser } from '../../lib/UserProvider';
 import { cartCalculate } from '../../Shared/cartCalculate';
 import CartAddress from '../../Shared/CartComponents/CartAddress';
 import CartCalculation from '../../Shared/CartComponents/CartCalculation';
@@ -14,7 +13,7 @@ import CartItem from '../../Shared/CartComponents/CartItem';
 const Purchase = () => {
    const { productId } = useParams();
    const user = useAuthUser();
-   const { refetch, loading, cart } = useCart();
+   const { refetch, cartLoading, cart } = useCart();
    const { msg, setMessage } = useMessage("");
    const navigate = useNavigate();
    const [step, setStep] = useState(false);
@@ -23,7 +22,7 @@ const Purchase = () => {
       if (msg !== '') return navigate('/');
    }, [msg, navigate])
 
-   if (loading) return <Spinner></Spinner>;
+   if (cartLoading) return <Spinner></Spinner>;
 
    const goCheckoutPage = () => {
       navigate(`/my-cart/checkout-single/${productId}`)

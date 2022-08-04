@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { useMessage } from '../../Hooks/useMessage';
 import Modal from './Components/Modal/Modal';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
-import { useAuthUser } from '../../lib/UserProvider';
+// import { useAuthUser } from '../../lib/UserProvider';
 import { useEffect } from 'react';
 import OrderTable from './Components/OrderTable';
 import { useBASE_URL } from '../../lib/BaseUrlProvider';
-import { useOrder } from '../../App';
+import { useAuthUser, useOrder } from '../../App';
 
 const ManageOrders = () => {
    const BASE_URL = useBASE_URL();
@@ -50,7 +50,7 @@ const ManageOrders = () => {
          const response = await fetch(`${BASE_URL}update-order-status/${st}/${userEmail}/${orderId}`, {
             method: "PUT",
             headers: {
-               "content-type": "application/json"
+               "Content-Type": "application/json"
             },
             body: JSON.stringify({ ownerCommission, totalEarn : parseFloat(totalEarn), productId, quantity, seller })
          });

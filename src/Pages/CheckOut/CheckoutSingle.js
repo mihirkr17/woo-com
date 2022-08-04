@@ -2,11 +2,10 @@ import { faCheckCircle, faLeftLong } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useCart } from '../../App';
+import { useAuthUser, useCart } from '../../App';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { useMessage } from '../../Hooks/useMessage';
 import { useBASE_URL } from '../../lib/BaseUrlProvider';
-import { useAuthUser } from '../../lib/UserProvider';
 import { cartCalculate } from '../../Shared/cartCalculate';
 import CartCalculation from '../../Shared/CartComponents/CartCalculation';
 import CartItem from '../../Shared/CartComponents/CartItem';
@@ -18,10 +17,10 @@ const CheckoutSingle = () => {
    const user = useAuthUser();
    const navigate = useNavigate();
    const { msg, setMessage } = useMessage();
-   const { cart, loading } = useCart();
+   const { cart, cartLoading } = useCart();
    const product = cart && cart?.buy_product;
 
-   if (loading) return <Spinner></Spinner>
+   if (cartLoading) return <Spinner></Spinner>
    const selectedAddress = cart && cart?.address && cart?.address.find(a => a?.select_address === true); //finding selected address to checkout page
 
    const buyBtnHandler = async (e) => {
@@ -63,7 +62,7 @@ const CheckoutSingle = () => {
          const response = await fetch(`${BASE_URL}set-order/${user?.email}`, {
             method: "POST",
             headers: {
-               "content-type": "application/json"
+               "Content-Type": "application/json"
             },
             body: JSON.stringify({ ...products })
          });

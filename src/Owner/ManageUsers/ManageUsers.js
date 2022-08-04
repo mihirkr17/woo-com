@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { useEffect } from 'react';
 import { Nav } from 'react-bootstrap';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { useAuthUser } from '../../App';
 import useAuth from '../../Hooks/useAuth';
-import { useAuthUser } from '../../lib/UserProvider';
 import "./ManageUsers.css";
 
 
 const ManageUsers = () => {
    const user = useAuthUser();
-   const { role } = useAuth();
+   const { role } = useAuth(user);
    const navigate = useNavigate();
    const location = useLocation();
    const [act, setAct] = useState("");

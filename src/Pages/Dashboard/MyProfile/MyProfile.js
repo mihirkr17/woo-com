@@ -6,11 +6,13 @@ import UpdateForm from './Components/UpdateForm';
 import { useBASE_URL } from '../../../lib/BaseUrlProvider';
 import useAuth from '../../../Hooks/useAuth';
 import Spinner from '../../../Components/Shared/Spinner/Spinner';
+import { useAuthUser } from '../../../App';
 
 
 const MyProfile = () => {
    const BASE_URL = useBASE_URL();
-   const { role, userInfo, authLoading, authRefetch } = useAuth();
+   const user = useAuthUser();
+   const { role, userInfo, authLoading, authRefetch } = useAuth(user);
    const [openEdit, setOpenEdit] = useState(false);
    const [country, setCountry] = useState(userInfo?.country);
    const [dob, setDob] = useState(userInfo?.dob);
@@ -36,7 +38,7 @@ const MyProfile = () => {
       const response = await fetch(`${BASE_URL}update-profile-data/${userInfo?.email}`, {
          method: "PUT",
          headers: {
-            "content-type": "application/json"
+            "Content-Type": "application/json"
          },
          body: JSON.stringify(data)
       });

@@ -3,12 +3,12 @@ import { useFetch } from '../../Hooks/useFetch';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { useMessage } from '../../Hooks/useMessage';
 import { Link } from 'react-router-dom';
-import { useAuthUser } from '../../lib/UserProvider';
 import BtnSpinner from '../../Components/Shared/BtnSpinner/BtnSpinner';
 import { useBASE_URL } from '../../lib/BaseUrlProvider';
 import "./MyOrder.css";
 import FilterOption from "../../Shared/FilterOption";
 import { useEffect } from 'react';
+import { useAuthUser } from '../../App';
 
 
 const MyOrder = () => {
@@ -79,7 +79,7 @@ const MyOrder = () => {
       const response = await fetch(`${BASE_URL}api/add-product-rating/${productId}/${userEmail}`, {
          method: "PUT",
          headers: {
-            "content-type": "application/json"
+            "Content-Type": "application/json"
          },
          body: JSON.stringify({ ...review })
       });
@@ -107,7 +107,7 @@ const MyOrder = () => {
          const response = await fetch(`${BASE_URL}api/cancel-my-order/${user?.email}/${orderId}`, {
             method: "PUT",
             headers: {
-               "content-type": "application/json"
+               "Content-Type": "application/json"
             },
             body: JSON.stringify({ status, cancel_reason, time_canceled })
          });

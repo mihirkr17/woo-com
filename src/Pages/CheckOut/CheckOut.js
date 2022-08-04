@@ -2,11 +2,10 @@ import { faCheckCircle, faLeftLong } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useCart } from '../../App';
+import { useAuthUser, useCart } from '../../App';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { useMessage } from '../../Hooks/useMessage';
 import { useBASE_URL } from '../../lib/BaseUrlProvider';
-import { useAuthUser } from '../../lib/UserProvider';
 import { cartCalculate } from '../../Shared/cartCalculate';
 import CartCalculation from '../../Shared/CartComponents/CartCalculation';
 import CartItem from '../../Shared/CartComponents/CartItem';
@@ -18,9 +17,10 @@ const CheckOut = () => {
    const user = useAuthUser();
    const navigate = useNavigate();
    const { msg, setMessage } = useMessage()
-   const { loading, cart } = useCart();
+   const { cartLoading, cart } = useCart();
+   let products = cart?.product && cart?.product.filter(p => p?.stock === "in");
 
-   if (loading) {
+   if (cartLoading) {
       return <Spinner></Spinner>;
    }
 
@@ -30,7 +30,6 @@ const CheckOut = () => {
       e.preventDefault();
       let buyAlert = window.confirm("Buy Now");
       let payment_mode = e.target.payment.value;
-      let products = cart?.product && cart?.product.filter(p => p?.stock === "in");
 
       for (let i = 0; i < products.length; i++) {
          let elem = products[i];
@@ -68,7 +67,7 @@ const CheckOut = () => {
             const response = await fetch(`${BASE_URL}set-order/${user?.email}`, {
                method: "POST",
                headers: {
-                  "content-type": "application/json"
+                  "Content-Type": "application/json"
                },
                body: JSON.stringify({ ...product })
             });
@@ -124,7 +123,7 @@ const CheckOut = () => {
                <div className="col-lg-4 mb-3">
                   <CartCalculation product={cartCalculate(cart?.product)} headTitle={"Order Details"}></CartCalculation>
                   <br />
-                  <CartPayment buyBtnHandler={buyBtnHandler}></CartPayment>
+                  <CartPayment buyBtnHandler={buyBtnHandler} isStock={products && products.length > 0 ? true : false}></CartPayment>
                </div>
             </div>
          </div>

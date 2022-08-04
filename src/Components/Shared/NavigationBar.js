@@ -3,14 +3,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { Button, Container, Dropdown, Nav, Navbar } from 'react-bootstrap';
 import { Link, NavLink } from 'react-router-dom';
-import { useCart } from '../../App';
+import { useAuthUser, useCart } from '../../App';
 import useAuth from '../../Hooks/useAuth';
-import { useAuthUser, useSignOut } from '../../lib/UserProvider';
+// import { useAuthUser } from '../../lib/UserProvider';
+import { loggedOut } from '../../Shared/common';
 import "./NavigationBar.css";
 
 const NavigationBar = ({ setQuery }) => {
    const user = useAuthUser();
-   const { role, userInfo } = useAuth();
+   const { role, userInfo } = useAuth(user);
    const { cartProductCount } = useCart();
 
    return (
@@ -38,7 +39,7 @@ const NavigationBar = ({ setQuery }) => {
                            </Dropdown.Toggle>
                            <Dropdown.Menu>
                               <Dropdown.Item as={Link} to='/my-profile/my-order'>My Order</Dropdown.Item>
-                              <Dropdown.Item as={Button} onClick={useSignOut}>Logout</Dropdown.Item>
+                              <Dropdown.Item as={Button} onClick={async () => loggedOut()}>Logout</Dropdown.Item>
                            </Dropdown.Menu>
                         </Dropdown>
                      </>

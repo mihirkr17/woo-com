@@ -6,16 +6,17 @@ import { useBASE_URL } from '../../../lib/BaseUrlProvider';
 const CheckOrder = () => {
    const BASE_URL = useBASE_URL();
    const { order, orderRefetch } = useOrder();
-   const token = new URLSearchParams(document.cookie.replaceAll("; ", "&")).get('accessToken');;
+   // const token = new URLSearchParams(document.cookie.replaceAll("; ", "&")).get('accessToken');
    const [openModal, setOpenModal] = useState(false);
-
+// console.log(order)
    const orderDispatchHandler = async (orderId, user_email) => {
       if (orderId && user_email) {
          const response = await fetch(`${BASE_URL}api/dispatch-order-request/${orderId}/${user_email}`, {
             method: "PUT",
-            headers : {
-               "content-type": "application/json",
-               authorization: `Bearer ${token}`
+            withCredentials: true,
+            credentials: "include",
+            headers: {
+               "Content-Type": "application/json",
             }
          });
 

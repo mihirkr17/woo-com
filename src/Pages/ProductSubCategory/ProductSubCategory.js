@@ -62,16 +62,12 @@ const ProductSubCategory = () => {
       }
    }
 
-   const category_head = {
-
-   }
-
    return (
       <div className="section_default">
          <CategoryHeader></CategoryHeader>
          <div className='container'>
 
-            <div className="category_head" style={category_head}>
+            <div className="category_head">
                <Breadcrumbs></Breadcrumbs>
                <div className="p-2 border-bottom">
                   <h5>{sub_category}</h5>
