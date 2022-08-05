@@ -2,11 +2,12 @@ import { faClose } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import BtnSpinner from '../../Components/Shared/BtnSpinner/BtnSpinner';
 
 import { loggedOut } from '../common';
 
-const CartItem = ({ product: cartProduct, setMessage, refetch, user, checkOut, cartTypes }) => {
-   
+const CartItem = ({ product: cartProduct, setMessage, refetch, checkOut, cartTypes, cartLoading }) => {
+
 
    // update product quantity handler
    const quantityHandler = async (cp, action) => {
@@ -63,9 +64,13 @@ const CartItem = ({ product: cartProduct, setMessage, refetch, user, checkOut, c
             </div>
             {
                !checkOut && <div className="ms-2 cart_btn">
-                  <button className='badge bg-primary my-1' disabled={cartProduct && cartProduct?.quantity <= 1 ? true : false} onClick={(e) => quantityHandler(cartProduct && cartProduct, "dec")}>-</button>
+                  <button className='badge bg-primary my-1' disabled={cartProduct && cartProduct?.quantity <= 1 ? true : false} onClick={(e) => quantityHandler(cartProduct && cartProduct, "dec")}>
+                     {cartLoading ? <BtnSpinner /> : "-"}
+                  </button>
                   <span className='border px-2'>{cartProduct && cartProduct?.quantity} </span>
-                  <button className='badge bg-primary my-1' disabled={cartProduct && cartProduct?.quantity >= cartProduct && cartProduct?.available ? true : false} onClick={(e) => quantityHandler(cartProduct && cartProduct, "inc")}>+</button>
+                  <button className='badge bg-primary my-1' disabled={cartProduct && cartProduct?.quantity >= cartProduct && cartProduct?.available ? true : false} onClick={(e) => quantityHandler(cartProduct && cartProduct, "inc")}>
+                     {cartLoading ? <BtnSpinner /> : "+"}
+                  </button>
                </div>
             }
          </div>

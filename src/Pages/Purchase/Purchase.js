@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuthUser, useCart } from '../../App';
-import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { useMessage } from '../../Hooks/useMessage';
 import { cartCalculate } from '../../Shared/cartCalculate';
 import CartAddress from '../../Shared/CartComponents/CartAddress';
@@ -20,9 +19,7 @@ const Purchase = () => {
 
    useEffect(() => {
       if (msg !== '') return navigate('/');
-   }, [msg, navigate])
-
-   if (cartLoading) return <Spinner></Spinner>;
+   }, [msg, navigate]);
 
    const goCheckoutPage = () => {
       navigate(`/my-cart/checkout-single/${productId}`)
@@ -36,7 +33,7 @@ const Purchase = () => {
                <div className="col-lg-8 mb-3">
                   <CartAddress refetch={refetch} user={user} addr={cart && cart?.address ? cart?.address : []} step={step} setStep={setStep}></CartAddress>
                   <br />
-                  <CartItem product={cart && cart?.buy_product} cartTypes={"buy"} refetch={refetch} user={user} setMessage={setMessage}></CartItem>                 
+                  <CartItem product={cart && cart?.buy_product} cartTypes={"buy"} refetch={refetch} cartLoading={cartLoading} setMessage={setMessage}></CartItem>                 
                </div>
                <div className="col-lg-4 mb-3">
                   <CartHeader user={user}></CartHeader>

@@ -11,7 +11,7 @@ import "./Cart.css";
 
 const Cart = () => {
    const user = useAuthUser();
-   const { refetch, cart, cartProductCount } = useCart();
+   const { refetch, cart, cartProductCount, cartLoading } = useCart();
    const { msg, setMessage } = useMessage();
    const [step, setStep] = useState(false);
    const navigate = useNavigate();
@@ -34,7 +34,7 @@ const Cart = () => {
                      {
                         cart?.product && cart?.product ? cart?.product.map(product => {
                            return (
-                              <CartItem key={product?._id} user={user} product={product} cartTypes={"toCart"} refetch={refetch} setMessage={setMessage}></CartItem>
+                              <CartItem key={product?._id} cartLoading={cartLoading} product={product} cartTypes={"toCart"} refetch={refetch} setMessage={setMessage}></CartItem>
                            )
                         }) :
                            <div className="card_default">
