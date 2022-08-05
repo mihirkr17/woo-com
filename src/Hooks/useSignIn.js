@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 
 export const useSignIn = (user) => {
    
-   const [isLogged, setIsLogged] = useState(false);
+   const [isLogged, setIsLogged] = useState("");
 
    useEffect(() => {
       const controller = new AbortController();
@@ -11,6 +11,7 @@ export const useSignIn = (user) => {
       (async () => {
          try {
             if (user) {
+              
                const email = user?.user?.email;
                const url = `${process.env.REACT_APP_BASE_URL}api/sign-user/${email}`;
                const response = await fetch(url, {
@@ -28,7 +29,7 @@ export const useSignIn = (user) => {
 
                if (response.ok) {
                   if (resData) {
-                     setIsLogged(true);
+                     setIsLogged(resData?.message);
                   }
                }
             }
@@ -38,7 +39,7 @@ export const useSignIn = (user) => {
       })();
 
       return () => controller?.abort();
-   }, [user, ]);
+   }, [user]);
 
    return [isLogged];
 };

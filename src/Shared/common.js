@@ -32,6 +32,6 @@ export const loggedOut = async () => {
    });
    const resData = await response.json();
    if (response.ok) {
-      
+      console.log(resData?.message);
    }
 };

@@ -5,12 +5,12 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { useCategories } from '../Hooks/useCategories';
 import { usePrice } from '../Hooks/usePrice';
 import { useMessage } from '../Hooks/useMessage';
-import { slugMaker } from './common';
-
+import { loggedOut, slugMaker } from './common';
 import BtnSpinner from '../Components/Shared/BtnSpinner/BtnSpinner';
+import { useNavigate } from 'react-router-dom';
 
 const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch }) => {
-   
+   const navigate = useNavigate();
    const [desc, setDescription] = useState((data?.description && data?.description) || "CKEditor v5");
    const [inputValue, setInputValue] = useState({ price: (data?.price && data?.price) || "", discount: (data?.discount && data?.discount) || "" });
    const { price_fixed, discount_amount_fixed } = usePrice(inputValue.price, inputValue.discount);
@@ -99,6 +99,8 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch })
             }
          } else {
             setActionLoading(false);
+            await loggedOut();
+            navigate("/login?q=unauthorized");
          }
       }
    }
@@ -155,7 +157,10 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch })
             </Form.Group>
 
             <Form.Group as={Col} controlId="formGridSubCategory">
-               <Form.Label>Product Sub Category</Form.Label>
+               <Form.Label>Product Sub Category <br />
+                  <small className='text-muted'>{data && data?.sub_category && data && data?.sub_category}</small>
+               </Form.Label>
+
                <Form.Select name='sub_category'>
                   {
                      subCategories && subCategories.map((items, index) => {

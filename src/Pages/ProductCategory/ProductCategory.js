@@ -1,8 +1,10 @@
 import React from 'react';
 import { useEffect } from 'react';
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Nav } from 'react-bootstrap';
+import { Link, useParams } from 'react-router-dom';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
+import { useCategories } from '../../Hooks/useCategories';
 import { useFetch } from '../../Hooks/useFetch';
 
 import Breadcrumbs from '../../Shared/Breadcrumbs';
@@ -11,7 +13,7 @@ import CategoryHeader from '../Home/Components/CategoryHeader';
 import "./ProductCategory.css";
 
 const ProductCategory = () => {
-   
+
    const { category } = useParams();
    const [url, setUrl] = useState("");
    const { data: productByCategory, loading } = useFetch(`${process.env.REACT_APP_BASE_URL + url}`);
@@ -19,6 +21,8 @@ const ProductCategory = () => {
    const [brands, setBrands] = useState({ brand: [] });
    const [getBrand, setGetBrand] = useState(["all"]);
    const [products, setProducts] = useState([]);
+   const { subCategories } = useCategories(category);
+
 
    useEffect(() => {
       if (productByCategory) {
@@ -93,45 +97,42 @@ const ProductCategory = () => {
                         </select>
                      </div>
 
-                     <div className='my-3'>
-                        <small><strong>Choose By Brands</strong></small>
-                        <div className="row">
-                           {
-                              getBrand && getBrand.map((b, i) => {
-                                 // console.log(b);
-                                 return (
-                                    <div className="col-12" key={i}>
-                                       <label htmlFor={b} >
-                                          <input type="checkbox" className='me-3' name={b} id={b} value={b} onChange={handleChange} />
-                                          {b}
-                                       </label>
-                                    </div>
 
+                     <div className="py-3">
+                        <ul>
+                           {
+                              subCategories && subCategories.map((c, i) => {
+                                 return (
+                                    <li key={i} className="mb-2">
+                                       <Nav.Item as={Link} to={`/${category}/${c}`}>
+                                          {c}
+                                       </Nav.Item>
+                                    </li>
                                  )
                               })
                            }
-                        </div>
+                        </ul>
                      </div>
                   </div>
 
                </div>
                <div className="category_right_side col-lg-10">
-               <div className="row">
-               {
-                  loading ? <Spinner /> : products && products.map(p => {
-                     return (
-                        <div key={p?._id} className="col-lg-3 mb-4">
-                           <Product product={p}></Product>
-                        </div>
-                     )
-                  })
-               }
-            </div>
+                  <div className="row">
+                     {
+                        loading ? <Spinner /> : products && products.map(p => {
+                           return (
+                              <div key={p?._id} className="col-lg-3 mb-4">
+                                 <Product product={p}></Product>
+                              </div>
+                           )
+                        })
+                     }
+                  </div>
                </div>
             </div>
 
 
-            
+
          </div>
       </div>
    );

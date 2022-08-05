@@ -11,7 +11,7 @@ const ProductSubCategory = () => {
    
    const { sub_category, category } = useParams();
    const [url, setUrl] = useState("");
-   const { data: productBySubCategory, loading } = useFetch(`${ + url}`);
+   const { data: productBySubCategory, loading } = useFetch(`${process.env.REACT_APP_BASE_URL + url}`);
    const [filters, setFilters] = useState('best_match');
    const [brands, setBrands] = useState({ brand: [] });
    const [getBrand, setGetBrand] = useState(["all"]);

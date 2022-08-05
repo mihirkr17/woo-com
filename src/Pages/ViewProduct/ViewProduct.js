@@ -10,12 +10,14 @@ import ProductModel from '../../Shared/ProductModel';
 import { useAuthUser, useCart } from '../../App';
 import { useState } from 'react';
 import { averageRating, loggedOut } from '../../Shared/common';
+import useAuth from '../../Hooks/useAuth';
 
 
 const ViewProduct = () => {
-   
+
    const { product_slug } = useParams();
    const user = useAuthUser();
+   const { role } = useAuth(user);
    const { refetch } = useCart();
    const { data: product, loading, refetch: productRefetch } = useFetch(`${process.env.REACT_APP_BASE_URL}api/fetch-single-product/${product_slug}/${user?.email}`);
    const { data: productByCategory } = useFetch(`${process.env.REACT_APP_BASE_URL}api/product-by-category?sub_category=${product?.sub_category}`);
@@ -102,7 +104,7 @@ const ViewProduct = () => {
       <div className='view_product section_default'>
          <div className="container">
             {msg}
-            <ProductModel showFor={"user"} product={product} buyLoading={buyLoading} addCartLoading={addCartLoading} addToCartHandler={addToCartHandler}></ProductModel>
+            <ProductModel showFor={role} product={product} buyLoading={buyLoading} addCartLoading={addCartLoading} addToCartHandler={addToCartHandler}></ProductModel>
             <div className="row pt-5">
                <div className="col-lg-9">
                   <h5 id='rating' className='text-center py-1'>Rating And Review Of {product?.title}</h5>

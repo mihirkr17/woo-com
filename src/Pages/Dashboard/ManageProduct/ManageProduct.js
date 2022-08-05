@@ -16,7 +16,7 @@ const ManageProduct = () => {
    const { msg, setMessage } = useMessage();
 
    const user = useAuthUser();
-   const { role, userInfo } = useAuth(user);
+   const { userInfo } = useAuth(user);
    const [items, setItems] = useState(0);
    const [page, setPage] = useState(0);
    const [url, setUrl] = useState("");

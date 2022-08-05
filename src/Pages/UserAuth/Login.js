@@ -6,7 +6,6 @@ import BtnSpinner from '../../Components/Shared/BtnSpinner/BtnSpinner';
 import { auth } from '../../firebase.init';
 import { useMessage } from '../../Hooks/useMessage';
 import { useSignIn } from '../../Hooks/useSignIn';
-// import { useToken } from '../../Hooks/useToken';
 import SocialAuth from './SocialAuth';
 
 const Login = () => {
@@ -17,6 +16,10 @@ const Login = () => {
    const [isLogged] = useSignIn(user);
    let from = location.state?.from?.pathname || '/';
    let msg;
+
+   const queryParams = new URLSearchParams(window.location.search);
+   const term = queryParams.get("q");
+   console.log(term);
 
    useEffect(() => {
       if (isLogged) navigate(from, { replace: true });
