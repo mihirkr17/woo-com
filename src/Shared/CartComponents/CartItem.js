@@ -74,7 +74,7 @@ const CartItem = ({ product: cartProduct, setMessage, refetch, user, checkOut, c
             <div className="col-12">
                <div className="row">
                   <div className="col-11">
-                     <p className="card_title"><Link to={`/product/${cartProduct && cartProduct?._id}`}>{cartProduct && cartProduct?.title}</Link></p>
+                     <p className="card_title"><Link to={`/${cartProduct?.category}/${cartProduct?.sub_category}/${cartProduct?.slug}`}>{cartProduct && cartProduct?.title}</Link></p>
                      <div className="d-flex align-items-center justify-content-between">
                         <small>
                            <strike className='text-muted'>{cartProduct && cartProduct?.price}</strike>&nbsp;
