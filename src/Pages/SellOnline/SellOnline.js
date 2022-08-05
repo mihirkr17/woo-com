@@ -3,17 +3,16 @@ import { useState } from 'react';
 import { useAuthUser } from '../../App';
 import useAuth from '../../Hooks/useAuth';
 import { useMessage } from '../../Hooks/useMessage';
-import { useBASE_URL } from '../../lib/BaseUrlProvider';
+
 
 const SellOnline = () => {
-   const BASE_URL = useBASE_URL();
    const user = useAuthUser();
    const { userInfo, refetch } = useAuth(user);
    const { msg, setMessage } = useMessage();
    const [categories, setCategories] = useState({ category: [] });
 
    const apiReq = async (fields) => {
-      const response = await fetch(`${BASE_URL}api/make-seller-request/${user?.email}`, {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/make-seller-request/${user?.email}`, {
          method: "PUT",
          headers: {
             "Content-Type": "application/json"

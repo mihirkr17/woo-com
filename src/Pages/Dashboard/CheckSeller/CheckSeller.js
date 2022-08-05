@@ -3,11 +3,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 import { Button, Modal } from 'react-bootstrap';
 import Spinner from '../../../Components/Shared/Spinner/Spinner';
-import { useBASE_URL } from '../../../lib/BaseUrlProvider';
+
 import { useSellerChecker } from '../../../lib/SellerCheckProvider';
 
 const CheckSeller = () => {
-   const BASE_URL = useBASE_URL();
+   
    const [modals, setModals] = useState(false);
    // const token = new URLSearchParams(document.cookie.replaceAll("; ", "&")).get('accessToken');
    const { state, dispatch, refetch, loading } = useSellerChecker();
@@ -18,7 +18,7 @@ const CheckSeller = () => {
    const makeSellerHandler = async (userId) => {
 
       if (window.confirm("Make Seller ?")) {
-         const response = await fetch(`${BASE_URL}api/permit-seller-request/${userId}`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/permit-seller-request/${userId}`, {
             method: "PUT",
             withCredentials: true,
             credentials: "include",

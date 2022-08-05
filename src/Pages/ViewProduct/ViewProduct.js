@@ -4,21 +4,21 @@ import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { useFetch } from '../../Hooks/useFetch';
 import "./ViewProduct.css";
 import { useMessage } from '../../Hooks/useMessage';
-import { useBASE_URL } from "../../lib/BaseUrlProvider";
+
 import Product from '../../Shared/Product';
 import ProductModel from '../../Shared/ProductModel';
 import { useAuthUser, useCart } from '../../App';
 import { useState } from 'react';
-import { averageRating } from '../../Shared/common';
+import { averageRating, loggedOut } from '../../Shared/common';
 
 
 const ViewProduct = () => {
-   const BASE_URL = useBASE_URL();
+   
    const { product_slug } = useParams();
    const user = useAuthUser();
    const { refetch } = useCart();
-   const { data: product, loading, refetch: productRefetch } = useFetch(`${BASE_URL}api/fetch-single-product/${product_slug}/${user?.email}`);
-   const { data: productByCategory } = useFetch(`${BASE_URL}api/product-by-category?sub_category=${product?.sub_category}`);
+   const { data: product, loading, refetch: productRefetch } = useFetch(`${process.env.REACT_APP_BASE_URL}api/fetch-single-product/${product_slug}/${user?.email}`);
+   const { data: productByCategory } = useFetch(`${process.env.REACT_APP_BASE_URL}api/product-by-category?sub_category=${product?.sub_category}`);
    const navigate = useNavigate();
    const { msg, setMessage } = useMessage();
    const [addCartLoading, setAddCartLoading] = useState(false);
@@ -28,8 +28,8 @@ const ViewProduct = () => {
 
    const addToCartHandler = async (product, params) => {
 
-      const url = params === "buy" ? `${BASE_URL}api/add-buy-product/${user?.email}` :
-         `${BASE_URL}api/add-to-cart/${user?.email}`;
+      const url = params === "buy" ? `${process.env.REACT_APP_BASE_URL}api/add-buy-product` :
+         `${process.env.REACT_APP_BASE_URL}api/add-to-cart`;
 
       let quantity = 1;
       let productPrice = parseInt(product?.price);
@@ -66,14 +66,17 @@ const ViewProduct = () => {
 
          const response = await fetch(url, {
             method: "PUT",
+            withCredentials: true,
+            credentials: "include",
             headers: {
                'content-type': 'application/json'
             },
             body: JSON.stringify(cartProduct)
          });
 
-         const resData = response.ok && await response.json();
-         if (resData) {
+         if (response.ok) {
+            const resData = await response.json();
+
             refetch();
             productRefetch();
             setMessage(resData?.message);
@@ -85,6 +88,12 @@ const ViewProduct = () => {
                setAddCartLoading(false);
                navigate('/my-cart');
             }
+
+         } else {
+            setAddCartLoading(false);
+            setBuyLoading(false);
+            await loggedOut();
+            navigate('/login')
          }
       }
    }

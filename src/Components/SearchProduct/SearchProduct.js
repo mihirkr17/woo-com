@@ -1,13 +1,13 @@
 import React from 'react';
 import { useFetch } from '../../Hooks/useFetch';
-import { useBASE_URL } from '../../lib/BaseUrlProvider';
+
 import Product from '../../Shared/Product';
 import Spinner from '../Shared/Spinner/Spinner';
 import "./SearchProduct.css";
 
 const SearchProduct = ({ query, setQuery }) => {
-   const BASE_URL = useBASE_URL();
-   const { data: allProducts, loading } = useFetch(`${BASE_URL}products`);
+   
+   const { data: allProducts, loading } = useFetch(`${process.env.REACT_APP_BASE_URL}products`);
 
    if (loading) return <Spinner></Spinner>;
 

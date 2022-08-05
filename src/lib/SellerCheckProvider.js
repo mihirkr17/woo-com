@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useContext } from 'react';
 import { createContext } from 'react';
 import { useFetch } from '../Hooks/useFetch';
-import { useBASE_URL } from './BaseUrlProvider';
+
 export const SellerCheckContext = createContext();
 
 const reducer = (state, action) => {
@@ -17,8 +17,8 @@ const reducer = (state, action) => {
 
 
 const SellerCheckProvider = ({ children }) => {
-   const BASE_URL = useBASE_URL();
-   const url = `${BASE_URL}api/check-seller-request`;
+   
+   const url = `${process.env.REACT_APP_BASE_URL}api/check-seller-request`;
    const { data, refetch, loading } = useFetch(url);
 
    const initialState = {

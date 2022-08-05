@@ -26,7 +26,7 @@ const Cart = () => {
             <p><strong className='text-danger'>{msg}</strong></p>
             <div className="row">
                <div className="col-lg-8 mb-3">
-                  <CartAddress refetch={refetch} addr={cart?.address ? cart?.address : []} user={user} step={step} setStep={setStep}></CartAddress>
+                  <CartAddress refetch={refetch} addr={cart?.address ? cart?.address : []} setStep={setStep}></CartAddress>
                   <br />
                   <div className="cart_card">
                      <h6>Total In Cart ({(cartProductCount) || 0})</h6>

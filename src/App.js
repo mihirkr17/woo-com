@@ -33,7 +33,7 @@ import SellOnline from './Pages/SellOnline/SellOnline';
 import CheckSeller from './Pages/Dashboard/CheckSeller/CheckSeller';
 import AllSeller from './Owner/ManageUsers/outlet/AllSeller';
 import SellerCheckProvider from './lib/SellerCheckProvider';
-import { useBASE_URL } from './lib/BaseUrlProvider';
+
 import { useFetch } from './Hooks/useFetch';
 import CheckOrder from './Pages/Dashboard/CheckOrder/CheckOrder';
 import useAuth from './Hooks/useAuth';
@@ -54,20 +54,19 @@ export const CartContext = createContext();
 export const OrderContext = createContext();
 
 function App() {
-  const BASE_URL = useBASE_URL();
   const [user, loading] = useAuthState(auth);
   const [query, setQuery] = useState('');
   const { role, userInfo } = useAuth(user);
 
   // fetching product
-  const { data: products, loading: productLoading } = useFetch(`${BASE_URL}products/`);
+  const { data: products, loading: productLoading } = useFetch(`${process.env.REACT_APP_BASE_URL}products/`);
 
   // fetching cart information and data from mongodb
-  const { data: cart, cartLoading, refetch } = useFetch(user && `${BASE_URL}my-cart-items/${user?.email}`);
+  const { data: cart, cartLoading, refetch } = useFetch(user && `${process.env.REACT_APP_BASE_URL}my-cart-items/${user?.email}`);
 
 
-  let url = role === "seller" ? `${BASE_URL}manage-orders?seller=${userInfo?.seller}` :
-    `${BASE_URL}manage-orders`;
+  let url = role === "seller" ? `${process.env.REACT_APP_BASE_URL}manage-orders?seller=${userInfo?.seller}` :
+    `${process.env.REACT_APP_BASE_URL}manage-orders`;
   // fetching order information and data from mongodb
   const { data: order, loading: orderLoading, refetch: orderRefetch } = useFetch(url);
 

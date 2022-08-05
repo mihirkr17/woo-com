@@ -4,20 +4,20 @@ import { useAuthUser } from '../../../App';
 import Spinner from '../../../Components/Shared/Spinner/Spinner';
 import useAuth from '../../../Hooks/useAuth';
 import { useFetch } from '../../../Hooks/useFetch';
-import { useBASE_URL } from '../../../lib/BaseUrlProvider';
+
 
 const AllUsers = () => {
-   const BASE_URL = useBASE_URL();
+   
    const user = useAuthUser();
    // const token = new URLSearchParams(document.cookie.replaceAll("; ", "&")).get('accessToken');
    const { role } = useAuth(user);
-   const { data, loading, refetch } = useFetch(`${BASE_URL}api/manage-user?uTyp=user`);
+   const { data, loading, refetch } = useFetch(`${process.env.REACT_APP_BASE_URL}api/manage-user?uTyp=user`);
 
    if (loading) return <Spinner></Spinner>;
 
    const makeAdminHandler = async (userId) => {
       if (window.confirm("Want to give permission 'admin'")) {
-         const response = await fetch(`${BASE_URL}make-admin/${userId}`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}make-admin/${userId}`, {
             method: "PUT",
             withCredentials: true,
             credentials: "include",

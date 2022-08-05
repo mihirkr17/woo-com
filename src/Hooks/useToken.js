@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useBASE_URL } from "../lib/BaseUrlProvider";
 
 export const useToken = (user) => {
-   const BASE_URL = useBASE_URL();
+   
    const [token, setToken] = useState(null);
 
    useEffect(() => {
@@ -12,7 +12,7 @@ export const useToken = (user) => {
          try {
             if (user) {
                const email = user?.user?.email;
-               const url = `${BASE_URL}api/sign-user/${email}`;
+               const url = `${process.env.REACT_APP_BASE_URL}api/sign-user/${email}`;
                const response = await fetch(url, {
                   method: "PUT",
                   withCredentials: true,
@@ -39,7 +39,7 @@ export const useToken = (user) => {
       })();
 
       return () => controller?.abort();
-   }, [user, BASE_URL]);
+   }, [user, ]);
 
    return [token];
 }

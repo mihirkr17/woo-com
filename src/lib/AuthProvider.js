@@ -3,13 +3,13 @@ import React, { useEffect, useState } from 'react';
 import { createContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../firebase.init';
-import { useBASE_URL } from './BaseUrlProvider';
+
 import { useAuthUser } from './UserProvider';
 
 export const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
-   const BASE_URL = useBASE_URL();
+   
    const user = useAuthUser();
    const [role, setRole] = useState("");
    const [userInfo, setUserInfo] = useState(null || {} || []);
@@ -30,7 +30,7 @@ const AuthProvider = ({ children }) => {
             setAuthLoading(true);
 
             if (user && token) {
-               const response = await fetch(`${BASE_URL}api/fetch-auth-user`, {
+               const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/fetch-auth-user`, {
                   method: "GET",
                   headers: {
                      "Content-Type": "application/json",
@@ -74,7 +74,7 @@ const AuthProvider = ({ children }) => {
 
       return () => controller?.abort();
 
-   }, [token, user, navigate, BASE_URL, ref]);
+   }, [token, user, navigate,  ref]);
 
    return (
       <AuthContext.Provider value={{ role, authLoading, err, userInfo, authRefetch }}>

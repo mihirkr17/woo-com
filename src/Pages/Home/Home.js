@@ -6,12 +6,12 @@ import HomeStore from './Components/HomeStore';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
 import CategoryHeader from './Components/CategoryHeader';
 import RecentProducts from './Components/RecentProducts';
-import { useBASE_URL } from '../../lib/BaseUrlProvider';
+
 import RecommendedProducts from './Components/RecommendedProducts';
 
 const Home = () => {
-   const BASE_URL = useBASE_URL();
-   const { data, loading } = useFetch(`${BASE_URL}products/`);
+   
+   const { data, loading } = useFetch(`${process.env.REACT_APP_BASE_URL}products/`);
 
    if (loading) return <Spinner></Spinner>;
 

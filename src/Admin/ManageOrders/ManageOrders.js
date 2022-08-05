@@ -5,11 +5,11 @@ import Spinner from '../../Components/Shared/Spinner/Spinner';
 // import { useAuthUser } from '../../lib/UserProvider';
 import { useEffect } from 'react';
 import OrderTable from './Components/OrderTable';
-import { useBASE_URL } from '../../lib/BaseUrlProvider';
+
 import { useAuthUser, useOrder } from '../../App';
 
 const ManageOrders = () => {
-   const BASE_URL = useBASE_URL();
+   
    const user = useAuthUser();
    const { msg, setMessage } = useMessage();
    const { order, orderRefetch, orderLoading } = useOrder();
@@ -31,7 +31,7 @@ const ManageOrders = () => {
    // Cancel the order if any wrong 
    const cancelOrderHandler = async (email, orderId) => {
       if (window.confirm("Want to cancel this order ?")) {
-         const response = await fetch(`${BASE_URL}api/remove-order/${user?.email}/${orderId}`, { method: "DELETE" });
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/remove-order/${user?.email}/${orderId}`, { method: "DELETE" });
          if (response.ok) await response.json();
          orderRefetch();
          setMessage(<strong className='text-success'>Order Cancelled...</strong>);
@@ -47,7 +47,7 @@ const ManageOrders = () => {
       let st = status === "pending" ? "placed" : status === "placed" ? "shipped" : "";
 
       if (window.confirm(confirmMsg)) {
-         const response = await fetch(`${BASE_URL}update-order-status/${st}/${userEmail}/${orderId}`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}update-order-status/${st}/${userEmail}/${orderId}`, {
             method: "PUT",
             headers: {
                "Content-Type": "application/json"

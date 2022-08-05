@@ -4,7 +4,7 @@ import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { useMessage } from '../../Hooks/useMessage';
 import { Link } from 'react-router-dom';
 import BtnSpinner from '../../Components/Shared/BtnSpinner/BtnSpinner';
-import { useBASE_URL } from '../../lib/BaseUrlProvider';
+
 import "./MyOrder.css";
 import FilterOption from "../../Shared/FilterOption";
 import { useEffect } from 'react';
@@ -12,10 +12,10 @@ import { useAuthUser } from '../../App';
 
 
 const MyOrder = () => {
-   const BASE_URL = useBASE_URL();
+   
    const user = useAuthUser();
    const { msg, setMessage } = useMessage();
-   const { data, refetch, loading } = useFetch(`${BASE_URL}my-order/${user?.email}`);
+   const { data, refetch, loading } = useFetch(`${process.env.REACT_APP_BASE_URL}my-order/${user?.email}`);
    const [actLoading, setActLoading] = useState(false);
    const [ratPoint, setRatPoint] = useState("5");
    const [reason, setReason] = useState("");
@@ -50,7 +50,7 @@ const MyOrder = () => {
 
    const removeOrderHandler = async (orderId) => {
       if (window.confirm("Want to cancel this order ?")) {
-         const response = await fetch(`${BASE_URL}api/remove-order/${user?.email}/${orderId}`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/remove-order/${user?.email}/${orderId}`, {
             method: "DELETE"
          });
          if (response.ok) {
@@ -76,8 +76,10 @@ const MyOrder = () => {
          ratingId, orderId: parseInt(orderId), rating_customer: userEmail, rating_point: ratingPoint, rating_description: ratingDesc
       }
 
-      const response = await fetch(`${BASE_URL}api/add-product-rating/${productId}/${userEmail}`, {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/add-product-rating/${productId}`, {
          method: "PUT",
+         withCredentials: true,
+         credentials: "include",
          headers: {
             "Content-Type": "application/json"
          },
@@ -104,7 +106,7 @@ const MyOrder = () => {
          setMessage(<strong className='text-success'>Please Select Cancel Reason...</strong>);
          return;
       } else {
-         const response = await fetch(`${BASE_URL}api/cancel-my-order/${user?.email}/${orderId}`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/cancel-my-order/${user?.email}/${orderId}`, {
             method: "PUT",
             headers: {
                "Content-Type": "application/json"

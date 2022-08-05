@@ -1,12 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useFetch } from '../../../Hooks/useFetch';
-import { useBASE_URL } from '../../../lib/BaseUrlProvider';
+
 import Product from '../../../Shared/Product';
 
 const RecommendedProducts = () => {
-   const BASE_URL = useBASE_URL();
-   const { data, loading } = useFetch(`${BASE_URL}api/products/recommended`);
+   
+   const { data, loading } = useFetch(`${process.env.REACT_APP_BASE_URL}api/products/recommended`);
 
    return (
       <div className='section_default'>

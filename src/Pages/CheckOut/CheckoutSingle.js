@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuthUser, useCart } from '../../App';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { useMessage } from '../../Hooks/useMessage';
-import { useBASE_URL } from '../../lib/BaseUrlProvider';
+
 import { cartCalculate } from '../../Shared/cartCalculate';
 import CartCalculation from '../../Shared/CartComponents/CartCalculation';
 import CartItem from '../../Shared/CartComponents/CartItem';
@@ -13,7 +13,7 @@ import CartPayment from '../../Shared/CartComponents/CartPayment';
 import { commissionRate } from '../../Shared/commissionRate';
 
 const CheckoutSingle = () => {
-   const BASE_URL = useBASE_URL();
+   
    const user = useAuthUser();
    const navigate = useNavigate();
    const { msg, setMessage } = useMessage();
@@ -59,7 +59,7 @@ const CheckoutSingle = () => {
       }
 
       if (window.confirm("Buy Now")) {
-         const response = await fetch(`${BASE_URL}set-order/${user?.email}`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}set-order/${user?.email}`, {
             method: "POST",
             headers: {
                "Content-Type": "application/json"

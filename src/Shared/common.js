@@ -19,10 +19,10 @@ export const averageRating = (rating) => {
    const average = parseFloat(ava.toFixed(2));
    return average;
 }
-
+// ${process.env.REACT_APP_BASE_URL}
 export const loggedOut = async () => {
    signOut(auth);
-   const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/sign-out`, {
+   const response = await fetch(`http://localhost:5000/api/sign-out`, {
       method: "GET",
       withCredentials: true,
       credentials: "include",

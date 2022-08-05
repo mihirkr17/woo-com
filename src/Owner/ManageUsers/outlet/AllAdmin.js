@@ -2,18 +2,18 @@ import React from 'react';
 import { Table } from 'react-bootstrap';
 import Spinner from '../../../Components/Shared/Spinner/Spinner';
 import { useFetch } from '../../../Hooks/useFetch';
-import { useBASE_URL } from '../../../lib/BaseUrlProvider';
+
 
 
 const AllAdmin = () => {
-   const BASE_URL = useBASE_URL();
+   
    // const token = new URLSearchParams(document.cookie.replaceAll("; ", "&")).get('accessToken');
-   const { data, loading, refetch } = useFetch(`${BASE_URL}api/manage-user?uTyp=admin`);
+   const { data, loading, refetch } = useFetch(`${process.env.REACT_APP_BASE_URL}api/manage-user?uTyp=admin`);
    if (loading) return <Spinner></Spinner>;
 
    const demoteToUserHandler = async (userId) => {
       if (window.confirm("Demote to user ?")) {
-         const response = await fetch(`${BASE_URL}api/demote-to-user/${userId}`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/demote-to-user/${userId}`, {
             method: "PUT",
             withCredentials: true,
             credentials: "include",

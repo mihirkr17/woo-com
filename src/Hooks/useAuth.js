@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
-import { useBASE_URL } from '../lib/BaseUrlProvider';
 import { loggedOut } from '../Shared/common';
 
 const useAuth = (user) => {
-   const BASE_URL = useBASE_URL();
+   
    const [role, setRole] = useState("");
    const [userInfo, setUserInfo] = useState(null || {} || []);
    const [authLoading, setAuthLoading] = useState(false);
@@ -21,14 +20,7 @@ const useAuth = (user) => {
             try {
                if (user) {
                   setAuthLoading(true);
-
-                  const response = await fetch(`${BASE_URL}api/fetch-auth-user`, {
-                     method: "GET",
-                     withCredentials: true,
-                     credentials: "include",
-                     // signal: controller.signal
-                  });
-
+                  const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/fetch-auth-user/${user?.email}`);
                   const data = await response.json();
 
                   if (response.status >= 200 && response.status <= 299) {
@@ -57,11 +49,11 @@ const useAuth = (user) => {
                setAuthLoading(false);
             }
          })()
-      }, 1000);
+      }, 200);
 
       return () => clearTimeout(runFunc);
 
-   }, [BASE_URL, user, ref]);
+   }, [user, ref]);
 
    return { role, authLoading, err, userInfo, authRefetch };
 };

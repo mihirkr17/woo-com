@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Spinner from '../../../Components/Shared/Spinner/Spinner';
 import useAuth from '../../../Hooks/useAuth';
 import { useFetch } from '../../../Hooks/useFetch';
-import { useBASE_URL } from '../../../lib/BaseUrlProvider';
+
 import FilterOption from '../../../Shared/FilterOption';
 import { useMessage } from '../../../Hooks/useMessage';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -14,14 +14,14 @@ import { useAuthUser } from '../../../App';
 
 const ManageProduct = () => {
    const { msg, setMessage } = useMessage();
-   const BASE_URL = useBASE_URL();
+
    const user = useAuthUser();
    const { role, userInfo } = useAuth(user);
    const [items, setItems] = useState(0);
    const [page, setPage] = useState(0);
    const [url, setUrl] = useState("");
-   let url2 = userInfo && userInfo?.seller ? `${BASE_URL}api/product-count?seller=${userInfo?.seller}` :
-      `${BASE_URL}api/product-count`
+   let url2 = userInfo && userInfo?.seller ? `${process.env.REACT_APP_BASE_URL}api/product-count?seller=${userInfo?.seller}` :
+      `${process.env.REACT_APP_BASE_URL}api/product-count`
    const { data: counter, refetch: counterRefetch } = useFetch(url2);
    const { data: products, loading, refetch } = useFetch(url);
    const [searchValue, setSearchValue] = useState("");
@@ -33,14 +33,14 @@ const ManageProduct = () => {
       let url;
       const setTimeUrl = setTimeout(() => {
          if (userInfo?.seller) {
-            url = `${BASE_URL}api/manage-product?seller=${userInfo?.seller}&page=${page}&items=${8}&category=${filterCategory}&search=${searchValue}`
-         }  else {
-            url = `${BASE_URL}api/manage-product?page=${page}&items=${8}&category=${filterCategory}&search=${searchValue}`
+            url = `${process.env.REACT_APP_BASE_URL}api/manage-product?seller=${userInfo?.seller}&page=${page}&items=${8}&category=${filterCategory}&search=${searchValue}`
+         } else {
+            url = `${process.env.REACT_APP_BASE_URL}api/manage-product?page=${page}&items=${8}&category=${filterCategory}&search=${searchValue}`
          }
          setUrl(url);
       }, 200);
       return () => clearTimeout(setTimeUrl);
-   }, [BASE_URL, page, userInfo?.seller, searchValue, filterCategory]);
+   }, [page, userInfo?.seller, searchValue, filterCategory]);
 
    useEffect(() => {
       if (searchValue.length > 0 || filterCategory !== "all") {
@@ -56,7 +56,7 @@ const ManageProduct = () => {
    // delete product
    const productDeleteHandler = async (productId) => {
       if (window.confirm("Want to delete this product ?")) {
-         const response = await fetch(`${BASE_URL}api/delete-product/${productId}`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/delete-product/${productId}`, {
             method: "DELETE"
          });
 
@@ -107,7 +107,7 @@ const ManageProduct = () => {
                                     <td>{
                                        <img src={p?.image} style={{ width: "45px", height: "45px" }} alt="" />
                                     }</td>
-                                    <td><p style={{ cursor : "pointer" }} title={`View ${p?.title}`} onClick={() => setProductDetailsModal(true && p)}>{p?.title.length > 50 ? p?.title.slice(0, 50) + "..." : p?.title}</p></td>
+                                    <td><p style={{ cursor: "pointer" }} title={`View ${p?.title}`} onClick={() => setProductDetailsModal(true && p)}>{p?.title.length > 50 ? p?.title.slice(0, 50) + "..." : p?.title}</p></td>
                                     <td>{p?.category}</td>
                                     <td>{p?.seller}</td>
                                     <td>

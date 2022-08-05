@@ -2,11 +2,11 @@ import React from 'react';
 import Product from '../../Shared/Product';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { useFetch } from '../../Hooks/useFetch';
-import { useBASE_URL } from '../../lib/BaseUrlProvider';
+
 
 const AllRecentProduct = () => {
-   const BASE_URL = useBASE_URL();
-   const { data, loading } = useFetch(`${BASE_URL}products/`);
+   
+   const { data, loading } = useFetch(`${process.env.REACT_APP_BASE_URL}products/`);
    if (loading) {return <Spinner></Spinner>};
    return (
       <div className="section_default bg-secondary">

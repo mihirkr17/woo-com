@@ -2,10 +2,11 @@ import { faClose } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useBASE_URL } from '../../lib/BaseUrlProvider';
+
+import { loggedOut } from '../common';
 
 const CartItem = ({ product: cartProduct, setMessage, refetch, user, checkOut, cartTypes }) => {
-   const BASE_URL = useBASE_URL();
+   
 
    // update product quantity handler
    const quantityHandler = async (cp, action) => {
@@ -13,14 +14,21 @@ const CartItem = ({ product: cartProduct, setMessage, refetch, user, checkOut, c
       let price = parseInt(cp?.price) * parseInt(quantity);
       let discount_amount_total = parseInt(cp?.discount_amount_fixed) * parseInt(quantity);
 
-      const response = await fetch(`${BASE_URL}api/update-product-quantity/${cp?._id}/${user?.email}/${cartTypes && cartTypes}`, {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/update-product-quantity/${cp?._id}/${cartTypes && cartTypes}`, {
          method: "PUT",
+         withCredentials: true,
+         credentials: "include",
          headers: {
             'content-type': 'application/json'
          },
          body: JSON.stringify({ quantity, price_total: price, discount_amount_total })
       })
-      if (response.ok) { await response.json(); refetch() };
+
+      if (response.ok) {
+         refetch();
+      } else {
+         await loggedOut();
+      }
    }
 
    //  Remove product from cartProduct && cartProduct handler
@@ -28,8 +36,10 @@ const CartItem = ({ product: cartProduct, setMessage, refetch, user, checkOut, c
       const { _id, title } = cp;
 
       if (window.confirm("Want to remove this item from your cart ?")) {
-         const response = await fetch(`${BASE_URL}delete-cart-item/${_id}/${user?.email}/${cartTypes && cartTypes}`, {
-            method: "DELETE"
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}delete-cart-item/${_id}/${cartTypes && cartTypes}`, {
+            method: "DELETE",
+            withCredentials: true,
+            credentials: "include",
          });
 
          if (response.ok) {
@@ -39,6 +49,8 @@ const CartItem = ({ product: cartProduct, setMessage, refetch, user, checkOut, c
                setMessage(`${title} ${resData?.message}`);
                refetch();
             };
+         } else {
+            await loggedOut();
          }
       }
    }

@@ -1,17 +1,20 @@
 import React, { useState } from 'react';
 import Modal from '../../../Admin/ManageOrders/Components/Modal/Modal';
 import { useOrder } from '../../../App';
-import { useBASE_URL } from '../../../lib/BaseUrlProvider';
+import { useMessage } from '../../../Hooks/useMessage';
+
+import { loggedOut } from '../../../Shared/common';
 
 const CheckOrder = () => {
-   const BASE_URL = useBASE_URL();
+   
    const { order, orderRefetch } = useOrder();
+   const {msg, setMessage} = useMessage();
    // const token = new URLSearchParams(document.cookie.replaceAll("; ", "&")).get('accessToken');
    const [openModal, setOpenModal] = useState(false);
 // console.log(order)
    const orderDispatchHandler = async (orderId, user_email) => {
       if (orderId && user_email) {
-         const response = await fetch(`${BASE_URL}api/dispatch-order-request/${orderId}/${user_email}`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/dispatch-order-request/${orderId}/${user_email}`, {
             method: "PUT",
             withCredentials: true,
             credentials: "include",
@@ -20,10 +23,12 @@ const CheckOrder = () => {
             }
          });
 
-         if (response.ok) {
+         if (response.status >= 200 && response.status <= 299) {
             const resData = await response.json();
-            console.log(resData);
+            setMessage(<p className='text-success'><small><strong>{resData?.message}</strong></small></p>)
             orderRefetch();
+         } else {
+            await loggedOut();
          }
       }
    }
@@ -31,6 +36,7 @@ const CheckOrder = () => {
    return (
       <div className='section_default'>
          <div className="container">
+            {msg}
             <div className="row">
                {order && order.length > 0 && <table className='table table-responsive'>
                   <thead>

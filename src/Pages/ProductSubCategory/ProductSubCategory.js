@@ -2,16 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { useFetch } from '../../Hooks/useFetch';
-import { useBASE_URL } from '../../lib/BaseUrlProvider';
+
 import Breadcrumbs from '../../Shared/Breadcrumbs';
 import Product from '../../Shared/Product';
 import CategoryHeader from '../Home/Components/CategoryHeader';
 
 const ProductSubCategory = () => {
-   const BASE_URL = useBASE_URL();
+   
    const { sub_category, category } = useParams();
    const [url, setUrl] = useState("");
-   const { data: productBySubCategory, loading } = useFetch(`${BASE_URL + url}`);
+   const { data: productBySubCategory, loading } = useFetch(`${ + url}`);
    const [filters, setFilters] = useState('best_match');
    const [brands, setBrands] = useState({ brand: [] });
    const [getBrand, setGetBrand] = useState(["all"]);

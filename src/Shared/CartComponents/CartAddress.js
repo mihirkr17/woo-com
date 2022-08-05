@@ -3,12 +3,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { useEffect } from 'react';
 import { useState } from 'react';
-import { useBASE_URL } from '../../lib/BaseUrlProvider';
+
+import { loggedOut } from '../common';
 import AddressForm from './AddressForm';
 import AddressUpdateForm from './AddressUpdateForm';
 
-const CartAddress = ({ refetch, addr, user, step, setStep }) => {
-   const BASE_URL = useBASE_URL();
+const CartAddress = ({ refetch, addr, setStep }) => {
+   
    const [openAddressForm, setOpenAddressForm] = useState(false);
    const [openAddressUpdateForm, setOpenAddressUpdateForm] = useState(false);
 
@@ -36,15 +37,17 @@ const CartAddress = ({ refetch, addr, user, step, setStep }) => {
       let final = { addressId, name, village, city, country, phone, zip };
       final["select_address"] = false;
 
-      const response = await fetch(`${BASE_URL}api/add-cart-address/${user?.email}`, {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/add-cart-address`, {
          method: "POST",
+         withCredentials: true,
+         credentials: "include",
          headers: {
             'content-type': 'application/json'
          },
          body: JSON.stringify(final)
       });
 
-      if (response.ok) await response.json(); setStep(false); refetch();
+      if (response.ok) { setStep(false); refetch() } else { await loggedOut() };
    }
 
    const updateAddressHandler = async (e) => {
@@ -58,22 +61,26 @@ const CartAddress = ({ refetch, addr, user, step, setStep }) => {
       let final = { addressId: parseInt(openAddressUpdateForm?.addressId), name, village, city, country, phone, zip };
       final["select_address"] = false;
 
-      const response = await fetch(`${BASE_URL}api/update-cart-address/${user?.email}`, {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/update-cart-address`, {
          method: "PUT",
+         withCredentials: true,
+         credentials: "include",
          headers: {
             'content-type': 'application/json'
          },
          body: JSON.stringify(final)
       });
 
-      if (response.ok) await response.json(); setStep(false); refetch();
+      if (response.ok) { setStep(false); refetch() } else { await loggedOut() };
    }
 
    const selectAddressHandler = async (addressId, selectAddress) => {
       let select_address = selectAddress === true ? false : true;
 
-      const response = await fetch(`${BASE_URL}api/select-address/${user?.email}`, {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/select-address`, {
          method: "PUT",
+         withCredentials: true,
+         credentials: "include",
          headers: {
             'content-type': 'application/json'
          },
@@ -83,15 +90,19 @@ const CartAddress = ({ refetch, addr, user, step, setStep }) => {
       if (response.ok) {
          await response.json();
          refetch()
-      };
+      } else {
+         await loggedOut();
+      }
    }
 
    const deleteAddressHandler = async (addressId) => {
       if (window.confirm("Want to remove address ?")) {
-         const response = await fetch(`${BASE_URL}api/delete-cart-address/${user?.email}/${addressId}`, {
-            method: "DELETE"
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/delete-cart-address/${addressId}`, {
+            method: "DELETE",
+            withCredentials: true,
+            credentials: "include"
          });
-         if (response.ok) return await response.json() && refetch();
+         if (response.ok) { refetch() } else { await loggedOut() }
       }
    }
 

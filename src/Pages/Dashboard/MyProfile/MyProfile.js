@@ -3,14 +3,14 @@ import { useFetch } from '../../../Hooks/useFetch';
 import { useState } from 'react';
 import "./MyProfile.css";
 import UpdateForm from './Components/UpdateForm';
-import { useBASE_URL } from '../../../lib/BaseUrlProvider';
+
 import useAuth from '../../../Hooks/useAuth';
 import Spinner from '../../../Components/Shared/Spinner/Spinner';
 import { useAuthUser } from '../../../App';
 
 
 const MyProfile = () => {
-   const BASE_URL = useBASE_URL();
+   
    const user = useAuthUser();
    const { role, userInfo, authLoading, authRefetch } = useAuth(user);
    const [openEdit, setOpenEdit] = useState(false);
@@ -18,8 +18,8 @@ const MyProfile = () => {
    const [dob, setDob] = useState(userInfo?.dob);
    const [actionLoading, setActionLoading] = useState(false);
 
-   let url2 = userInfo && userInfo?.seller ? `${BASE_URL}api/product-count?seller=${userInfo?.seller}` :
-      `${BASE_URL}api/product-count`
+   let url2 = userInfo && userInfo?.seller ? `${process.env.REACT_APP_BASE_URL}api/product-count?seller=${userInfo?.seller}` :
+      `${process.env.REACT_APP_BASE_URL}api/product-count`
    const { data: myProductCount } = useFetch(url2);
 
    let age = new Date().getFullYear() - (userInfo?.dob && parseInt((userInfo?.dob).split("-")[0]));
@@ -35,7 +35,7 @@ const MyProfile = () => {
    }
 
    const apiReq = async (data) => {
-      const response = await fetch(`${BASE_URL}update-profile-data/${userInfo?.email}`, {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}update-profile-data/${userInfo?.email}`, {
          method: "PUT",
          headers: {
             "Content-Type": "application/json"

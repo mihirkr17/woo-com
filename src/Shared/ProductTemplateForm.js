@@ -6,11 +6,11 @@ import { useCategories } from '../Hooks/useCategories';
 import { usePrice } from '../Hooks/usePrice';
 import { useMessage } from '../Hooks/useMessage';
 import { slugMaker } from './common';
-import { useBASE_URL } from '../lib/BaseUrlProvider';
+
 import BtnSpinner from '../Components/Shared/BtnSpinner/BtnSpinner';
 
 const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch }) => {
-   const BASE_URL = useBASE_URL();
+   
    const [desc, setDescription] = useState((data?.description && data?.description) || "CKEditor v5");
    const [inputValue, setInputValue] = useState({ price: (data?.price && data?.price) || "", discount: (data?.discount && data?.discount) || "" });
    const { price_fixed, discount_amount_fixed } = usePrice(inputValue.price, inputValue.discount);
@@ -65,7 +65,7 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch })
       }
 
       const requestType = {
-         url: formTypes === "update" ? `${BASE_URL}api/update-product/${data?._id && data?._id}` : `${BASE_URL}api/add-product`,
+         url: formTypes === "update" ? `${process.env.REACT_APP_BASE_URL}api/update-product/${data?._id && data?._id}` : `${process.env.REACT_APP_BASE_URL}api/add-product`,
          method: formTypes === "update" ? "PUT" : "POST"
       }
 
@@ -76,6 +76,8 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch })
       } else {
          const response = await fetch(requestType?.url, {
             method: requestType?.method,
+            withCredentials: true,
+            credentials: "include",
             headers: {
                "Content-Type": "application/json"
             },
