@@ -6,7 +6,7 @@ export const useCategories = (category, dataCategory) => {
 
    useEffect(() => {
 
-      const fashionCategories = ["men's-clothing", "women's-clothing", "jewelry", "accessories"];
+      const fashionCategories = ["men-fashion", "women-fashion", "jewelry", "accessories"];
       const electronicCategories = ["mobile-parts", "laptop-parts", "desktop-parts", "home-accessories"];
 
       let subCategories = (category || dataCategory) === "fashion" ? fashionCategories :

@@ -7,7 +7,7 @@ import { useMessage } from '../../Hooks/useMessage';
 
 const SellOnline = () => {
    const user = useAuthUser();
-   const { userInfo, refetch } = useAuth(user);
+   const { userInfo, authRefetch } = useAuth(user);
    const { msg, setMessage } = useMessage();
    const [categories, setCategories] = useState({ category: [] });
 
@@ -31,7 +31,7 @@ const SellOnline = () => {
       let seller_phone = e.target.seller_phone.value;
     
       let data = await apiReq({ seller_phone });
-      if (data?.message === "success") refetch();
+      if (data?.message === "success") authRefetch();
    }
 
    const handleChange = (e) => {
@@ -73,7 +73,7 @@ const SellOnline = () => {
 
             if (data?.message === "success") {
                e.target.reset();
-               refetch();
+               authRefetch();
             }
          }
       }
@@ -129,21 +129,9 @@ const SellOnline = () => {
                            <small><strong>Please select at least one particular product category for sell...</strong></small>
                            <div className="row">
                               <div className="col-12">
-                                 <label htmlFor='men_cloth'>
-                                    <input type="checkbox" className='me-3' name="men_cloth" id="men_cloth" value="men's-clothing" onChange={handleChange} />
-                                    Men Clothing
-                                 </label>
-                              </div>
-                              <div className="col-12">
-                                 <label htmlFor="women_cloth">
-                                    <input type="checkbox" className='me-3' name="women_cloth" id="women_cloth" value="women's-clothing" onChange={handleChange} />
-                                    Women Clothing
-                                 </label>
-                              </div>
-                              <div className="col-12">
-                                 <label htmlFor="jewelry">
-                                    <input type="checkbox" className='me-3' name="jewelry" id="jewelry" value="jewelry" onChange={handleChange} />
-                                    Jewelry
+                                 <label htmlFor="fashion">
+                                    <input type="checkbox" className='me-3' name="fashion" id="fashion" value="fashion" onChange={handleChange} />
+                                    Fashion
                                  </label>
                               </div>
                               <div className="col-12">

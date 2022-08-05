@@ -7,6 +7,9 @@ import { Link, useLocation } from 'react-router-dom';
 const Breadcrumbs = () => {
    const location = useLocation();
    const path = location.pathname.split("/").filter(x => x);
+   // let tyt = location.href.split("=").filter(e => e);
+   // tyt.shift();
+   // console.log(tyt);
    return (
       <Breadcrumb>
          <Link to={"/"}> <FontAwesomeIcon icon={faHome} /> Home</Link>

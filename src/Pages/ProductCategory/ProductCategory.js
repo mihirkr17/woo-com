@@ -6,15 +6,13 @@ import { Link, useParams } from 'react-router-dom';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { useCategories } from '../../Hooks/useCategories';
 import { useFetch } from '../../Hooks/useFetch';
-
 import Breadcrumbs from '../../Shared/Breadcrumbs';
 import Product from '../../Shared/Product';
 import CategoryHeader from '../Home/Components/CategoryHeader';
 import "./ProductCategory.css";
 
 const ProductCategory = () => {
-
-   const { category } = useParams();
+   const { category, sub_category } = useParams();
    const [url, setUrl] = useState("");
    const { data: productByCategory, loading } = useFetch(`${process.env.REACT_APP_BASE_URL + url}`);
    const [filters, setFilters] = useState('best_match');
@@ -39,9 +37,14 @@ const ProductCategory = () => {
 
       if (category && filters) {
          filterUrl = `api/product-by-category?category=${category}&filters=${filters}`;
-         setUrl(filterUrl);
       }
-   }, [category, filters]);
+
+      if (category && sub_category) {
+         filterUrl = `api/product-by-category?category=${category}&sub_category=${sub_category}&filters=${filters}`;
+      }
+
+      setUrl(filterUrl);
+   }, [category, filters, sub_category]);
 
    useEffect(() => {
       let g;
@@ -55,8 +58,6 @@ const ProductCategory = () => {
 
       return setProducts(g);
    }, [brands, productByCategory]);
-
-   // if (loading) return <Spinner></Spinner>;
 
    const handleChange = (e) => {
       const { value, checked } = e.target;
@@ -79,45 +80,68 @@ const ProductCategory = () => {
 
             <div className="category_head">
                <Breadcrumbs></Breadcrumbs>
-               <div className="p-2 border-bottom">
-                  <h5>{category}</h5>
-                  <small className="badge bg-primary">{category}</small>
+               <div className="py-1 border-bottom">
+                  <div className="sort_price">
+                     <span>Sort By </span>
+                     <select name="filter" id="" onChange={(e) => setFilters(e.target.value)}>
+                        <option value="best_match">Best Match</option>
+                        <option value="lowest">Lowest</option>
+                        <option value="highest">Highest</option>
+                     </select>
+                  </div>
                </div>
+
             </div>
 
             <div className="row" style={{ position: "relative", height: "77vh" }}>
                <div className="category_left_side col-lg-2 border-end">
-                  <div className="category_header py-4">
-                     <div className="sort_price">
-                        <span>Sort By </span>
-                        <select name="filter" id="" onChange={(e) => setFilters(e.target.value)}>
-                           <option value="best_match">Best Match</option>
-                           <option value="lowest">Lowest</option>
-                           <option value="highest">Highest</option>
-                        </select>
-                     </div>
+                  <div className="py-1">
+                     <small><strong>Categories</strong></small>
+                     <ul>
+                        <li className="my-1">
+                           <Nav.Item as={Link} to={`/${category}`}>
+                              All {category}
+                           </Nav.Item>
+                        </li>
+                        {
+                           subCategories && subCategories.map((c, i) => {
+                              return (
+                                 <li key={i} className="my-1">
+                                    <Nav.Item as={Link} to={`/${category}/${c}`}>
+                                       {c}
+                                    </Nav.Item>
+                                 </li>
+                              )
+                           })
+                        }
+                     </ul>
+                  </div>
 
 
-                     <div className="py-3">
-                        <ul>
+                  {
+                     <div className='py-1'>
+                        <small><strong>Brands</strong></small>
+                        <div className="row">
                            {
-                              subCategories && subCategories.map((c, i) => {
+                              getBrand && getBrand.map((b, i) => {
                                  return (
-                                    <li key={i} className="mb-2">
-                                       <Nav.Item as={Link} to={`/${category}/${c}`}>
-                                          {c}
-                                       </Nav.Item>
-                                    </li>
+                                    <div className="col-12" key={i}>
+                                       <label htmlFor={b} >
+                                          <input type="checkbox" className='me-2' name={b} id={b} value={b} onChange={handleChange} />
+                                          {b}
+                                       </label>
+                                    </div>
+
                                  )
                               })
                            }
-                        </ul>
+                        </div>
                      </div>
-                  </div>
+                  }
 
                </div>
                <div className="category_right_side col-lg-10">
-                  <div className="row">
+                  <div className="row py-3">
                      {
                         loading ? <Spinner /> : products && products.map(p => {
                            return (

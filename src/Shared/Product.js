@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 const Product = ({ product }) => {
    return (
       <div className='card_default my-2'>
+         {/* <Link to={`/categories?sub_category=${product?.sub_category}`}> */}
          <Link to={`/${product?.category}/${product?.sub_category}/${product?.slug}`}>
             <div className="card_img">
                <img src={product?.image} alt='' />

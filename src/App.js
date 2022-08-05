@@ -33,11 +33,9 @@ import SellOnline from './Pages/SellOnline/SellOnline';
 import CheckSeller from './Pages/Dashboard/CheckSeller/CheckSeller';
 import AllSeller from './Owner/ManageUsers/outlet/AllSeller';
 import SellerCheckProvider from './lib/SellerCheckProvider';
-
 import { useFetch } from './Hooks/useFetch';
 import CheckOrder from './Pages/Dashboard/CheckOrder/CheckOrder';
 import useAuth from './Hooks/useAuth';
-import ProductSubCategory from './Pages/ProductSubCategory/ProductSubCategory';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from './firebase.init';
 import Spinner from './Components/Shared/Spinner/Spinner';
@@ -88,7 +86,7 @@ function App() {
 
             <Route path='/:category/:sub_category/:product_slug' element={<ViewProduct></ViewProduct>}></Route>
             <Route path='/:category' element={<ProductCategory></ProductCategory>}></Route>
-            <Route path='/:category/:sub_category' element={<ProductSubCategory></ProductSubCategory>}></Route>
+            <Route path='/:category/:sub_category' element={<ProductCategory></ProductCategory>}></Route>
 
             <Route path='/product/recent/all' element={<AllRecentProduct></AllRecentProduct>}></Route>
             <Route path='/my-cart' element={<RequireAuth><Cart></Cart></RequireAuth>}></Route>

@@ -35,14 +35,14 @@ const CategoryHeader = ({ thisFor }) => {
             thisFor === "home" && <div className="rounded mb-4 c_nav">
                <div className="d-flex align-items-center justify-content-center flex-wrap py-1 category_navbar shadow-bottom">
                   <div className="c_nav_btn" onMouseOver={() => selectHandler("fashion")}>
-                     <Nav.Item className='text-dark a'>
+                     <Nav.Item className='text-dark a' as={Link} to={`/fashion`}>
                         <img src={fashion} alt="" />
                         <small>Fashion</small>
                      </Nav.Item>
                   </div>
 
                   <div className="c_nav_btn" onMouseOver={() => selectHandler("electronics")}>
-                     <Nav.Item className='text-dark a'>
+                     <Nav.Item className='text-dark a' as={Link} to={`/electronics`}>
                         <img src={electronicsImage} alt="" />
                         <small>Electronics</small>
                      </Nav.Item>
