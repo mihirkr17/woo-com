@@ -16,8 +16,6 @@ import CheckOut from './Pages/CheckOut/CheckOut';
 import MyOrder from './Pages/MyOrder/MyOrder';
 import ManageOrders from './Admin/ManageOrders/ManageOrders';
 import ProductCategory from './Pages/ProductCategory/ProductCategory';
-import AllRecentProduct from './Pages/AllRecentProduct/AllRecentProduct';
-import SearchProduct from './Components/SearchProduct/SearchProduct';
 import Dashboard from './Pages/Dashboard/Dashboard';
 import MyProfile from './Pages/Dashboard/MyProfile/MyProfile';
 import AllUsers from './Owner/ManageUsers/outlet/AllUsers';
@@ -39,11 +37,9 @@ import useAuth from './Hooks/useAuth';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from './firebase.init';
 import Spinner from './Components/Shared/Spinner/Spinner';
+import SearchPage from './Pages/SearchPage/SearchPage';
 
 export const UserContext = createContext();
-
-// Declare Product Context
-export const ProductContext = createContext();
 
 // Declare Cart Context
 export const CartContext = createContext();
@@ -53,11 +49,7 @@ export const OrderContext = createContext();
 
 function App() {
   const [user, loading] = useAuthState(auth);
-  const [query, setQuery] = useState('');
   const { role, userInfo } = useAuth(user);
-
-  // fetching product
-  const { data: products, loading: productLoading } = useFetch(`${process.env.REACT_APP_BASE_URL}products/`);
 
   // fetching cart information and data from mongodb
   const { data: cart, cartLoading, refetch } = useFetch(user && `${process.env.REACT_APP_BASE_URL}my-cart-items/${user?.email}`);
@@ -74,21 +66,19 @@ function App() {
 
   return (
     <UserContext.Provider value={user}>
-      <ProductContext.Provider value={{ products, productLoading }}>
         <CartContext.Provider value={{ cart, cartLoading, refetch, cartProductCount: cart?.product && (cart?.product.length || 0) }}>
-          <NavigationBar setQuery={setQuery}></NavigationBar>
-          <SearchProduct query={query} setQuery={setQuery}></SearchProduct>
+          <NavigationBar></NavigationBar>
           <Routes>
             <Route path='/' element={<Home></Home>} ></Route>
             <Route path='/blog' element={<Blog></Blog>} ></Route>
             <Route path='/login' element={<Login></Login>}></Route>
             <Route path='/register' element={<Register></Register>}></Route>
+            <Route path='/search' element={<SearchPage></SearchPage>}></Route>
 
             <Route path='/:category/:sub_category/:product_slug' element={<ViewProduct></ViewProduct>}></Route>
             <Route path='/:category' element={<ProductCategory></ProductCategory>}></Route>
             <Route path='/:category/:sub_category' element={<ProductCategory></ProductCategory>}></Route>
 
-            <Route path='/product/recent/all' element={<AllRecentProduct></AllRecentProduct>}></Route>
             <Route path='/my-cart' element={<RequireAuth><Cart></Cart></RequireAuth>}></Route>
             <Route path='/product/purchase/:productId' element={<RequireAuth><Purchase></Purchase></RequireAuth>}></Route>
             <Route path='/my-cart/checkout/:cartId' element={<RequireAuth><CheckOut></CheckOut></RequireAuth>}></Route>
@@ -124,13 +114,11 @@ function App() {
           </Routes>
           <Footer></Footer>
         </CartContext.Provider>
-      </ProductContext.Provider>
     </UserContext.Provider>
   );
 }
 
 export default App;
 export const useAuthUser = () => useContext(UserContext);
-export const useProducts = () => useContext(ProductContext);
 export const useCart = () => useContext(CartContext);
 export const useOrder = () => useContext(OrderContext);

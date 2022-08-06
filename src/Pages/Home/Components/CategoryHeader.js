@@ -9,16 +9,7 @@ import { useCategories } from '../../../Hooks/useCategories';
 
 const CategoryHeader = ({ thisFor }) => {
    const [sCategory, setSCategory] = useState("");
-   const [category, setCategory] = useState([]);
-   const {subCategories} = useCategories(sCategory);
-   
-
-   useEffect(() => {
-      const fashionSubCategory = ["men's-clothing", "women's-clothing", "jewelry"];
-      const electronicSubCategories = ["mobile-parts", "laptop-parts", "desktop-parts"];
-      let pp = (sCategory === "electronics") ? electronicSubCategories : (sCategory === "fashion") ? fashionSubCategory : [];
-      setCategory(pp);
-   }, [sCategory]);
+   const { subCategories } = useCategories(sCategory);
 
    const selectHandler = (params) => {
       if (params) {

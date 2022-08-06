@@ -94,7 +94,7 @@ const ProductCategory = () => {
             </div>
 
             <div className="row" style={{ position: "relative", height: "77vh" }}>
-               <div className="category_left_side col-lg-2 border-end">
+               <div className="category_left_side col-lg-2 col-md-3 border-end">
                   <div className="py-1">
                      <small><strong>Categories</strong></small>
                      <ul>
@@ -140,12 +140,12 @@ const ProductCategory = () => {
                   }
 
                </div>
-               <div className="category_right_side col-lg-10">
+               <div className="category_right_side col-lg-10 col-md-9">
                   <div className="row py-3">
                      {
                         loading ? <Spinner /> : products && products.map(p => {
                            return (
-                              <div key={p?._id} className="col-lg-3 mb-4">
+                              <div key={p?._id} className="col-lg-3 col-md-6 mb-4">
                                  <Product product={p}></Product>
                               </div>
                            )

@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { loggedOut } from '../Shared/common';
 
 const useAuth = (user) => {
-   
    const [role, setRole] = useState("");
    const [userInfo, setUserInfo] = useState(null || {} || []);
    const [authLoading, setAuthLoading] = useState(false);
@@ -35,9 +34,7 @@ const useAuth = (user) => {
                      setAuthLoading(false);
                      await loggedOut();
                   }
-               }
-
-               if (!user) {
+               } else {
                   setRole("");
                   setAuthLoading(false);
                   setUserInfo({});

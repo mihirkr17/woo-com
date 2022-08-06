@@ -173,3 +173,108 @@ tr {
 .status_btn:hover {
   text-decoration: underline;
 }
+
+.product_card {
+  margin: auto;
+  border-radius: 2px;
+  background: var(--color-trans-one);
+  -webkit-box-shadow: 0 4px 30px var(--color-trans-two);
+          box-shadow: 0 4px 30px var(--color-trans-two);
+  -webkit-backdrop-filter: blur(18px);
+          backdrop-filter: blur(18px);
+  border: 1px solid var(--color-accent);
+  width: 190px;
+}
+
+.product_card:hover {
+  -webkit-box-shadow: 0 0 6px #00000086;
+          box-shadow: 0 0 6px #00000086;
+}
+
+.product_card_img {
+  padding-top: 0.8rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  height: 90px;
+}
+
+.product_card_img > img {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: contain;
+     object-fit: contain;
+  margin: auto;
+}
+
+.product_card_description {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  padding: 0.9rem;
+  color: var(--color-dark);
+}
+
+.product_card_description .product_title {
+  position: relative;
+  font-size: 14px;
+  height: 36px;
+  line-height: 18px;
+  color: #212121;
+  white-space: normal;
+  display: -webkit-box;
+  line-clamp: 2;
+  box-orient: vertical;
+}
+
+.product_card_description .product_meta .product_price {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+}
+
+.product_card_description .product_meta .product_price > big {
+  margin: 0.5rem 0;
+  color: var(--color-accent);
+}
+
+.product_card_description .product_meta .product_price > small {
+  margin-left: 0.6rem;
+}
+
+.product_card_description .product_meta .product_info {
+  margin-top: 0.5rem;
+  font-size: 14px;
+  height: 36px;
+  line-height: 18px;
+  color: #212121;
+  white-space: normal;
+  display: -webkit-box;
+  line-clamp: 2;
+}
+
+.product_card_description .product_meta .product_info > small {
+  font-size: 0.767rem;
+}
+
+@media (max-width: 567px) {
+  .product_card {
+    width: 100%;
+  }
+}

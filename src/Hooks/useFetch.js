@@ -10,28 +10,31 @@ export const useFetch = (url) => {
    refetch = () => setRef(e => !e);
 
    useEffect(() => {
-      const controller = new AbortController();
-      (async () => {
-         try {
-            setLoading(true);
-            const response = await fetch(url, { signal: controller?.signal });
 
-            if (response.status === 400) {
-               window.location.reload();
-            }
-            
-            if (response.status >= 200 && response.status <= 299) {
-               setData(await response.json());
-            }
-         } catch (error) {
-            setErr(error);
-         } finally {
-            setLoading(false);
-         }
-      })();
+      const fetchData = setTimeout(() => {
+         (async () => {
+            try {
+               setLoading(true);
+               const response = await fetch(url);
 
-      return () => controller?.abort();
-      
+               if (response.status === 400) {
+                  window.location.reload();
+               }
+
+               if (response.status >= 200 && response.status <= 299) {
+                  setData(await response.json());
+               }
+            } catch (error) {
+               setErr(error);
+            } finally {
+               setLoading(false);
+            }
+         })();
+      }, 100);
+
+
+      return () => clearTimeout(fetchData);
+
    }, [url, ref]);
 
    return { data, loading, err, refetch };
