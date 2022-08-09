@@ -3,26 +3,29 @@ html {
   --color-bg: #f7f9f9;
   --color-primary: #c45ab3;
   --color-primary-alt: #631a86;
-  --color-secondary: #e74c3c;
-  --color-secondary-alt: #cb4335;
+  --color-secondary: #4b4b4b;
+  --color-secondary-alt: #2c2c2c;
   --color-accent: #1abc9c;
-  --color-light: #fbfcfc;
-  --color-light-alt: #f4f6f7;
+  --color-accent-alt: #049477;
+  --color-light: #1b1b1b;
+  --color-light-alt: #141414;
   --color-dark: #17202a;
   --color-dark-alt: #1b2631;
   --color-link: #3498db;
+  --color-orange: #ff751a;
+  --color-orange-alt: #c75407;
+  --color-antiquewhite: antiquewhite;
 
   // color transparent
   --color-trans-one: #ffffff91;
   --color-trans-two: #0000001a;
   --color-trans-three: #ffffff2b;
-  --color-trans-four: ;
+  --color-text: #000000;
 
   // fonts family variation
   --font-primary2: "Spline Sans Mono", monospace;
-  --font-primary: 'Poppins', sans-serif;
+  --font-primary: "Poppins", sans-serif;
   --font-secondary: "Fredoka One", cursive;
-  --font-accent: ;
 
   // font size variation
   --size-primary: 0.975rem;
@@ -30,18 +33,40 @@ html {
   --size-bigger: 2rem;
   --size-small: 0.875rem;
   --size-smaller: 0.785rem;
-  --size-smallest: 0.700rem
+  --size-smallest: 0.7rem;
 }
 
-@media (max-width : 567px) {
+html[data-theme="true"] {
+  --color-bg: #1b1b1b;
+  --color-primary: #c45ab3;
+  --color-primary-alt: #631a86;
+  --color-secondary: #b6b6b6;
+  --color-secondary-alt: #c0c0c0;
+  --color-accent: #6dfa0f;
+  --color-accent-alt: #049477;
+  --color-light: #f0f0f0;
+  --color-light-alt: #f4f6f7;
+  --color-dark: #f1f1f1;
+  --color-dark-alt: #93bce5;
+  --color-link: #3498db;
+  --color-orange: #ff751a;
+  --color-orange-alt: #c75407;
+  --color-text: #fff;
+  --color-trans-one: #1a1a1a91;
+  --color-antiquewhite: #07a5897d;
+  
+}
+
+
+@media (max-width: 567px) {
   html {
     // font size variation
-    --size-primary: 0.910rem;
+    --size-primary: 0.91rem;
     --size-big: 1.1rem;
     --size-bigger: 2rem;
     --size-small: 0.875rem;
     --size-smaller: 0.785rem;
-    --size-smallest: 0.685rem
+    --size-smallest: 0.685rem;
   }
 }
 
@@ -57,6 +82,7 @@ html {
 body {
   background-color: var(--color-bg);
   font-family: var(--font-primary);
+  color: var(--color-text);
 }
 
 ul,

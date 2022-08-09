@@ -6,7 +6,7 @@ import { useAuthUser, useCart } from '../../App';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { useMessage } from '../../Hooks/useMessage';
 
-import { cartCalculate } from '../../Shared/cartCalculate';
+import { cartCalculate } from '../../Shared/common';
 import CartCalculation from '../../Shared/CartComponents/CartCalculation';
 import CartItem from '../../Shared/CartComponents/CartItem';
 import CartPayment from '../../Shared/CartComponents/CartPayment';

@@ -1,14 +1,16 @@
 import React from 'react';
 import { Table } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import Spinner from '../../../Components/Shared/Spinner/Spinner';
 import { useFetch } from '../../../Hooks/useFetch';
+import { loggedOut } from '../../../Shared/common';
 
 
 
 const AllAdmin = () => {
-   
    // const token = new URLSearchParams(document.cookie.replaceAll("; ", "&")).get('accessToken');
    const { data, loading, refetch } = useFetch(`${process.env.REACT_APP_BASE_URL}api/manage-user?uTyp=admin`);
+   const navigate = useNavigate();
    if (loading) return <Spinner></Spinner>;
 
    const demoteToUserHandler = async (userId) => {
@@ -21,7 +23,15 @@ const AllAdmin = () => {
                "Content-Type": "application/json"
             }
          });
-         if (await response.json()) refetch();
+
+         const resData = await response.json();
+
+         if (response.ok) {
+            refetch();
+         } else {
+            await loggedOut();
+            navigate(`/login?err=${resData?.message} token not found`);
+         }
       }
    }
 

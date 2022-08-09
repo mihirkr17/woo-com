@@ -2,17 +2,17 @@ import React, { useState } from 'react';
 import { useFetch } from '../../Hooks/useFetch';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { useMessage } from '../../Hooks/useMessage';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import BtnSpinner from '../../Components/Shared/BtnSpinner/BtnSpinner';
-
-import "./MyOrder.css";
 import FilterOption from "../../Shared/FilterOption";
 import { useEffect } from 'react';
 import { useAuthUser } from '../../App';
+import { loggedOut } from '../../Shared/common';
+import "./MyOrder.css";
 
 
 const MyOrder = () => {
-   
+
    const user = useAuthUser();
    const { msg, setMessage } = useMessage();
    const { data, refetch, loading } = useFetch(`${process.env.REACT_APP_BASE_URL}my-order/${user?.email}`);
@@ -23,6 +23,7 @@ const MyOrder = () => {
    const [openReviewForm, setOpenReviewForm] = useState(false);
    const [filterOrder, setFilterOrder] = useState("");
    const [orderItems, setOrderItems] = useState([]);
+   const navigate = useNavigate();
 
    useEffect(() => {
       if (filterOrder === "" || filterOrder === "all") {
@@ -50,13 +51,19 @@ const MyOrder = () => {
 
    const removeOrderHandler = async (orderId) => {
       if (window.confirm("Want to cancel this order ?")) {
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/remove-order/${user?.email}/${orderId}`, {
-            method: "DELETE"
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/remove-order/${orderId}`, {
+            method: "DELETE",
+            withCredentials: true,
+            credentials: "include",
          });
+
+         const resData = await response.json();
          if (response.ok) {
-            const resData = await response.json();
             resData && refetch();
             setMessage(<strong className='text-success'>{resData?.message}</strong>);
+         } else {
+            await loggedOut();
+            navigate(`/login?err=${resData?.message} token not found`);
          }
       }
    }
@@ -92,6 +99,9 @@ const MyOrder = () => {
          setMessage(<p className='text-success'><small><strong>{resData?.message}</strong></small></p>);
          setActLoading(false);
          refetch()
+      } else {
+         await loggedOut();
+         navigate(`/login?err=${resData?.message} token not found`);
       }
    }
 
@@ -100,24 +110,30 @@ const MyOrder = () => {
       let cancel_reason = reason;
       let status = "canceled";
       let orderId = e.target.orderId.value;
+      let userEmail = e.target.user_email.value;
       let time_canceled = new Date().toLocaleString();
 
       if (cancel_reason === "Choose Reason" || cancel_reason === "") {
          setMessage(<strong className='text-success'>Please Select Cancel Reason...</strong>);
          return;
       } else {
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/cancel-my-order/${user?.email}/${orderId}`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/cancel-my-order/${userEmail}/${orderId}`, {
             method: "PUT",
+            withCredentials: true,
+            credentials: "include",
             headers: {
                "Content-Type": "application/json"
             },
             body: JSON.stringify({ status, cancel_reason, time_canceled })
          });
 
+         const resData = await response.json();
          if (response.ok) {
-            const resData = await response.json();
             refetch();
             setMessage(<strong className='text-success'>{resData?.message}</strong>);
+         } else {
+            await loggedOut();
+            navigate(`/login?err=${resData?.message} token not found`);
          }
       }
    }
@@ -135,15 +151,16 @@ const MyOrder = () => {
                <div className="col-lg-2">
                   <h6>Filter Order</h6>
                   <FilterOption
-                     options={["all", "pending", "placed", "shipped"]}
+                     options={["all", "pending", "placed", "shipped", "canceled"]}
                      filterHandler={setFilterOrder}
                   />
                </div>
                <div className="col-lg-10">
-                  <h6>{data?.orders && data?.orders.length > 0 ? "Total : " + data?.orders.length + " Orders" : "You Have No Orders In Your History"}</h6>
+                  <h6>{orderItems && orderItems.length > 0 ? "Total : " + orderItems.length + " Orders" : "You Have No Orders In Your History"}</h6>
                   <div className="row">
                      {
                         orderItems && orderItems.length > 0 ? orderItems.map(order => {
+
                            const { product_name, quantity, payment_mode, discount, status, orderId,
                               price_total_amount, image, _id, seller, category, sub_category, cancel_reason, time_canceled, time_pending, time_placed, time_shipped, isRating, slug } = order;
                            return (
@@ -221,6 +238,7 @@ const MyOrder = () => {
                                                                            "I placed the order by mistake"
                                                                         ]} filterHandler={setReason} />
                                                                      <input type="hidden" name="orderId" defaultValue={orderId} />
+                                                                     <input type="hidden" name="user_email" defaultValue={data?.user_email} />
                                                                      <button type="submit" className="btn btn-sm btn-danger">Cancel</button>
                                                                   </div>
                                                                </form>

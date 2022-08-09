@@ -2,12 +2,11 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthUser, useCart } from '../../App';
 import { useMessage } from '../../Hooks/useMessage';
-import { cartCalculate } from '../../Shared/cartCalculate';
+import { cartCalculate } from '../../Shared/common';
 import CartAddress from '../../Shared/CartComponents/CartAddress';
 import CartCalculation from '../../Shared/CartComponents/CartCalculation';
 import CartHeader from '../../Shared/CartComponents/CartHeader';
 import CartItem from '../../Shared/CartComponents/CartItem';
-import "./Cart.css";
 
 const Cart = () => {
    const user = useAuthUser();
@@ -17,7 +16,9 @@ const Cart = () => {
    const navigate = useNavigate();
 
    const goCheckoutPage = async (id) => {
-      navigate(`/my-cart/checkout/${id}`);
+      if (step) {
+         navigate(`/my-cart/checkout/${id}`);
+      }
    }
 
    return (
@@ -26,7 +27,7 @@ const Cart = () => {
             <p><strong className='text-danger'>{msg}</strong></p>
             <div className="row">
                <div className="col-lg-8 mb-3">
-                  <CartAddress refetch={refetch} addr={cart?.address ? cart?.address : []} setStep={setStep}></CartAddress>
+                  <CartAddress navigate={navigate} refetch={refetch} addr={cart?.address ? cart?.address : []} setStep={setStep}></CartAddress>
                   <br />
                   <div className="cart_card">
                      <h6>Total In Cart ({(cartProductCount) || 0})</h6>
@@ -34,7 +35,7 @@ const Cart = () => {
                      {
                         cart?.product && cart?.product ? cart?.product.map(product => {
                            return (
-                              <CartItem key={product?._id} cartLoading={cartLoading} product={product} cartTypes={"toCart"} refetch={refetch} setMessage={setMessage}></CartItem>
+                              <CartItem navigate={navigate} key={product?._id} cartLoading={cartLoading} product={product} cartTypes={"toCart"} refetch={refetch} setMessage={setMessage}></CartItem>
                            )
                         }) :
                            <div className="card_default">
@@ -54,7 +55,7 @@ const Cart = () => {
                      {(cart?.address && cart?.address.length === 0) && <small className="my-2 p-1">Please Insert Your Address</small>}
                      {((cart?.address && cart?.address.length > 0) && (step === false)) && <small className="my-2 p-1">Select Your Address</small>}
                      {(cart?.product && cart?.product.length === 0) && <small className="my-2 p-1">Please Add Product To Your Cart</small>}
-                     <button className='btn btn-info btn-sm w-100' onClick={() => goCheckoutPage(cart?._id)}
+                     <button className='bt9_checkout' onClick={() => goCheckoutPage(cart?._id)}
                         disabled={(step === true) && (cart?.product && cart?.product.length > 0) ? false : true}>
                         Checkout
                      </button>

@@ -76,8 +76,9 @@ const ViewProduct = () => {
             body: JSON.stringify(cartProduct)
          });
 
+         const resData = await response.json();
          if (response.ok) {
-            const resData = await response.json();
+            
 
             refetch();
             productRefetch();
@@ -95,7 +96,7 @@ const ViewProduct = () => {
             setAddCartLoading(false);
             setBuyLoading(false);
             await loggedOut();
-            navigate('/login')
+            navigate(`/login?err=${resData?.message} token not found`);
          }
       }
    }
@@ -115,7 +116,7 @@ const ViewProduct = () => {
                               <div className="p-4">
                                  <p className='text-warning'>
                                     <span className="fs-1">
-                                       {averageRating(product?.rating) || 0}
+                                       {(product?.rating_average) || 0}
                                     </span>
                                     <span className="fs-4 text-muted">/5</span>
                                  </p>

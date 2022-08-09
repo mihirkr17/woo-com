@@ -1,22 +1,29 @@
 import React from 'react';
 import { useFetch } from '../../../Hooks/useFetch';
 import { useState } from 'react';
-import "./MyProfile.css";
 import UpdateForm from './Components/UpdateForm';
-
 import useAuth from '../../../Hooks/useAuth';
 import Spinner from '../../../Components/Shared/Spinner/Spinner';
 import { useAuthUser } from '../../../App';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { loggedOut } from '../../../Shared/common';
 
 
 const MyProfile = () => {
-   
    const user = useAuthUser();
    const { role, userInfo, authLoading, authRefetch } = useAuth(user);
    const [openEdit, setOpenEdit] = useState(false);
-   const [country, setCountry] = useState(userInfo?.country);
-   const [dob, setDob] = useState(userInfo?.dob);
    const [actionLoading, setActionLoading] = useState(false);
+   const navigate = useNavigate();
+   const queryParams = new URLSearchParams(window.location.search).get("update");
+   const [inputValue, setInputValue] = useState({
+      country: userInfo?.country || "",
+      division: userInfo?.division || "",
+      district: userInfo?.district || "",
+      thana: userInfo?.thana || "",
+      dob: userInfo.dob || ""
+   });
 
    let url2 = userInfo && userInfo?.seller ? `${process.env.REACT_APP_BASE_URL}api/product-count?seller=${userInfo?.seller}` :
       `${process.env.REACT_APP_BASE_URL}api/product-count`
@@ -24,145 +31,164 @@ const MyProfile = () => {
 
    let age = new Date().getFullYear() - (userInfo?.dob && parseInt((userInfo?.dob).split("-")[0]));
 
-
-   // open edit form
-   const openEditForm = async (params) => {
-      if (params === openEdit) {
-         setOpenEdit(false);
+   useEffect(() => {
+      if (queryParams === userInfo?._id) {
+         setOpenEdit(true);
       } else {
-         setOpenEdit(params);
+         setOpenEdit(false);
       }
-   }
+   }, [queryParams, userInfo?._id]);
 
-   const apiReq = async (data) => {
+   // common function for updating single value
+   const updateDocHandler = async (e) => {
+      e.preventDefault();
+      setActionLoading(true);
+
+      let data = {
+         country: inputValue.country || "Not Set",
+         division: inputValue.division || "Not Set",
+         district: inputValue.district || "Not Set",
+         thana: inputValue.thana || "Not Set",
+         dob: inputValue.dob || "Not Set"
+      }
+
       const response = await fetch(`${process.env.REACT_APP_BASE_URL}update-profile-data/${userInfo?.email}`, {
          method: "PUT",
+         withCredentials: true,
+         credentials: "include",
          headers: {
             "Content-Type": "application/json"
          },
          body: JSON.stringify(data)
       });
 
+      const resData = await response.json();
+
       if (response.ok) {
          setActionLoading(false);
-         await response.json();
          authRefetch();
+         // setInputValue({});
       } else {
          setActionLoading(false);
+         await loggedOut();
+         navigate(`/login?err=${resData?.message} token not found`);
       }
-   }
-
-   // common function for updating single value
-   const updateDocHandler = async (e) => {
-      e.preventDefault();
-      setActionLoading(true);
-      const updateFor = e.target.updateFor.value;
-      let inputValues = {};
-
-      if (updateFor === "country") {
-         inputValues['country'] = country;
-      }
-      if (updateFor === "dob") {
-         inputValues['dob'] = dob;
-      }
-
-      return await apiReq(inputValues);
    }
 
    if (authLoading) return <Spinner></Spinner>;
    return (
-      <div className='section_default'>
+      <div className='section_default my_profile'>
          <div className="container">
-            <h5>My profile</h5>
-            <div className="profile_heder d-flex align-items-center justify-content-between flex-wrap py-3">
-               <p>Balance : {userInfo?.total_earn || 0}&nbsp;$</p>
-               {
-                  (role === "owner" || role === "seller") && <div><button className='btn btn-info'>Withdraw</button></div>
-               }
-            </div>
+
             <div className="row">
                <div className="col-12">
+                  <div className='tty_ssd'>
+                     {openEdit ? "Edit Information" : "Personal Information"}
+                     {
+                        openEdit ? <button className='bt9_edit' onClick={() => navigate(`/dashboard/my-profile`)}>Cancel</button> :
+                           <button className='bt9_edit' onClick={() => navigate(`/dashboard/my-profile?update=${userInfo?._id}`)}>Edit</button>
+                     }
+                  </div>
 
-                  <table className='table table-responsive'>
-                     <thead>
-                        <tr>
-                           <th>Information</th>
-                        </tr>
-                     </thead>
-                     <tbody>
 
-                        <tr>
-                           <th>ID</th>
-                           <td>{userInfo?._id}</td>
-                        </tr>
-                        <tr>
-                           <th>Email</th>
-                           <td>{userInfo?.email}</td>
-                        </tr>
-                        <tr>
-                           <th>Age</th>
-                           <td>{age || 0}</td>
-                        </tr>
-                        <tr>
-                           <th>Role</th>
-                           <td>{userInfo?.role}</td>
-                        </tr>
-                        <tr>
-                           <th>Country</th>
-                           <td>
-                              <div className="d-flex align-items-center justify-content-between">
-                                 <p>{userInfo?.country || "empty"}</p>
-                                 <button onClick={() => openEditForm("country")} className='bt9_change'>{openEdit === "country" ? "Cancel" : "Edit"}</button>
+                  <div className="pb-3">
+                     {
+                        openEdit ? <UpdateForm inputValue={inputValue} setInputValue={setInputValue} userInfo={userInfo} actionLoading={actionLoading} updateDocHandler={updateDocHandler} /> :
+                           <>
+                              <div className="profile_header">
+                                 {
+                                    (role === "owner") && <div className='ph_i'>
+                                       <span>Balance : {userInfo?.total_earn || 0}&nbsp;$</span>
+                                       <button className='bt9_withdraw'>Withdraw</button>
+                                    </div>
+                                 }
                               </div>
-                              <UpdateForm type={'text'}
-                                 defaultValue={userInfo?.country}
-                                 actionLoading={actionLoading}
-                                 getValue={setCountry}
-                                 updateDocHandler={updateDocHandler}
-                                 openEdit={openEdit}
-                                 updateFor={"country"}
-                              />
-                           </td>
-                        </tr>
-                        <tr>
-                           <th>DOB</th>
-                           <td>
-                              <div className="d-flex align-items-center justify-content-between">
-                                 <p>{userInfo?.dob || "empty"}</p>
-                                 <button onClick={() => openEditForm("dob")} className='bt9_change'>{openEdit === "dob" ? "Cancel" : "Edit"}</button>
-                              </div>
-                              <UpdateForm type={'date'}
-                                 defaultValue={userInfo?.dob}
-                                 actionLoading={actionLoading}
-                                 getValue={setDob}
-                                 updateDocHandler={updateDocHandler}
-                                 openEdit={openEdit}
-                                 updateFor={"dob"}
-                              />
-                           </td>
-                        </tr>
-                     </tbody>
-                  </table>
+                              <table className='table table-sm table-striped'>
+                                 <thead>
+                                    <tr>
+                                       <th></th>
+                                    </tr>
+                                 </thead>
+                                 <tbody>
+                                    <tr>
+                                       <th>ID</th>
+                                       <td>{userInfo?._id}</td>
+                                    </tr>
+                                    <tr>
+                                       <th>Email</th>
+                                       <td>{userInfo?.email}</td>
+                                    </tr>
+                                    <tr>
+                                       <th>Age</th>
+                                       <td>{age || 0}</td>
+                                    </tr>
+                                    <tr>
+                                       <th>Role</th>
+                                       <td>{userInfo?.role}</td>
+                                    </tr>
+                                    <tr>
+                                       <th>Country</th>
+                                       <td>{userInfo?.country || "Not Set"}</td>
+                                    </tr>
+                                    <tr>
+                                       <th>Division</th>
+                                       <td>{userInfo?.division || "Not Set"}</td>
+                                    </tr>
+                                    <tr>
+                                       <th>District</th>
+                                       <td>{userInfo?.district || "Not Set"}</td>
+                                    </tr>
+                                    <tr>
+                                       <th>Thana</th>
+                                       <td>{userInfo?.thana || "Not Set"}</td>
+                                    </tr>
+                                    <tr>
+                                       <th>DOB</th>
+                                       <td>
+                                          {userInfo?.dob || "Not Set"}
+                                       </td>
+                                    </tr>
+                                 </tbody>
+                              </table>
+                           </>
+
+                     }
+                  </div>
+
                </div>
+
                {
                   role === "seller" && <div className="col-12">
                      <div className="card">
                         <div className="card-body">
-                           <h6>Seller Information :</h6>
+                           <div className="profile_header">
+                              <h6>Seller Information</h6>
+
+                              {
+                                 (role === "seller") && <div className='ph_i'>
+                                    <span>Balance : {userInfo?.total_earn || 0}&nbsp;$</span>
+                                    <button className='bt9_withdraw'>Withdraw</button>
+                                 </div>
+                              }
+                           </div>
                            <article>
-                              <small>
-                                 <strong>Display Name : </strong> {userInfo?.seller} <span className="text-muted">(Not change able)</span> <br />
-                              </small>
                               <address>
-                                 <small><strong>Village : </strong>{userInfo?.seller_address?.seller_village}</small><br />
-                                 <small><strong>District : </strong>{userInfo?.seller_address?.seller_district}</small><br />
-                                 <small><strong>Country : </strong>{userInfo?.seller_address?.seller_country}</small><br />
-                                 <small><strong>Zip Code : </strong>{userInfo?.seller_address?.seller_zip}</small><br />
-                                 <small><strong>Registered Phone : </strong>{userInfo?.seller_phone}</small> <br />
+                                 <pre>
+                                    <small><strong>Seller Name         : </strong>{userInfo?.seller}<span className="text-muted">(Not Changeable)</span> <br /></small>
+                                    <small><strong>Village             : </strong>{userInfo?.seller_address?.seller_village}</small><br />
+                                    <small><strong>District            : </strong>{userInfo?.seller_address?.seller_district}</small><br />
+                                    <small><strong>Country             : </strong>{userInfo?.seller_address?.seller_country}</small><br />
+                                    <small><strong>Zip Code            : </strong>{userInfo?.seller_address?.seller_zip}</small><br />
+                                    <small><strong>Registered Phone    : </strong>{userInfo?.seller_phone}</small> <br />
+                                 </pre>
                               </address>
-                              <small><strong>Total Product : </strong>{(myProductCount && myProductCount.count) || 0}</small><br />
-                              <small><strong>Total Earn : </strong>{userInfo?.total_earn || 0}&nbsp;$</small><br />
-                              <small><strong>Total Sold Product : </strong>{userInfo?.success_sell || 0}&nbsp;Items</small>
+                              <div>
+                                 <pre>
+                                    <small><strong>Total Product       : </strong>{(myProductCount && myProductCount.count) || 0}</small><br />
+                                    <small><strong>Total Earn          : </strong>{userInfo?.total_earn || 0}&nbsp;$</small><br />
+                                    <small><strong>Total Sold Product  : </strong>{userInfo?.success_sell || 0}&nbsp;Items</small>
+                                 </pre>
+                              </div>
                            </article>
                         </div>
                      </div>

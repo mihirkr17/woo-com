@@ -16,13 +16,13 @@ export const averageRating = (rating) => {
       countValue += rat?.count;
    });
    const ava = weightVal / countValue;
-   const average = parseFloat(ava.toFixed(2));
+   const average = parseFloat(ava.toFixed(1));
    return average;
 }
 // ${process.env.REACT_APP_BASE_URL}
 export const loggedOut = async () => {
    signOut(auth);
-   const response = await fetch(`http://localhost:5000/api/sign-out`, {
+   const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/sign-out`, {
       method: "GET",
       withCredentials: true,
       credentials: "include",
@@ -35,3 +35,29 @@ export const loggedOut = async () => {
       console.log(resData?.message);
    }
 };
+
+// for cart calculation
+export const cartCalculate = (product) => {
+   let p;
+   if (product) {
+      p = {
+         totalPrice: (product.map(p => (parseFloat(p?.price)) * parseInt(p?.quantity)).reduce((p, c) => p + c, 0).toFixed(2)),
+         totalQuantity: product.map(p => parseInt(p?.quantity)).reduce((p, c) => p + c, 0),
+         totalDiscount: (product.map(p => (parseFloat(p?.discount_amount_fixed)) * parseInt(p?.quantity)).reduce((p, c) => p + c, 0).toFixed(2)),
+         totalAmount: function () {
+            return (this.totalPrice - this.totalDiscount).toFixed(2)
+         }
+      }
+   } else {
+      p = {
+         totalPrice: 0,
+         totalQuantity: 0,
+         totalDiscount: 0,
+         totalAmount: function () {
+            return 0;
+         }
+      }
+   }
+
+   return p;
+}

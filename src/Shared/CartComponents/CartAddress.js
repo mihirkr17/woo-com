@@ -3,13 +3,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { useEffect } from 'react';
 import { useState } from 'react';
-
 import { loggedOut } from '../common';
 import AddressForm from './AddressForm';
 import AddressUpdateForm from './AddressUpdateForm';
 
-const CartAddress = ({ refetch, addr, setStep }) => {
-   
+const CartAddress = ({ refetch, addr, setStep, navigate }) => {
+
    const [openAddressForm, setOpenAddressForm] = useState(false);
    const [openAddressUpdateForm, setOpenAddressUpdateForm] = useState(false);
 
@@ -20,9 +19,7 @@ const CartAddress = ({ refetch, addr, setStep }) => {
       } else {
          setStep(false)
       }
-
    }, [addr, setStep]);
-
 
    const addAddressHandler = async (e) => {
       e.preventDefault();
@@ -47,7 +44,14 @@ const CartAddress = ({ refetch, addr, setStep }) => {
          body: JSON.stringify(final)
       });
 
-      if (response.ok) { setStep(false); refetch() } else { await loggedOut() };
+      const resData = await response.json();
+
+      if (response.ok) {
+         setStep(false); refetch()
+      } else {
+         await loggedOut();
+         navigate(`/login?err=${resData?.message} token not found`);
+      };
    }
 
    const updateAddressHandler = async (e) => {
@@ -71,7 +75,12 @@ const CartAddress = ({ refetch, addr, setStep }) => {
          body: JSON.stringify(final)
       });
 
-      if (response.ok) { setStep(false); refetch() } else { await loggedOut() };
+      const resData = await response.json();
+
+      if (response.ok) { setStep(false); refetch() } else {
+         await loggedOut();
+         navigate(`/login?err=${resData?.message} token not found`);
+      };
    }
 
    const selectAddressHandler = async (addressId, selectAddress) => {
@@ -87,11 +96,13 @@ const CartAddress = ({ refetch, addr, setStep }) => {
          body: JSON.stringify({ addressId, select_address })
       });
 
+      const resData = await response.json();
+
       if (response.ok) {
-         await response.json();
          refetch()
       } else {
          await loggedOut();
+         navigate(`/login?err=${resData?.message} token not found`);
       }
    }
 
@@ -102,7 +113,12 @@ const CartAddress = ({ refetch, addr, setStep }) => {
             withCredentials: true,
             credentials: "include"
          });
-         if (response.ok) { refetch() } else { await loggedOut() }
+         const resData = await response.json();
+
+         if (response.ok) { refetch() } else {
+            await loggedOut();
+            navigate(`/login?err=${resData?.message} token not found`);
+         }
       }
    }
 

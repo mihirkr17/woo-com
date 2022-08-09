@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuthUser, useCart } from '../../App';
 import { useMessage } from '../../Hooks/useMessage';
-import { cartCalculate } from '../../Shared/cartCalculate';
+import { cartCalculate } from '../../Shared/common';
 import CartAddress from '../../Shared/CartComponents/CartAddress';
 import CartCalculation from '../../Shared/CartComponents/CartCalculation';
 import CartHeader from '../../Shared/CartComponents/CartHeader';
@@ -22,7 +22,9 @@ const Purchase = () => {
    }, [msg, navigate]);
 
    const goCheckoutPage = () => {
-      navigate(`/my-cart/checkout-single/${productId}`)
+      if (step) {
+         navigate(`/my-cart/checkout-single/${productId}`);
+      }
    }
 
    return (
@@ -31,9 +33,9 @@ const Purchase = () => {
             <p><strong className='text-danger'>{msg}</strong></p>
             <div className="row">
                <div className="col-lg-8 mb-3">
-                  <CartAddress refetch={refetch} user={user} addr={cart && cart?.address ? cart?.address : []} step={step} setStep={setStep}></CartAddress>
+                  <CartAddress navigate={navigate} refetch={refetch} user={user} addr={cart && cart?.address ? cart?.address : []} step={step} setStep={setStep}></CartAddress>
                   <br />
-                  <CartItem product={cart && cart?.buy_product} cartTypes={"buy"} refetch={refetch} cartLoading={cartLoading} setMessage={setMessage}></CartItem>                 
+                  <CartItem navigate={navigate} product={cart && cart?.buy_product} cartTypes={"buy"} refetch={refetch} cartLoading={cartLoading} setMessage={setMessage}></CartItem>
                </div>
                <div className="col-lg-4 mb-3">
                   <CartHeader user={user}></CartHeader>
@@ -43,7 +45,7 @@ const Purchase = () => {
                   <div className="text-center">
                      {(cart?.address && cart?.address.length === 0) && <small className="my-2 p-1">Please Insert Your Address</small>}
                      {(cart?.address && (cart?.address.length > 0) && (step === false)) && <small className="my-2 p-1">Select Your Address</small>}
-                     <button className='btn btn-info btn-sm w-100' onClick={goCheckoutPage}
+                     <button className='bt9_checkout' onClick={goCheckoutPage}
                         disabled={step === true ? false : true}>
                         Checkout
                      </button>

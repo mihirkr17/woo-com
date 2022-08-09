@@ -1,66 +1,95 @@
-import React, { useState } from 'react';
-import { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Nav } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import "./CategoryHeader.css";
-import fashion from "../../../Assets/Images/fashion.png";
-import electronicsImage from "../../../Assets/Images/electronics.png";
-import { useCategories } from '../../../Hooks/useCategories';
+import { useRef } from 'react';
+import { newCategory } from "../../../Assets/CustomData/categories";
 
-const CategoryHeader = ({ thisFor }) => {
-   const [sCategory, setSCategory] = useState("");
-   const { subCategories } = useCategories(sCategory);
+const CategoryHeader = () => {
+   const [active, setActive] = useState(false);
+   const cateRef = useRef();
+   const [ctg, setCtg] = useState({});
 
-   const selectHandler = (params) => {
-      if (params) {
-         setSCategory(params);
+   useEffect(() => {
+      function reportWindowSize() {
+         const { offsetTop } = cateRef.current;
+
+         if (window.scrollY >= offsetTop) {
+            setActive(true);
+         } else {
+            setActive(false);
+         }
+
       }
-      else {
-         setSCategory("");
-      }
+      // Trigger this function on resize
+      window.addEventListener('scroll', reportWindowSize);
+      //  Cleanup for componentWillUnmount
+      return () => window.removeEventListener('scroll', reportWindowSize);
+   }, []);
+
+   const handleCategories = (name) => {
+      setCtg(name);
    }
 
+   console.log(ctg);
    return (
       <>
-         {
-            thisFor === "home" && <div className="rounded mb-4 c_nav">
-               <div className="d-flex align-items-center justify-content-center flex-wrap py-1 category_navbar shadow-bottom">
-                  <div className="c_nav_btn" onMouseOver={() => selectHandler("fashion")}>
-                     <Nav.Item className='text-dark a' as={Link} to={`/fashion`}>
-                        <img src={fashion} alt="" />
-                        <small>Fashion</small>
-                     </Nav.Item>
-                  </div>
 
-                  <div className="c_nav_btn" onMouseOver={() => selectHandler("electronics")}>
-                     <Nav.Item className='text-dark a' as={Link} to={`/electronics`}>
-                        <img src={electronicsImage} alt="" />
-                        <small>Electronics</small>
-                     </Nav.Item>
-                  </div>
-               </div>
+         <div className="rounded mb-4 c_nav" ref={cateRef}>
+            <div className="d-flex align-items-center justify-content-center flex-wrap py-1 category_navbar shadow-bottom">
 
-               <div className="p-2" onMouseLeave={() => selectHandler("")} style={sCategory ? { display: "block" } : { display: "none" }}>
-                  <div className='card'>
-                     <div className="card-body">
-                        <ul>
-                           {
-                              subCategories && subCategories.map((c, i) => {
-                                 return (
-                                    <li key={i} className="mb-2">
-                                       <Nav.Item as={Link} to={`/${sCategory}/${c}`}>
-                                          {c}
-                                       </Nav.Item>
-                                    </li>
-                                 )
-                              })
-                           }
-                        </ul>
-                     </div>
+               {
+                  newCategory && newCategory.map((c, i) => {
+                     return (
+                        <>
+                           <div className="c_nav_btn" key={i} onMouseOver={() => handleCategories(c && c)}>
+                              <Nav.Item className='a' as={Link} to={`/${c.category}`}>
+                                 {
+                                    active ? "" : <img src={c?.img} alt="" />
+                                 }
+                                 <small>{c.category}</small>
+                              </Nav.Item>
+                           </div>
+                        </>
+                     )
+                  })
+               }
+            </div>
+
+            <div className="cc_tty" style={ctg.category ? { display: "block" } : { display: "none" }} onMouseLeave={() => handleCategories({})} >
+               <div className="c_sub_menu_wrapper">
+                  <div className='row'>
+                     {
+                        ctg.sc && ctg.sc.map((subCtg, ind) => {
+                           return (
+                              <div className='col-lg-4 gg_tr' key={ind}>
+                                 <p className="ai_tj">
+                                    <Nav.Item as={Link} to={`/${ctg?.category}/${subCtg?.sub_category}`}>
+                                       {subCtg?.sub_category}
+                                    </Nav.Item>
+                                 </p>
+
+                                 <div className="ffg_th">
+                                    {
+                                       subCtg?.sc_item && subCtg?.sc_item.map((scCtg, ind) => {
+                                          return (
+                                             <p>
+                                                <Nav.Item as={Link} key={ind} to={`/${ctg?.category}/${subCtg?.sub_category}/${scCtg}`}>
+                                                   {scCtg.charAt(0).toUpperCase() + scCtg.slice(1).replace(/[-]/g, ' ')}
+                                                </Nav.Item>
+                                             </p>
+                                          )
+                                       })
+                                    }
+                                 </div>
+
+                              </div>
+                           )
+                        })
+                     }
                   </div>
                </div>
             </div>
-         }
+         </div>
       </>
    );
 };

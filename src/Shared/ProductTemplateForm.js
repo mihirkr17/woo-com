@@ -14,11 +14,16 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch })
    const [desc, setDescription] = useState((data?.description && data?.description) || "CKEditor v5");
    const [inputValue, setInputValue] = useState({ price: (data?.price && data?.price) || "", discount: (data?.discount && data?.discount) || "" });
    const { price_fixed, discount_amount_fixed } = usePrice(inputValue.price, inputValue.discount);
-   const [category, setCategory] = useState((data?.category && data?.category) || "");
-   const { categories, subCategories } = useCategories(category, (data?.category && data?.category));
    const { msg, setMessage } = useMessage();
    const newDate = new Date();
    const [actionLoading, setActionLoading] = useState(false);
+   const [ctg, setCtg] = useState({ category: "", sub_category: "", second_category: "" });
+   const { Categories, subCategories, secondCategories } = useCategories(ctg);
+
+   const handleCtgValues = (e) => {
+      let values = e.target.value;
+      setCtg({ ...ctg, [e.target.name]: values })
+   }
 
    const handleInput = (e) => {
       const values = e.target.value;
@@ -32,14 +37,26 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch })
       let title = e.target.title.value;
       let image = e.target.image.value;
       let description = desc;
-      let sub_category = e.target.sub_category.value;
+      // let sub_category = e.target.sub_category.value;
       let price = inputValue.price;
       let discount = inputValue.discount;
-      let rating = [];
+      let rating = [
+         { weight: 5, count: 0 },
+         { weight: 4, count: 0 },
+         { weight: 3, count: 0 },
+         { weight: 2, count: 0 },
+         { weight: 1, count: 0 },
+      ];
       let available = e.target.available.value;
       let brand = e.target.brand.value;
 
       let slug = slugMaker(title);
+
+      const genre = {
+         category: ctg?.category, // category
+         sub_category: ctg?.sub_category, // sub category
+         second_category: ctg?.second_category // third category
+      }
 
       let product = {
          title,
@@ -47,9 +64,8 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch })
          brand,
          image,
          description,
-         category,
+         genre,
          price: parseFloat(price),
-         sub_category,
          price_fixed,
          discount: parseFloat(discount),
          discount_amount_fixed,
@@ -61,6 +77,7 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch })
       } else {
          product["seller"] = userInfo?.seller;
          product["rating"] = rating;
+         product["rating_average"] = 0;
          product["createAt"] = newDate.toLocaleString();
       }
 
@@ -69,7 +86,12 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch })
          method: formTypes === "update" ? "PUT" : "POST"
       }
 
-      if (title === "" || image === "" || description === "" || category === "" || sub_category === "" || price === "" || discount === "" || brand === "") {
+      if (
+         title === "" || image === "" ||
+         description === "" || ctg.category === "" ||
+         ctg.sub_category === "" || price === "" ||
+         discount === "" || brand === "" || ctg.second_category === ""
+      ) {
          setMessage(<p className='text-danger'><small><strong>Required All Input Fields !</strong></small></p>);
          setActionLoading(false);
          return;
@@ -105,6 +127,21 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch })
       }
    }
 
+   const selectOption = (arr, values) => {
+      return (
+         <select name={values} id={values} onChange={handleCtgValues}>
+            <option value="">Choose {values}</option>
+            {
+               arr && arr.map((c, i) => {
+                  return (
+                     <option value={c} key={i}>{c}</option>
+                  )
+               })
+            }
+         </select>
+      )
+   }
+
 
    return (
       <Form onSubmit={productHandler}>
@@ -138,8 +175,31 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch })
             </Form.Group>
          </Row>
 
-         <Row className="my-3">
+         <div className="row my-3">
             <Form.Group as={Col} controlId="formGridCategory">
+               <Form.Label>Product Category</Form.Label> <br />
+               {
+                  selectOption(Categories, "category")
+               }
+            </Form.Group>
+
+            <Form.Group as={Col} controlId="formGridCategory">
+               <Form.Label>Product Sub Category</Form.Label> <br />
+               {
+                  selectOption(subCategories, "sub_category")
+               }
+            </Form.Group>
+
+            <Form.Group as={Col} controlId="formGridCategory">
+               <Form.Label>Product Second Category</Form.Label> <br />
+               {
+                  selectOption(secondCategories, "second_category")
+               }
+            </Form.Group>
+         </div>
+
+         <Row className="my-3">
+            {/* <Form.Group as={Col} controlId="formGridCategory">
                <Form.Label>Product Category</Form.Label>
                <Form.Select name='category' onChange={(e) => setCategory(e.target.value)}>
                   {
@@ -170,7 +230,7 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch })
                      })
                   }
                </Form.Select>
-            </Form.Group>
+            </Form.Group> */}
 
             <Form.Group as={Col} controlId="formGridPrice">
                <Form.Label>Price</Form.Label>

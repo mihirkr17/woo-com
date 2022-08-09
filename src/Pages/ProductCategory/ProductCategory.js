@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 import { Nav } from 'react-bootstrap';
 import { Link, useParams } from 'react-router-dom';
+import { newCategory } from '../../Assets/CustomData/categories';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { useCategories } from '../../Hooks/useCategories';
 import { useFetch } from '../../Hooks/useFetch';
@@ -12,7 +13,7 @@ import CategoryHeader from '../Home/Components/CategoryHeader';
 import "./ProductCategory.css";
 
 const ProductCategory = () => {
-   const { category, sub_category } = useParams();
+   const { category, sub_category, second_category } = useParams();
    const [url, setUrl] = useState("");
    const { data: productByCategory, loading } = useFetch(`${process.env.REACT_APP_BASE_URL + url}`);
    const [filters, setFilters] = useState('best_match');
@@ -21,6 +22,8 @@ const ProductCategory = () => {
    const [products, setProducts] = useState([]);
    const { subCategories } = useCategories(category);
 
+   const { sc: subCategory } = newCategory && newCategory.find(e => e.category === category);
+   const secondCategory = subCategory && subCategory.find(e => e.sub_category === sub_category);
 
    useEffect(() => {
       if (productByCategory) {
@@ -40,11 +43,15 @@ const ProductCategory = () => {
       }
 
       if (category && sub_category) {
-         filterUrl = `api/product-by-category?category=${category}&sub_category=${sub_category}&filters=${filters}`;
+         filterUrl = `api/product-by-category?category=${category}&sb_category=${sub_category}&filters=${filters}`;
+      }
+
+      if (category && sub_category && second_category) {
+         filterUrl = `api/product-by-category?category=${category}&sb_category=${sub_category}&sc_category=${second_category}&filters=${filters}`;
       }
 
       setUrl(filterUrl);
-   }, [category, filters, sub_category]);
+   }, [category, filters, sub_category, second_category]);
 
    useEffect(() => {
       let g;
@@ -75,9 +82,7 @@ const ProductCategory = () => {
 
    return (
       <div className="section_default">
-         <CategoryHeader></CategoryHeader>
          <div className='container'>
-
             <div className="category_head">
                <Breadcrumbs></Breadcrumbs>
                <div className="py-1 border-bottom">
@@ -95,27 +100,48 @@ const ProductCategory = () => {
 
             <div className="row" style={{ position: "relative", height: "77vh" }}>
                <div className="category_left_side col-lg-2 col-md-3 border-end">
-                  <div className="py-1">
-                     <small><strong>Categories</strong></small>
-                     <ul>
-                        <li className="my-1">
-                           <Nav.Item as={Link} to={`/${category}`}>
-                              All {category}
-                           </Nav.Item>
-                        </li>
-                        {
-                           subCategories && subCategories.map((c, i) => {
-                              return (
-                                 <li key={i} className="my-1">
-                                    <Nav.Item as={Link} to={`/${category}/${c}`}>
-                                       {c}
-                                    </Nav.Item>
-                                 </li>
-                              )
-                           })
-                        }
-                     </ul>
-                  </div>
+                  {
+                     (category && !sub_category && !second_category) && <div className="py-1">
+                        <small><strong>{category}</strong></small>
+                        <ul>
+                           <li className="my-1">
+                              <Nav.Item as={Link} to={`/${category}`}>
+                                 All {category}
+                              </Nav.Item>
+                           </li>
+                           {
+                              subCategory && subCategory.map((c, i) => {
+                                 return (
+                                    <li key={i} className="my-1">
+                                       <Nav.Item as={Link} to={`/${category}/${c?.sub_category}`}>
+                                          {c?.sub_category}
+                                       </Nav.Item>
+                                    </li>
+                                 )
+                              })
+                           }
+                        </ul>
+                     </div>
+                  }
+                  {
+                     (sub_category && !second_category) && <div className="py-1">
+                        <small><strong>{sub_category}</strong></small>
+                        <ul>
+                           {
+                              secondCategory?.sc_item && secondCategory?.sc_item.map((c, i) => {
+
+                                 return (
+                                    <li key={i} className="my-1">
+                                       <Nav.Item as={Link} to={`/${category}/${sub_category}/${c}`}>
+                                          {c}
+                                       </Nav.Item>
+                                    </li>
+                                 )
+                              })
+                           }
+                        </ul>
+                     </div>
+                  }
 
 
                   {

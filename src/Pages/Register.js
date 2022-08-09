@@ -6,7 +6,6 @@ import BtnSpinner from "../Components/Shared/BtnSpinner/BtnSpinner";
 import { auth } from '../firebase.init';
 import { useMessage } from '../Hooks/useMessage';
 import { useSignIn } from '../Hooks/useSignIn';
-// import { useToken } from '../Hooks/useToken';
 
 const Register = () => {
    const { msg: regMsg, setMessage } = useMessage();

@@ -8,7 +8,7 @@ import useAuth from '../../Hooks/useAuth';
 import { loggedOut } from '../../Shared/common';
 import "./NavigationBar.css";
 
-const NavigationBar = () => {
+const NavigationBar = ({ theme, setTheme }) => {
    const user = useAuthUser();
    const q = new URLSearchParams(window.location.search).get("q");
    const { role, userInfo } = useAuth(user);
@@ -21,11 +21,16 @@ const NavigationBar = () => {
             <Navbar.Brand className="nav_link" as={NavLink} to="/">Woo-Com</Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
 
-            <Nav.Item>
-               <input type="search" className='form-control form-control-sm' onChange={(e) => navigate(`/search?q=${e.target.value}`)} defaultValue={q || ""} placeholder='Search product by title, brand, seller' name="s_query" />
-            </Nav.Item>
+
+
 
             <Navbar.Collapse id="basic-navbar-nav">
+               <Nav.Item>
+                  <input type="search" className='form-control form-control-sm' onChange={(e) => navigate(`/search?q=${e.target.value}`)} defaultValue={q || ""} placeholder='Search product by title, brand, seller' name="s_query" />
+               </Nav.Item>
+               <Nav.Item>
+                  <input type="checkbox" checked={theme ? true : ""} onChange={() => setTheme(!theme)} />
+               </Nav.Item>
                <Nav className="ms-auto">
                   <Nav.Link as={NavLink} className="nav_link" to="/">Home</Nav.Link>
                   {

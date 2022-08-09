@@ -6,8 +6,7 @@ import BtnSpinner from '../../Components/Shared/BtnSpinner/BtnSpinner';
 
 import { loggedOut } from '../common';
 
-const CartItem = ({ product: cartProduct, setMessage, refetch, checkOut, cartTypes, cartLoading }) => {
-
+const CartItem = ({ product: cartProduct, setMessage, refetch, checkOut, cartTypes, cartLoading , navigate}) => {
 
    // update product quantity handler
    const quantityHandler = async (cp, action) => {
@@ -24,11 +23,13 @@ const CartItem = ({ product: cartProduct, setMessage, refetch, checkOut, cartTyp
          },
          body: JSON.stringify({ quantity, price_total: price, discount_amount_total })
       })
+      const resData = await response.json();
 
       if (response.ok) {
          refetch();
       } else {
          await loggedOut();
+         navigate(`/login?err=${resData?.message} token not found`);
       }
    }
 
@@ -43,15 +44,15 @@ const CartItem = ({ product: cartProduct, setMessage, refetch, checkOut, cartTyp
             credentials: "include",
          });
 
+         const resData = await response.json();
          if (response.ok) {
-            const resData = await response.json();
-
             if (resData) {
                setMessage(`${title} ${resData?.message}`);
                refetch();
             };
          } else {
             await loggedOut();
+            navigate(`/login?err=${resData?.message} token not found`);
          }
       }
    }
@@ -80,7 +81,7 @@ const CartItem = ({ product: cartProduct, setMessage, refetch, checkOut, cartTyp
                <div className="row">
                   <div className="col-11">
                      <p className="card_title"><Link to={`/${cartProduct?.category}/${cartProduct?.sub_category}/${cartProduct?.slug}`}>{cartProduct && cartProduct?.title}</Link></p>
-                     <div className="d-flex align-items-center justify-content-between">
+                     <div className="d-flex align-items-center justify-content-between flex-wrap">
                         <small>
                            <strike className='text-muted'>{cartProduct && cartProduct?.price}</strike>&nbsp;
                            <big className='text-success'>{cartProduct && cartProduct?.price_fixed}$</big>&nbsp;{cartProduct && cartProduct?.discount + "% Off"}

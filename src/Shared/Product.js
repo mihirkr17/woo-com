@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 const Product = ({ product }) => {
    return (
       <div className='product_card my-2'>
-         <Link to={`/${product?.category}/${product?.sub_category}/${product?.slug}`}>
+         <Link to={`/${product?.genre?.category}/${product?.genre?.sub_category}/${product?.genre?.second_category}/${product?.slug}`}>
             <div className="product_card_img">
                <img src={product?.image} alt='' />
             </div>
@@ -16,12 +16,12 @@ const Product = ({ product }) => {
                </div>
 
                <div className='product_meta'>
-                  <div className="product_info">
+                  <div className="product_brand">
                      <small>Brand : {product?.brand}</small><br />
                   </div>
 
                   <div className="product_rating">
-                     <small>{product?.rating_average || 0}/5</small>
+                     <small>{product?.rating_average || 0} out of 5</small>
                   </div>
 
                   <div className="product_price">

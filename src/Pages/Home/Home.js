@@ -7,7 +7,7 @@ import RecommendedProducts from './Components/RecommendedProducts';
 const Home = () => {
    return (
       <section className='home__section'>
-         <CategoryHeader thisFor={"home"}></CategoryHeader>
+         <CategoryHeader></CategoryHeader>
          {/* <Banner data={data}></Banner> */}
          <RecommendedProducts></RecommendedProducts>
          <HomeStore></HomeStore>

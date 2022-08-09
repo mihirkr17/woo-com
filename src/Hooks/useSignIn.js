@@ -1,44 +1,40 @@
 import { useEffect, useState } from 'react';
 
-
 export const useSignIn = (user) => {
-   
    const [isLogged, setIsLogged] = useState("");
 
    useEffect(() => {
-      const controller = new AbortController();
+      const handler = setTimeout(() => {
+         (async () => {
+            try {
+               if (user) {
+                  const email = user?.user?.email;
+                  const url = `${process.env.REACT_APP_BASE_URL}api/sign-user/${email}`;
+                  const response = await fetch(url, {
+                     method: "PUT",
+                     withCredentials: true,
+                     credentials: "include"
+                  });
 
-      (async () => {
-         try {
-            if (user) {
-              
-               const email = user?.user?.email;
-               const url = `${process.env.REACT_APP_BASE_URL}api/sign-user/${email}`;
-               const response = await fetch(url, {
-                  method: "PUT",
-                  withCredentials: true,
-                  credentials: "include",
-                  signal: controller.signal
-               });
+                  const resData = await response.json();
 
-               const resData = await response.json();
+                  if (response.status === 400) {
+                     return window.location.reload();
+                  }
 
-               if (response.status === 400) {
-                  return window.location.reload();
-               }
-
-               if (response.ok) {
-                  if (resData) {
-                     setIsLogged(resData?.message);
+                  if (response.ok) {
+                     if (resData) {
+                        setIsLogged(resData?.message);
+                     }
                   }
                }
+            } catch (error) {
+               throw new Error(`Something went wrong ${error}`);
             }
-         } catch (error) {
-            throw new Error(`Something went wrong ${error}`);
-         }
-      })();
+         })();
+      }, 100);
 
-      return () => controller?.abort();
+      return () => clearTimeout(handler);
    }, [user]);
 
    return [isLogged];

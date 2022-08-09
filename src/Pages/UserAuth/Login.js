@@ -18,8 +18,7 @@ const Login = () => {
    let msg;
 
    const queryParams = new URLSearchParams(window.location.search);
-   const term = queryParams.get("q");
-   console.log(term);
+   const term = queryParams.get("err");
 
    useEffect(() => {
       if (isLogged) navigate(from, { replace: true });
@@ -48,6 +47,7 @@ const Login = () => {
                      <div className="card-body">
                         <h3 className='py-5'>Login to WOO-COM</h3>
                         {msg || logMsg}
+                        {term && <p className="text-danger py-2"><small><strong>{term}</strong></small></p>}
                         <Form onSubmit={handleLogin} className='text-start'>
                            <Form.Group className="mb-3" controlId="formBasicEmail">
                               <Form.Label>Email address</Form.Label>

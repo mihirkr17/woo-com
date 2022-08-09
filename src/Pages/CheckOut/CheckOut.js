@@ -6,7 +6,7 @@ import { useAuthUser, useCart } from '../../App';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { useMessage } from '../../Hooks/useMessage';
 
-import { cartCalculate } from '../../Shared/cartCalculate';
+import { cartCalculate } from '../../Shared/common';
 import CartCalculation from '../../Shared/CartComponents/CartCalculation';
 import CartItem from '../../Shared/CartComponents/CartItem';
 import CartPayment from '../../Shared/CartComponents/CartPayment';
@@ -29,6 +29,12 @@ const CheckOut = () => {
 
    const buyBtnHandler = async (e) => {
       e.preventDefault();
+
+      if (products && products.length <= 0) {
+         setMessage(<p className='text-danger'><small><strong>No Products to buy</strong></small></p>);
+         return;
+      }
+
       let buyAlert = window.confirm("Buy Now");
       let payment_mode = e.target.payment.value;
 
