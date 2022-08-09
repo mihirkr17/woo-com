@@ -51,7 +51,7 @@ const ManageProduct = () => {
       }
    }, [counter, searchValue, filterCategory]);
 
-   const categories = ["all", "fashion", "electronics"];
+   const categories = ["all", "fashion", "electronics", "men-clothing"];
 
    // delete product
    const productDeleteHandler = async (productId) => {
