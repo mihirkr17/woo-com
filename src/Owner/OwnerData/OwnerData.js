@@ -9,12 +9,12 @@ const OwnerData = () => {
    const { role } = useAuth(user);
    const navigate = useNavigate();
 
-   useEffect(() => {
-      if ((role && (role !== "owner" && role !== "admin")) && !user) {
-         navigate('/');
-         return;
-      };
-   }, [navigate, role, user]);
+   // useEffect(() => {
+   //    if ((role && (role !== "owner" && role !== "admin")) && !user) {
+   //       navigate('/');
+   //       return;
+   //    };
+   // }, [navigate, role, user]);
 
    return (
       <div>

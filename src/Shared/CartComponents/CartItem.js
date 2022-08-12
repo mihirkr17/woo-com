@@ -6,7 +6,7 @@ import BtnSpinner from '../../Components/Shared/BtnSpinner/BtnSpinner';
 
 import { loggedOut } from '../common';
 
-const CartItem = ({ product: cartProduct, setMessage, refetch, checkOut, cartTypes, cartLoading , navigate}) => {
+const CartItem = ({ product: cartProduct, setMessage, refetch, checkOut, cartTypes, cartLoading, navigate }) => {
 
    // update product quantity handler
    const quantityHandler = async (cp, action) => {
@@ -80,7 +80,7 @@ const CartItem = ({ product: cartProduct, setMessage, refetch, checkOut, cartTyp
             <div className="col-12">
                <div className="row">
                   <div className="col-11">
-                     <p className="card_title"><Link to={`/${cartProduct?.category}/${cartProduct?.sub_category}/${cartProduct?.slug}`}>{cartProduct && cartProduct?.title}</Link></p>
+                     <p className="card_title"><Link to={`/product/${cartProduct?.slug}`}>{cartProduct && cartProduct?.title}</Link></p>
                      <div className="d-flex align-items-center justify-content-between flex-wrap">
                         <small>
                            <strike className='text-muted'>{cartProduct && cartProduct?.price}</strike>&nbsp;

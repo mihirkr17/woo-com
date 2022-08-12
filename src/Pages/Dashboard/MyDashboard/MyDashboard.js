@@ -1,12 +1,10 @@
 import React from 'react';
 import { useAuthUser } from '../../../App';
-import Spinner from '../../../Components/Shared/Spinner/Spinner';
 import useAuth from '../../../Hooks/useAuth';
 
 const MyDashboard = () => {
    const user = useAuthUser();
-   const {userInfo, authLoading} = useAuth(user);
-   if (authLoading) return <Spinner></Spinner>;
+   const {userInfo} = useAuth(user);
 
    return (
       <div className='section_default'>

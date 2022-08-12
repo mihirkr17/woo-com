@@ -30,7 +30,6 @@ const CategoryHeader = () => {
       setCtg(name);
    }
 
-   console.log(ctg);
    return (
       <>
 
@@ -40,16 +39,14 @@ const CategoryHeader = () => {
                {
                   newCategory && newCategory.map((c, i) => {
                      return (
-                        <>
-                           <div className="c_nav_btn" key={i} onMouseOver={() => handleCategories(c && c)}>
-                              <Nav.Item className='a' as={Link} to={`/${c.category}`}>
-                                 {
-                                    active ? "" : <img src={c?.img} alt="" />
-                                 }
-                                 <small>{c.category}</small>
-                              </Nav.Item>
-                           </div>
-                        </>
+                        <div className="c_nav_btn" key={i} onMouseOver={() => handleCategories(c && c)}>
+                           <Nav.Item className='a' as={Link} to={`/${c.category}`}>
+                              {
+                                 active ? "" : <img src={c?.img} alt="" />
+                              }
+                              <small>{c.category}</small>
+                           </Nav.Item>
+                        </div>
                      )
                   })
                }
@@ -70,10 +67,10 @@ const CategoryHeader = () => {
 
                                  <div className="ffg_th">
                                     {
-                                       subCtg?.sc_item && subCtg?.sc_item.map((scCtg, ind) => {
+                                       subCtg?.sc_item && subCtg?.sc_item.map((scCtg, i) => {
                                           return (
-                                             <p>
-                                                <Nav.Item as={Link} key={ind} to={`/${ctg?.category}/${subCtg?.sub_category}/${scCtg}`}>
+                                             <p key={i}>
+                                                <Nav.Item as={Link} to={`/${ctg?.category}/${subCtg?.sub_category}/${scCtg}`}>
                                                    {scCtg.charAt(0).toUpperCase() + scCtg.slice(1).replace(/[-]/g, ' ')}
                                                 </Nav.Item>
                                              </p>

@@ -62,7 +62,7 @@ export const newCategory = [
             id: 2,
             sub_category: "shirt-punjabi-blazer",
             sc_item: [
-               "shirt-collection", "punjabi-katua-and-fotua", "blazer"
+               "shirt-collection", "punjabi", "katua-and-fotua", "blazer"
             ]
          }
       ],

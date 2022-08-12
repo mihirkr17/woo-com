@@ -1,3 +1,21 @@
+.ggt_ffo {
+  a {
+    font-size: 0.9rem;
+    text-transform: capitalize;
+  }
+  small {
+   font-size: 0.9rem;
+  }
+  ul {
+    li {
+      a {
+        font-size: 0.9rem;
+        text-transform: capitalize;
+      }
+    }
+  }
+}
+
 .category_right_side {
    height: 100%;
    overflow-y: auto;

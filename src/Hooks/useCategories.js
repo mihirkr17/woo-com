@@ -30,7 +30,7 @@ const menCategories = {
       "stylish-t-shirts", "stripe-polo", "colorful-polo", "couple-t-shirts"
    ],
    "shirt-punjabi-blazer" : [
-      "shirt-collection", "punjabi-katua-and-fotua", "blazer"
+      "shirt-collection", "punjabi", "katua-and-fotua", "blazer"
    ]
 }
 

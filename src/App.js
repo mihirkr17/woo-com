@@ -39,6 +39,10 @@ import { auth } from './firebase.init';
 import Spinner from './Components/Shared/Spinner/Spinner';
 import SearchPage from './Pages/SearchPage/SearchPage';
 import { useEffect } from 'react';
+import NotFound from './Pages/NotFound/NotFound';
+import Policy from './Pages/Dashboard/Policy/Policy';
+import RequireSeller from './Auth/RequireSeller';
+import RequiredOwner from './Auth/RequiredOwner';
 
 export const UserContext = createContext();
 
@@ -51,6 +55,7 @@ export const OrderContext = createContext();
 function App() {
   const [user, loading] = useAuthState(auth);
   const { role, userInfo } = useAuth(user);
+
   const getTheme = () => {
     return JSON.parse(localStorage.getItem("theme")) || false;
   }
@@ -83,7 +88,7 @@ function App() {
           <Route path='/register' element={<Register></Register>}></Route>
           <Route path='/search' element={<SearchPage></SearchPage>}></Route>
 
-          <Route path='/:category/:sub_category/:second_category/:product_slug' element={<ViewProduct></ViewProduct>}></Route>
+          <Route path='/product/:product_slug' element={<ViewProduct></ViewProduct>}></Route>
           <Route path='/:category' element={<ProductCategory></ProductCategory>}></Route>
           <Route path='/:category/:sub_category' element={<ProductCategory></ProductCategory>}></Route>
           <Route path='/:category/:sub_category/:second_category' element={<ProductCategory></ProductCategory>}></Route>
@@ -106,10 +111,14 @@ function App() {
             <Route index element={<RequireOwnerAdmin><MyDashboard></MyDashboard></RequireOwnerAdmin>}></Route>
             <Route path='my-profile' element={<RequireOwnerAdmin><MyProfile></MyProfile></RequireOwnerAdmin>}></Route>
             <Route path='manage-orders' element={<RequireOwnerAdmin><ManageOrders></ManageOrders></RequireOwnerAdmin>}></Route>
-            <Route path='add-product' element={<RequireOwnerAdmin><AddProduct></AddProduct></RequireOwnerAdmin>}></Route>
             <Route path='manage-product' element={<RequireOwnerAdmin><ManageProduct></ManageProduct></RequireOwnerAdmin>}></Route>
             <Route path='check-seller' element={<RequireOwnerAdmin><CheckSeller></CheckSeller></RequireOwnerAdmin>}></Route>
-            <Route path='check-order' element={<RequireOwnerAdmin><CheckOrder></CheckOrder></RequireOwnerAdmin>}></Route>
+            <Route path='privacy-policy' element={<RequireOwnerAdmin><Policy></Policy></RequireOwnerAdmin>}></Route>
+
+            {/* // seller routes  */}
+            <Route path='add-product' element={<RequireSeller><AddProduct></AddProduct></RequireSeller>}></Route>
+            <Route path='check-order' element={<RequireSeller><CheckOrder></CheckOrder></RequireSeller>}></Route>
+
 
             {/* // Only owner route */}
             <Route path='manage-users' element={<RequireOwnerAdmin><ManageUsers></ManageUsers></RequireOwnerAdmin>}>
@@ -117,8 +126,10 @@ function App() {
               <Route path='all-admin' element={<RequireOwnerAdmin><AllAdmin></AllAdmin></RequireOwnerAdmin>}></Route>
               <Route path='all-seller' element={<RequireOwnerAdmin><AllSeller></AllSeller></RequireOwnerAdmin>}></Route>
             </Route>
-            <Route path='owner-data' element={<RequireOwnerAdmin><OwnerData></OwnerData></RequireOwnerAdmin>}></Route>
+
+            <Route path='owner-data' element={<RequiredOwner><OwnerData></OwnerData></RequiredOwner>}></Route>
           </Route>
+          <Route path='*' element={<NotFound></NotFound>}></Route>
 
         </Routes>
         <Footer></Footer>

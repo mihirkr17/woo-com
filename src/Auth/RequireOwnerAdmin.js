@@ -3,7 +3,6 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { useAuthUser } from '../App';
 import Spinner from '../Components/Shared/Spinner/Spinner';
 import useAuth from '../Hooks/useAuth';
-import { loggedOut } from '../Shared/common';
 
 const RequireOwnerAdmin = ({ children }) => {
    const user = useAuthUser();
@@ -17,11 +16,13 @@ const RequireOwnerAdmin = ({ children }) => {
    }
 
    if (role) {
-      if (role !== "owner" && role !== "admin" && role === "user" && role !== "seller") {
-         (async () => loggedOut())();
-         return <Navigate to={'/login'} state={{ from: location }} replace></Navigate>
+      if (role === "user") return <Navigate to={`/`} replace/> 
+
+      if (role !== "owner" && role !== "admin" && role !== "seller") {
+         return <Navigate to={'/'} state={{ from: location }} replace></Navigate>
+      } else {
+         return children;
       }
-      return children;
    }
 };
 

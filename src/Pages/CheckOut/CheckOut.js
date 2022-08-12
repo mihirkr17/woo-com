@@ -14,7 +14,6 @@ import { commissionRate } from '../../Shared/commissionRate';
 import { loggedOut } from '../../Shared/common';
 
 const CheckOut = () => {
-   
    const user = useAuthUser();
    const navigate = useNavigate();
    const { msg, setMessage } = useMessage()
@@ -48,13 +47,11 @@ const CheckOut = () => {
             user_email: user?.email,
             owner_commission_rate: parseFloat(commission_rate.toFixed(2)),
             owner_commission: parseFloat(commission.toFixed(2)),
-            _id: elem._id,
+            productId: elem._id,
             product_name: elem.title,
             slug: elem?.slug,
             brand: elem?.brand,
             image: elem.image,
-            category: elem.category,
-            sub_category: elem?.sub_category,
             quantity: elem.quantity,
             price: elem.price,
             price_fixed: elem.price_fixed,

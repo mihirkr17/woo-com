@@ -4,19 +4,16 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthUser, useCart } from '../../App';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
-import { useMessage } from '../../Hooks/useMessage';
-
-import { cartCalculate } from '../../Shared/common';
+import { cartCalculate, loggedOut } from '../../Shared/common';
 import CartCalculation from '../../Shared/CartComponents/CartCalculation';
 import CartItem from '../../Shared/CartComponents/CartItem';
 import CartPayment from '../../Shared/CartComponents/CartPayment';
 import { commissionRate } from '../../Shared/commissionRate';
 
 const CheckoutSingle = () => {
-   
+
    const user = useAuthUser();
    const navigate = useNavigate();
-   const { msg, setMessage } = useMessage();
    const { cart, cartLoading } = useCart();
    const product = cart && cart?.buy_product;
 
@@ -36,13 +33,11 @@ const CheckoutSingle = () => {
          user_email: user?.email,
          owner_commission_rate: parseFloat(commission_rate.toFixed(2)),
          owner_commission: parseFloat(commission.toFixed(2)),
-         _id: product._id,
+         productId: product._id,
          product_name: product.title,
          slug: product?.slug,
          brand: product?.brand,
          image: product.image,
-         category: product.category,
-         sub_category: product?.sub_category,
          quantity: product.quantity,
          price: product.price,
          price_fixed: product.price_fixed,
@@ -52,7 +47,7 @@ const CheckoutSingle = () => {
          discount_amount_fixed: product.discount_amount_fixed,
          discount_amount_total: product.discount_amount_total,
          seller: product.seller,
-         address:  selectedAddress,
+         address: selectedAddress,
          payment_mode: payment_mode,
          status: "pending",
          time_pending: new Date().toLocaleString()
@@ -61,14 +56,22 @@ const CheckoutSingle = () => {
       if (window.confirm("Buy Now")) {
          const response = await fetch(`${process.env.REACT_APP_BASE_URL}set-order/${user?.email}`, {
             method: "POST",
+            withCredentials: true,
+            credentials: "include",
             headers: {
                "Content-Type": "application/json"
             },
             body: JSON.stringify({ ...products })
          });
 
-         response.ok ? await response.json() && navigate(`/my-profile/my-order`) :
-            setMessage(<strong className='text-danger'>Something went wrong!</strong>);
+         const resData = await response.json();
+
+         if (response.status >= 200 && response.status <= 299) {
+            navigate(`/my-profile/my-order?order=${resData?.message}`);
+         } else {
+            await loggedOut();
+            navigate(`/login?err=${resData?.message} token not found`);
+         }
       }
    }
 
@@ -79,7 +82,6 @@ const CheckoutSingle = () => {
             <div className="mb-4">
                <Link to='/my-cart'> <FontAwesomeIcon icon={faLeftLong} /> Back To Cart</Link>
             </div>
-            {msg}
             <div className="row">
                <div className="col-lg-8 mb-3">
                   <div>

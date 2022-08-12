@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Col, Form, Row } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { useCategories } from '../Hooks/useCategories';
@@ -17,8 +17,10 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch })
    const { msg, setMessage } = useMessage();
    const newDate = new Date();
    const [actionLoading, setActionLoading] = useState(false);
-   const [ctg, setCtg] = useState({ category: "", sub_category: "", second_category: "" });
+   const [ctg, setCtg] = useState({ category: data?.genre?.category || "", sub_category: data?.genre?.sub_category || "", second_category: data?.genre?.second_category || "" });
    const { Categories, subCategories, secondCategories } = useCategories(ctg);
+
+   const [specInp, setSpecInp] = useState(data?.info?.specification || [{ type: "", value: "" }]);
 
    const handleCtgValues = (e) => {
       let values = e.target.value;
@@ -30,6 +32,26 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch })
       setInputValue({ ...inputValue, [e.target.name]: values });
    }
 
+   const addSpecInputFieldHandler = () => {
+      setSpecInp([...specInp, { type: "", value: "" }])
+   }
+
+   // handle input change
+   const handleInputChange = (e, index) => {
+      const { name, value } = e.target;
+      let list = [...specInp];
+      list[index][name] = value;
+      setSpecInp(list);
+   };
+   // handle click event of the Remove button
+   const removeSpecInputFieldHandler = index => {
+      const list = [...specInp];
+      list.splice(index, 1);
+      setSpecInp(list);
+   };
+
+
+
    const productHandler = async (e) => {
       e.preventDefault();
       setActionLoading(true);
@@ -37,7 +59,8 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch })
       let title = e.target.title.value;
       let image = e.target.image.value;
       let description = desc;
-      // let sub_category = e.target.sub_category.value;
+      let short_description = e.target.short_description.value;
+      let specification = specInp;
       let price = inputValue.price;
       let discount = inputValue.discount;
       let rating = [
@@ -58,12 +81,19 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch })
          second_category: ctg?.second_category // third category
       }
 
+      const info = {
+         description,
+         short_description,
+         specification
+      }
+
       let product = {
          title,
          slug,
          brand,
          image,
          description,
+         info,
          genre,
          price: parseFloat(price),
          price_fixed,
@@ -127,14 +157,16 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch })
       }
    }
 
-   const selectOption = (arr, values) => {
+   const selectOption = (arr, values, oldValue) => {
       return (
-         <select name={values} id={values} onChange={handleCtgValues}>
-            <option value="">Choose {values}</option>
+         <select className="form-select form-select-sm text-capitalize" name={values} id={values} onChange={handleCtgValues}>
+
+            {/* <option value="">Choose...</option> */}
+            {oldValue ? <option value={oldValue}>{oldValue}</option> : <option value="">Choose...</option>}
             {
                arr && arr.map((c, i) => {
                   return (
-                     <option value={c} key={i}>{c}</option>
+                     <option value={c} key={i}>{c.replace(/[-]/g, " ")}</option>
                   )
                })
             }
@@ -142,134 +174,120 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch })
       )
    }
 
-
    return (
       <Form onSubmit={productHandler}>
-         <Row className="mb-3">
-            <Form.Group as={Col} controlId="formGridTitle">
-               <Form.Label>Product Title</Form.Label>
-               <Form.Control name="title" type="text" defaultValue={(data?.title && data?.title) || ""} placeholder="Title" />
-            </Form.Group>
+         <div className="row my-4">
+            <div className='col-lg-12 mb-3'>
+               <label htmlFor='title'>Title</label>
+               <input className='form-control form-control-sm' name="title" id='title' type="text" defaultValue={(data?.title && data?.title) || ""} placeholder="Title" />
+            </div>
 
-            <Form.Group as={Col} controlId="formGridImage">
-               <Form.Label>Product Image</Form.Label>
-               <Form.Control name="image" type="text" defaultValue={(data?.image && data?.image) || ""} placeholder="Image Link" />
-            </Form.Group>
-         </Row>
+            <div className='col-lg-12 mb-3'>
+               <label htmlFor='image'>Image</label>
+               <input className='form-control form-control-sm' name="image" id='image' type="text" defaultValue={(data?.image && data?.image) || ""} placeholder="Image Link" />
+            </div>
 
-         <Form.Group>
-            <Form.Label>Product Description</Form.Label>
-            <CKEditor editor={ClassicEditor}
-               data={desc}
-               onChange={(event, editor) => {
-                  const data = editor.getData();
-                  return setDescription(data);
-               }}
-            />
-         </Form.Group>
+            <div className="col-lg-12 mb-3">
+               <label htmlFor='description'>Description</label>
+                  <CKEditor editor={ClassicEditor}
+                     data={desc}
+                     onChange={(event, editor) => {
+                        const data = editor.getData();
+                        return setDescription(data);
+                     }}
+                  />
+            </div>
 
-         <Row className="my-3">
-            <Form.Group as={Col} controlId="formGridBrand">
-               <Form.Label>Product Brand</Form.Label>
-               <Form.Control name="brand" type="text" defaultValue={(data?.brand && data?.brand) || ""} placeholder="Brand Name..." />
-            </Form.Group>
-         </Row>
-
-         <div className="row my-3">
-            <Form.Group as={Col} controlId="formGridCategory">
-               <Form.Label>Product Category</Form.Label> <br />
-               {
-                  selectOption(Categories, "category")
-               }
-            </Form.Group>
-
-            <Form.Group as={Col} controlId="formGridCategory">
-               <Form.Label>Product Sub Category</Form.Label> <br />
-               {
-                  selectOption(subCategories, "sub_category")
-               }
-            </Form.Group>
-
-            <Form.Group as={Col} controlId="formGridCategory">
-               <Form.Label>Product Second Category</Form.Label> <br />
-               {
-                  selectOption(secondCategories, "second_category")
-               }
-            </Form.Group>
+            <div className='col-lg-12 mb-3'>
+               <label htmlFor='short_description'>Short Description</label>
+               <input className='form-control form-control-sm' name="short_description" id='short_description' type="text" defaultValue={(data?.info?.short_description && data?.info?.short_description) || ""} placeholder="Short description" />
+            </div>
          </div>
 
-         <Row className="my-3">
-            {/* <Form.Group as={Col} controlId="formGridCategory">
-               <Form.Label>Product Category</Form.Label>
-               <Form.Select name='category' onChange={(e) => setCategory(e.target.value)}>
-                  {
-                     data && data?.category ? <option value={data?.category}>{data?.category.toUpperCase()}</option>
-                        : <option value="">Choose Category...</option>
-                  }
-                  {
-                     categories && categories.map((items, index) => {
-                        return (
-                           <option value={items} key={index}>{items.toUpperCase()}</option>
-                        )
-                     })
-                  }
-               </Form.Select>
-            </Form.Group>
+         <div className="my-4">
+            <label>Specification</label>
+            {
+               specInp && specInp.map((x, i) => {
+                  return (
+                     <div className="py-2 d-flex align-items-end" key={i}>
 
-            <Form.Group as={Col} controlId="formGridSubCategory">
-               <Form.Label>Product Sub Category <br />
-                  <small className='text-muted'>{data && data?.sub_category && data && data?.sub_category}</small>
-               </Form.Label>
+                        <div className="row w-100">
+                           <div className="col-lg-6 mb-3">
 
-               <Form.Select name='sub_category'>
-                  {
-                     subCategories && subCategories.map((items, index) => {
-                        return (
-                           <option value={items} key={index}>{items.toUpperCase()}</option>
-                        )
-                     })
-                  }
-               </Form.Select>
-            </Form.Group> */}
+                              <input className="form-control form-control-sm" name="type" id='type' type="text" placeholder='Spec type' value={x.type} onChange={(e) => handleInputChange(e, i)}></input>
+                           </div>
 
-            <Form.Group as={Col} controlId="formGridPrice">
-               <Form.Label>Price</Form.Label>
-               <Form.Control name='price' type='number' value={inputValue.price} onChange={handleInput} />
-            </Form.Group>
+                           <div className="col-lg-6 mb-3">
+                              <input className="form-control form-control-sm" name="value" id='value' type="text" placeholder='Spec_value' value={x.value} onChange={(e) => handleInputChange(e, i)}></input>
+                           </div>
+                        </div>
 
-            <Form.Group as={Col} controlId="formGridDiscount">
-               <Form.Label>Discount</Form.Label>
-               <Form.Control name='discount' type='number' value={inputValue.discount} onChange={handleInput} />
-            </Form.Group>
-         </Row>
+                        <div className="btn-box d-flex ms-4 mb-3">
+                           {specInp.length !== 1 && <button
+                              className="btn btn-danger me-2 btn-sm"
+                              onClick={() => removeSpecInputFieldHandler(i)}>Remove</button>}
+                           {specInp.length - 1 === i && <button className="btn btn-primary btn-sm" onClick={addSpecInputFieldHandler}>Add</button>}
+                        </div>
+                     </div>
+                  )
+               })
+            }
+         </div>
 
-         <Row>
-            <Form.Group as={Col} controlId="formGridPrice">
-               <Form.Label>Price Fixed</Form.Label>
-               <Form.Control disabled defaultValue={price_fixed || inputValue?.price} key={price_fixed || inputValue?.price}></Form.Control>
-            </Form.Group>
+         <div className="row my-4">
+            <div className='col-lg-3 mb-3'>
+               <label htmlFor='brand'>Brand</label>
+               <input name="brand" id='brand' className='form-control form-control-sm' type="text" defaultValue={(data?.brand && data?.brand) || ""} placeholder="Brand Name..." />
+            </div>
 
-            <Form.Group as={Col} controlId="formGridPrice">
-               <Form.Label>discount_amount_fixed</Form.Label>
-               <Form.Control disabled defaultValue={discount_amount_fixed || 0} key={discount_amount_fixed} />
-            </Form.Group>
-         </Row>
+            <div className='col-lg-3 mb-3'>
+               <label htmlFor='category'>Category</label> <br />
+               {
+                  selectOption(Categories, "category", ctg?.category)
+               }
+            </div>
 
-         <Form.Group className="mb-3" id="formGridStock">
-            <Form.Label>Update Stock</Form.Label>
-            <Form.Control name='available' type='number' defaultValue={(data?.available && data?.available) || ""} />
-            <small className="p-1 text-muted">
-               Warning : If you set it to 0 then product will be stock out
-            </small>
-         </Form.Group>
+            <div className='col-lg-3 mb-3'>
+               <label htmlFor='sub_category'>Sub Category</label> <br />
+               {
+                  selectOption(subCategories, "sub_category", ctg?.sub_category)
+               }
+            </div>
+
+            <div className='col-lg-3 mb-3'>
+               <label htmlFor='second_category'>Second Category</label> <br />
+               {
+                  selectOption(secondCategories, "second_category", ctg?.second_category)
+               }
+            </div>
+         </div>
+
+         <div className="row my-4">
+            <div className='col-lg-4 mb-3'>
+               <label htmlFor='price'>Price <small>(Fixed Price : {price_fixed || inputValue?.price || 0})</small></label>
+               <input name='price' id='price' type='number' className="form-control form-control-sm" value={inputValue.price || ""} onChange={handleInput} />
+            </div>
+
+            <div className='col-lg-4 mb-3'>
+               <label htmlFor='discount'>Discount <small>(Fixed Discount : {discount_amount_fixed || 0})</small></label>
+               <input name='discount' id='discount' type='number' className="form-control form-control-sm" value={inputValue.discount} onChange={handleInput} />
+            </div>
+            <div className='col-lg-4 mb-3'>
+               <label htmlFor='available'>Update Stock</label>
+               <input className='form-control form-control-sm' name='available' id='available' type='number' defaultValue={(data?.available && data?.available) || ""} />
+            </div>
+         </div>
+         <p className="p-1 text-muted">
+            <small>Warning : If you set it to 0 then product will be stock out</small>
+         </p>
          {msg}
-         <Button variant="primary" type="submit">
+         <button className='btn btn-sm btn-primary' type="submit">
             {
                actionLoading ? <BtnSpinner text={formTypes === "create" ? "Adding..." : "Updating..."} /> :
                   formTypes === "create" ? "Add Product" : "Update Product"
             }
-         </Button>
-      </Form>
+         </button>
+      </Form >
    );
 };
 

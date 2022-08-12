@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 const Product = ({ product }) => {
    return (
       <div className='product_card my-2'>
-         <Link to={`/${product?.genre?.category}/${product?.genre?.sub_category}/${product?.genre?.second_category}/${product?.slug}`}>
+         <Link to={`/product/${product?.slug}`}>
             <div className="product_card_img">
                <img src={product?.image} alt='' />
             </div>

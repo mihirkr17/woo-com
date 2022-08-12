@@ -16,7 +16,7 @@ const ManageProduct = () => {
    const { msg, setMessage } = useMessage();
 
    const user = useAuthUser();
-   const { userInfo } = useAuth(user);
+   const { userInfo, role } = useAuth(user);
    const [items, setItems] = useState(0);
    const [page, setPage] = useState(0);
    const [url, setUrl] = useState("");
@@ -102,13 +102,15 @@ const ManageProduct = () => {
                         </thead>
                         <tbody>
                            {products && products.map((p, index) => {
+                              console.log(products)
+                              const {genre} = p;
                               return (
                                  <tr key={index}>
                                     <td>{
                                        <img src={p?.image} style={{ width: "45px", height: "45px" }} alt="" />
                                     }</td>
                                     <td><p style={{ cursor: "pointer" }} title={`View ${p?.title}`} onClick={() => setProductDetailsModal(true && p)}>{p?.title.length > 50 ? p?.title.slice(0, 50) + "..." : p?.title}</p></td>
-                                    <td>{p?.category}</td>
+                                    <td>{genre?.category}</td>
                                     <td>{p?.seller}</td>
                                     <td>
                                        <button className="btn btn-sm m-1" title={`View ${p?.title}`} onClick={() => setProductDetailsModal(true && p)}>
@@ -146,6 +148,7 @@ const ManageProduct = () => {
                      <ProductDetailsModal
                         modalOpen={productDetailsModal}
                         modalClose={() => setProductDetailsModal(false)}
+                        showFor={role}
                      />
                   </>
             }

@@ -19,7 +19,7 @@
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  color: var(--color-light);
+  color: var(--color-dark);
   img {
     width: 55px;
     height: 55px;
@@ -68,6 +68,7 @@
     > a {
       color: var(--color-dark);
       font-size: 0.9rem;
+      text-transform: capitalize;
     }
   }
 }

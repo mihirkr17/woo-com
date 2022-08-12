@@ -17,7 +17,7 @@ const OrderTable = ({ orderList, updateOrderStatusHandler, cancelOrderHandler, s
          <tbody>
             {
                orderList && orderList.map((odr) => {
-                  const { orderId, user_email, payment_mode, status, owner_commission, _id, quantity, price_total_amount, seller } = odr?.orders;
+                  const { orderId, user_email, payment_mode, status, owner_commission, productId, quantity, price_total_amount, seller } = odr?.orders;
                   let total_earn = price_total_amount - parseFloat(owner_commission);
                   return (
                      <tr key={orderId}>
@@ -36,7 +36,7 @@ const OrderTable = ({ orderList, updateOrderStatusHandler, cancelOrderHandler, s
                                     status,
                                     status === "placed" && parseFloat(owner_commission.toFixed(2)),
                                     status === "placed" && parseFloat(total_earn.toFixed(2)),
-                                    _id,
+                                    productId,
                                     quantity,
                                     seller && seller
                                  )}>

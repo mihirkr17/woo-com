@@ -7,11 +7,11 @@ html {
   --color-secondary-alt: #2c2c2c;
   --color-accent: #1abc9c;
   --color-accent-alt: #049477;
-  --color-light: #1b1b1b;
+  --color-light: #f3f3f3;
   --color-light-alt: #141414;
-  --color-dark: #17202a;
-  --color-dark-alt: #1b2631;
-  --color-link: #3498db;
+  --color-dark: #0f0f0f;
+  --color-dark-alt: #1f1f1f;
+  --color-link: #141414;
   --color-orange: #ff751a;
   --color-orange-alt: #c75407;
   --color-antiquewhite: antiquewhite;
@@ -44,11 +44,11 @@ html[data-theme="true"] {
   --color-secondary-alt: #c0c0c0;
   --color-accent: #6dfa0f;
   --color-accent-alt: #049477;
-  --color-light: #f0f0f0;
+  --color-light: #292929;
   --color-light-alt: #f4f6f7;
   --color-dark: #f1f1f1;
   --color-dark-alt: #93bce5;
-  --color-link: #3498db;
+  --color-link: #e7e7e7;
   --color-orange: #ff751a;
   --color-orange-alt: #c75407;
   --color-text: #fff;
@@ -83,6 +83,7 @@ body {
   background-color: var(--color-bg);
   font-family: var(--font-primary);
   color: var(--color-text);
+  font-size: 15px;
 }
 
 ul,
@@ -90,6 +91,9 @@ li,
 a {
   list-style: none;
   text-decoration: none;
+}
+ol, ul {
+  padding-left: 0.8rem;
 }
 
 a {

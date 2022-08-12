@@ -66,6 +66,7 @@ const Dashboard = () => {
                            <Nav.Link as={NavLink} className={act === "manage-orders" ? "active_link" : ""} to='manage-orders'>Manage Orders</Nav.Link>
                            <Nav.Link as={NavLink} className={act === "manage-users" ? "active_link" : ""} to='manage-users'>Manage Users</Nav.Link>
                            <Nav.Link as={NavLink} className={act === "check-seller" ? "active_link" : ""} to='check-seller'>Check Seller {state?.slLength}</Nav.Link>
+                           <Nav.Link as={NavLink} className={act === "privacy-policy" ? "active_link" : ""} to='privacy-policy'>Privacy & Policy</Nav.Link> 
                         </>
                      }
                   </div>

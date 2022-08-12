@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom";
 
 export const useFetch = (url) => {
    const [data, setData] = useState();
    const [loading, setLoading] = useState(false);
    const [err, setErr] = useState(null);
    const [ref, setRef] = useState(false);
+   const navigate = useNavigate();
 
    let refetch;
    refetch = () => setRef(e => !e);
@@ -21,8 +23,12 @@ export const useFetch = (url) => {
                   window.location.reload();
                }
 
+               const resData = await response.json();
+
                if (response.status >= 200 && response.status <= 299) {
-                  setData(await response.json());
+                  setData(resData);
+               } else {
+                  navigate('/');
                }
             } catch (error) {
                setErr(error);
@@ -35,7 +41,7 @@ export const useFetch = (url) => {
 
       return () => clearTimeout(fetchData);
 
-   }, [url, ref]);
+   }, [url, ref, navigate]);
 
    return { data, loading, err, refetch };
 }

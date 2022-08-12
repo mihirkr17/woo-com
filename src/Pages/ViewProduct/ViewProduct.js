@@ -4,7 +4,6 @@ import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { useFetch } from '../../Hooks/useFetch';
 import "./ViewProduct.css";
 import { useMessage } from '../../Hooks/useMessage';
-
 import Product from '../../Shared/Product';
 import ProductModel from '../../Shared/ProductModel';
 import { useAuthUser, useCart } from '../../App';
@@ -14,13 +13,12 @@ import useAuth from '../../Hooks/useAuth';
 
 
 const ViewProduct = () => {
-
    const { product_slug } = useParams();
    const user = useAuthUser();
    const { role } = useAuth(user);
    const { refetch } = useCart();
    const { data: product, loading, refetch: productRefetch } = useFetch(`${process.env.REACT_APP_BASE_URL}api/fetch-single-product/${product_slug}/${user?.email}`);
-   const { data: productByCategory } = useFetch(`${process.env.REACT_APP_BASE_URL}api/product-by-category?sub_category=${product?.sub_category}`);
+   const { data: productByCategory } = useFetch(`${process.env.REACT_APP_BASE_URL}api/product-by-category?sub_category=${product?.genre?.sub_category}`);
    const navigate = useNavigate();
    const { msg, setMessage } = useMessage();
    const [addCartLoading, setAddCartLoading] = useState(false);
@@ -44,8 +42,6 @@ const ViewProduct = () => {
          slug: product.slug,
          brand: product.brand,
          image: product.image,
-         category: product.category,
-         sub_category: product.sub_category,
          quantity: quantity,
          price: productPrice,
          price_total: (productPrice * quantity) - discount_amount_total,
@@ -78,8 +74,6 @@ const ViewProduct = () => {
 
          const resData = await response.json();
          if (response.ok) {
-            
-
             refetch();
             productRefetch();
             setMessage(resData?.message);
@@ -129,14 +123,12 @@ const ViewProduct = () => {
                      </div>
                      {
                         product?.reviews && product?.reviews.length > 0 ? product?.reviews.map((rats, index) => {
-
-                           let cName = rats?.rating_customer && rats?.rating_customer.lastIndexOf("@");
                            return (
                               <div className="col-lg-12 mb-3" key={index}>
                                  <div className="card_default">
                                     <div className="card_description">
                                        <small className='text-warning'>{rats?.rating_point && rats?.rating_point} Out of 5</small>
-                                       <i className='text-muted'>{rats?.rating_customer && rats?.rating_customer.slice(0, cName)}</i>
+                                       <i className='text-muted'>{rats?.rating_customer && rats?.rating_customer}</i>
                                        <small>{rats?.rating_description && rats?.rating_description}</small>
                                     </div>
                                  </div>

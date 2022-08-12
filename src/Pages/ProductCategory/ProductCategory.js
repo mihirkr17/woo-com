@@ -5,12 +5,9 @@ import { Nav } from 'react-bootstrap';
 import { Link, useParams } from 'react-router-dom';
 import { newCategory } from '../../Assets/CustomData/categories';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
-import { useCategories } from '../../Hooks/useCategories';
 import { useFetch } from '../../Hooks/useFetch';
 import Breadcrumbs from '../../Shared/Breadcrumbs';
 import Product from '../../Shared/Product';
-import CategoryHeader from '../Home/Components/CategoryHeader';
-import "./ProductCategory.css";
 
 const ProductCategory = () => {
    const { category, sub_category, second_category } = useParams();
@@ -20,10 +17,9 @@ const ProductCategory = () => {
    const [brands, setBrands] = useState({ brand: [] });
    const [getBrand, setGetBrand] = useState(["all"]);
    const [products, setProducts] = useState([]);
-   const { subCategories } = useCategories(category);
 
-   const { sc: subCategory } = newCategory && newCategory.find(e => e.category === category);
-   const secondCategory = subCategory && subCategory.find(e => e.sub_category === sub_category);
+   const subCategory = newCategory && newCategory.find(e => e.category === category);
+   const secondCategory = subCategory?.sc && subCategory?.sc.find(e => e.sub_category === sub_category);
 
    useEffect(() => {
       if (productByCategory) {
@@ -84,7 +80,7 @@ const ProductCategory = () => {
       <div className="section_default">
          <div className='container'>
             <div className="category_head">
-               <Breadcrumbs></Breadcrumbs>
+               <Breadcrumbs path={[category, sub_category, (second_category || "")]}></Breadcrumbs>
                <div className="py-1 border-bottom">
                   <div className="sort_price">
                      <span>Sort By </span>
@@ -101,16 +97,11 @@ const ProductCategory = () => {
             <div className="row" style={{ position: "relative", height: "77vh" }}>
                <div className="category_left_side col-lg-2 col-md-3 border-end">
                   {
-                     (category && !sub_category && !second_category) && <div className="py-1">
+                     (category && !sub_category && !second_category) && <div className="py-1 ggt_ffo">
                         <small><strong>{category}</strong></small>
                         <ul>
-                           <li className="my-1">
-                              <Nav.Item as={Link} to={`/${category}`}>
-                                 All {category}
-                              </Nav.Item>
-                           </li>
                            {
-                              subCategory && subCategory.map((c, i) => {
+                              subCategory?.sc && subCategory?.sc.map((c, i) => {
                                  return (
                                     <li key={i} className="my-1">
                                        <Nav.Item as={Link} to={`/${category}/${c?.sub_category}`}>
@@ -124,16 +115,15 @@ const ProductCategory = () => {
                      </div>
                   }
                   {
-                     (sub_category && !second_category) && <div className="py-1">
-                        <small><strong>{sub_category}</strong></small>
+                     (sub_category && !second_category) && <div className="py-1 ggt_ffo">
+                        <Link to={`/${category}`}><strong>{sub_category.replace(/[-]/g, " ")}</strong></Link>
                         <ul>
                            {
                               secondCategory?.sc_item && secondCategory?.sc_item.map((c, i) => {
-
                                  return (
                                     <li key={i} className="my-1">
                                        <Nav.Item as={Link} to={`/${category}/${sub_category}/${c}`}>
-                                          {c}
+                                          {c.replace(/[-]/g, " ")}
                                        </Nav.Item>
                                     </li>
                                  )
@@ -145,7 +135,7 @@ const ProductCategory = () => {
 
 
                   {
-                     <div className='py-1'>
+                     <div className='py-1 ggt_ffo'>
                         <small><strong>Brands</strong></small>
                         <div className="row">
                            {
@@ -167,6 +157,9 @@ const ProductCategory = () => {
 
                </div>
                <div className="category_right_side col-lg-10 col-md-9">
+               {
+                       products && products.length <= 0 && <p>No Result</p>
+                     }
                   <div className="row py-3">
                      {
                         loading ? <Spinner /> : products && products.map(p => {

@@ -9,11 +9,12 @@ import { useEffect } from 'react';
 import { useAuthUser } from '../../App';
 import { loggedOut } from '../../Shared/common';
 import "./MyOrder.css";
+import useAuth from '../../Hooks/useAuth';
 
 
 const MyOrder = () => {
-
    const user = useAuthUser();
+   const {userInfo} = useAuth(user);
    const { msg, setMessage } = useMessage();
    const { data, refetch, loading } = useFetch(`${process.env.REACT_APP_BASE_URL}my-order/${user?.email}`);
    const [actLoading, setActLoading] = useState(false);
@@ -32,7 +33,7 @@ const MyOrder = () => {
          setOrderItems(data && data.orders.filter(p => p?.status === filterOrder))
       }
    }, [data, filterOrder]);
-
+   console.log(orderItems)
    const openCancelFormHandler = (orderId) => {
       if (orderId === openCancelForm) {
          setOpenCancelForm(false);
@@ -75,12 +76,11 @@ const MyOrder = () => {
       let ratingPoint = e.target.rating_point.value;
       let ratingDesc = e.target.rating_description.value;
       let productId = e.target.product_id.value;
-      let userEmail = user?.email;
       let orderId = e.target.order_id.value;
       let ratingId = Math.floor(Math.random() * 1000000);
 
       let review = {
-         ratingId, orderId: parseInt(orderId), rating_customer: userEmail, rating_point: ratingPoint, rating_description: ratingDesc
+         ratingId, orderId: parseInt(orderId), rating_customer: userInfo?.displayName, rating_point: ratingPoint, rating_description: ratingDesc
       }
 
       const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/add-product-rating/${productId}`, {
@@ -160,9 +160,9 @@ const MyOrder = () => {
                   <div className="row">
                      {
                         orderItems && orderItems.length > 0 ? orderItems.map(order => {
-
+             
                            const { product_name, quantity, payment_mode, discount, status, orderId,
-                              price_total_amount, image, _id, seller, category, sub_category, cancel_reason, time_canceled, time_pending, time_placed, time_shipped, isRating, slug } = order;
+                              price_total_amount, image, productId, seller, category, cancel_reason, time_canceled, time_pending, time_placed, time_shipped, isRating, slug } = order;
                            return (
                               <div className="col-12 mb-3" key={orderId}>
                                  <div className="order_card">
@@ -263,7 +263,7 @@ const MyOrder = () => {
                                                                      </small>
                                                                   </p>
                                                                   <div className='d-flex align-items-center justify-content-end' >
-                                                                     {isRating ? <Link to={`/${category}/${sub_category}/${slug}#rating`}>Review</Link> :
+                                                                     {isRating ? <Link to={`/product/${slug}#rating`}>Review</Link> :
                                                                         <>
                                                                            <button className="btn btn-sm text-danger" onClick={() => openReviewFormHandler(orderId)} style={openReviewForm !== orderId ? { display: "block" } : { display: "none" }}>
                                                                               Add Review
@@ -273,7 +273,7 @@ const MyOrder = () => {
                                                                                  <input type="text" disabled defaultValue={ratPoint} key={ratPoint} />
                                                                                  <input type="range" min={1} max={5} step={1} name='rating_point' className='my-2' onChange={(e) => setRatPoint(e.target.value, orderId)} />
                                                                                  <textarea type="text" name='rating_description' className='form-control form-control-sm' placeholder='Write a Review' />
-                                                                                 <input type="hidden" defaultValue={_id} name='product_id' />
+                                                                                 <input type="hidden" defaultValue={productId} name='product_id' />
                                                                                  <input type="hidden" defaultValue={orderId} name='order_id' />
                                                                                  <button className='btn btn-sm btn-primary mt-2'>{actLoading === true ? <BtnSpinner text={"Adding Review..."}></BtnSpinner> : "Add Review"}</button>
                                                                               </form>

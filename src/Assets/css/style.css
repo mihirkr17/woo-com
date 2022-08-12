@@ -6,11 +6,11 @@ html {
   --color-secondary-alt: #2c2c2c;
   --color-accent: #1abc9c;
   --color-accent-alt: #049477;
-  --color-light: #1b1b1b;
+  --color-light: #f3f3f3;
   --color-light-alt: #141414;
-  --color-dark: #17202a;
-  --color-dark-alt: #1b2631;
-  --color-link: #3498db;
+  --color-dark: #0f0f0f;
+  --color-dark-alt: #1f1f1f;
+  --color-link: #141414;
   --color-orange: #ff751a;
   --color-orange-alt: #c75407;
   --color-antiquewhite: antiquewhite;
@@ -37,11 +37,11 @@ html[data-theme="true"] {
   --color-secondary-alt: #c0c0c0;
   --color-accent: #6dfa0f;
   --color-accent-alt: #049477;
-  --color-light: #f0f0f0;
+  --color-light: #292929;
   --color-light-alt: #f4f6f7;
   --color-dark: #f1f1f1;
   --color-dark-alt: #93bce5;
-  --color-link: #3498db;
+  --color-link: #e7e7e7;
   --color-orange: #ff751a;
   --color-orange-alt: #c75407;
   --color-text: #fff;
@@ -74,6 +74,7 @@ body {
   background-color: var(--color-bg);
   font-family: var(--font-primary);
   color: var(--color-text);
+  font-size: 15px;
 }
 
 ul,
@@ -81,6 +82,10 @@ li,
 a {
   list-style: none;
   text-decoration: none;
+}
+
+ol, ul {
+  padding-left: 0.8rem;
 }
 
 a {
@@ -252,6 +257,82 @@ tr {
 
 .bt9_withdraw:hover {
   background-color: var(--color-orange-alt);
+}
+
+.form-control {
+  border: none;
+  background-color: var(--color-light);
+  color: var(--color-dark-alt);
+  border-bottom: 1px solid var(--color-accent);
+  border-left: groove;
+}
+
+.form-control .form-control-sm {
+  padding: 0.2rem 0.5rem;
+}
+
+.form-control:focus {
+  border-color: var(--color-accent);
+  border: none;
+  background-color: transparent;
+  -webkit-box-shadow: 0 0 0 0.1rem var(--color-accent);
+          box-shadow: 0 0 0 0.1rem var(--color-accent);
+}
+
+.form-select {
+  border: none;
+  background-color: var(--color-light);
+  color: var(--color-dark-alt);
+  text-transform: capitalize;
+  border-bottom: 1px solid var(--color-accent);
+  border-left: groove;
+}
+
+.form-select .form-select-sm {
+  padding: 0.2rem 0.5rem;
+}
+
+.form-select:focus {
+  border-color: var(--color-accent);
+  border: none;
+  background-color: transparent;
+  -webkit-box-shadow: 0 0 0 0.1rem var(--color-accent);
+          box-shadow: 0 0 0 0.1rem var(--color-accent);
+}
+
+label {
+  font-size: 0.816rem;
+  margin-bottom: 0.5rem;
+}
+
+.btn {
+  border: none;
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primary-alt);
+}
+
+.btn-primary:focus {
+  border: none;
+}
+
+.btn-primary.active {
+  color: #fff;
+  background-color: transparent;
+}
+
+.btn-check:active + .btn-primary,
+.btn-check:checked + .btn-primary,
+.btn-primary.active,
+.btn-primary:active,
+.show > .btn-primary.dropdown-toggle {
+  color: #fff;
+  background-color: var(--color-primary);
 }
 
 .product_card {
@@ -552,7 +633,7 @@ tr {
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
           flex-direction: column;
-  color: var(--color-light);
+  color: var(--color-dark);
 }
 
 .c_nav_btn .a img {
@@ -607,4 +688,70 @@ tr {
 .ffg_th > p > a {
   color: var(--color-dark);
   font-size: 0.9rem;
+  text-transform: capitalize;
+}
+
+.ggt_ffo a {
+  font-size: 0.9rem;
+  text-transform: capitalize;
+}
+
+.ggt_ffo small {
+  font-size: 0.9rem;
+}
+
+.ggt_ffo ul li a {
+  font-size: 0.9rem;
+  text-transform: capitalize;
+}
+
+.category_right_side {
+  height: 100%;
+  overflow-y: auto;
+  scrollbar-width: 2px;
+}
+
+.category_left_side {
+  height: 100%;
+  overflow-y: auto;
+}
+
+@media (max-width: 567px) {
+  .category_right_side {
+    height: 100%;
+    overflow-y: auto;
+  }
+  .category_left_side {
+    height: auto;
+    overflow-y: auto;
+  }
+}
+
+.ddl_g_btn {
+  background-color: transparent;
+  border: none;
+  color: white;
+  padding: 0.6rem;
+  height: auto;
+  display: block;
+  font-size: 1rem;
+}
+
+.ddl_g_btn.active {
+  background-color: var(--color-accent);
+}
+
+.ff_kl3 {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  background-color: var(--color-secondary);
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
 }

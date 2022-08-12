@@ -9,11 +9,16 @@ export const useSignIn = (user) => {
             try {
                if (user) {
                   const email = user?.user?.email;
+                  const name = user?.user?.displayName;
                   const url = `${process.env.REACT_APP_BASE_URL}api/sign-user/${email}`;
                   const response = await fetch(url, {
                      method: "PUT",
                      withCredentials: true,
-                     credentials: "include"
+                     credentials: "include",
+                     headers: {
+                        "Content-Type": "application/json"
+                     },
+                     body: JSON.stringify({ name })
                   });
 
                   const resData = await response.json();

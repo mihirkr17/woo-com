@@ -3,16 +3,15 @@ import { useFetch } from '../../../Hooks/useFetch';
 import { useState } from 'react';
 import UpdateForm from './Components/UpdateForm';
 import useAuth from '../../../Hooks/useAuth';
-import Spinner from '../../../Components/Shared/Spinner/Spinner';
 import { useAuthUser } from '../../../App';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { loggedOut } from '../../../Shared/common';
 
 
 const MyProfile = () => {
    const user = useAuthUser();
-   const { role, userInfo, authLoading, authRefetch } = useAuth(user);
+   const { role, userInfo, authRefetch } = useAuth(user);
    const [openEdit, setOpenEdit] = useState(false);
    const [actionLoading, setActionLoading] = useState(false);
    const navigate = useNavigate();
@@ -75,7 +74,6 @@ const MyProfile = () => {
       }
    }
 
-   if (authLoading) return <Spinner></Spinner>;
    return (
       <div className='section_default my_profile'>
          <div className="container">
