@@ -1,17 +1,15 @@
 import React from 'react';
 import { Table } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { useAuthUser } from '../../../App';
 import Spinner from '../../../Components/Shared/Spinner/Spinner';
-import useAuth from '../../../Hooks/useAuth';
 import { useFetch } from '../../../Hooks/useFetch';
+import { useAuthContext } from '../../../lib/AuthProvider';
 import { loggedOut } from '../../../Shared/common';
 
 
 const AllUsers = () => {
-   const user = useAuthUser();
    // const token = new URLSearchParams(document.cookie.replaceAll("; ", "&")).get('accessToken');
-   const { role } = useAuth(user);
+   const { role } = useAuthContext();
    const { data, loading, refetch } = useFetch(`${process.env.REACT_APP_BASE_URL}api/manage-user?uTyp=user`);
    const navigate = useNavigate();
 

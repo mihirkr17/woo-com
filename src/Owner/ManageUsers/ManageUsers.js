@@ -1,16 +1,13 @@
 import React, { useState } from 'react';
 import { useEffect } from 'react';
 import { Nav } from 'react-bootstrap';
-import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { useAuthUser } from '../../App';
-import useAuth from '../../Hooks/useAuth';
+import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { useAuthContext } from '../../lib/AuthProvider';
 import "./ManageUsers.css";
 
 
 const ManageUsers = () => {
-   const user = useAuthUser();
-   const { role } = useAuth(user);
-   const navigate = useNavigate();
+   const { role } = useAuthContext();
    const location = useLocation();
    const [act, setAct] = useState("");
 
@@ -23,13 +20,6 @@ const ManageUsers = () => {
       }
    }, [location.pathname]);
 
-   // if role is not owner then redirect to dashboard
-   useEffect(() => {
-      if (role && (role !== "owner" && role !== "admin")) {
-         navigate('/dashboard');
-         return;
-      };
-   }, [navigate, role, user]);
 
 
    return (

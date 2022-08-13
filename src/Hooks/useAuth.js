@@ -22,6 +22,10 @@ const useAuth = (user) => {
                   const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/fetch-auth-user/${user?.email}`);
                   const data = await response.json();
 
+                  if (!data) {
+                     await loggedOut();
+                  }
+
                   if (response.status >= 200 && response.status <= 299) {
                      const userData = data && data?.result;
 

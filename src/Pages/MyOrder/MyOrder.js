@@ -9,12 +9,12 @@ import { useEffect } from 'react';
 import { useAuthUser } from '../../App';
 import { loggedOut } from '../../Shared/common';
 import "./MyOrder.css";
-import useAuth from '../../Hooks/useAuth';
+import { useAuthContext } from '../../lib/AuthProvider';
 
 
 const MyOrder = () => {
    const user = useAuthUser();
-   const {userInfo} = useAuth(user);
+   const { userInfo } = useAuthContext();
    const { msg, setMessage } = useMessage();
    const { data, refetch, loading } = useFetch(`${process.env.REACT_APP_BASE_URL}my-order/${user?.email}`);
    const [actLoading, setActLoading] = useState(false);
@@ -33,7 +33,7 @@ const MyOrder = () => {
          setOrderItems(data && data.orders.filter(p => p?.status === filterOrder))
       }
    }, [data, filterOrder]);
-   console.log(orderItems)
+
    const openCancelFormHandler = (orderId) => {
       if (orderId === openCancelForm) {
          setOpenCancelForm(false);
@@ -160,7 +160,7 @@ const MyOrder = () => {
                   <div className="row">
                      {
                         orderItems && orderItems.length > 0 ? orderItems.map(order => {
-             
+
                            const { product_name, quantity, payment_mode, discount, status, orderId,
                               price_total_amount, image, productId, seller, category, cancel_reason, time_canceled, time_pending, time_placed, time_shipped, isRating, slug } = order;
                            return (

@@ -2,16 +2,14 @@ import React from 'react';
 import { useFetch } from '../../../Hooks/useFetch';
 import { useState } from 'react';
 import UpdateForm from './Components/UpdateForm';
-import useAuth from '../../../Hooks/useAuth';
-import { useAuthUser } from '../../../App';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { loggedOut } from '../../../Shared/common';
+import { useAuthContext } from '../../../lib/AuthProvider';
 
 
 const MyProfile = () => {
-   const user = useAuthUser();
-   const { role, userInfo, authRefetch } = useAuth(user);
+   const { role, userInfo, authRefetch } = useAuthContext();
    const [openEdit, setOpenEdit] = useState(false);
    const [actionLoading, setActionLoading] = useState(false);
    const navigate = useNavigate();

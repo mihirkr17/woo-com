@@ -1,12 +1,10 @@
 import React from 'react';
 import "./AddProduct.css";
-import useAuth from '../../../Hooks/useAuth';
 import ProductTemplateForm from '../../../Shared/ProductTemplateForm';
-import { useAuthUser } from '../../../App';
+import { useAuthContext } from '../../../lib/AuthProvider';
 
 const AddProduct = () => {
-   const user = useAuthUser();
-   const { userInfo } = useAuth(user);
+   const { userInfo } = useAuthContext();
 
    return (
       <div className='section_default'>

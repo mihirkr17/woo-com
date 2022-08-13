@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import Modal from '../../../Admin/ManageOrders/Components/Modal/Modal';
-import { useOrder } from '../../../App';
 import { useMessage } from '../../../Hooks/useMessage';
-
+import { useOrder } from '../../../lib/OrderProvider';
 import { loggedOut } from '../../../Shared/common';
 
 const CheckOrder = () => {
-   
    const { order, orderRefetch } = useOrder();
    const {msg, setMessage} = useMessage();
    // const token = new URLSearchParams(document.cookie.replaceAll("; ", "&")).get('accessToken');

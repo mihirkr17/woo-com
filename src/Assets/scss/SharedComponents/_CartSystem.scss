@@ -20,7 +20,7 @@
 
 .address_card {
   position: relative;
-  background-color: white;
+  background-color: var(--color-bg);
   cursor: pointer;
   transition: all 0.4s linear;
   padding: 0.2rem 0.5rem;
@@ -28,10 +28,11 @@
   border: 1px solid #e7e7e7;
   height: 112px;
   display: block;
+  color: var(--color-text-primary);
 
   &:hover {
     background-color: whitesmoke;
-    border: 1px solid #92c700;
+    border: 1px solid var(--color-accent);
   }
 
   &::before {
@@ -45,7 +46,7 @@
 }
 
 .address_card.selected {
-  background-color: whitesmoke;
+  background-color: var(--color-active);
   border: 1px solid var(--color-accent-alt);
 }
 
@@ -54,7 +55,7 @@
 }
 
 .cart_card {
-  background-color: #ffffff;
+  background-color: var(--color-card);
   padding: 0.8rem;
   border: 1px solid #e7e7e7;
   border-top: 8px solid var(--color-accent);

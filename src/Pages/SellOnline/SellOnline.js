@@ -1,13 +1,13 @@
 import React from 'react';
 import { useState } from 'react';
 import { useAuthUser } from '../../App';
-import useAuth from '../../Hooks/useAuth';
 import { useMessage } from '../../Hooks/useMessage';
+import { useAuthContext } from '../../lib/AuthProvider';
 
 
 const SellOnline = () => {
    const user = useAuthUser();
-   const { userInfo, authRefetch } = useAuth(user);
+   const { userInfo, authRefetch } = useAuthContext();
    const { msg, setMessage } = useMessage();
    const [categories, setCategories] = useState({ category: [] });
 
@@ -29,7 +29,11 @@ const SellOnline = () => {
    const handleSellerPhone = async (e) => {
       e.preventDefault();
       let seller_phone = e.target.seller_phone.value;
-    
+
+      if (seller_phone === "") {
+         return window.alert("please Enter phone number");
+      }
+
       let data = await apiReq({ seller_phone });
       if (data?.message === "success") authRefetch();
    }
@@ -106,7 +110,7 @@ const SellOnline = () => {
                (userInfo?.seller_phone && !userInfo?.seller_request) && <div className="row">
 
                   <div className="col-lg-7 mx-auto py-5">
-                     
+
                      <form onSubmit={handleSeller} >
                         <small><strong>Be a Seller ? Add your information below...</strong></small>
                         <div className="my-3">
@@ -138,7 +142,14 @@ const SellOnline = () => {
                                  <label htmlFor="electronics">
                                     <input type="checkbox" className='me-3' name="electronics" id="electronics" value="electronics" onChange={handleChange} />
                                     Electronics
-                                 </label></div>
+                                 </label>
+                              </div>
+                              <div className="col-12">
+                                 <label htmlFor="men-clothing">
+                                    <input type="checkbox" className='me-3' name="men-clothing" id="men-clothing" value="men-clothing" onChange={handleChange} />
+                                    Men Clothing
+                                 </label>
+                              </div>
                            </div>
                         </div>
                         <div className="card my-3">

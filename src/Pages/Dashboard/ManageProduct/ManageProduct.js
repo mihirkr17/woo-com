@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Spinner from '../../../Components/Shared/Spinner/Spinner';
-import useAuth from '../../../Hooks/useAuth';
 import { useFetch } from '../../../Hooks/useFetch';
-
 import FilterOption from '../../../Shared/FilterOption';
 import { useMessage } from '../../../Hooks/useMessage';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -10,13 +8,11 @@ import { faEye, faPenAlt, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import ProductDetailsModal from './Components/ProductDetailsModal';
 import ProductUpdateModal from './Components/ProductUpdateModal';
 import { Table } from 'react-bootstrap';
-import { useAuthUser } from '../../../App';
+import { useAuthContext } from '../../../lib/AuthProvider';
 
 const ManageProduct = () => {
    const { msg, setMessage } = useMessage();
-
-   const user = useAuthUser();
-   const { userInfo, role } = useAuth(user);
+   const { userInfo, role } = useAuthContext();
    const [items, setItems] = useState(0);
    const [page, setPage] = useState(0);
    const [url, setUrl] = useState("");

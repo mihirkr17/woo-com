@@ -1,10 +1,8 @@
 import React from 'react';
-import { useAuthUser } from '../../../App';
-import useAuth from '../../../Hooks/useAuth';
+import { useAuthContext } from '../../../lib/AuthProvider';
 
 const MyDashboard = () => {
-   const user = useAuthUser();
-   const {userInfo} = useAuth(user);
+   const { userInfo } = useAuthContext();
 
    return (
       <div className='section_default'>

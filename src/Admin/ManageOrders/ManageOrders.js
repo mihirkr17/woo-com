@@ -2,11 +2,10 @@ import React, { useState } from 'react';
 import { useMessage } from '../../Hooks/useMessage';
 import Modal from './Components/Modal/Modal';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
-// import { useAuthUser } from '../../lib/UserProvider';
 import { useEffect } from 'react';
 import OrderTable from './Components/OrderTable';
-
-import { useAuthUser, useOrder } from '../../App';
+import { useAuthUser } from '../../App';
+import { useOrder } from '../../lib/OrderProvider';
 
 const ManageOrders = () => {
    

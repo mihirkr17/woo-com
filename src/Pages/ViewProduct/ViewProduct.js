@@ -9,13 +9,13 @@ import ProductModel from '../../Shared/ProductModel';
 import { useAuthUser, useCart } from '../../App';
 import { useState } from 'react';
 import { averageRating, loggedOut } from '../../Shared/common';
-import useAuth from '../../Hooks/useAuth';
+import { useAuthContext } from '../../lib/AuthProvider';
 
 
 const ViewProduct = () => {
    const { product_slug } = useParams();
    const user = useAuthUser();
-   const { role } = useAuth(user);
+   const { role } = useAuthContext();
    const { refetch } = useCart();
    const { data: product, loading, refetch: productRefetch } = useFetch(`${process.env.REACT_APP_BASE_URL}api/fetch-single-product/${product_slug}/${user?.email}`);
    const { data: productByCategory } = useFetch(`${process.env.REACT_APP_BASE_URL}api/product-by-category?sub_category=${product?.genre?.sub_category}`);
