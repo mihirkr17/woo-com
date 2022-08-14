@@ -1,0 +1,91 @@
+[debug] [2022-08-14T16:37:30.731Z] ----------------------------------------------------------------------
+[debug] [2022-08-14T16:37:30.736Z] Command:       /usr/bin/node /usr/bin/firebase deploy
+[debug] [2022-08-14T16:37:30.738Z] CLI Version:   10.6.0
+[debug] [2022-08-14T16:37:30.738Z] Platform:      linux
+[debug] [2022-08-14T16:37:30.738Z] Node Version:  v16.16.0
+[debug] [2022-08-14T16:37:30.743Z] Time:          Sun Aug 14 2022 22:37:30 GMT+0600 (Bangladesh Standard Time)
+[debug] [2022-08-14T16:37:30.743Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2022-08-14T16:37:30.877Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2022-08-14T16:37:30.877Z] > authorizing via signed-in user (mroy35034@gmail.com)
+[debug] [2022-08-14T16:37:30.878Z] [iam] checking project woo-com-ea61f for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2022-08-14T16:37:30.880Z] > refreshing access token with scopes: []
+[debug] [2022-08-14T16:37:30.881Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ <request body omitted>
+[debug] [2022-08-14T16:37:36.578Z] <<< HTTP RESPONSE 200 {"date":"Sun, 14 Aug 2022 16:37:36 GMT","cache-control":"no-cache, no-store, max-age=0, must-revalidate","pragma":"no-cache","expires":"Mon, 01 Jan 1990 00:00:00 GMT","content-type":"application/json; charset=utf-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","server":"scaffolding on HTTPServer2","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2022-08-14T16:37:36.590Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/woo-com-ea61f:testIamPermissions [none]
+[debug] [2022-08-14T16:37:36.591Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/woo-com-ea61f:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2022-08-14T16:37:53.324Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/woo-com-ea61f:testIamPermissions 200
+[debug] [2022-08-14T16:37:53.325Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/woo-com-ea61f:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2022-08-14T16:37:53.327Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/woo-com-ea61f [none]
+[debug] [2022-08-14T16:37:54.128Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/woo-com-ea61f 200
+[debug] [2022-08-14T16:37:54.129Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/woo-com-ea61f {"projectId":"woo-com-ea61f","projectNumber":"585146996608","displayName":"woo-com","name":"projects/woo-com-ea61f","resources":{"hostingSite":"woo-com-ea61f"},"state":"ACTIVE","etag":"1_f8f50ffa-912d-4be8-92da-947fe6000696"}
+[info] 
+[info] === Deploying to 'woo-com-ea61f'...
+[info] 
+[info] i  deploying hosting 
+[debug] [2022-08-14T16:37:54.134Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/woo-com-ea61f [none]
+[debug] [2022-08-14T16:38:17.323Z] Failed to make request to https://firebase.googleapis.com/v1beta1/projects/woo-com-ea61f
+[debug] [2022-08-14T16:38:17.871Z] FirebaseError: Failed to make request to https://firebase.googleapis.com/v1beta1/projects/woo-com-ea61f
+    at RetryOperation._fn (/usr/lib/node_modules/firebase-tools/lib/apiv2.js:240:31)
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)
+[error] 
+[error] Error: Failed to get Firebase project woo-com-ea61f. Please make sure the project exists and your account has permission to access it.
+[debug] [2022-08-14T16:38:51.056Z] ----------------------------------------------------------------------
+[debug] [2022-08-14T16:38:51.060Z] Command:       /usr/bin/node /usr/bin/firebase deploy
+[debug] [2022-08-14T16:38:51.060Z] CLI Version:   10.6.0
+[debug] [2022-08-14T16:38:51.061Z] Platform:      linux
+[debug] [2022-08-14T16:38:51.061Z] Node Version:  v16.16.0
+[debug] [2022-08-14T16:38:51.061Z] Time:          Sun Aug 14 2022 22:38:51 GMT+0600 (Bangladesh Standard Time)
+[debug] [2022-08-14T16:38:51.062Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2022-08-14T16:38:51.164Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2022-08-14T16:38:51.165Z] > authorizing via signed-in user (mroy35034@gmail.com)
+[debug] [2022-08-14T16:38:51.165Z] [iam] checking project woo-com-ea61f for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2022-08-14T16:38:51.169Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/woo-com-ea61f:testIamPermissions [none]
+[debug] [2022-08-14T16:38:51.169Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/woo-com-ea61f:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2022-08-14T16:38:52.762Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/woo-com-ea61f:testIamPermissions 200
+[debug] [2022-08-14T16:38:52.762Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/woo-com-ea61f:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2022-08-14T16:38:52.764Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/woo-com-ea61f [none]
+[debug] [2022-08-14T16:39:00.018Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/woo-com-ea61f 200
+[debug] [2022-08-14T16:39:00.018Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/woo-com-ea61f {"projectId":"woo-com-ea61f","projectNumber":"585146996608","displayName":"woo-com","name":"projects/woo-com-ea61f","resources":{"hostingSite":"woo-com-ea61f"},"state":"ACTIVE","etag":"1_f8f50ffa-912d-4be8-92da-947fe6000696"}
+[info] 
+[info] === Deploying to 'woo-com-ea61f'...
+[info] 
+[info] i  deploying hosting 
+[debug] [2022-08-14T16:39:00.025Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/woo-com-ea61f [none]
+[debug] [2022-08-14T16:39:30.031Z] Timeout reached making request to https://firebase.googleapis.com/v1beta1/projects/woo-com-ea61f
+[debug] [2022-08-14T16:39:31.443Z] FirebaseError: Timeout reached making request to https://firebase.googleapis.com/v1beta1/projects/woo-com-ea61f
+    at RetryOperation._fn (/usr/lib/node_modules/firebase-tools/lib/apiv2.js:236:35)
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)
+[error] 
+[error] Error: Failed to get Firebase project woo-com-ea61f. Please make sure the project exists and your account has permission to access it.
+[debug] [2022-08-14T16:42:44.240Z] ----------------------------------------------------------------------
+[debug] [2022-08-14T16:42:44.243Z] Command:       /usr/bin/node /usr/bin/firebase deploy
+[debug] [2022-08-14T16:42:44.244Z] CLI Version:   10.6.0
+[debug] [2022-08-14T16:42:44.244Z] Platform:      linux
+[debug] [2022-08-14T16:42:44.244Z] Node Version:  v16.16.0
+[debug] [2022-08-14T16:42:44.245Z] Time:          Sun Aug 14 2022 22:42:44 GMT+0600 (Bangladesh Standard Time)
+[debug] [2022-08-14T16:42:44.245Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2022-08-14T16:42:44.339Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2022-08-14T16:42:44.340Z] > authorizing via signed-in user (mroy35034@gmail.com)
+[debug] [2022-08-14T16:42:44.340Z] [iam] checking project woo-com-ea61f for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2022-08-14T16:42:44.344Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/woo-com-ea61f:testIamPermissions [none]
+[debug] [2022-08-14T16:42:44.344Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/woo-com-ea61f:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2022-08-14T16:42:45.021Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/woo-com-ea61f:testIamPermissions 200
+[debug] [2022-08-14T16:42:45.022Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/woo-com-ea61f:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2022-08-14T16:42:45.023Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/woo-com-ea61f [none]
+[debug] [2022-08-14T16:42:45.876Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/woo-com-ea61f 200
+[debug] [2022-08-14T16:42:45.876Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/woo-com-ea61f {"projectId":"woo-com-ea61f","projectNumber":"585146996608","displayName":"woo-com","name":"projects/woo-com-ea61f","resources":{"hostingSite":"woo-com-ea61f"},"state":"ACTIVE","etag":"1_f8f50ffa-912d-4be8-92da-947fe6000696"}
+[info] 
+[info] === Deploying to 'woo-com-ea61f'...
+[info] 
+[info] i  deploying hosting 
+[debug] [2022-08-14T16:42:45.880Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/woo-com-ea61f [none]
+[debug] [2022-08-14T16:43:15.885Z] Timeout reached making request to https://firebase.googleapis.com/v1beta1/projects/woo-com-ea61f
+[debug] [2022-08-14T16:43:16.319Z] FirebaseError: Timeout reached making request to https://firebase.googleapis.com/v1beta1/projects/woo-com-ea61f
+    at RetryOperation._fn (/usr/lib/node_modules/firebase-tools/lib/apiv2.js:236:35)
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)
+[error] 
+[error] Error: Failed to get Firebase project woo-com-ea61f. Please make sure the project exists and your account has permission to access it.
