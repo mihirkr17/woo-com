@@ -152,8 +152,8 @@ const SellOnline = () => {
                               </div>
                            </div>
                         </div>
-                        <div className="card my-3">
-                           <div className="card-body">
+                        <div className="card_default my-3">
+                           <div className="card_description">
                               <p>
                                  <small className="text-muted">
                                     NB. If you want to become seller your role will be changed to seller and your existing cart & order

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const Categories = ["fashion", "electronics", "men-clothing"];
+const Categories = ["fashion", "electronics", "men-clothing", "women-clothing"];
 
 const electronicsCategories = {
    "mobile-accessories": [
@@ -26,11 +26,20 @@ const fashionCategories = {
 };
 
 const menCategories = {
-   "t-shirt-and-polo" : [
+   "t-shirt-and-polo": [
       "stylish-t-shirts", "stripe-polo", "colorful-polo", "couple-t-shirts"
    ],
-   "shirt-punjabi-blazer" : [
+   "shirt-punjabi-blazer": [
       "shirt-collection", "punjabi", "katua-and-fotua", "blazer"
+   ]
+}
+
+const womenCategories = {
+   "modern-and-western": [
+      "t-shirts", "tops", "leggings", "kurti-single-kamiz"
+   ],
+   "winter-dress": [
+      "punjabi", "katua-and-fotua", "blazer"
    ]
 }
 
@@ -69,6 +78,8 @@ export const useCategories = (ctg) => {
          initCategories("electronics", electronicsCategories);
       } else if (ctg.category === "men-clothing") {
          initCategories("men-clothing", menCategories);
+      } else if (ctg.category === "women-clothing") {
+         initCategories("women-clothing", womenCategories);
       } else {
          initCategories("", {});
       }

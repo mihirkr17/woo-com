@@ -15,7 +15,7 @@ import { useAuthContext } from '../../lib/AuthProvider';
 const ViewProduct = () => {
    const { product_slug } = useParams();
    const user = useAuthUser();
-   const { role } = useAuthContext();
+   const { role, authRefetch } = useAuthContext();
    const { refetch } = useCart();
    const { data: product, loading, refetch: productRefetch } = useFetch(`${process.env.REACT_APP_BASE_URL}api/fetch-single-product/${product_slug}/${user?.email}`);
    const { data: productByCategory } = useFetch(`${process.env.REACT_APP_BASE_URL}api/product-by-category?sub_category=${product?.genre?.sub_category}`);
@@ -23,8 +23,6 @@ const ViewProduct = () => {
    const { msg, setMessage } = useMessage();
    const [addCartLoading, setAddCartLoading] = useState(false);
    const [buyLoading, setBuyLoading] = useState(false);
-
-   if (loading) return <Spinner></Spinner>;
 
    const addToCartHandler = async (product, params) => {
 
@@ -95,11 +93,84 @@ const ViewProduct = () => {
       }
    }
 
+   const addToWishlist = async (product) => {
+
+      let quantity = 1;
+      let productPrice = parseInt(product?.price);
+      let discount_amount_fixed = parseFloat(product?.discount_amount_fixed)
+      let discount_amount_total = discount_amount_fixed * quantity;
+
+      let wishlistProduct = {
+         _id: product._id,
+         title: product.title,
+         slug: product.slug,
+         brand: product.brand,
+         image: product.image,
+         quantity: quantity,
+         price: productPrice,
+         price_total: (productPrice * quantity) - discount_amount_total,
+         price_fixed: product.price_fixed,
+         discount: product.discount,
+         discount_amount_fixed: discount_amount_fixed,
+         discount_amount_total: discount_amount_total,
+         stock: product?.stock,
+         available: product.available,
+         user_email: user?.email,
+         seller: product?.seller
+      }
+
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/add-to-wishlist/${user?.email}`, {
+         method: "PUT",
+         withCredentials: true,
+         credentials: "include",
+         headers: {
+            'content-type': 'application/json'
+         },
+         body: JSON.stringify(wishlistProduct)
+      })
+
+      const resData = await response.json();
+
+      if (response.ok) {
+         productRefetch();
+         authRefetch();
+         setMessage(<p className='py-2 text-success'><small><strong>{resData?.message}</strong></small></p>);
+      } else {
+         await loggedOut();
+         navigate(`/login?err=${resData?.message} token not found`);
+      }
+   }
+
+   const removeToWishlist = async (productId) => {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/remove-to-wishlist/${productId}`, {
+         method: "DELETE",
+         withCredentials: true,
+         credentials: "include"
+      })
+
+      const resData = await response.json();
+
+      if (response.ok) {
+         productRefetch();
+         authRefetch();
+         setMessage(<p className='py-2 text-success'><small><strong>{resData?.message}</strong></small></p>);
+      } else {
+         await loggedOut();
+         navigate(`/login?err=${resData?.message} token not found`);
+      }
+   }
+
    return (
       <div className='view_product section_default'>
          <div className="container">
             {msg}
-            <ProductModel showFor={role} product={product} buyLoading={buyLoading} addCartLoading={addCartLoading} addToCartHandler={addToCartHandler}></ProductModel>
+            {loading ? <Spinner /> :
+               <ProductModel showFor={role} product={product} buyLoading={buyLoading}
+                  addCartLoading={addCartLoading} addToCartHandler={addToCartHandler}
+                  addToWishlist={addToWishlist}
+                  removeToWishlist={removeToWishlist}
+               ></ProductModel>
+            }
             <div className="row pt-5">
                <div className="col-lg-9">
                   <h5 id='rating' className='text-center py-1'>Rating And Review Of {product?.title}</h5>

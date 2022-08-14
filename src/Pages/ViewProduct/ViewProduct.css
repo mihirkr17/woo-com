@@ -56,3 +56,16 @@
    background-color: #c57a00;
 }
 
+.wishlistBtn {
+   padding: 0.6rem 0.6rem;
+   border-radius: 3px;
+   color: var(--color-text);
+   font-size: 0.875rem;
+   border: none;
+   letter-spacing: 1px;
+   text-transform: uppercase;
+   font-weight: 500;
+   transition: all 0.4s linear;
+   background-color: transparent;
+   border: 1px solid var(--color-dark);
+}

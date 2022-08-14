@@ -17,7 +17,7 @@
 }
 
 .d_link > .nav-link {
-   color: black;
+   color: var(--color-text);
 }
 
 .d_link > .nav-link.active_link {
@@ -34,3 +34,9 @@
 
    }
 } */
+
+
+.pp_iyg {
+   display: flex;
+   flex-direction: column;
+}

@@ -2,7 +2,7 @@ import { faHome, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { Breadcrumb } from 'react-bootstrap';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const Breadcrumbs = ({path : newPath}) => {
    // const location = useLocation();
@@ -11,7 +11,7 @@ const Breadcrumbs = ({path : newPath}) => {
    // tyt.shift();
    let path = newPath.filter(x => x);
    return (
-      <Breadcrumb>
+      <Breadcrumb className="py-3">
          <Link to={"/"}><FontAwesomeIcon style={{ fontSize: "13px", color: "var(--color-dark)" }} icon={faHome} /></Link>
          <span>&nbsp;<FontAwesomeIcon style={{ fontSize: "13px", color: "orange" }} icon={faChevronRight}/>&nbsp;</span>
          {
@@ -22,7 +22,7 @@ const Breadcrumbs = ({path : newPath}) => {
                return (
                   <React.Fragment key={i}>
                      <Link to={"/" + routeTo} style={lastOne ? { pointerEvents: "none", color: "gray" } : { pointerEvents: "auto" }}>
-                        {e.replace(/[-]/g, " ")}
+                        {e.replace(/[-]/g, " ").toUpperCase()}
                      </Link>
                      {i < path.length - 1 && <span>&nbsp;<FontAwesomeIcon style={{ fontSize: "13px", color: "orange" }} icon={faChevronRight}/>&nbsp;</span>}
                   </React.Fragment>

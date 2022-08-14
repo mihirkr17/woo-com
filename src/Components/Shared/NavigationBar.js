@@ -6,7 +6,6 @@ import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuthUser, useCart } from '../../App';
 import { useAuthContext } from '../../lib/AuthProvider';
 import { loggedOut } from '../../Shared/common';
-import "./NavigationBar.css";
 
 const NavigationBar = ({ theme, setTheme }) => {
    const user = useAuthUser();
@@ -48,6 +47,12 @@ const NavigationBar = ({ theme, setTheme }) => {
 
 
                <Nav className="ms-auto">
+                  <div className='theme_box'>
+                     <label className="switch">
+                        <input type="checkbox" checked={theme ? true : ""} onChange={() => setTheme(!theme)} />
+                        <span className="slider round"></span>
+                     </label>
+                  </div>
                   <Nav.Link as={NavLink} className="nav_link" to="/">Home</Nav.Link>
                   {
                      (((role === "owner") || (role === "admin") || (role === "seller")) && user) &&
@@ -58,6 +63,8 @@ const NavigationBar = ({ theme, setTheme }) => {
                         {user && <div className="bg-info cart_badge">{cartProductCount || 0}</div>}
                      </Nav.Link>
                   }
+
+
 
                   {
                      (user && (role !== "owner" && role !== "admin" && role !== "seller")) && <>
@@ -71,13 +78,7 @@ const NavigationBar = ({ theme, setTheme }) => {
                         >
                            {(userInfo?.isSeller && role === "user") && <Dropdown.Item onClick={handleToSeller}>Switch To Seller</Dropdown.Item>}
                            <Dropdown.Item as={Link} to='/my-profile/my-order'>My Order</Dropdown.Item>
-                           <div className='theme_box'>
-                              <span>Theme</span>
-                              <label className="switch">
-                                 <input type="checkbox" checked={theme ? true : ""} onChange={() => setTheme(!theme)} />
-                                 <span className="slider round"></span>
-                              </label>
-                           </div>
+                           <Dropdown.Item as={Link} to='/my-profile/my-wishlist'>My Wishlist ({(userInfo?.wishlist && userInfo?.wishlist.length) || 0})</Dropdown.Item>
                            <button className='mt-2 btn btn-sm' onClick={async () => loggedOut()}>Logout</button>
                         </DropdownButton>
                      </>

@@ -6,7 +6,7 @@ html {
   --color-secondary-alt: #2c2c2c;
   --color-accent: #1abc9c;
   --color-accent-alt: #049477;
-  --color-light: #f3f3f3;
+  --color-light: #ffffff;
   --color-light-alt: #141414;
   --color-dark: #0f0f0f;
   --color-dark-alt: #1f1f1f;
@@ -16,6 +16,7 @@ html {
   --color-antiquewhite: antiquewhite;
   --color-card: #ffffff;
   --color-text-primary: #111111;
+  --color-nav: #f8f8f8;
   --color-trans-one: #ffffff91;
   --color-trans-two: #0000001a;
   --color-trans-three: #ffffff2b;
@@ -38,7 +39,7 @@ html[data-theme="true"] {
   --color-primary-alt: #631a86;
   --color-secondary: #b6b6b6;
   --color-secondary-alt: #c0c0c0;
-  --color-accent: #6dfa0f;
+  --color-accent: #0fa4fa;
   --color-accent-alt: #049477;
   --color-light: #292929;
   --color-light-alt: #f4f6f7;
@@ -53,6 +54,7 @@ html[data-theme="true"] {
   --color-card: #3f3f3f;
   --color-text-primary: #e9e9e9;
   --color-active: #222222;
+  --color-nav: #1b1b1b;
 }
 
 @media (max-width: 567px) {
@@ -115,9 +117,17 @@ svg {
   color: var(--color-text-primary);
 }
 
+.table {
+  color: var(--color-text);
+}
+
+.ck.ck-editor__main > .ck-editor__editable {
+  background-color: var(--color-light) !important;
+}
+
 .card_default {
   background: var(--color-trans-one);
-  border-radius: 16px;
+  border-radius: 4px;
   -webkit-box-shadow: 0 4px 30px var(--color-trans-two);
           box-shadow: 0 4px 30px var(--color-trans-two);
   -webkit-backdrop-filter: blur(18px);
@@ -272,21 +282,21 @@ svg {
 .form-control {
   border: none;
   background-color: var(--color-light);
-  color: var(--color-dark-alt);
-  border-bottom: 1px solid var(--color-accent);
-  border-left: groove;
+  color: var(--color-text);
+  border-bottom: 2px solid var(--color-accent);
+  border-radius: 0;
 }
 
 .form-control .form-control-sm {
-  padding: 0.2rem 0.5rem;
+  padding: 0.4rem 0.5rem;
 }
 
 .form-control:focus {
-  border-color: var(--color-accent);
-  border: none;
-  background-color: transparent;
-  -webkit-box-shadow: 0 0 0 0.1rem var(--color-accent);
-          box-shadow: 0 0 0 0.1rem var(--color-accent);
+  border-bottom: 3px solid var(--color-accent-alt);
+  background-color: var(--color-bg);
+  -webkit-box-shadow: unset;
+          box-shadow: unset;
+  color: var(--color-text);
 }
 
 .form-select {
@@ -294,8 +304,8 @@ svg {
   background-color: var(--color-light);
   color: var(--color-dark-alt);
   text-transform: capitalize;
-  border-bottom: 1px solid var(--color-accent);
-  border-left: groove;
+  border-bottom: 2px solid var(--color-accent);
+  border-radius: 0;
 }
 
 .form-select .form-select-sm {
@@ -306,8 +316,8 @@ svg {
   border-color: var(--color-accent);
   border: none;
   background-color: transparent;
-  -webkit-box-shadow: 0 0 0 0.1rem var(--color-accent);
-          box-shadow: 0 0 0 0.1rem var(--color-accent);
+  -webkit-box-shadow: unset;
+          box-shadow: unset;
 }
 
 label {
@@ -352,11 +362,17 @@ label {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
-  width: 100%;
+  width: auto;
   padding: 0.25rem 1rem;
-  -webkit-box-pack: justify;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: start;
+}
+
+@media (max-width: 567px) {
+  .theme_box {
+    margin: 1rem 0;
+  }
 }
 
 .switch {
@@ -364,7 +380,6 @@ label {
   display: inline-block;
   width: 40px;
   height: 12px;
-  margin: auto;
 }
 
 .switch input {
@@ -440,6 +455,71 @@ input:checked + .slider:before {
   -webkit-box-pack: start;
       -ms-flex-pack: start;
           justify-content: flex-start;
+}
+
+.modal-content {
+  background-color: var(--color-bg);
+}
+
+.btn {
+  color: var(--color-text);
+}
+
+.navigation_bar {
+  background-color: var(--color-nav);
+  color: var(--color-text);
+  padding: 0.6rem 0;
+}
+
+.nav_link {
+  margin: 0 0.6rem;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  color: var(--color-text);
+}
+
+.nav_link.active {
+  color: var(--color-text-alt) !important;
+}
+
+.cart_link {
+  position: relative;
+}
+
+.cart_link .cart_badge {
+  width: 16px;
+  height: 16px;
+  border-radius: 50px;
+  border: 1px solid #ffffff;
+  font-size: 10px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: white;
+  font-weight: bold;
+}
+
+.navbar-light .navbar-nav .nav-link {
+  color: unset;
+}
+
+.navbar-light .navbar-nav .nav-link:focus,
+.navbar-light .navbar-nav .nav-link:hover {
+  color: unset;
+}
+
+.navbar-light .navbar-brand {
+  color: unset;
 }
 
 .product_card {
@@ -838,7 +918,7 @@ input:checked + .slider:before {
 .ddl_g_btn {
   background-color: transparent;
   border: none;
-  color: white;
+  color: var(--color-text);
   padding: 0.6rem;
   height: auto;
   display: block;
@@ -850,6 +930,7 @@ input:checked + .slider:before {
 }
 
 .ff_kl3 {
+  padding: 2rem 1rem;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -859,7 +940,61 @@ input:checked + .slider:before {
   -webkit-box-pack: justify;
       -ms-flex-pack: justify;
           justify-content: space-between;
-  background-color: var(--color-secondary);
   -ms-flex-wrap: wrap;
       flex-wrap: wrap;
+}
+
+.d_left {
+  height: 89vh;
+  position: fixed;
+  left: 0;
+  top: 70px;
+  width: 220px;
+  overflow-y: auto;
+}
+
+.d_link {
+  height: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: start;
+      -ms-flex-align: start;
+          align-items: flex-start;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  margin-top: 1.3rem;
+}
+
+.d_link > .nav-link {
+  color: var(--color-text);
+}
+
+.d_link > .nav-link.active_link {
+  color: red;
+}
+
+.d_right {
+  margin-left: 220px;
+  overflow-y: auto;
+}
+
+/* @media (max-width : 567px) {
+   .d_left {
+
+   }
+} */
+.pp_iyg {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
 }

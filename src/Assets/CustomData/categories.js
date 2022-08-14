@@ -66,5 +66,26 @@ export const newCategory = [
             ]
          }
       ],
+   },
+   {
+      id: 4,
+      category: "women-clothing",
+      img: menClothing,
+      sc: [
+         {
+            id: 1,
+            sub_category: "modern-and-western",
+            sc_item: [
+               "t-shirts", "tops", "leggings", "kurti-single-kamiz"
+            ]
+         },
+         {
+            id: 2,
+            sub_category: "winter-dress",
+            sc_item: [
+               "punjabi", "katua-and-fotua", "blazer"
+            ]
+         }
+      ],
    }
 ]

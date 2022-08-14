@@ -80,8 +80,8 @@ const CheckSeller = () => {
                      <Modal.Title>Seller Information : </Modal.Title>
                   </Modal.Header>
                   <Modal.Body>
-                     <div className="card">
-                        <div className="card-body">
+                     <div className="card_default">
+                        <div className="card_description">
                            <small><strong>Seller Name</strong> : {modals?.seller}</small><br />
                            <small><strong>Seller Village</strong> : {modals?.seller_address?.seller_village}</small><br />
                            <small><strong>Seller District</strong> : {modals?.seller_address?.seller_district}</small><br />

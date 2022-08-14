@@ -43,8 +43,8 @@ const Login = () => {
          <Container>
             <Row>
                <div className="col-lg-4 mx-auto">
-                  <div className="card text-center shadow py-3">
-                     <div className="card-body">
+                  <div className="card_default text-center shadow py-3">
+                     <div className="card_description">
                         <h3 className='py-5'>Login to WOO-COM</h3>
                         {msg || logMsg}
                         {term && <p className="text-danger py-2"><small><strong>{term}</strong></small></p>}

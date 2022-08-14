@@ -1,0 +1,47 @@
+.navigation_bar {
+  background-color: var(--color-nav);
+  color: var(--color-text);
+  padding: 0.6rem 0;
+}
+
+.nav_link {
+  margin: 0 0.6rem;
+  width: fit-content;
+  color: var(--color-text);
+}
+
+.nav_link.active {
+  color: var(--color-text-alt) !important;
+}
+
+.cart_link {
+  position: relative;
+}
+.cart_link .cart_badge {
+  width: 16px;
+  height: 16px;
+  border-radius: 50px;
+  border: 1px solid #ffffff;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: white;
+  font-weight: bold;
+}
+
+.navbar-light .navbar-nav .nav-link {
+  color: unset;
+}
+
+.navbar-light .navbar-nav .nav-link:focus,
+.navbar-light .navbar-nav .nav-link:hover {
+  color: unset;
+}
+
+.navbar-light .navbar-brand {
+  color: unset;
+}

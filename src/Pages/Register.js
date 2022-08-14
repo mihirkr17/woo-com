@@ -41,8 +41,8 @@ const Register = () => {
          <div className="container">
             <div className="row">
                <div className="col-lg-4 mx-auto">
-                  <div className="card py-3 shadow">
-                     <div className="card-body">
+                  <div className="card_default py-3 shadow">
+                     <div className="card_description">
                         <h3>Register</h3>
                         {msg || regMsg}
                         <Form onSubmit={handleRegister}>

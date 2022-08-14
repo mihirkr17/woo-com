@@ -9,6 +9,8 @@ import ProductDetailsModal from './Components/ProductDetailsModal';
 import ProductUpdateModal from './Components/ProductUpdateModal';
 import { Table } from 'react-bootstrap';
 import { useAuthContext } from '../../../lib/AuthProvider';
+import { loggedOut } from '../../../Shared/common';
+import { useNavigate } from 'react-router-dom';
 
 const ManageProduct = () => {
    const { msg, setMessage } = useMessage();
@@ -24,6 +26,7 @@ const ManageProduct = () => {
    const [filterCategory, setFilterCategory] = useState("all");
    const [openModal, setOpenModal] = useState(false);
    const [productDetailsModal, setProductDetailsModal] = useState(false);
+   const navigate = useNavigate();
 
    useEffect(() => {
       let url;
@@ -53,14 +56,19 @@ const ManageProduct = () => {
    const productDeleteHandler = async (productId) => {
       if (window.confirm("Want to delete this product ?")) {
          const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/delete-product/${productId}`, {
-            method: "DELETE"
+            method: "DELETE",
+            withCredentials: true,
+            credentials: "include"
          });
+         const resData = await response.json();
 
          if (response.ok) {
-            const resData = await response.json();
             refetch();
             counterRefetch();
             setMessage(<p className='text-success'><small><strong>{resData?.message}</strong></small></p>);
+         } else {
+            await loggedOut();
+            navigate(`/login?err=${resData?.message} token not found`) 
          }
       }
    }
@@ -99,7 +107,7 @@ const ManageProduct = () => {
                         <tbody>
                            {products && products.map((p, index) => {
                               console.log(products)
-                              const {genre} = p;
+                              const { genre } = p;
                               return (
                                  <tr key={index}>
                                     <td>{

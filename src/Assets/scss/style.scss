@@ -2,6 +2,7 @@
 @import "Global/class";
 
 // Shared Components 
+@import "SharedComponents/NavigationBar";
 @import "SharedComponents/Product";
 @import "SharedComponents/CartSystem";
 @import "SharedComponents/MyProfile";
@@ -9,3 +10,4 @@
 @import "SharedComponents/CategoryHeader";
 @import "SharedComponents/ProductCategory";
 @import "SharedComponents/ProductModel";
+@import "SharedComponents/Dashboard";

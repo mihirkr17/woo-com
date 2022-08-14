@@ -2,7 +2,6 @@ import React from 'react';
 import { Nav } from 'react-bootstrap';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
-import "./Dashboard.css";
 import { useState } from 'react';
 import { useSellerChecker } from '../../lib/SellerCheckProvider';
 import { loggedOut } from '../../Shared/common';
@@ -61,11 +60,13 @@ const Dashboard = () => {
       <div className='section_default'>
          <div className="container">
             <div className={`${responsive < 567 ? "row" : "dashboard"}`}>
-               <div className={`${responsive < 567 ? "col-12 pb-3" : "d_left card_default card_description"}`}>
-                  <button className='btn btn-sm btn-danger' onClick={async () => loggedOut()}>Log Out</button>
-                  {
-                     (userInfo?.isSeller && "seller") && <button className='btn btn-sm btn-primary mt-3' onClick={handleToUser}>Switch To User</button>
-                  }
+               <div className={`${responsive < 567 ? "col-12 pb-3 d_right_side" : "d_left card_default card_description"}`}>
+                  <div className="pp_iyg">
+                     <button className='btn btn-sm btn-danger' onClick={async () => loggedOut()}>Log Out</button>
+                     {
+                        (userInfo?.isSeller && "seller") && <button className='btn btn-sm btn-primary mt-3' onClick={handleToUser}>Switch To User</button>
+                     }
+                  </div>
                   <div className="d_link">
                      <Nav.Link as={NavLink} className={act === "dashboard" ? "active_link" : ""} to='/dashboard'>Dashboard</Nav.Link>
                      <Nav.Link as={NavLink} className={act === "my-profile" ? "active_link" : ""} to='my-profile'>My Profile</Nav.Link>

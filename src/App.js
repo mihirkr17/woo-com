@@ -44,6 +44,7 @@ import RequiredOwnerAdmin from './Auth/RequiredOwnerAdmin';
 import OrderProvider from './lib/OrderProvider';
 import UserProvider, { UserContext } from './lib/UserProvider';
 import CartProvider, { CartContext } from './lib/CartProvider';
+import Wishlist from './Pages/Wishlist/Wishlist';
 
 function App() {
 
@@ -81,6 +82,7 @@ function App() {
             <Route path='/my-cart/checkout-single/:productId' element={<RequireAuth><CheckoutSingle></CheckoutSingle></RequireAuth>}></Route>
             <Route path='/my-profile/my-order' element={<RequireAuth><MyOrder></MyOrder></RequireAuth>}></Route>
             <Route path='/sell-online' element={<RequireAuth><SellOnline></SellOnline></RequireAuth>}></Route>
+            <Route path='/my-profile/my-wishlist' element={<RequireAuth><Wishlist></Wishlist></RequireAuth>}></Route>
 
             {/* // Admin path */}
             <Route path='/dashboard' element={<RequiredDashboard>

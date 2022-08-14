@@ -48,7 +48,6 @@ const UpdateForm = ({ updateDocHandler, actionLoading, userInfo, inputValue, set
       } else {
          setAddress("", {});
       }
-
    }, [inputValue]);
 
    const selectOption = (arr, values) => {
@@ -69,14 +68,10 @@ const UpdateForm = ({ updateDocHandler, actionLoading, userInfo, inputValue, set
 
    return (
       <form onSubmit={updateDocHandler}>
-         <table className='table table-sm table-striped'>
+         <table className='table table-sm table-borderless'>
             <thead>
             </thead>
             <tbody>
-               <tr>
-                  <th>ID</th>
-                  <td></td>
-               </tr>
                <tr>
                   <th>Country</th>
                   <td className='d-flex align-items-center justify-content-between flex-wrap'>

@@ -15,11 +15,11 @@ const MyProfile = () => {
    const navigate = useNavigate();
    const queryParams = new URLSearchParams(window.location.search).get("update");
    const [inputValue, setInputValue] = useState({
-      country: userInfo?.country || "",
-      division: userInfo?.division || "",
-      district: userInfo?.district || "",
-      thana: userInfo?.thana || "",
-      dob: userInfo.dob || ""
+      country: "",
+      division: "",
+      district: "",
+      thana: "",
+      dob: ""
    });
 
    let url2 = userInfo && userInfo?.seller ? `${process.env.REACT_APP_BASE_URL}api/product-count?seller=${userInfo?.seller}` :
@@ -49,7 +49,7 @@ const MyProfile = () => {
          dob: inputValue.dob || "Not Set"
       }
 
-      const response = await fetch(`${process.env.REACT_APP_BASE_URL}update-profile-data/${userInfo?.email}`, {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/update-profile-data/${userInfo?.email}`, {
          method: "PUT",
          withCredentials: true,
          credentials: "include",
@@ -99,7 +99,7 @@ const MyProfile = () => {
                                     </div>
                                  }
                               </div>
-                              <table className='table table-sm table-striped'>
+                              <table className='table table-sm table-borderless'>
                                  <thead>
                                     <tr>
                                        <th></th>
@@ -155,8 +155,8 @@ const MyProfile = () => {
 
                {
                   role === "seller" && <div className="col-12">
-                     <div className="card">
-                        <div className="card-body">
+                     <div className="card_default">
+                        <div className="card_description">
                            <div className="profile_header">
                               <h6>Seller Information</h6>
 

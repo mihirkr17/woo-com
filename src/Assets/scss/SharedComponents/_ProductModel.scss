@@ -1,7 +1,7 @@
 .ddl_g_btn {
    background-color: transparent;
    border: none;
-   color: white;
+   color: var(--color-text);
    padding: 0.6rem;
    height: auto;
    display: block;
@@ -14,9 +14,9 @@
 }
 
 .ff_kl3 {
+   padding: 2rem 1rem;
    display: flex;
    align-items: center;
    justify-content: space-between;
-   background-color: var(--color-secondary);
    flex-wrap: wrap;
 }

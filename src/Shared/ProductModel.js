@@ -2,13 +2,13 @@ import { Interweave } from 'interweave';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import BtnSpinner from '../Components/Shared/BtnSpinner/BtnSpinner';
-import { faCartShopping } from '@fortawesome/free-solid-svg-icons';
+import { faCartShopping, faHeart, faHeartCircleCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Breadcrumbs from './Breadcrumbs';
 import { averageRating } from './common';
 import { useState } from 'react';
 
-const ProductModel = ({ product, addToCartHandler, addCartLoading, buyLoading, showFor }) => {
+const ProductModel = ({ product, addToCartHandler, addCartLoading, buyLoading, showFor, addToWishlist, removeToWishlist }) => {
    const navigate = useNavigate();
    const [tab, setTab] = useState("description");
 
@@ -32,7 +32,7 @@ const ProductModel = ({ product, addToCartHandler, addCartLoading, buyLoading, s
                <h5 className="product_title py-3">{product?.title}</h5>
                <small><strike>{product?.price}</strike> - <span>{product?.discount}%</span></small>&nbsp;
                <big className='text-success'>${product?.price_fixed}</big><br />
-               <small className='text-warning'>Rating : {averageRating(product?.rating) || 0}/5</small><br />
+               <small className=' badge bg-success'>Rating : {averageRating(product?.rating) || 0}/5</small><br />
                <small className='text-muted'><i>{product?.stock === "out" ? "Out of Stock" : "Hurry, Only " + product?.available + " Left !"} </i></small><br />
                <small className='text-muted'>Seller : {product?.seller}</small><br />
                {
@@ -44,11 +44,15 @@ const ProductModel = ({ product, addToCartHandler, addCartLoading, buyLoading, s
                {
                   (showFor === "user") && <div className="d-flex align-items-center justify-content-center py-3 mt-4">
                      {
+                        product?.inWishlist ? <button className='wishlistBtn' onClick={() => removeToWishlist(product?._id)}><FontAwesomeIcon icon={faHeartCircleCheck} /></button>
+                           : <button className='wishlistBtn' onClick={() => addToWishlist(product)}><FontAwesomeIcon icon={faHeart} /></button>
+                     }
+                     {
                         product?.inCart === false ?
-                           <button className='addToCartBtn' disabled={product?.stock === "out" ? true : false} onClick={() => addToCartHandler(product, "toCart")}>
+                           <button className='ms-4 addToCartBtn' disabled={product?.stock === "out" ? true : false} onClick={() => addToCartHandler(product, "toCart")}>
                               {addCartLoading ? <BtnSpinner text={"Adding..."}></BtnSpinner> : <><FontAwesomeIcon icon={faCartShopping} /> Add To Cart</>}
                            </button> :
-                           <button className='addToCartBtn' onClick={() => navigate('/my-cart')}>
+                           <button className='ms-4 addToCartBtn' onClick={() => navigate('/my-cart')}>
                               Go To Cart
                            </button>
                      }
@@ -60,7 +64,7 @@ const ProductModel = ({ product, addToCartHandler, addCartLoading, buyLoading, s
                }
             </div>
          </div>
-         <div className="col-12 py-3 mt-3 card">
+         <div className="col-12 py-3 mt-3 card_default">
             <div className="ff_kl3">
                <button className={`ddl_g_btn ${tab === "description" ? "active" : ""}`} onClick={() => setTab("description")}>Product Description</button>
                <button className={`ddl_g_btn ${tab === "spec" ? "active" : ""}`} onClick={() => setTab("spec")}>Specification</button>
@@ -72,7 +76,7 @@ const ProductModel = ({ product, addToCartHandler, addCartLoading, buyLoading, s
                }
 
             </div>
-            <div className="dp_fgk card-body">
+            <div className="dp_fgk card_description">
                {
                   tab === "description" && <Interweave className='pt-4 product_spec' content={product?.description} />
                }
