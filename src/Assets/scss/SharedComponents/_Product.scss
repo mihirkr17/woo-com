@@ -48,16 +48,13 @@
   .product_meta {
     .product_price {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: flex-start;
+      flex-direction: column;
 
       > big {
-        margin: 0.5rem 0;
         color: var(--color-accent);
-      }
-
-      > small {
-        margin-left: 0.6rem;
+        font-weight: 500;
       }
     }
 

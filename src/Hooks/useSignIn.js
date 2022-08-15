@@ -10,13 +10,14 @@ export const useSignIn = (user) => {
                if (user) {
                   const email = user?.user?.email;
                   const name = user?.user?.displayName;
-                  const url = `${process.env.REACT_APP_BASE_URL}api/sign-user/${email}`;
+                  const url = `${process.env.REACT_APP_BASE_URL}api/sign-user`;
                   const response = await fetch(url, {
                      method: "PUT",
                      withCredentials: true,
                      credentials: "include",
                      headers: {
-                        "Content-Type": "application/json"
+                        "Content-Type": "application/json",
+                        authorization: `Basic ${email}`
                      },
                      body: JSON.stringify({ name })
                   });
@@ -24,7 +25,7 @@ export const useSignIn = (user) => {
                   const resData = await response.json();
 
                   if (response.status === 400) {
-                     return window.location.reload();
+                     console.log(resData?.message);
                   }
 
                   if (response.ok) {

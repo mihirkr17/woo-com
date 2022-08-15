@@ -39,10 +39,13 @@ const Dashboard = () => {
    }, []);
 
    const handleToUser = async () => {
-      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/switch-to-user/${userInfo?._id}`, {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/switch-role/user`, {
          method: "PUT",
          withCredentials: true,
-         credentials: "include"
+         credentials: "include",
+         headers: {
+            authorization: `userID ${userInfo?._id}`
+         }
       });
 
       const resData = await response.json();

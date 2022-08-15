@@ -25,8 +25,8 @@ const Product = ({ product }) => {
                   </div>
 
                   <div className="product_price">
-                     <big>${product?.price_fixed}</big>
-                     <small><strike>${product?.price}</strike> -{product?.discount || 0}%</small>
+                     <big>BDT {product?.price_fixed} TK</big>
+                     <small><strike>BDT {product?.price}</strike> -{product?.discount || 0}%</small>
                   </div>
 
                </div>

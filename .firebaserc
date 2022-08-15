@@ -1,5 +1,7 @@
 {
   "projects": {
-    "default": "woo-com-ea61f"
-  }
+    "default": "woo-com-ea61f",
+    "hosting": "woo-com-ea61f"
+  },
+  "targets": {}
 }

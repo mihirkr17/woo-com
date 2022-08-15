@@ -17,13 +17,22 @@ const useAuth = (user) => {
       const runFunc = setTimeout(() => {
          (async () => {
             try {
+
                if (user) {
                   setAuthLoading(true);
-                  const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/fetch-auth-user/${user?.email}`);
+                  const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/fetch-auth-user`, {
+                     headers: {
+                        authorization: `Basic ${user?.email}`
+                     }
+                  });
                   const data = await response.json();
 
                   if (!data) {
                      await loggedOut();
+                  }
+
+                  if (response.status === 400) {
+                     console.log(data?.message);
                   }
 
                   if (response.status >= 200 && response.status <= 299) {

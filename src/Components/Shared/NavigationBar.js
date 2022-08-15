@@ -15,10 +15,13 @@ const NavigationBar = ({ theme, setTheme }) => {
    const navigate = useNavigate();
 
    const handleToSeller = async () => {
-      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/switch-to-seller/${userInfo?._id}`, {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/switch-role/seller`, {
          method: "PUT",
          withCredentials: true,
-         credentials: "include"
+         credentials: "include",
+         headers: {
+            authorization: `userID ${userInfo?._id}`
+         }
       });
 
       const resData = await response.json();

@@ -164,13 +164,13 @@ const ViewProduct = () => {
       <div className='view_product section_default'>
          <div className="container">
             {msg}
-            {loading ? <Spinner /> :
+            {/* {loading ? <Spinner /> : */}
                <ProductModel showFor={role} product={product} buyLoading={buyLoading}
                   addCartLoading={addCartLoading} addToCartHandler={addToCartHandler}
                   addToWishlist={addToWishlist}
                   removeToWishlist={removeToWishlist}
                ></ProductModel>
-            }
+            {/* } */}
             <div className="row pt-5">
                <div className="col-lg-9">
                   <h5 id='rating' className='text-center py-1'>Rating And Review Of {product?.title}</h5>

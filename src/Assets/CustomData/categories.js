@@ -33,7 +33,7 @@ export const newCategory = [
                "headphone-earphone",
                "data-cable-charger",
                "power-bank",
-               "back-cover", "screen-protector",
+               "back-cover", "screen-protector", "mobile-holders",
                "others"
             ]
          },

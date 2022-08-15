@@ -26,12 +26,9 @@ const ProductModel = ({ product, addToCartHandler, addCartLoading, buyLoading, s
          <div className="col-lg-7 pb-3">
             <article className="product_description">
                {(showFor === "user") && <Breadcrumbs path={[product?.genre?.category, product?.genre?.sub_category, product?.genre?.second_category]}></Breadcrumbs>}
-               <strong className="badge bg-primary">
-                  {product?.genre?.category}
-               </strong>
                <h5 className="product_title py-3">{product?.title}</h5>
                <small><strike>{product?.price}</strike> - <span>{product?.discount}%</span></small>&nbsp;
-               <big className='text-success'>${product?.price_fixed}</big><br />
+               <big className='text-success'>BDT {product?.price_fixed} TK</big><br />
                <small className=' badge bg-success'>Rating : {averageRating(product?.rating) || 0}/5</small><br />
                <small className='text-muted'><i>{product?.stock === "out" ? "Out of Stock" : "Hurry, Only " + product?.available + " Left !"} </i></small><br />
                <small className='text-muted'>Seller : {product?.seller}</small><br />
