@@ -47,7 +47,7 @@ const CartItem = ({ product: cartProduct, setMessage, refetch, checkOut, cartTyp
       <div className="card_default d-flex mb-2">
          <div className="d-flex px-3">
             <div className="cart_img d-flex align-items-center justify-content-center">
-               <img src={cartProduct && cartProduct?.image} alt="" />
+               <img src={cartProduct && cartProduct?.image[0]} alt="" />
             </div>
             {
                !checkOut && <div className="ms-2 cart_btn">
@@ -68,10 +68,16 @@ const CartItem = ({ product: cartProduct, setMessage, refetch, checkOut, cartTyp
                   <div className="col-11">
                      <p className="card_title"><Link to={`/product/${cartProduct?.slug}`}>{cartProduct && cartProduct?.title}</Link></p>
                      <div className="d-flex align-items-center justify-content-between flex-wrap">
-                        <small>
+                        {/* <small>
                            <strike className='text-muted'>{cartProduct && cartProduct?.price}</strike>&nbsp;
                            <big className='text-success'>{cartProduct && cartProduct?.price_fixed} TK </big>&nbsp;{cartProduct && cartProduct?.discount + "% Off"}
-                        </small>
+                        </small> */}
+
+                        <div className="product_price_model">
+                           <big>BDT {cartProduct?.price_fixed} TK</big>
+                           <small><strike><i>BDT {cartProduct?.price} TK</i></strike> (-{cartProduct?.discount || 0}%) off</small>
+                        </div>
+
                         <small className="text-muted">Qty : {cartProduct && cartProduct?.quantity}</small>
                         <small className="text-muted">Seller : {cartProduct && cartProduct?.seller}</small>
                         <small className="text-muted"> Stock : {cartProduct && cartProduct?.stock}({cartProduct && cartProduct?.available})</small>

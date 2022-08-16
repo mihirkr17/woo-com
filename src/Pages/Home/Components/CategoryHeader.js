@@ -3,11 +3,14 @@ import { Nav } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useRef } from 'react';
 import { newCategory } from "../../../Assets/CustomData/categories";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBarsProgress } from '@fortawesome/free-solid-svg-icons';
 
 const CategoryHeader = () => {
    const [active, setActive] = useState(false);
    const cateRef = useRef();
    const [ctg, setCtg] = useState({});
+   const [show, setShow] = useState(false);
 
    useEffect(() => {
       function reportWindowSize() {
@@ -18,7 +21,6 @@ const CategoryHeader = () => {
          } else {
             setActive(false);
          }
-
       }
       // Trigger this function on resize
       window.addEventListener('scroll', reportWindowSize);
@@ -31,10 +33,13 @@ const CategoryHeader = () => {
    }
 
    return (
-      <>
+      <div className='category_header'>
+         <button className='btn btn-sm nv_btn' onClick={() => setShow(e => !e)}>
+            <FontAwesomeIcon icon={faBarsProgress} />
+         </button>
+         <div className={show ? "c_nav active" : "c_nav"} ref={cateRef}>
 
-         <div className="rounded mb-4 c_nav" ref={cateRef}>
-            <div className="d-flex align-items-center justify-content-center flex-wrap py-1 category_navbar shadow-bottom">
+            <div className="category_navbar shadow-bottom">
 
                {
                   newCategory && newCategory.map((c, i) => {
@@ -56,7 +61,7 @@ const CategoryHeader = () => {
                <div className="c_sub_menu_wrapper">
                   <div className='row'>
                      {
-                        ctg.sc && ctg.sc.map((subCtg, ind) => {
+                        ctg.sub_category_items && ctg.sub_category_items.map((subCtg, ind) => {
                            return (
                               <div className='col-lg-4 gg_tr' key={ind}>
                                  <p className="ai_tj">
@@ -67,7 +72,7 @@ const CategoryHeader = () => {
 
                                  <div className="ffg_th">
                                     {
-                                       subCtg?.sc_item && subCtg?.sc_item.map((scCtg, i) => {
+                                       subCtg?.second_category_items && subCtg?.second_category_items.map((scCtg, i) => {
                                           return (
                                              <p key={i}>
                                                 <Nav.Item as={Link} to={`/${ctg?.category}/${subCtg?.sub_category}/${scCtg}`}>
@@ -87,7 +92,7 @@ const CategoryHeader = () => {
                </div>
             </div>
          </div>
-      </>
+      </div>
    );
 };
 

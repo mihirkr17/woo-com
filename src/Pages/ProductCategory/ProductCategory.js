@@ -19,7 +19,7 @@ const ProductCategory = () => {
    const [products, setProducts] = useState([]);
 
    const subCategory = newCategory && newCategory.find(e => e.category === category);
-   const secondCategory = subCategory?.sc && subCategory?.sc.find(e => e.sub_category === sub_category);
+   const secondCategory = subCategory?.sub_category_items && subCategory?.sub_category_items.find(e => e.sub_category === sub_category);
 
    useEffect(() => {
       if (productByCategory) {
@@ -101,7 +101,7 @@ const ProductCategory = () => {
                         <small><strong>{category}</strong></small>
                         <ul>
                            {
-                              subCategory?.sc && subCategory?.sc.map((c, i) => {
+                              subCategory?.sub_category_items && subCategory?.sub_category_items.map((c, i) => {
                                  return (
                                     <li key={i} className="my-1">
                                        <Nav.Item as={Link} to={`/${category}/${c?.sub_category}`}>
@@ -119,7 +119,7 @@ const ProductCategory = () => {
                         <Link to={`/${category}`}><strong>{sub_category.replace(/[-]/g, " ")}</strong></Link>
                         <ul>
                            {
-                              secondCategory?.sc_item && secondCategory?.sc_item.map((c, i) => {
+                              secondCategory?.second_category_items && secondCategory?.second_category_items.map((c, i) => {
                                  return (
                                     <li key={i} className="my-1">
                                        <Nav.Item as={Link} to={`/${category}/${sub_category}/${c}`}>

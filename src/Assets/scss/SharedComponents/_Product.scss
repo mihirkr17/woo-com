@@ -46,21 +46,6 @@
   }
 
   .product_meta {
-    .product_price {
-      display: flex;
-      align-items: flex-start;
-      justify-content: flex-start;
-      flex-direction: column;
-
-      > big {
-        color: var(--color-accent);
-        font-weight: 500;
-      }
-    }
-
-    .product_rating small {
-      color: var(--color-orange);
-    }
 
     .product_brand {
       margin-top: 0.5rem;

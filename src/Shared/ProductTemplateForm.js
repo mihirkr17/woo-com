@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { Form } from 'react-bootstrap';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-import { useCategories } from '../Hooks/useCategories';
 import { usePrice } from '../Hooks/usePrice';
 import { useMessage } from '../Hooks/useMessage';
 import { loggedOut, slugMaker } from './common';
 import BtnSpinner from '../Components/Shared/BtnSpinner/BtnSpinner';
 import { useNavigate } from 'react-router-dom';
+import { newCategory } from '../Assets/CustomData/categories';
 
 const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch }) => {
    const navigate = useNavigate();
@@ -17,14 +17,34 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch })
    const { msg, setMessage } = useMessage();
    const newDate = new Date();
    const [actionLoading, setActionLoading] = useState(false);
-   const [ctg, setCtg] = useState({ category: data?.genre?.category || "", sub_category: data?.genre?.sub_category || "", second_category: data?.genre?.second_category || "" });
-   const { Categories, subCategories, secondCategories } = useCategories(ctg);
+
+   // image link
+   const [images, setImages] = useState(data?.image || []);
 
    const [specInp, setSpecInp] = useState(data?.info?.specification || [{ type: "", value: "" }]);
 
-   const handleCtgValues = (e) => {
-      let values = e.target.value;
-      setCtg({ ...ctg, [e.target.name]: values })
+   const [category, setCategory] = useState(data?.genre?.category || "");
+   const [subCategory, setSubCategory] = useState(data?.genre?.sub_category || "");
+   const [secondCategory, setSecondCategory] = useState(data?.genre?.second_category || "");
+
+   const sub_category = newCategory && newCategory.find(e => e.category === category);
+   const second_category = sub_category?.sub_category_items && sub_category?.sub_category_items.find(e => e.sub_category === subCategory);
+
+   const handleImages = (e, index) => {
+      const { value } = e.target;
+      let list = [...images];
+      list[index] = value;
+      setImages(list);
+   }
+
+   const addImageInputField = () => {
+      setImages([...images, '']);
+   }
+
+   const removeImageInputField = (index) => {
+      let listArr = [...images];
+      listArr.splice(index, 1);
+      setImages(listArr);
    }
 
    const handleInput = (e) => {
@@ -57,7 +77,7 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch })
       setActionLoading(true);
 
       let title = e.target.title.value;
-      let image = e.target.image.value;
+      // let image = e.target.image.value;
       let description = desc;
       let short_description = e.target.short_description.value;
       let specification = specInp;
@@ -76,9 +96,9 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch })
       let slug = slugMaker(title);
 
       const genre = {
-         category: ctg?.category, // category
-         sub_category: ctg?.sub_category, // sub category
-         second_category: ctg?.second_category // third category
+         category: category, // category
+         sub_category: subCategory, // sub category
+         second_category: secondCategory // third category
       }
 
       const info = {
@@ -91,7 +111,7 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch })
          title,
          slug,
          brand,
-         image,
+         image: images,
          description,
          info,
          genre,
@@ -117,10 +137,10 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch })
       }
 
       if (
-         title === "" || image === "" ||
-         description === "" || ctg.category === "" ||
-         ctg.sub_category === "" || price === "" ||
-         discount === "" || brand === "" || ctg.second_category === ""
+         title === "" || images.length < 0 ||
+         description === "" || category === "" ||
+         subCategory === "" || price === "" ||
+         discount === "" || brand === "" || secondCategory === ""
       ) {
          setMessage(<p className='text-danger'><small><strong>Required All Input Fields !</strong></small></p>);
          setActionLoading(false);
@@ -157,23 +177,6 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch })
       }
    }
 
-   const selectOption = (arr, values, oldValue) => {
-      return (
-         <select className="form-select form-select-sm text-capitalize" name={values} id={values} onChange={handleCtgValues}>
-
-            {/* <option value="">Choose...</option> */}
-            {oldValue ? <option value={oldValue}>{oldValue}</option> : <option value="">Choose...</option>}
-            {
-               arr && arr.map((c, i) => {
-                  return (
-                     <option value={c} key={i}>{c.replace(/[-]/g, " ")}</option>
-                  )
-               })
-            }
-         </select>
-      )
-   }
-
    return (
       <Form onSubmit={productHandler}>
          <div className="row my-4">
@@ -182,20 +185,50 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch })
                <input className='form-control form-control-sm' name="title" id='title' type="text" defaultValue={(data?.title && data?.title) || ""} placeholder="Title" />
             </div>
 
-            <div className='col-lg-12 mb-3'>
+            <div className="col-lg-12 mb-3">
+               <label htmlFor='image'>Image(<small>Product Image</small>)&nbsp;
+                  <span className="badge bg-primary p-2 btn-sm" onClick={addImageInputField}>Add New Image</span>
+               </label>
+               {
+                  images && images.map((img, index) => {
+                     return (
+                        <div className="py-2 d-flex align-items-end" key={index}>
+
+                           <div className="row w-100">
+                              <div className="col-lg-12 mb-3">
+                                 <input className="form-control form-control-sm" name="image" id='image' type="text"
+                                    placeholder='Image url' value={img} onChange={(e) => handleImages(e, index)}></input>
+                              </div>
+                           </div>
+
+                           <div className="btn-box d-flex ms-4 mb-3">
+                              <span
+                                 className="btn btn-danger me-2 btn-sm"
+                                 onClick={() => removeImageInputField(index)}>
+                                 x
+                              </span>
+                           </div>
+                        </div>
+                     )
+                  })
+               }
+            </div>
+
+            {/* <div className='col-lg-12 mb-3'>
                <label htmlFor='image'>Image</label>
                <input className='form-control form-control-sm' name="image" id='image' type="text" defaultValue={(data?.image && data?.image) || ""} placeholder="Image Link" />
             </div>
+            */}
 
             <div className="col-lg-12 mb-3">
                <label htmlFor='description'>Description</label>
-                  <CKEditor editor={ClassicEditor}
-                     data={desc}
-                     onChange={(event, editor) => {
-                        const data = editor.getData();
-                        return setDescription(data);
-                     }}
-                  />
+               <CKEditor editor={ClassicEditor}
+                  data={desc}
+                  onChange={(event, editor) => {
+                     const data = editor.getData();
+                     return setDescription(data);
+                  }}
+               />
             </div>
 
             <div className='col-lg-12 mb-3'>
@@ -242,23 +275,45 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch })
 
             <div className='col-lg-3 mb-3'>
                <label htmlFor='category'>Category</label> <br />
-               {
-                  selectOption(Categories, "category", ctg?.category)
-               }
+               <select className="form-select form-select-sm text-capitalize" name="category" id="category" onChange={(e) => setCategory(e.target.value)}>
+                  <option value={category || ""}>{category || "choose"}</option>
+                  {
+                     newCategory && newCategory.map((category, index) => {
+                        return (
+                           <option value={category?.category} key={index}>{category?.category}</option>
+
+                        )
+                     })
+                  }
+               </select>
             </div>
 
             <div className='col-lg-3 mb-3'>
                <label htmlFor='sub_category'>Sub Category</label> <br />
-               {
-                  selectOption(subCategories, "sub_category", ctg?.sub_category)
-               }
+               <select className="form-select form-select-sm text-capitalize" name="sub_category" id="sub_category" onChange={(e) => setSubCategory(e.target.value)}>
+                  <option value={subCategory || ""}>{subCategory || "choose"}</option>
+                  {
+                     sub_category?.sub_category_items && sub_category?.sub_category_items.map((category, index) => {
+                        return (
+                           <option value={category?.sub_category} key={index}>{category?.sub_category}</option>
+                        )
+                     })
+                  }
+               </select>
             </div>
 
             <div className='col-lg-3 mb-3'>
                <label htmlFor='second_category'>Second Category</label> <br />
-               {
-                  selectOption(secondCategories, "second_category", ctg?.second_category)
-               }
+               <select className="form-select form-select-sm text-capitalize" name="second_category" id="second_category" onChange={(e) => setSecondCategory(e.target.value)}>
+                  <option value={secondCategory || ""}>{secondCategory || "choose"}</option>
+                  {
+                     second_category?.second_category_items && second_category?.second_category_items.map((c, i) => {
+                        return (
+                           <option value={c} key={i}>{c}</option>
+                        )
+                     })
+                  }
+               </select>
             </div>
          </div>
 

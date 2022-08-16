@@ -106,12 +106,12 @@ const ManageProduct = () => {
                         </thead>
                         <tbody>
                            {products && products.map((p, index) => {
-                              console.log(products)
+
                               const { genre } = p;
                               return (
                                  <tr key={index}>
                                     <td>{
-                                       <img src={p?.image} style={{ width: "45px", height: "45px" }} alt="" />
+                                       <img src={p?.image[0]} style={{ width: "45px", height: "45px" }} alt="" />
                                     }</td>
                                     <td><p style={{ cursor: "pointer" }} title={`View ${p?.title}`} onClick={() => setProductDetailsModal(true && p)}>{p?.title.length > 50 ? p?.title.slice(0, 50) + "..." : p?.title}</p></td>
                                     <td>{genre?.category}</td>

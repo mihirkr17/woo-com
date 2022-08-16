@@ -7,16 +7,16 @@ export const newCategory = [
       id: 1,
       category: "fashion",
       img: fashion,
-      sc: [
+      sub_category_items: [
          {
             id: 1,
             sub_category: "jewelry",
-            sc_item: ["diamond-jewelry"]
+            second_category_items: ["diamond-jewelry"]
          },
          {
             id: 2,
             sub_category: "fashion-accessories",
-            sc_item: ["sun-glass", "backpack-and-side-bag"]
+            second_category_items: ["sun-glass", "backpack-and-side-bag"]
          }
       ],
 
@@ -25,11 +25,11 @@ export const newCategory = [
       id: 2,
       category: "electronics",
       img: electronicsImage,
-      sc: [
+      sub_category_items: [
          {
             id: 1,
             sub_category: "mobile-accessories",
-            sc_item: [
+            second_category_items: [
                "headphone-earphone",
                "data-cable-charger",
                "power-bank",
@@ -40,7 +40,7 @@ export const newCategory = [
          {
             id: 2,
             sub_category: "computer-accessories",
-            sc_item: [
+            second_category_items: [
                "memory", "hard-disk", "pen-drive",
                "mouse-keyboard"
             ]
@@ -50,18 +50,18 @@ export const newCategory = [
       id: 3,
       category: "men-clothing",
       img: menClothing,
-      sc: [
+      sub_category_items: [
          {
             id: 1,
             sub_category: "t-shirt-and-polo",
-            sc_item: [
+            second_category_items: [
                "stylish-t-shirts", "stripe-polo", "colorful-polo", "couple-t-shirts"
             ]
          },
          {
             id: 2,
             sub_category: "shirt-punjabi-blazer",
-            sc_item: [
+            second_category_items: [
                "shirt-collection", "punjabi", "katua-and-fotua", "blazer"
             ]
          }
@@ -71,18 +71,18 @@ export const newCategory = [
       id: 4,
       category: "women-clothing",
       img: menClothing,
-      sc: [
+      sub_category_items: [
          {
             id: 1,
             sub_category: "modern-and-western",
-            sc_item: [
+            second_category_items: [
                "t-shirts", "tops", "leggings", "kurti-single-kamiz"
             ]
          },
          {
             id: 2,
             sub_category: "winter-dress",
-            sc_item: [
+            second_category_items: [
                "punjabi", "katua-and-fotua", "blazer"
             ]
          }

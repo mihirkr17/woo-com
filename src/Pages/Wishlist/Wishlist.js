@@ -41,7 +41,7 @@ const Wishlist = () => {
                            <div className="card_default d-flex mb-2">
                               <div className="d-flex px-3">
                                  <div className="cart_img d-flex align-items-center justify-content-center">
-                                    <img src={product && product?.image} alt="" />
+                                    <img src={product && product?.image[0]} alt="" />
                                  </div>
                               </div>
 
