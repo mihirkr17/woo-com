@@ -1,7 +1,7 @@
-import { faCartShopping } from '@fortawesome/free-solid-svg-icons';
+import { faCartShopping, faGauge, faHome, faSearch, faUserAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React from 'react';
-import { ButtonGroup, Container, Dropdown, DropdownButton, Nav, Navbar } from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Container, Navbar } from 'react-bootstrap';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuthUser, useCart } from '../../App';
 import { useAuthContext } from '../../lib/AuthProvider';
@@ -9,6 +9,8 @@ import { loggedOut } from '../../Shared/common';
 
 const NavigationBar = ({ theme, setTheme }) => {
    const user = useAuthUser();
+   const [openSearchField, setOpenSearchField] = useState(false);
+   const [openAccount, setOpenAccount] = useState(false);
    const q = new URLSearchParams(window.location.search).get("q");
    const { role, userInfo } = useAuthContext();
    const { cartProductCount } = useCart();
@@ -37,58 +39,71 @@ const NavigationBar = ({ theme, setTheme }) => {
 
    return (
       <Navbar sticky='top' className='navigation_bar' expand="lg">
-         <Container>
-            <Navbar.Brand className="nav_link" as={NavLink} to="/">Woo-Com</Navbar.Brand>
-            <Navbar.Toggle aria-controls="basic-navbar-nav" />
+         <Container className='nav_container'>
+            <div className="nav_brand_logo">
+               <Navbar.Brand className="nav_link" as={NavLink} to="/">Woo</Navbar.Brand>
+            </div>
 
+            <div className="nav_right_items">
+               <div className='theme_box nv_items'>
+                  <label className="switch">
+                     <input type="checkbox" checked={theme ? true : ""} onChange={() => setTheme(!theme)} />
+                     <span className="slider round"></span>
+                  </label>
+               </div>
 
-            <Navbar.Collapse id="basic-navbar-nav">
-               <Nav.Item>
-                  <input type="search" className='form-control form-control-sm' onChange={(e) => navigate(`/search?q=${e.target.value}`)} defaultValue={q || ""} placeholder='Search product by title, brand, seller' name="s_query" />
-               </Nav.Item>
+               <div className="search_box nv_items">
+                  <span onClick={() => setOpenSearchField(e => !e)}>
+                     <FontAwesomeIcon icon={faSearch} />
+                  </span>
 
-
-
-               <Nav className="ms-auto">
-                  <div className='theme_box'>
-                     <label className="switch">
-                        <input type="checkbox" checked={theme ? true : ""} onChange={() => setTheme(!theme)} />
-                        <span className="slider round"></span>
-                     </label>
+                  <div className={`search_field ${openSearchField ? "active" : ""}`}>
+                     <input type="search" className='form-control form-control-sm' onChange={(e) => navigate(`/search?q=${e.target.value}`)} defaultValue={q || ""} placeholder='Search product by title, brand, seller' name="s_query" />
                   </div>
-                  <Nav.Link as={NavLink} className="nav_link" to="/">Home</Nav.Link>
+               </div>
+
+               <div className="nv_items">
+                  <NavLink className="nav_link" to="/"><FontAwesomeIcon icon={faHome} /> </NavLink>
+               </div>
+
+               <div className="nv_items">
                   {
                      (((role === "owner") || (role === "admin") || (role === "seller")) && user) &&
-                     <Nav.Link as={NavLink} className="nav_link" to="/dashboard">dashboard</Nav.Link>
+                     <NavLink className="nav_link" to="/dashboard"><FontAwesomeIcon icon={faGauge}></FontAwesomeIcon></NavLink>
                   }
                   {
-                     (role !== "owner" && role !== "admin" && role !== "seller") && <Nav.Link as={NavLink} className="nav_link cart_link" to='/my-cart'>Cart <FontAwesomeIcon icon={faCartShopping}></FontAwesomeIcon>
+                     (role !== "owner" && role !== "admin" && role !== "seller") &&
+                     <NavLink className="nav_link cart_link" to='/my-cart'><FontAwesomeIcon icon={faCartShopping}></FontAwesomeIcon>
                         {user && <div className="bg-info cart_badge">{cartProductCount || 0}</div>}
-                     </Nav.Link>
+                     </NavLink>
                   }
+               </div>
 
+               {
+                  (user && (role !== "owner" && role !== "admin" && role !== "seller")) &&
+                  <div className="account_box nv_items">
+                     <span onClick={() => setOpenAccount(e => !e)}>
+                        <FontAwesomeIcon icon={faUserAlt}></FontAwesomeIcon>
+                     </span>
+                     <div className={`account_field ${openAccount ? "active" : ""}`}>
+                        {
+                           (userInfo?.isSeller && role === "user") &&
+                           <button className='drp_item' onClick={handleToSeller}>Switch To Seller</button>
+                        }
+                        {!userInfo?.isSeller &&
+                           <Link className="drp_item" to="/sell-online">Become a Seller</Link>}
+                        <Link className='drp_item' to='/my-profile/my-order'>My Order</Link>
+                        <Link className='drp_item' to='/my-profile/my-wishlist'>
+                           My Wishlist ({(userInfo?.wishlist && userInfo?.wishlist.length) || 0})
+                        </Link>
+                        <button className='drp_item' onClick={async () => loggedOut()}>Logout</button>
+                     </div>
+                  </div>
+               }
 
+               {!user && <Link to="/login">Login</Link>}
 
-                  {
-                     (user && (role !== "owner" && role !== "admin" && role !== "seller")) && <>
-                        {!userInfo?.isSeller && <Nav.Link as={NavLink} className="nav_link" to="/sell-online">Become a Seller</Nav.Link>}
-
-                        <DropdownButton
-                           as={ButtonGroup}
-                           align={{ lg: 'end' }}
-                           title={user?.displayName}
-                           id="dropdown-menu-align-responsive-1"
-                        >
-                           {(userInfo?.isSeller && role === "user") && <Dropdown.Item onClick={handleToSeller}>Switch To Seller</Dropdown.Item>}
-                           <Dropdown.Item as={Link} to='/my-profile/my-order'>My Order</Dropdown.Item>
-                           <Dropdown.Item as={Link} to='/my-profile/my-wishlist'>My Wishlist ({(userInfo?.wishlist && userInfo?.wishlist.length) || 0})</Dropdown.Item>
-                           <button className='mt-2 btn btn-sm' onClick={async () => loggedOut()}>Logout</button>
-                        </DropdownButton>
-                     </>
-                  }
-                  {!user && <Nav.Link as={NavLink} to="/login">Login</Nav.Link>}
-               </Nav>
-            </Navbar.Collapse>
+            </div>
          </Container>
       </Navbar>
    );
