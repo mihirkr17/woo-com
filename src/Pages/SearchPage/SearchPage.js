@@ -1,41 +1,22 @@
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
+import { Link } from 'react-router-dom';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { useFetch } from '../../Hooks/useFetch';
-import Product from '../../Shared/Product';
 
-const SearchPage = () => {
-   const query = new URLSearchParams(window.location.search).get("q");
-   const { data, loading } = useFetch(query && `${process.env.REACT_APP_BASE_URL}api/search-products/${query}`);
-   const navigate = useNavigate();
-
-   useEffect(() => {
-      if (query === "") {
-         navigate("/");
-      }
-   }, [navigate, query]);
-
+const SearchPage = ({ data, loading }) => {
+   
    return (
-      <div className='section_default'>
-         <div className="container">
-
-            <div className="py-2">
-               {
-                  query && <><h6>{`Search result for ${query}`}</h6><small>{data && data.length}</small></>
-               }
-            </div>
-            <div className="row">
-               {
-                  loading ? <Spinner /> : data && data.length > 0 ? data.map((product, index) => {
-                     return (
-                        <div className="col-lg-2 col-md-4" key={index}>
-                           <Product product={product}></Product>
-                        </div>
-                     )
-                  }) : <p>No Result found</p>
-               }
-            </div>
-         </div>
+      <div className='card_default card_description'>
+         {
+            loading ? <Spinner /> : (data && data.length > 0) && data.map((product, index) => {
+               return (
+                  <div className="d-flex flex-row align-items-center justify-content-start" key={index}>
+                    <img src={product?.image[0]} style={{ width: "25px", height: "25px", marginRight: "0.8rem", marginBottom: "0.4rem" }} alt="" />
+                    <Link to={`/product/${product?.slug}`} style={{ fontSize: "0.7rem" }}>{product?.title}</Link>
+                  </div>
+               )
+            })
+         }
       </div>
    );
 };

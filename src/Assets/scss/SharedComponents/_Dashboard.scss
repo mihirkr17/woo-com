@@ -17,11 +17,19 @@
 }
 
 .d_link > .nav-link {
-   color: var(--color-text);
+   color: var(--color-secondary);
+   font-weight: 500;
+   font-size: 0.9rem;
+   svg {
+      color: var(--color-secondary);
+   }
 }
 
 .d_link > .nav-link.active_link {
-   color: red;
+   color: var(--color-text);
+   svg {
+      color: var(--color-text);
+   }
 }
 
 .d_right {

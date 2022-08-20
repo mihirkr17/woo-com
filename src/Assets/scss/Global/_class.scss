@@ -329,3 +329,21 @@ input:checked + .slider:before {
   color: var(--color-orange);
   font-weight: 500;
 }
+
+// .search_result {
+//   width: 50%;
+//   margin: auto;
+// }
+
+// @media (max-width: 567px) {
+//   .search_result {
+//     width: 95%;
+//   }
+// }
+
+.theme_changer {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  z-index: 99999999999;
+}

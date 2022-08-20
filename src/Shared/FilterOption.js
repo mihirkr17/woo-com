@@ -6,7 +6,7 @@ const FilterOption = ({ options, filterHandler }) => {
          {
             options && options.map((opt, index) => {
                return (
-                  <option value={opt} key={index}>{opt}</option>
+                  <option value={opt || opt?.category} key={index}>{opt || opt?.category}</option>
                )
             })
          }

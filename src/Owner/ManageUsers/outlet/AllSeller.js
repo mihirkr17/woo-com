@@ -1,5 +1,4 @@
 import React from 'react';
-import { Table } from 'react-bootstrap';
 import Spinner from '../../../Components/Shared/Spinner/Spinner';
 import { useFetch } from '../../../Hooks/useFetch';
 
@@ -9,11 +8,11 @@ const AllSeller = () => {
    const { data, loading } = useFetch(`${process.env.REACT_APP_BASE_URL}api/manage-user?uTyp=seller`);
    if (loading) return <Spinner></Spinner>;
    return (
-      <div>
+      <div className='table-responsive pt-4'>
          {
             data && data.length > 0 ?
-               <Table striped responsive>
-                  <thead>
+               <table className='table table-striped table-sm table-borderless'>
+                  <thead className='table-dark'>
                      <tr>
                         <th>Email</th>
                         <th>Role</th>
@@ -35,7 +34,7 @@ const AllSeller = () => {
                         })
                      }
                   </tbody>
-               </Table> : <p className='text-center py-2'><span>No User Found</span></p>
+               </table> : <p className='text-center py-2'><span>No User Found</span></p>
          }
       </div>
    );

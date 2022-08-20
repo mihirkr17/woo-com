@@ -8,15 +8,15 @@
 }
 
 .nav_brand_logo {
-  width: 20%;
+  width: 30%;
 }
 
 .nav_right_items {
   display: flex;
   align-items: center;
-  justify-content: space-around;
+  justify-content: flex-end;
   flex-direction: row;
-  width: 80%;
+  width: 70%;
 }
 
 .nv_items {
@@ -39,6 +39,16 @@
 
 .search_box {
   position: relative;
+
+  input {
+    max-width: max-content;
+  }
+
+  .search_result {
+    position: absolute;
+    top: 30px;
+    left: 0;
+  }
 }
 
 .search_field {

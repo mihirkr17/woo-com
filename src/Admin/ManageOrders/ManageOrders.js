@@ -6,17 +6,19 @@ import { useEffect } from 'react';
 import OrderTable from './Components/OrderTable';
 import { useAuthUser } from '../../App';
 import { useOrder } from '../../lib/OrderProvider';
+import { loggedOut } from '../../Shared/common';
+import { useNavigate } from 'react-router-dom';
 
 const ManageOrders = () => {
-   
+
    const user = useAuthUser();
    const { msg, setMessage } = useMessage();
    const { order, orderRefetch, orderLoading } = useOrder();
-
    const [openModal, setOpenModal] = useState(false);
    const [pendingOrders, setPendingOrders] = useState([]);
    const [placeOrder, setPlaceOrder] = useState([]);
    const [shipOrder, setShipOrder] = useState([]);
+   const navigate = useNavigate();
 
    // Filtering orders by status
    useEffect(() => {
@@ -40,22 +42,32 @@ const ManageOrders = () => {
    // Update the order status by seller or admin
    const updateOrderStatusHandler = async (userEmail, orderId, status, ownerCommission = 0, totalEarn = 0, productId, quantity, seller) => {
 
-      let confirmMsg = status === "placed" ? "Want To Placed This Order" : "Want To Shipped This Order";
-      let successMsg = status === "placed" ? "Order Successfully Placed" : "Order Successfully Shipped";
+      let confirmMsg = status === "pending" ? "Want To Placed This Order" : "Want To Shipped This Order";
+      let successMsg = status === "pending" ? "Order Successfully Placed" : "Order Successfully Shipped";
 
       let st = status === "pending" ? "placed" : status === "placed" ? "shipped" : "";
 
       if (window.confirm(confirmMsg)) {
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}update-order-status/${st}/${userEmail}/${orderId}`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}update-order-status/${st}/${orderId}`, {
             method: "PUT",
+            withCredentials: true,
+            credentials: "include",
             headers: {
-               "Content-Type": "application/json"
+               "Content-Type": "application/json",
+               authorization: `${userEmail}`
             },
-            body: JSON.stringify({ ownerCommission, totalEarn : parseFloat(totalEarn), productId, quantity, seller })
+            body: JSON.stringify({ ownerCommission, totalEarn: parseFloat(totalEarn), productId, quantity, seller })
          });
-         if (response.ok) await response.json();
-         setMessage(<p className='text-success'><small><strong>{successMsg}</strong></small></p>);
-         orderRefetch();
+         
+         if (response.ok) {
+            await response.json();
+            setMessage(<p className='text-success'><small><strong>{successMsg}</strong></small></p>);
+            orderRefetch();
+         } else {
+            await loggedOut();
+            navigate(`/login?err=token not found`);
+         }
+
       }
    }
 

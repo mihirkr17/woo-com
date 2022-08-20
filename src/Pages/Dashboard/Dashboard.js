@@ -3,10 +3,10 @@ import { Nav } from 'react-bootstrap';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useState } from 'react';
-import { useSellerChecker } from '../../lib/SellerCheckProvider';
 import { loggedOut } from '../../Shared/common';
 import { useAuthContext } from '../../lib/AuthProvider';
-import { useOrder } from '../../lib/OrderProvider';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faAddressCard, faBagShopping, faBlind, faCartFlatbed, faIndustry, faUserGroup } from '@fortawesome/free-solid-svg-icons';
 
 
 const Dashboard = () => {
@@ -14,8 +14,6 @@ const Dashboard = () => {
    const [responsive, setResponsive] = useState(window.innerWidth);
    const location = useLocation();
    const [act, setAct] = useState("");
-   const { state } = useSellerChecker();
-   const { orderCount } = useOrder();
    const navigate = useNavigate();
 
    useEffect(() => {
@@ -71,32 +69,37 @@ const Dashboard = () => {
                      }
                   </div>
                   <div className="d_link">
-                     <Nav.Link as={NavLink} className={act === "dashboard" ? "active_link" : ""} to='/dashboard'>Dashboard</Nav.Link>
-                     <Nav.Link as={NavLink} className={act === "my-profile" ? "active_link" : ""} to='my-profile'>My Profile</Nav.Link>
+                     <Nav.Link as={NavLink} className={act === "dashboard" ? "active_link" : ""} to='/dashboard'>
+                        <FontAwesomeIcon icon={faIndustry} />
+                        <span>&nbsp;&nbsp;Overview</span>
+                     </Nav.Link>
+                     <Nav.Link as={NavLink} className={act === "my-profile" ? "active_link" : ""} to='my-profile'>
+                        <FontAwesomeIcon icon={faAddressCard} />
+                        <span>&nbsp;&nbsp;Profile</span>
+                     </Nav.Link>
 
+                     <Nav.Link as={NavLink} className={act === "manage-product" ? "active_link" : ""} to='manage-product'>
+                        <FontAwesomeIcon icon={faBagShopping} />
+                        <span>&nbsp;&nbsp;Products</span>
+                     </Nav.Link>
                      {
-                        (role === "seller") &&
-                        <>
-                           <Nav.Link as={NavLink} className={act === "add-product" ? "active_link" : ""} to='add-product'>Add Product</Nav.Link>
-                           <Nav.Link as={NavLink} className={act === "check-order" ? "active_link" : ""} to='check-order'>Check Order <span className="badge bg-danger">{orderCount}</span></Nav.Link>
-                        </>
-                     }
-                     <Nav.Link as={NavLink} className={act === "manage-product" ? "active_link" : ""} to='manage-product'>Manage Product</Nav.Link>
-                     {
-                        (role === "owner") && <>
-                           <Nav.Link as={NavLink} className={act === "owner-data" ? "active_link" : ""} to='owner-data'>Owner</Nav.Link>
-                        </>
-                     }
-                     {
-                        role === "admin" && <>
-                           <Nav.Link as={NavLink} className={act === "check-seller" ? "active_link" : ""} to='check-seller'>Check Seller {state?.slLength}</Nav.Link>
-                           <Nav.Link as={NavLink} className={act === "manage-orders" ? "active_link" : ""} to='manage-orders'>Manage Orders</Nav.Link>
-                        </>
+                        role === "seller" &&
+                        <Nav.Link as={NavLink} className={act === "manage-orders" ? "active_link" : ""} to='manage-orders'>
+                           <FontAwesomeIcon icon={faCartFlatbed} />
+                           <span>&nbsp;&nbsp;Orders</span>
+                        </Nav.Link>
+
                      }
                      {
                         (role === "admin" || role === "owner") && <>
-                           <Nav.Link as={NavLink} className={act === "manage-users" ? "active_link" : ""} to='manage-users'>Manage Users</Nav.Link>
-                           <Nav.Link as={NavLink} className={act === "privacy-policy" ? "active_link" : ""} to='privacy-policy'>Privacy & Policy</Nav.Link>
+                           <Nav.Link as={NavLink} className={act === "manage-users" ? "active_link" : ""} to='manage-users'>
+                              <FontAwesomeIcon icon={faUserGroup} />
+                              <span>&nbsp;&nbsp;Users</span>
+                           </Nav.Link>
+                           <Nav.Link as={NavLink} className={act === "privacy-policy" ? "active_link" : ""} to='privacy-policy'>
+                              <FontAwesomeIcon icon={faBlind} />
+                              <span>&nbsp;&nbsp;Privacy & Policy</span>
+                           </Nav.Link>
                         </>
                      }
 

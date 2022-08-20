@@ -1,11 +1,8 @@
 import React from 'react';
-import { Table } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import Spinner from '../../../Components/Shared/Spinner/Spinner';
 import { useFetch } from '../../../Hooks/useFetch';
 import { loggedOut } from '../../../Shared/common';
-
-
 
 const AllAdmin = () => {
    // const token = new URLSearchParams(document.cookie.replaceAll("; ", "&")).get('accessToken');
@@ -36,14 +33,15 @@ const AllAdmin = () => {
    }
 
    return (
-      <div>
+      <div className='table-responsive pt-4'>
          {
             data && data.length > 0 ?
-               <Table striped responsive>
-                  <thead>
+               <table className='table table-borderless table-striped table-sm'>
+                  <thead className='table-dark'>
                      <tr>
                         <th>Email</th>
                         <th>Role</th>
+                        <th>Action</th>
                      </tr>
                   </thead>
                   <tbody>
@@ -61,7 +59,7 @@ const AllAdmin = () => {
                         })
                      }
                   </tbody>
-               </Table> : <p className='text-center py-2'><span>No Admin Found</span></p>
+               </table> : <p className='text-center py-2'><span>No Admin Found</span></p>
          }
       </div>
    );

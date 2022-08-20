@@ -18,18 +18,13 @@ import ManageOrders from './Admin/ManageOrders/ManageOrders';
 import ProductCategory from './Pages/ProductCategory/ProductCategory';
 import Dashboard from './Pages/Dashboard/Dashboard';
 import MyProfile from './Pages/Dashboard/MyProfile/MyProfile';
-import AllUsers from './Owner/ManageUsers/outlet/AllUsers';
-import OwnerData from './Owner/OwnerData/OwnerData';
-import AllAdmin from './Owner/ManageUsers/outlet/AllAdmin';
 import ManageUsers from './Owner/ManageUsers/ManageUsers';
 import RequiredDashboard from './Auth/RequiredDashboard';
-import AddProduct from './Pages/Dashboard/AddProduct/AddProduct';
 import ManageProduct from './Pages/Dashboard/ManageProduct/ManageProduct';
 import MyDashboard from './Pages/Dashboard/MyDashboard/MyDashboard';
 import CheckoutSingle from './Pages/CheckOut/CheckoutSingle';
 import SellOnline from './Pages/SellOnline/SellOnline';
 import CheckSeller from './Pages/Dashboard/CheckSeller/CheckSeller';
-import AllSeller from './Owner/ManageUsers/outlet/AllSeller';
 import SellerCheckProvider from './lib/SellerCheckProvider';
 import CheckOrder from './Pages/Dashboard/CheckOrder/CheckOrder';
 import SearchPage from './Pages/SearchPage/SearchPage';
@@ -37,7 +32,6 @@ import { useEffect } from 'react';
 import NotFound from './Pages/NotFound/NotFound';
 import Policy from './Pages/Dashboard/Policy/Policy';
 import RequiredSeller from './Auth/RequiredSeller';
-import RequiredOwner from './Auth/RequiredOwner';
 import RequiredAdmin from "./Auth/RequiredAdmin";
 import AuthProvider from './lib/AuthProvider';
 import RequiredOwnerAdmin from './Auth/RequiredOwnerAdmin';
@@ -70,7 +64,7 @@ function App() {
             <Route path='/login' element={<Login></Login>}></Route>
             <Route path='/register' element={<Register></Register>}></Route>
             <Route path='/search' element={<SearchPage></SearchPage>}></Route>
-            
+
             <Route path='/product/:product_slug' element={<ViewProduct></ViewProduct>}></Route>
             <Route path='/:category' element={<ProductCategory></ProductCategory>}></Route>
             <Route path='/:category/:sub_category' element={<ProductCategory></ProductCategory>}></Route>
@@ -94,26 +88,30 @@ function App() {
             </RequiredDashboard>}>
               <Route index element={<MyDashboard></MyDashboard>}></Route>
               <Route path='my-profile' element={<MyProfile></MyProfile>}></Route>
-              <Route path='manage-orders' element={<RequiredAdmin><ManageOrders></ManageOrders></RequiredAdmin>}></Route>
               <Route path='manage-product' element={<ManageProduct></ManageProduct>}></Route>
+
+
+              {/* only admin route */}
               <Route path='check-seller' element={<RequiredAdmin><CheckSeller></CheckSeller></RequiredAdmin>}></Route>
-              <Route path='privacy-policy' element={<RequiredOwnerAdmin><Policy></Policy></RequiredOwnerAdmin>}></Route>
 
-              {/* // seller routes  */}
-              <Route path='add-product' element={<RequiredSeller><AddProduct></AddProduct></RequiredSeller>}></Route>
+              {/*  seller routes  */}
               <Route path='check-order' element={<RequiredSeller><CheckOrder></CheckOrder></RequiredSeller>}></Route>
+              <Route path='manage-orders' element={<RequiredSeller><ManageOrders></ManageOrders></RequiredSeller>}></Route>
 
-              {/* // Only owner route */}
-              <Route path='manage-users' element={<RequiredOwnerAdmin><ManageUsers></ManageUsers></RequiredOwnerAdmin>}>
-                <Route index element={<AllUsers></AllUsers>}></Route>
-                <Route path='all-admin' element={<RequiredOwner><AllAdmin></AllAdmin></RequiredOwner>}></Route>
-                <Route path='all-seller' element={<AllSeller></AllSeller>}></Route>
-              </Route>
-
-              <Route path='owner-data' element={<RequiredOwner><OwnerData></OwnerData></RequiredOwner>}></Route>
+              {/* // owner and admin route */}
+              <Route path='manage-users' element={<RequiredOwnerAdmin><ManageUsers></ManageUsers></RequiredOwnerAdmin>}></Route>
+              <Route path='privacy-policy' element={<RequiredOwnerAdmin><Policy></Policy></RequiredOwnerAdmin>}></Route>
             </Route>
             <Route path='*' element={<NotFound></NotFound>}></Route>
           </Routes>
+          <div className="theme_changer">
+            <div className='theme_box'>
+              <label className="switch">
+                <input type="checkbox" checked={theme ? true : ""} onChange={() => setTheme(!theme)} />
+                <span className="slider round"></span>
+              </label>
+            </div>
+          </div>
           <Footer></Footer>
         </CartProvider>
       </AuthProvider>

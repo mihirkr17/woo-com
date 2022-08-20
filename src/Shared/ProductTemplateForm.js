@@ -8,6 +8,8 @@ import { loggedOut, slugMaker } from './common';
 import BtnSpinner from '../Components/Shared/BtnSpinner/BtnSpinner';
 import { useNavigate } from 'react-router-dom';
 import { newCategory } from '../Assets/CustomData/categories';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPenAlt } from '@fortawesome/free-solid-svg-icons';
 
 const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch }) => {
    const navigate = useNavigate();
@@ -77,7 +79,6 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch })
       setActionLoading(true);
 
       let title = e.target.title.value;
-      // let image = e.target.image.value;
       let description = desc;
       let short_description = e.target.short_description.value;
       let specification = specInp;
@@ -92,6 +93,21 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch })
       ];
       let available = e.target.available.value;
       let brand = e.target.brand.value;
+
+      let packageWeight = e.target.package_weight.value;
+      let packageLength = e.target.package_length.value;
+      let packageWidth = e.target.package_width.value;
+      let packageHeight = e.target.package_height.value;
+
+      // seller sku
+      let sellerSku = e.target.seller_sku.value;
+
+      let package_dimension = {
+         weight: parseFloat(packageWeight),
+         length: parseFloat(packageLength),
+         width: parseFloat(packageWidth),
+         height: parseFloat(packageHeight)
+      }
 
       let slug = slugMaker(title);
 
@@ -119,7 +135,9 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch })
          price_fixed,
          discount: parseFloat(discount),
          discount_amount_fixed,
-         available: parseInt(available)
+         available: parseInt(available),
+         package_dimension,
+         seller_sku: sellerSku
       }
 
       if (formTypes === "update") {
@@ -138,9 +156,9 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch })
 
       if (
          title === "" || images.length < 0 ||
-         description === "" || category === "" ||
+         short_description === "" || category === "" ||
          subCategory === "" || price === "" ||
-         discount === "" || brand === "" || secondCategory === ""
+         brand === "" || secondCategory === "" || (packageWeight || packageLength || packageWidth || packageHeight) === ""
       ) {
          setMessage(<p className='text-danger'><small><strong>Required All Input Fields !</strong></small></p>);
          setActionLoading(false);
@@ -181,7 +199,7 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch })
       <Form onSubmit={productHandler}>
          <div className="row my-4">
             <div className='col-lg-12 mb-3'>
-               <label htmlFor='title'>Title</label>
+               <label htmlFor='title'>Title <span style={{ color: "red" }}>*</span></label>
                <input className='form-control form-control-sm' name="title" id='title' type="text" defaultValue={(data?.title && data?.title) || ""} placeholder="Title" />
             </div>
 
@@ -213,75 +231,42 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch })
                   })
                }
             </div>
-
-            {/* <div className='col-lg-12 mb-3'>
-               <label htmlFor='image'>Image</label>
-               <input className='form-control form-control-sm' name="image" id='image' type="text" defaultValue={(data?.image && data?.image) || ""} placeholder="Image Link" />
-            </div>
-            */}
-
-            <div className="col-lg-12 mb-3">
-               <label htmlFor='description'>Description</label>
-               <CKEditor editor={ClassicEditor}
-                  data={desc}
-                  onChange={(event, editor) => {
-                     const data = editor.getData();
-                     return setDescription(data);
-                  }}
-               />
-            </div>
-
-            <div className='col-lg-12 mb-3'>
-               <label htmlFor='short_description'>Short Description</label>
-               <input className='form-control form-control-sm' name="short_description" id='short_description' type="text" defaultValue={(data?.info?.short_description && data?.info?.short_description) || ""} placeholder="Short description" />
-            </div>
-         </div>
-
-         <div className="my-4">
-            <label>Specification</label>
-            {
-               specInp && specInp.map((x, i) => {
-                  return (
-                     <div className="py-2 d-flex align-items-end" key={i}>
-
-                        <div className="row w-100">
-                           <div className="col-lg-6 mb-3">
-
-                              <input className="form-control form-control-sm" name="type" id='type' type="text" placeholder='Spec type' value={x.type} onChange={(e) => handleInputChange(e, i)}></input>
-                           </div>
-
-                           <div className="col-lg-6 mb-3">
-                              <input className="form-control form-control-sm" name="value" id='value' type="text" placeholder='Spec_value' value={x.value} onChange={(e) => handleInputChange(e, i)}></input>
-                           </div>
-                        </div>
-
-                        <div className="btn-box d-flex ms-4 mb-3">
-                           {specInp.length !== 1 && <button
-                              className="btn btn-danger me-2 btn-sm"
-                              onClick={() => removeSpecInputFieldHandler(i)}>Remove</button>}
-                           {specInp.length - 1 === i && <button className="btn btn-primary btn-sm" onClick={addSpecInputFieldHandler}>Add</button>}
-                        </div>
-                     </div>
-                  )
-               })
-            }
          </div>
 
          <div className="row my-4">
             <div className='col-lg-3 mb-3'>
-               <label htmlFor='brand'>Brand</label>
+               <label htmlFor='price'>Price <small>(Fixed Price : {price_fixed || inputValue?.price || 0})</small><span style={{ color: "red" }}>*</span></label>
+               <input name='price' id='price' type='number' className="form-control form-control-sm" value={inputValue.price || ""} onChange={handleInput} />
+            </div>
+
+            <div className='col-lg-3 mb-3'>
+               <label htmlFor='discount'>Discount <small>(Fixed Discount : {discount_amount_fixed || 0})</small></label>
+               <input name='discount' id='discount' type='number' className="form-control form-control-sm" value={inputValue.discount} onChange={handleInput} />
+            </div>
+            <div className='col-lg-3 mb-3'>
+               <label htmlFor='available'>Update Stock</label>
+               <input className='form-control form-control-sm' name='available' id='available' type='number' defaultValue={((data?.available && data?.available) || 0) || ""} />
+            </div>
+            <div className='col-lg-3 mb-3'>
+               <label htmlFor='seller_sku'>Seller SKU</label>
+               <input className='form-control form-control-sm' name='seller_sku' id='seller_sku' type='text' defaultValue={(data?.seller_sku && data?.seller_sku) || ""} />
+            </div>
+         </div>
+
+         <div className="row my-4">
+            <div className='col-lg-3 mb-3'>
+               <label htmlFor='brand'>Brand <span style={{ color: "red" }}>*</span></label>
                <input name="brand" id='brand' className='form-control form-control-sm' type="text" defaultValue={(data?.brand && data?.brand) || ""} placeholder="Brand Name..." />
             </div>
 
             <div className='col-lg-3 mb-3'>
-               <label htmlFor='category'>Category</label> <br />
+               <label htmlFor='category'>Category <span style={{ color: "red" }}>*</span></label> <br />
                <select className="form-select form-select-sm text-capitalize" name="category" id="category" onChange={(e) => setCategory(e.target.value)}>
                   <option value={category || ""}>{category || "choose"}</option>
                   {
                      newCategory && newCategory.map((category, index) => {
                         return (
                            <option value={category?.category} key={index}>{category?.category}</option>
-
                         )
                      })
                   }
@@ -289,7 +274,7 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch })
             </div>
 
             <div className='col-lg-3 mb-3'>
-               <label htmlFor='sub_category'>Sub Category</label> <br />
+               <label htmlFor='sub_category'>Sub Category <span style={{ color: "red" }}>*</span></label> <br />
                <select className="form-select form-select-sm text-capitalize" name="sub_category" id="sub_category" onChange={(e) => setSubCategory(e.target.value)}>
                   <option value={subCategory || ""}>{subCategory || "choose"}</option>
                   {
@@ -303,7 +288,7 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch })
             </div>
 
             <div className='col-lg-3 mb-3'>
-               <label htmlFor='second_category'>Second Category</label> <br />
+               <label htmlFor='second_category'>Second Category <span style={{ color: "red" }}>*</span></label> <br />
                <select className="form-select form-select-sm text-capitalize" name="second_category" id="second_category" onChange={(e) => setSecondCategory(e.target.value)}>
                   <option value={secondCategory || ""}>{secondCategory || "choose"}</option>
                   {
@@ -318,23 +303,78 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch })
          </div>
 
          <div className="row my-4">
-            <div className='col-lg-4 mb-3'>
-               <label htmlFor='price'>Price <small>(Fixed Price : {price_fixed || inputValue?.price || 0})</small></label>
-               <input name='price' id='price' type='number' className="form-control form-control-sm" value={inputValue.price || ""} onChange={handleInput} />
+            <h6>Add a product description </h6>
+            <div className='col-lg-12 mb-3'>
+               <label htmlFor='short_description'>Short Description <span style={{ color: "red" }}>*</span></label>
+               <input className='form-control form-control-sm' name="short_description" id='short_description' type="text" defaultValue={(data?.info?.short_description && data?.info?.short_description) || ""} placeholder="Short description" />
             </div>
 
-            <div className='col-lg-4 mb-3'>
-               <label htmlFor='discount'>Discount <small>(Fixed Discount : {discount_amount_fixed || 0})</small></label>
-               <input name='discount' id='discount' type='number' className="form-control form-control-sm" value={inputValue.discount} onChange={handleInput} />
+            <div className="col-lg-12 mb-3">
+               <label htmlFor='description'>Description</label>
+               <CKEditor editor={ClassicEditor}
+                  data={desc}
+                  onChange={(event, editor) => {
+                     const data = editor.getData();
+                     return setDescription(data);
+                  }}
+               />
             </div>
-            <div className='col-lg-4 mb-3'>
-               <label htmlFor='available'>Update Stock</label>
-               <input className='form-control form-control-sm' name='available' id='available' type='number' defaultValue={(data?.available && data?.available) || ""} />
+
+            <div className="col-lg-12 mb-3">
+               <label>Specification</label>
+               {
+                  specInp && specInp.map((x, i) => {
+                     return (
+                        <div className="py-2 d-flex align-items-end" key={i}>
+
+                           <div className="row w-100">
+                              <div className="col-lg-6 mb-3">
+
+                                 <input className="form-control form-control-sm" name="type" id='type' type="text" placeholder='Spec type' value={x.type} onChange={(e) => handleInputChange(e, i)}></input>
+                              </div>
+
+                              <div className="col-lg-6 mb-3">
+                                 <input className="form-control form-control-sm" name="value" id='value' type="text" placeholder='Spec_value' value={x.value} onChange={(e) => handleInputChange(e, i)}></input>
+                              </div>
+                           </div>
+
+                           <div className="btn-box d-flex ms-4 mb-3">
+                              {specInp.length !== 1 && <button
+                                 className="btn btn-danger me-2 btn-sm"
+                                 onClick={() => removeSpecInputFieldHandler(i)}>Remove</button>}
+                              {specInp.length - 1 === i && <button className="btn btn-primary btn-sm" onClick={addSpecInputFieldHandler}>Add</button>}
+                           </div>
+                        </div>
+                     )
+                  })
+               }
             </div>
          </div>
-         <p className="p-1 text-muted">
-            <small>Warning : If you set it to 0 then product will be stock out</small>
-         </p>
+
+         <div className="card_default card_description my-4">
+            <h6>Service & Delivery</h6>
+            <div className="row ">
+               <div className="col-lg-12 mb-4">
+                  <label htmlFor="package_weight">Package Weight (kg) <span style={{ color: "red" }}>*</span> </label>
+                  <input name="package_weight" id='package_weight' className='form-control form-control-sm' type="text" defaultValue={(data?.package_dimension?.weight) || ""} placeholder="Weight(KG)" />
+               </div>
+               <div className="col-lg-12">
+                  <p>Package Dimensions (cm) <span style={{ color: "red" }}>*</span></p>
+                  <div className="row">
+                     <div className="col-4">
+                        <input className='form-control form-control-sm' type="text" name='package_length' defaultValue={(data?.package_dimension?.length) || ""} placeholder='Length (cm)' />
+                     </div>
+                     <div className="col-4">
+                        <input className='form-control form-control-sm' type="text" name='package_width' defaultValue={(data?.package_dimension?.width) || ""} placeholder='Width (cm)' />
+                     </div>
+                     <div className="col-4">
+                        <input className='form-control form-control-sm' type="text" name='package_height' defaultValue={(data?.package_dimension?.height) || ""} placeholder='Height (cm)' />
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+
          {msg}
          <button className='btn btn-sm btn-primary' type="submit">
             {
