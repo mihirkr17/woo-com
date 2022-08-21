@@ -132,39 +132,29 @@
 
 // form design
 .form-control {
-  border: none;
   background-color: var(--color-light);
   color: var(--color-text);
-  border-bottom: 2px solid var(--color-accent);
-  border-radius: 0;
   .form-control-sm {
     padding: 0.4rem 0.5rem;
   }
 
   &:focus {
-    border-bottom: 3px solid var(--color-accent-alt);
     background-color: var(--color-bg);
-    box-shadow: unset;
     color: var(--color-text);
   }
 }
 
 .form-select {
-  border: none;
   background-color: var(--color-light);
   color: var(--color-dark-alt);
   text-transform: capitalize;
-  border-bottom: 2px solid var(--color-accent);
-  border-radius: 0;
   .form-select-sm {
     padding: 0.2rem 0.5rem;
   }
 
   &:focus {
-    border-color: var(--color-accent);
-    border: none;
-    background-color: transparent;
-    box-shadow: unset;
+    background-color: var(--color-bg);
+    color: var(--color-text);
   }
 }
 

@@ -13,8 +13,15 @@ const ProductModel = ({ product, addToCartHandler, addCartLoading, buyLoading, s
    const navigate = useNavigate();
    const [tab, setTab] = useState("description");
    const [tabImg, setTabImg] = useState("");
+   const [size, setSize] = useState("");
    const [zoom, setZoom] = useState({ transform: "translate3d('0px, 0px, 0px')" });
-   useEffect(() => setTabImg(product?.image && product?.image[0]), [product?.image])
+   useEffect(() => setTabImg(product?.image && product?.image[0]), [product?.image]);
+   useEffect(() => setSize(product?.info?.size && product?.info?.size[0]), [product?.info?.size]);
+   
+    if (product) {
+      product['size'] = (size);
+   }
+
 
    const handleImgTab = (params) => {
       setTabImg(params);
@@ -58,7 +65,7 @@ const ProductModel = ({ product, addToCartHandler, addCartLoading, buyLoading, s
          </div>
          <div className="col-lg-7 pb-3 product_description">
             <article>
-               {(showFor !== "admin" && showFor !== "owner" && showFor !== "seller") && <Breadcrumbs path={[product?.genre?.category, product?.genre?.sub_category, product?.genre?.second_category]}></Breadcrumbs>}
+               {(showFor !== "admin" && showFor !== "owner" && showFor !== "seller") && <Breadcrumbs path={[product?.genre?.category, product?.genre?.sub_category, product?.genre?.post_category]}></Breadcrumbs>}
                <h5 className="product_title py-3">{product?.title}</h5>
                {/* <small className=' badge bg-success'>Rating : {averageRating(product?.rating) || 0}/5</small><br /> */}
 
@@ -75,7 +82,15 @@ const ProductModel = ({ product, addToCartHandler, addCartLoading, buyLoading, s
                <small className='text-muted'><i>{product?.stock === "out" ? "Out of Stock" : "Hurry, Only " + product?.available + " Left !"} </i></small><br />
                <small className='text-muted'>Seller : {product?.seller}</small><br />
                {
-                  (showFor === "admin" || showFor === "owner" || showFor === "seller") && <small>{product?.genre?.category + " > " + product?.genre?.sub_category + " > " + product?.genre?.second_category}</small>
+                  product?.info?.size && 
+                  product?.info?.size.map((e, i) => {
+                     return(
+                        <button key={i} className='btn btn-sm' style={size && size === e ? {backgroundColor: "gray"} : {}} onClick={() => setSize(e)}>{e}</button>
+                     )
+                  })
+               }
+               {
+                  (showFor === "admin" || showFor === "owner" || showFor === "seller") && <small>{product?.genre?.category + " > " + product?.genre?.sub_category + " > " + product?.genre?.post_category}</small>
                }
             </article>
 

@@ -9,7 +9,8 @@ import BtnSpinner from '../Components/Shared/BtnSpinner/BtnSpinner';
 import { useNavigate } from 'react-router-dom';
 import { newCategory } from '../Assets/CustomData/categories';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPenAlt } from '@fortawesome/free-solid-svg-icons';
+import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
+import { useEffect } from 'react';
 
 const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch }) => {
    const navigate = useNavigate();
@@ -20,17 +21,22 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch })
    const newDate = new Date();
    const [actionLoading, setActionLoading] = useState(false);
 
+   const [status, setStatus] = useState(data?.status || "");
+
    // image link
    const [images, setImages] = useState(data?.image || []);
 
    const [specInp, setSpecInp] = useState(data?.info?.specification || [{ type: "", value: "" }]);
 
-   const [category, setCategory] = useState(data?.genre?.category || "");
-   const [subCategory, setSubCategory] = useState(data?.genre?.sub_category || "");
-   const [secondCategory, setSecondCategory] = useState(data?.genre?.second_category || "");
+   const [category, setCategory] = useState("");
+   const [subCategory, setSubCategory] = useState("");
+   const [postCategory, setPostCategory] = useState("");
 
    const sub_category = newCategory && newCategory.find(e => e.category === category);
-   const second_category = sub_category?.sub_category_items && sub_category?.sub_category_items.find(e => e.sub_category === subCategory);
+   const post_category = sub_category?.sub_category_items && sub_category?.sub_category_items.find(e => e.sub_category === subCategory);
+
+   const [sizes, setSizes] = useState({ size: data?.info?.size || [] });
+
 
    const handleImages = (e, index) => {
       const { value } = e.target;
@@ -72,79 +78,89 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch })
       setSpecInp(list);
    };
 
+   const handleSize = (e) => {
+      const { value, checked } = e.target;
+      const { size } = sizes;
+      if (checked) {
+         setSizes({
+            size: [...size, value],
+         });
+      } else {
+         setSizes({
+            size: size.filter((e) => e !== value)
+         });
+      }
+   }
 
 
    const productHandler = async (e) => {
       e.preventDefault();
       setActionLoading(true);
 
-      let title = e.target.title.value;
-      let description = desc;
-      let short_description = e.target.short_description.value;
-      let specification = specInp;
-      let price = inputValue.price;
-      let discount = inputValue.discount;
-      let rating = [
-         { weight: 5, count: 0 },
-         { weight: 4, count: 0 },
-         { weight: 3, count: 0 },
-         { weight: 2, count: 0 },
-         { weight: 1, count: 0 },
-      ];
-      let available = e.target.available.value;
-      let brand = e.target.brand.value;
+      const title = e.target.title.value;
+      const slug = slugMaker(title);
+      const description = desc;
+      const short_description = e.target.short_description.value;
+      const inBox = e.target.in_box.value;
+      const specification = specInp;
+      const price = inputValue.price;
+      const discount = inputValue.discount;
+      const available = e.target.available.value;
+      const brand = e.target.brand.value;
 
+      // package dimension
       let packageWeight = e.target.package_weight.value;
       let packageLength = e.target.package_length.value;
       let packageWidth = e.target.package_width.value;
       let packageHeight = e.target.package_height.value;
 
       // seller sku
-      let sellerSku = e.target.seller_sku.value;
+      const sellerSku = e.target.seller_sku.value;
 
-      let package_dimension = {
-         weight: parseFloat(packageWeight),
-         length: parseFloat(packageLength),
-         width: parseFloat(packageWidth),
-         height: parseFloat(packageHeight)
-      }
-
-      let slug = slugMaker(title);
-
-      const genre = {
-         category: category, // category
-         sub_category: subCategory, // sub category
-         second_category: secondCategory // third category
-      }
-
-      const info = {
-         description,
-         short_description,
-         specification
-      }
 
       let product = {
          title,
          slug,
          brand,
          image: images,
-         description,
-         info,
-         genre,
+         info: {
+            description,
+            short_description,
+            specification,
+            size: sizes?.size,
+            in_box: inBox
+         },
          price: parseFloat(price),
          price_fixed,
          discount: parseFloat(discount),
          discount_amount_fixed,
          available: parseInt(available),
-         package_dimension,
-         seller_sku: sellerSku
+         package_dimension: {
+            weight: parseFloat(packageWeight),
+            length: parseFloat(packageLength),
+            width: parseFloat(packageWidth),
+            height: parseFloat(packageHeight)
+         },
+         seller_sku: sellerSku,
+         status
       }
 
       if (formTypes === "update") {
          product["modifiedAt"] = newDate.toLocaleString();
       } else {
+         product["genre"] = {
+            category: category, // category
+            sub_category: subCategory, // sub category
+            post_category: postCategory // third category
+         }
          product["seller"] = userInfo?.seller;
-         product["rating"] = rating;
+         product["rating"] = [
+            { weight: 5, count: 0 },
+            { weight: 4, count: 0 },
+            { weight: 3, count: 0 },
+            { weight: 2, count: 0 },
+            { weight: 1, count: 0 },
+         ];
          product["rating_average"] = 0;
          product["createAt"] = newDate.toLocaleString();
       }
@@ -155,10 +171,10 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch })
       }
 
       if (
-         title === "" || images.length < 0 ||
-         short_description === "" || category === "" ||
-         subCategory === "" || price === "" ||
-         brand === "" || secondCategory === "" || (packageWeight || packageLength || packageWidth || packageHeight) === ""
+         (title || images.length < 0 ||
+            short_description || category ||
+            subCategory || price ||
+            brand || postCategory || packageWeight || packageLength || packageWidth || packageHeight) === ""
       ) {
          setMessage(<p className='text-danger'><small><strong>Required All Input Fields !</strong></small></p>);
          setActionLoading(false);
@@ -190,7 +206,7 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch })
          } else {
             setActionLoading(false);
             await loggedOut();
-            navigate("/login?q=unauthorized");
+            navigate("/login?err= token not found");
          }
       }
    }
@@ -233,121 +249,155 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch })
             </div>
          </div>
 
-         <div className="row my-4">
-            <div className='col-lg-3 mb-3'>
-               <label htmlFor='price'>Price <small>(Fixed Price : {price_fixed || inputValue?.price || 0})</small><span style={{ color: "red" }}>*</span></label>
-               <input name='price' id='price' type='number' className="form-control form-control-sm" value={inputValue.price || ""} onChange={handleInput} />
-            </div>
+         <div className="card_default card_description my-4">
+            <h6>Product Attributes</h6>
+            <div className="row my-4">
+               <div className='col-lg-3 mb-3'>
+                  <label htmlFor='price'>Price <small>(Fixed Price : {price_fixed || inputValue?.price || 0})</small><span style={{ color: "red" }}>*</span></label>
+                  <input name='price' id='price' type='number' className="form-control form-control-sm" value={inputValue.price || ""} onChange={handleInput} />
+               </div>
 
-            <div className='col-lg-3 mb-3'>
-               <label htmlFor='discount'>Discount <small>(Fixed Discount : {discount_amount_fixed || 0})</small></label>
-               <input name='discount' id='discount' type='number' className="form-control form-control-sm" value={inputValue.discount} onChange={handleInput} />
-            </div>
-            <div className='col-lg-3 mb-3'>
-               <label htmlFor='available'>Update Stock</label>
-               <input className='form-control form-control-sm' name='available' id='available' type='number' defaultValue={((data?.available && data?.available) || 0) || ""} />
-            </div>
-            <div className='col-lg-3 mb-3'>
-               <label htmlFor='seller_sku'>Seller SKU</label>
-               <input className='form-control form-control-sm' name='seller_sku' id='seller_sku' type='text' defaultValue={(data?.seller_sku && data?.seller_sku) || ""} />
-            </div>
-         </div>
+               <div className='col-lg-3 mb-3'>
+                  <label htmlFor='discount'>Discount <small>(Fixed Discount : {discount_amount_fixed || 0})</small></label>
+                  <input name='discount' id='discount' type='number' className="form-control form-control-sm" value={inputValue.discount} onChange={handleInput} />
+               </div>
+               <div className='col-lg-3 mb-3'>
+                  <label htmlFor='available'>Update Stock</label>
+                  <input className='form-control form-control-sm' name='available' id='available' type='number' defaultValue={((data?.available && data?.available) || 0) || ""} />
+               </div>
+               <div className='col-lg-3 mb-3'>
+                  <label htmlFor='seller_sku'>Seller SKU</label>
+                  <input className='form-control form-control-sm' name='seller_sku' id='seller_sku' type='text' defaultValue={(data?.seller_sku && data?.seller_sku) || ""} />
+               </div>
 
-         <div className="row my-4">
-            <div className='col-lg-3 mb-3'>
-               <label htmlFor='brand'>Brand <span style={{ color: "red" }}>*</span></label>
-               <input name="brand" id='brand' className='form-control form-control-sm' type="text" defaultValue={(data?.brand && data?.brand) || ""} placeholder="Brand Name..." />
-            </div>
+               <div className='col-lg-3 mb-3'>
+                  <label htmlFor='brand'>Brand <span style={{ color: "red" }}>*</span></label>
+                  <input name="brand" id='brand' className='form-control form-control-sm' type="text" defaultValue={(data?.brand && data?.brand) || ""} placeholder="Brand Name..." />
+               </div>
 
-            <div className='col-lg-3 mb-3'>
-               <label htmlFor='category'>Category <span style={{ color: "red" }}>*</span></label> <br />
-               <select className="form-select form-select-sm text-capitalize" name="category" id="category" onChange={(e) => setCategory(e.target.value)}>
-                  <option value={category || ""}>{category || "choose"}</option>
-                  {
-                     newCategory && newCategory.map((category, index) => {
-                        return (
-                           <option value={category?.category} key={index}>{category?.category}</option>
-                        )
-                     })
-                  }
-               </select>
-            </div>
-
-            <div className='col-lg-3 mb-3'>
-               <label htmlFor='sub_category'>Sub Category <span style={{ color: "red" }}>*</span></label> <br />
-               <select className="form-select form-select-sm text-capitalize" name="sub_category" id="sub_category" onChange={(e) => setSubCategory(e.target.value)}>
-                  <option value={subCategory || ""}>{subCategory || "choose"}</option>
-                  {
-                     sub_category?.sub_category_items && sub_category?.sub_category_items.map((category, index) => {
-                        return (
-                           <option value={category?.sub_category} key={index}>{category?.sub_category}</option>
-                        )
-                     })
-                  }
-               </select>
-            </div>
-
-            <div className='col-lg-3 mb-3'>
-               <label htmlFor='second_category'>Second Category <span style={{ color: "red" }}>*</span></label> <br />
-               <select className="form-select form-select-sm text-capitalize" name="second_category" id="second_category" onChange={(e) => setSecondCategory(e.target.value)}>
-                  <option value={secondCategory || ""}>{secondCategory || "choose"}</option>
-                  {
-                     second_category?.second_category_items && second_category?.second_category_items.map((c, i) => {
-                        return (
-                           <option value={c} key={i}>{c}</option>
-                        )
-                     })
-                  }
-               </select>
-            </div>
-         </div>
-
-         <div className="row my-4">
-            <h6>Add a product description </h6>
-            <div className='col-lg-12 mb-3'>
-               <label htmlFor='short_description'>Short Description <span style={{ color: "red" }}>*</span></label>
-               <input className='form-control form-control-sm' name="short_description" id='short_description' type="text" defaultValue={(data?.info?.short_description && data?.info?.short_description) || ""} placeholder="Short description" />
-            </div>
-
-            <div className="col-lg-12 mb-3">
-               <label htmlFor='description'>Description</label>
-               <CKEditor editor={ClassicEditor}
-                  data={desc}
-                  onChange={(event, editor) => {
-                     const data = editor.getData();
-                     return setDescription(data);
-                  }}
-               />
-            </div>
-
-            <div className="col-lg-12 mb-3">
-               <label>Specification</label>
                {
-                  specInp && specInp.map((x, i) => {
-                     return (
-                        <div className="py-2 d-flex align-items-end" key={i}>
+                  formTypes === "create" && <>
+                     <div className='col-lg-3 mb-3'>
+                        <label htmlFor='category'>Category <span style={{ color: "red" }}>*</span></label> <br />
+                        <select className="form-select form-select-sm text-capitalize" name="category" id="category" onChange={(e) => setCategory(e.target.value)}>
+                           <option value={""}>{"Choose"}</option>
+                           {
+                              newCategory && newCategory.map((category, index) => {
+                                 return (
+                                    <option value={category?.category} key={index}>{category?.category}</option>
+                                 )
+                              })
+                           }
+                        </select>
+                     </div>
 
-                           <div className="row w-100">
-                              <div className="col-lg-6 mb-3">
+                     <div className='col-lg-3 mb-3'>
+                        <label htmlFor='sub_category'>Sub Category <span style={{ color: "red" }}>*</span></label> <br />
+                        <select className="form-select form-select-sm text-capitalize" name="sub_category" id="sub_category" onChange={(e) => setSubCategory(e.target.value)}>
+                           <option value="">{"Choose"}</option>
+                           {
+                              sub_category?.sub_category_items && sub_category?.sub_category_items.map((category, index) => {
+                                 return (
+                                    <option value={category?.sub_category} key={index}>{category?.sub_category}</option>
+                                 )
+                              })
+                           }
+                        </select>
+                     </div>
 
-                                 <input className="form-control form-control-sm" name="type" id='type' type="text" placeholder='Spec type' value={x.type} onChange={(e) => handleInputChange(e, i)}></input>
-                              </div>
-
-                              <div className="col-lg-6 mb-3">
-                                 <input className="form-control form-control-sm" name="value" id='value' type="text" placeholder='Spec_value' value={x.value} onChange={(e) => handleInputChange(e, i)}></input>
-                              </div>
-                           </div>
-
-                           <div className="btn-box d-flex ms-4 mb-3">
-                              {specInp.length !== 1 && <button
-                                 className="btn btn-danger me-2 btn-sm"
-                                 onClick={() => removeSpecInputFieldHandler(i)}>Remove</button>}
-                              {specInp.length - 1 === i && <button className="btn btn-primary btn-sm" onClick={addSpecInputFieldHandler}>Add</button>}
-                           </div>
-                        </div>
-                     )
-                  })
+                     <div className='col-lg-3 mb-3'>
+                        <label htmlFor='post_category'>Second Category <span style={{ color: "red" }}>*</span></label> <br />
+                        <select className="form-select form-select-sm text-capitalize" name="post_category" id="post_category" onChange={(e) => setPostCategory(e.target.value)}>
+                           <option value={""}>{"Choose"}</option>
+                           {
+                              post_category?.post_category_items && post_category?.post_category_items.map((c, i) => {
+                                 return (
+                                    <option value={c} key={i}>{c}</option>
+                                 )
+                              })
+                           }
+                        </select>
+                     </div>
+                  </>
                }
+
+               {
+                  (post_category?.size) && <div className="row">
+                     <div className="col-12">
+                        <strong>Select Size</strong>
+                     </div>
+                     {
+                        post_category?.size && post_category?.size.map((e, i) => {
+                           return (
+                              <div className="col-12" key={i}>
+                                 <label htmlFor={e}>
+                                    <input type="checkbox" className='me-3' name={e} checked={sizes?.size.includes(e) ? true : false} id={e} value={e} onChange={handleSize} />
+                                    {e}
+                                 </label>
+                              </div>
+                           )
+                        })
+                     }
+
+                  </div>
+               }
+            </div>
+
+         </div>
+
+         <div className="card_default card_description my-4">
+            <div className="row">
+               <h6>Product Details </h6>
+               <div className='col-lg-12 mb-3'>
+                  <label htmlFor='short_description'>Short Description <span style={{ color: "red" }}>*</span></label>
+                  <textarea className='form-control form-control-sm' name="short_description" id='short_description' type="text" defaultValue={(data?.info?.short_description && data?.info?.short_description) || ""} placeholder="Short description" />
+               </div>
+
+               <div className="col-lg-12 mb-3">
+                  <label htmlFor='description'>Description</label>
+                  <CKEditor editor={ClassicEditor}
+                     data={desc}
+                     onChange={(event, editor) => {
+                        const data = editor.getData();
+                        return setDescription(data);
+                     }}
+                  />
+               </div>
+
+               <div className="col-lg-12 mb-3">
+                  <label>Specification</label>
+                  {
+                     specInp && specInp.map((x, i) => {
+                        return (
+                           <div className="py-2 d-flex align-items-end" key={i}>
+
+                              <div className="row w-100">
+                                 <div className="col-lg-6 mb-3">
+
+                                    <input className="form-control form-control-sm" name="type" id='type' type="text" placeholder='Spec type' value={x.type} onChange={(e) => handleInputChange(e, i)}></input>
+                                 </div>
+
+                                 <div className="col-lg-6 mb-3">
+                                    <input className="form-control form-control-sm" name="value" id='value' type="text" placeholder='Spec_value' value={x.value} onChange={(e) => handleInputChange(e, i)}></input>
+                                 </div>
+                              </div>
+
+                              <div className="btn-box d-flex ms-4 mb-3">
+                                 {specInp.length !== 1 && <button
+                                    className="btn btn-danger me-2 btn-sm"
+                                    onClick={() => removeSpecInputFieldHandler(i)}>Remove</button>}
+                                 {specInp.length - 1 === i && <button className="btn btn-primary btn-sm" onClick={addSpecInputFieldHandler}>Add</button>}
+                              </div>
+                           </div>
+                        )
+                     })
+                  }
+               </div>
+
+               <div className='col-lg-12 mb-3'>
+                  <label htmlFor='in_box'>What is in the box <span style={{ color: "red" }}>*</span></label>
+                  <input className='form-control form-control-sm' name="in_box" id='in_box' type="text" defaultValue={(data?.info?.in_box && data?.info?.in_box) || ""} placeholder="e.g: 1 x hard disk" />
+               </div>
             </div>
          </div>
 
@@ -371,6 +421,19 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, modalClose, refetch })
                         <input className='form-control form-control-sm' type="text" name='package_height' defaultValue={(data?.package_dimension?.height) || ""} placeholder='Height (cm)' />
                      </div>
                   </div>
+               </div>
+            </div>
+         </div>
+
+         <div className="card_default card_description my-4">
+            <div className="row">
+               <div className="col-lg-3">
+                  <label htmlFor="status">Set Status</label>
+                  <select className='form-select form-select-sm' name="status" id="status" onChange={(e) => setStatus(e.target.value)}>
+                     <option value={status || ""}>{status || "Select Status"}</option>
+                     <option value={"active"}>Active</option>
+                     <option value="inactive">Inactive</option>
+                  </select>
                </div>
             </div>
          </div>

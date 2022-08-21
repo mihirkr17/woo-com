@@ -3,7 +3,7 @@ import Spinner from '../../../Components/Shared/Spinner/Spinner';
 import { useFetch } from '../../../Hooks/useFetch';
 import { useMessage } from '../../../Hooks/useMessage';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faPenAlt, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faPenAlt, faPenToSquare, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import ProductDetailsModal from './Components/ProductDetailsModal';
 import ProductUpdateModal from './Components/ProductUpdateModal';
 import { Table } from 'react-bootstrap';
@@ -157,7 +157,7 @@ const ManageProduct = () => {
                                                    <FontAwesomeIcon icon={faEye} />
                                                 </button>
                                                 <button className="btn btn-sm m-1" title={`Update ${p?.title}`} onClick={() => setOpenModal(true && p)}>
-                                                   <FontAwesomeIcon icon={faPenAlt} />
+                                                   <FontAwesomeIcon icon={faPenToSquare} />
                                                 </button>
                                                 <button className='btn btn-sm m-1' title={`Delete ${p?.title}`} onClick={() => productDeleteHandler(p?._id)}>
                                                    <FontAwesomeIcon icon={faTrashAlt} />

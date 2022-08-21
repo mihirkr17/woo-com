@@ -29,29 +29,29 @@ const ViewProduct = () => {
       const url = params === "buy" ? `${process.env.REACT_APP_BASE_URL}api/add-buy-product` :
          `${process.env.REACT_APP_BASE_URL}api/add-to-cart`;
 
-      let quantity = 1;
-      let productPrice = parseInt(product?.price);
-      let discount_amount_fixed = parseFloat(product?.discount_amount_fixed)
-      let discount_amount_total = discount_amount_fixed * quantity;
-
       let cartProduct = {
-         _id: product._id,
-         title: product.title,
-         slug: product.slug,
-         brand: product.brand,
-         image: product.image,
-         quantity: quantity,
-         price: productPrice,
-         price_total: (productPrice * quantity) - discount_amount_total,
-         price_fixed: product.price_fixed,
-         discount: product.discount,
-         discount_amount_fixed: discount_amount_fixed,
-         discount_amount_total: discount_amount_total,
-         stock: product?.stock,
-         available: product.available,
+         _id: product?._id,
+         title: product?.title,
+         slug: product?.slug,
+         brand: product?.brand,
+         size: product?.size,
+         image: product.image[0],
+         quantity: 1,
+         price: parseFloat(product?.price),
+         price_fixed: parseFloat(product.price_fixed),
+         price_total: parseFloat(product.price_fixed) * 1,
+         discount: product?.discount,
+         discount_amount_fixed: parseFloat(product?.discount_amount_fixed),
+         discount_amount_total: parseFloat(product?.discount_amount_fixed) * 1,
          user_email: user?.email,
-         seller: product?.seller
+         seller: product?.seller,
+         seller_sku: product?.seller_sku,
+         package_dimension: product?.package_dimension,
+         in_box: product?.info?.in_box,
+         stock: product?.stock,
+         available: product?.available
       }
+
 
       if (product?.stock === "in") {
          if (params === "buy") {
@@ -71,6 +71,7 @@ const ViewProduct = () => {
          });
 
          const resData = await response.json();
+
          if (response.ok) {
             refetch();
             productRefetch();
@@ -105,7 +106,7 @@ const ViewProduct = () => {
          title: product.title,
          slug: product.slug,
          brand: product.brand,
-         image: product.image,
+         image: product.image[0],
          quantity: quantity,
          price: productPrice,
          price_total: (productPrice * quantity) - discount_amount_total,
@@ -114,7 +115,6 @@ const ViewProduct = () => {
          discount_amount_fixed: discount_amount_fixed,
          discount_amount_total: discount_amount_total,
          stock: product?.stock,
-         available: product.available,
          user_email: user?.email,
          seller: product?.seller
       }
@@ -165,11 +165,11 @@ const ViewProduct = () => {
          <div className="container">
             {msg}
             {/* {loading ? <Spinner /> : */}
-               <ProductModel showFor={role} product={product} buyLoading={buyLoading}
-                  addCartLoading={addCartLoading} addToCartHandler={addToCartHandler}
-                  addToWishlist={addToWishlist}
-                  removeToWishlist={removeToWishlist}
-               ></ProductModel>
+            <ProductModel showFor={role} product={product} buyLoading={buyLoading}
+               addCartLoading={addCartLoading} addToCartHandler={addToCartHandler}
+               addToWishlist={addToWishlist}
+               removeToWishlist={removeToWishlist}
+            ></ProductModel>
             {/* } */}
             <div className="row pt-5">
                <div className="col-lg-9">

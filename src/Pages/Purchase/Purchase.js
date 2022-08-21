@@ -17,9 +17,9 @@ const Purchase = () => {
    const navigate = useNavigate();
    const [step, setStep] = useState(false);
 
-   useEffect(() => {
-      if (msg !== '') return navigate('/');
-   }, [msg, navigate]);
+   // useEffect(() => {
+   //    if (msg !== '') return navigate('/');
+   // }, [msg, navigate]);
 
    const goCheckoutPage = () => {
       if (step) {

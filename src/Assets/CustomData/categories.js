@@ -11,12 +11,12 @@ export const newCategory = [
          {
             id: 1,
             sub_category: "jewelry",
-            second_category_items: ["diamond-jewelry"]
+            post_category_items: ["diamond-jewelry"]
          },
          {
             id: 2,
             sub_category: "fashion-accessories",
-            second_category_items: ["sun-glass", "backpack-and-side-bag"]
+            post_category_items: ["sun-glass", "backpack-and-side-bag"]
          }
       ],
 
@@ -29,7 +29,7 @@ export const newCategory = [
          {
             id: 1,
             sub_category: "mobile-accessories",
-            second_category_items: [
+            post_category_items: [
                "headphone-earphone",
                "data-cable-charger",
                "power-bank",
@@ -40,7 +40,7 @@ export const newCategory = [
          {
             id: 2,
             sub_category: "computer-accessories",
-            second_category_items: [
+            post_category_items: [
                "memory", "hard-disk", "pen-drive",
                "mouse-keyboard"
             ]
@@ -54,16 +54,18 @@ export const newCategory = [
          {
             id: 1,
             sub_category: "t-shirt-and-polo",
-            second_category_items: [
+            post_category_items: [
                "stylish-t-shirts", "stripe-polo", "colorful-polo", "couple-t-shirts"
-            ]
+            ],
+            size: ["S", "M", "L", "XL", "XXL"]
          },
          {
             id: 2,
             sub_category: "shirt-punjabi-blazer",
-            second_category_items: [
+            post_category_items: [
                "shirt-collection", "punjabi", "katua-and-fotua", "blazer"
-            ]
+            ],
+            size: ["S", "M", "L", "XL", "XXL"]
          }
       ],
    },
@@ -75,14 +77,14 @@ export const newCategory = [
          {
             id: 1,
             sub_category: "modern-and-western",
-            second_category_items: [
+            post_category_items: [
                "t-shirts", "tops", "leggings", "kurti-single-kamiz"
             ]
          },
          {
             id: 2,
             sub_category: "winter-dress",
-            second_category_items: [
+            post_category_items: [
                "punjabi", "katua-and-fotua", "blazer"
             ]
          }

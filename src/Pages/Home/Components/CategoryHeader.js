@@ -72,7 +72,7 @@ const CategoryHeader = () => {
 
                                  <div className="ffg_th">
                                     {
-                                       subCtg?.second_category_items && subCtg?.second_category_items.map((scCtg, i) => {
+                                       subCtg?.post_category_items && subCtg?.post_category_items.map((scCtg, i) => {
                                           return (
                                              <p key={i}>
                                                 <Nav.Item as={Link} to={`/${ctg?.category}/${subCtg?.sub_category}/${scCtg}`}>

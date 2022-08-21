@@ -281,11 +281,8 @@ svg {
 }
 
 .form-control {
-  border: none;
   background-color: var(--color-light);
   color: var(--color-text);
-  border-bottom: 2px solid var(--color-accent);
-  border-radius: 0;
 }
 
 .form-control .form-control-sm {
@@ -293,20 +290,14 @@ svg {
 }
 
 .form-control:focus {
-  border-bottom: 3px solid var(--color-accent-alt);
   background-color: var(--color-bg);
-  -webkit-box-shadow: unset;
-          box-shadow: unset;
   color: var(--color-text);
 }
 
 .form-select {
-  border: none;
   background-color: var(--color-light);
   color: var(--color-dark-alt);
   text-transform: capitalize;
-  border-bottom: 2px solid var(--color-accent);
-  border-radius: 0;
 }
 
 .form-select .form-select-sm {
@@ -314,11 +305,8 @@ svg {
 }
 
 .form-select:focus {
-  border-color: var(--color-accent);
-  border: none;
-  background-color: transparent;
-  -webkit-box-shadow: unset;
-          box-shadow: unset;
+  background-color: var(--color-bg);
+  color: var(--color-text);
 }
 
 label {

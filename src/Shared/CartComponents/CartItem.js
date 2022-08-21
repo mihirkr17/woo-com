@@ -10,15 +10,27 @@ const CartItem = ({ product: cartProduct, setMessage, refetch, checkOut, cartTyp
    // update product quantity handler
    const quantityHandler = async (cp, action) => {
       let quantity = action === "dec" ? cp?.quantity - 1 : cp?.quantity + 1;
-      let price = parseInt(cp?.price) * parseInt(quantity);
-      let discount_amount_total = parseInt(cp?.discount_amount_fixed) * parseInt(quantity);
+      // let price = parseInt(cp?.price) * parseInt(quantity);
+      // let discount_amount_total = parseInt(cp?.discount_amount_fixed) * parseInt(quantity);
       const url = `${process.env.REACT_APP_BASE_URL}api/update-product-quantity/${cartTypes && cartTypes}`;
-      const body = { quantity, price_total: price, discount_amount_total };
+      const body = { quantity };
 
-      const resData = await apiHandler(url, "PUT", `${cp?._id}`, body);
+      const response = await fetch(url, {
+         method: "PUT",
+         withCredentials: true,
+         credentials: "include",
+         headers: {
+            "Content-Type": "application/json",
+            authorization: `${cp?._id}` || ""
+         },
+         body: JSON.stringify(body)
+      });
 
-      if (resData) {
+      const resData = await response.json();
+
+      if (response.ok) {
          refetch();
+         setMessage(resData?.message);
       } else {
          await loggedOut();
          navigate(`/login?err=Something went wrong`);
@@ -47,7 +59,7 @@ const CartItem = ({ product: cartProduct, setMessage, refetch, checkOut, cartTyp
       <div className="card_default d-flex mb-2">
          <div className="d-flex px-3">
             <div className="cart_img d-flex align-items-center justify-content-center">
-               <img src={cartProduct && cartProduct?.image[0]} alt="" />
+               <img src={cartProduct && cartProduct?.image} alt="" />
             </div>
             {
                !checkOut && <div className="ms-2 cart_btn">
@@ -78,9 +90,9 @@ const CartItem = ({ product: cartProduct, setMessage, refetch, checkOut, cartTyp
                            <small><strike><i>BDT {cartProduct?.price} TK</i></strike> (-{cartProduct?.discount || 0}%) off</small>
                         </div>
 
+                        <small className="text-muted">Size : {cartProduct && cartProduct?.size}</small>
                         <small className="text-muted">Qty : {cartProduct && cartProduct?.quantity}</small>
                         <small className="text-muted">Seller : {cartProduct && cartProduct?.seller}</small>
-                        <small className="text-muted"> Stock : {cartProduct && cartProduct?.stock}({cartProduct && cartProduct?.available})</small>
                      </div>
                   </div>
                   {

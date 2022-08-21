@@ -14,7 +14,7 @@ const CartProvider = ({ children }) => {
       }
    });
    return (
-      <CartContext.Provider value={{ cart, cartLoading, refetch, cartProductCount: cart?.product && (cart?.product.length || 0) }}>
+      <CartContext.Provider value={{ cart, cartLoading, refetch, cartProductCount: cart?.product && (cart?.product.length || 0), cartTotalPrice : cart && cart?.cartTotalPrice }}>
          {children}
       </CartContext.Provider>
    );

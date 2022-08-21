@@ -68,7 +68,7 @@ function App() {
             <Route path='/product/:product_slug' element={<ViewProduct></ViewProduct>}></Route>
             <Route path='/:category' element={<ProductCategory></ProductCategory>}></Route>
             <Route path='/:category/:sub_category' element={<ProductCategory></ProductCategory>}></Route>
-            <Route path='/:category/:sub_category/:second_category' element={<ProductCategory></ProductCategory>}></Route>
+            <Route path='/:category/:sub_category/:post_category' element={<ProductCategory></ProductCategory>}></Route>
 
             <Route path='/my-cart' element={<RequireAuth><Cart></Cart></RequireAuth>}></Route>
             <Route path='/product/purchase/:productId' element={<RequireAuth><Purchase></Purchase></RequireAuth>}></Route>

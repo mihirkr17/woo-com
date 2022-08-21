@@ -41,7 +41,7 @@ const Wishlist = () => {
                            <div className="card_default d-flex mb-2">
                               <div className="d-flex px-3">
                                  <div className="cart_img d-flex align-items-center justify-content-center">
-                                    <img src={product && product?.image[0]} alt="" />
+                                    <img src={product && product?.image} alt="" />
                                  </div>
                               </div>
 
@@ -57,7 +57,7 @@ const Wishlist = () => {
                                              </small>
                                              <small className="text-muted">Qty : {product && product?.quantity}</small>
                                              <small className="text-muted">Seller : {product && product?.seller}</small>
-                                             <small className="text-muted"> Stock : {product && product?.stock}({product && product?.available})</small>
+                                             <small className="text-muted"> Stock : {product && product?.stock}</small>
                                           </div>
                                        </div>
 
