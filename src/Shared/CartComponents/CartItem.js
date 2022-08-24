@@ -5,17 +5,13 @@ import { Link } from 'react-router-dom';
 import BtnSpinner from '../../Components/Shared/BtnSpinner/BtnSpinner';
 import { apiHandler, loggedOut } from '../common';
 
-const CartItem = ({ product: cartProduct, setMessage, refetch, checkOut, cartTypes, cartLoading, navigate }) => {
+const CartItem = ({ product: cartProduct, setMessage, authRefetch, checkOut, cartTypes, cartLoading, navigate }) => {
 
    // update product quantity handler
    const quantityHandler = async (cp, action) => {
       let quantity = action === "dec" ? cp?.quantity - 1 : cp?.quantity + 1;
-      // let price = parseInt(cp?.price) * parseInt(quantity);
-      // let discount_amount_total = parseInt(cp?.discount_amount_fixed) * parseInt(quantity);
-      const url = `${process.env.REACT_APP_BASE_URL}api/update-product-quantity/${cartTypes && cartTypes}`;
-      const body = { quantity };
 
-      const response = await fetch(url, {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/update-product-quantity/${cartTypes && cartTypes}`, {
          method: "PUT",
          withCredentials: true,
          credentials: "include",
@@ -23,13 +19,13 @@ const CartItem = ({ product: cartProduct, setMessage, refetch, checkOut, cartTyp
             "Content-Type": "application/json",
             authorization: `${cp?._id}` || ""
          },
-         body: JSON.stringify(body)
+         body: JSON.stringify({ quantity })
       });
 
       const resData = await response.json();
 
       if (response.ok) {
-         refetch();
+         authRefetch();
          setMessage(resData?.message);
       } else {
          await loggedOut();
@@ -40,14 +36,13 @@ const CartItem = ({ product: cartProduct, setMessage, refetch, checkOut, cartTyp
    //  Remove product from cartProduct && cartProduct handler
    const removeItemFromCartHandler = async (cp) => {
       const { _id, title } = cp;
-      const url = `${process.env.REACT_APP_BASE_URL}delete-cart-item/${cartTypes && cartTypes}`;
 
       if (window.confirm("Want to remove this item from your cart ?")) {
-         const resData = await apiHandler(url, "DELETE", `${_id}`);
+         const resData = await apiHandler(`${process.env.REACT_APP_BASE_URL}delete-cart-item/${cartTypes && cartTypes}`, "DELETE", `${_id}`);
 
          if (resData) {
             setMessage(`${title} ${resData?.message}`);
-            refetch();
+            authRefetch();
          } else {
             await loggedOut();
             navigate(`/login?err=Something went wrong`);
@@ -80,14 +75,8 @@ const CartItem = ({ product: cartProduct, setMessage, refetch, checkOut, cartTyp
                   <div className="col-11">
                      <p className="card_title"><Link to={`/product/${cartProduct?.slug}`}>{cartProduct && cartProduct?.title}</Link></p>
                      <div className="d-flex align-items-center justify-content-between flex-wrap">
-                        {/* <small>
-                           <strike className='text-muted'>{cartProduct && cartProduct?.price}</strike>&nbsp;
-                           <big className='text-success'>{cartProduct && cartProduct?.price_fixed} TK </big>&nbsp;{cartProduct && cartProduct?.discount + "% Off"}
-                        </small> */}
-
                         <div className="product_price_model">
-                           <big>BDT {cartProduct?.price_fixed} TK</big>
-                           <small><strike><i>BDT {cartProduct?.price} TK</i></strike> (-{cartProduct?.discount || 0}%) off</small>
+                           <big>{cartProduct?.price} TK</big>
                         </div>
 
                         <small className="text-muted">Size : {cartProduct && cartProduct?.size}</small>

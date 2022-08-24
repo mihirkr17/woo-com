@@ -2,7 +2,10 @@ import React from 'react';
 import "./Modal.css";
 
 const Modal = ({ data, closeModal }) => {
-   const { orderId, user_email, payment_mode, image, price_fixed, status, quantity, time_pending, address, seller, discount, discount_amount_fixed, price, price_total_amount } = data;
+   const { orderId, title, user_email, payment_mode, image, trackingId,delivery_service, package_dimension, status, quantity, time_pending, shipping_address, discount, price, totalAmount } = data && data;
+
+
+
    return (
       <div className='modal_c' style={data ? { display: "block" } : { display: "none" }}>
          <div className="modal_body card_description">
@@ -20,6 +23,7 @@ const Modal = ({ data, closeModal }) => {
                            <th>Product</th>
                            <td>
                               <img src={image} alt="" style={{ width: "55px", height: "55px" }} />
+                              <span>{title}</span>
                            </td>
                         </tr>
                         <tr>
@@ -27,16 +31,16 @@ const Modal = ({ data, closeModal }) => {
                            <td>{orderId}</td>
                         </tr>
                         <tr>
+                           <th>Tracking ID</th>
+                           <td>{trackingId}</td>
+                        </tr>
+                        <tr>
                            <th>Order Email</th>
                            <td>{user_email}</td>
                         </tr>
                         <tr>
                            <th>Price</th>
-                           <td>{price}$</td>
-                        </tr>
-                        <tr>
-                           <th>Price Fixed</th>
-                           <td>{price_fixed}$</td>
+                           <td>{price} Tk</td>
                         </tr>
                         <tr>
                            <th>Quantity</th>
@@ -48,7 +52,7 @@ const Modal = ({ data, closeModal }) => {
                         </tr>
                         <tr>
                            <th>Total Amount</th>
-                           <td>{price_total_amount}$ Total amount (with minus discount)</td>
+                           <td>{totalAmount} Tk</td>
                         </tr>
                         <tr>
                            <th>Payment Mode</th>
@@ -77,32 +81,33 @@ const Modal = ({ data, closeModal }) => {
                               </tr> : ""
                         }
                         <tr>
-                           <th>Order Customer Name</th>
-                           <td>{address?.name}</td>
+                           <th>Shipping Address</th>
+                           <td>
+                              <pre>
+                                 Customer : {shipping_address?.name} <br />
+                                 Village  : {shipping_address?.village} <br />
+                                 City     : {shipping_address?.city} <br />
+                                 Country  : {shipping_address?.country} <br />
+                                 Zip code : {shipping_address?.zip} <br />
+                                 Phone    : {shipping_address?.phone}
+                              </pre>
+                           </td>
+                        </tr>
+
+                        <tr>
+                           <th>In The Box</th>
+                           <td>{delivery_service?.in_box}</td>
                         </tr>
                         <tr>
-                           <th>Order Customer Village</th>
-                           <td>{address?.village}</td>
-                        </tr>
-                        <tr>
-                           <th>Order Customer City</th>
-                           <td>{address?.city}</td>
-                        </tr>
-                        <tr>
-                           <th>Order Customer Country</th>
-                           <td>{address?.country}</td>
-                        </tr>
-                        <tr>
-                           <th>Order Customer Zip</th>
-                           <td>{address?.zip}</td>
-                        </tr>
-                        <tr>
-                           <th>Order Customer Phone</th>
-                           <td>{address?.phone}</td>
-                        </tr>
-                        <tr>
-                           <th>Seller Name</th>
-                           <td>{seller}</td>
+                           <th>Package Dimension</th>
+                           <td>
+                              <pre>
+                                 weight : {package_dimension?.weight} kg <br />
+                                 height : {package_dimension?.height} cm <br />
+                                 length : {package_dimension?.length} cm <br />
+                                 width  : {package_dimension?.width} cm
+                              </pre>
+                           </td>
                         </tr>
                      </tbody>
                   </table>

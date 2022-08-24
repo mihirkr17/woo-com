@@ -1,0 +1,1 @@
+export const paymentMode = ["cod", "mastercard", "net-banking"];

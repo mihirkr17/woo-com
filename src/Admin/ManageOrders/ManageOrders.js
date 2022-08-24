@@ -32,10 +32,20 @@ const ManageOrders = () => {
    // Cancel the order if any wrong 
    const cancelOrderHandler = async (email, orderId) => {
       if (window.confirm("Want to cancel this order ?")) {
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/remove-order/${user?.email}/${orderId}`, { method: "DELETE" });
-         if (response.ok) await response.json();
-         orderRefetch();
-         setMessage(<strong className='text-success'>Order Cancelled...</strong>);
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/remove-order/${email}/${orderId}`, {
+            method: "DELETE",
+            withCredentials: true,
+            credentials: "include",
+         });
+         const resData = await response.json();
+
+         if (response.ok) {
+            setMessage(<strong className='text-success'>Order Cancelled...</strong>);
+            orderRefetch();
+         } else {
+            await loggedOut();
+            navigate(`/login?err=${resData?.message}`);
+         }
       }
    }
 
@@ -58,7 +68,7 @@ const ManageOrders = () => {
             },
             body: JSON.stringify({ ownerCommission, totalEarn: parseFloat(totalEarn), productId, quantity, seller })
          });
-         
+
          if (response.ok) {
             await response.json();
             setMessage(<p className='text-success'><small><strong>{successMsg}</strong></small></p>);

@@ -2,55 +2,55 @@ import { faCheckCircle, faLeftLong } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuthUser, useCart } from '../../App';
+import { useAuthUser } from '../../App';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { cartCalculate, loggedOut } from '../../Shared/common';
 import CartCalculation from '../../Shared/CartComponents/CartCalculation';
 import CartItem from '../../Shared/CartComponents/CartItem';
 import CartPayment from '../../Shared/CartComponents/CartPayment';
 import { commissionRate } from '../../Shared/commissionRate';
+import { useAuthContext } from '../../lib/AuthProvider';
 
 const CheckoutSingle = () => {
 
    const user = useAuthUser();
    const navigate = useNavigate();
-   const { cart, cartLoading } = useCart();
-   const product = cart && cart?.buy_product;
+   const { userInfo, authLoading } = useAuthContext();
+   const product = userInfo && userInfo?.buy_product;
 
-   if (cartLoading) return <Spinner></Spinner>
-   const selectedAddress = cart && cart?.address && cart?.address.find(a => a?.select_address === true); //finding selected address to checkout page
+   if (authLoading) return <Spinner></Spinner>
+   const selectedAddress = userInfo && userInfo?.address && userInfo?.address.find(a => a?.select_address === true); //finding selected address to checkout page
 
    const buyBtnHandler = async (e) => {
       e.preventDefault();
       let payment_mode = e.target.payment.value;
       let orderId = Math.floor(Math.random() * 1000000000);
-      let priceFixed = parseFloat(product?.price_fixed);
       let productQuantity = parseInt(product?.quantity);
-      const { commission, commission_rate } = commissionRate(priceFixed, productQuantity)
-
+      const { commission, commission_rate } = commissionRate(parseFloat(product?.price), productQuantity)
+      let trackingId = ("TR00" + orderId); 
       let products = {
          orderId: orderId,
-         user_email: user?.email,
+         trackingId,
+         user_email: userInfo?.email,
          owner_commission_rate: parseFloat(commission_rate.toFixed(2)),
          owner_commission: parseFloat(commission.toFixed(2)),
          productId: product._id,
-         product_name: product.title,
+         title: product.title,
          slug: product?.slug,
          brand: product?.brand,
          image: product.image,
+         sku: product?.sku,
          quantity: product.quantity,
          price: product.price,
-         price_fixed: product.price_fixed,
-         price_total: product.price_total,
-         price_total_amount: (parseFloat(product.price_fixed) * parseInt(product.quantity)),
+         totalAmount: product?.totalAmount,
          discount: product.discount,
-         discount_amount_fixed: product.discount_amount_fixed,
-         discount_amount_total: product.discount_amount_total,
          seller: product.seller,
-         address: selectedAddress,
+         shipping_address: selectedAddress,
          payment_mode: payment_mode,
+         package_dimension: product?.package_dimension,
+         delivery_service: product?.delivery_service,
          status: "pending",
-         time_pending: new Date().toLocaleString()
+         time_pending: new Date().toLocaleString(),
       }
 
       if (window.confirm("Buy Now")) {
@@ -107,15 +107,15 @@ const CheckoutSingle = () => {
                      <hr />
                      <div className="row">
                         {
-                           <CartItem checkOut={true} cartTypes={"buy"} product={cart && cart?.buy_product}></CartItem>
+                           <CartItem checkOut={true} cartTypes={"buy"} product={userInfo && userInfo?.buy_product}></CartItem>
                         }
                      </div>
                   </div>
                </div>
                <div className="col-lg-4 mb-3">
-                  <CartCalculation product={cartCalculate([cart && cart?.buy_product])} headTitle={"Order Details"}></CartCalculation>
+                  <CartCalculation product={cartCalculate([userInfo && userInfo?.buy_product])} headTitle={"Order Details"}></CartCalculation>
                   <br />
-                  <CartPayment buyBtnHandler={buyBtnHandler}></CartPayment>
+                  <CartPayment buyBtnHandler={buyBtnHandler} isStock={userInfo && userInfo?.buy_product ? true : false}></CartPayment>
                </div>
             </div>
          </div>

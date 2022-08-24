@@ -165,34 +165,6 @@ label {
 
 // btn class
 
-.btn {
-  border: none;
-}
-
-.btn-primary {
-  background-color: var(--color-primary);
-
-  &:hover {
-    background-color: var(--color-primary-alt);
-  }
-  &:focus {
-    border: none;
-  }
-  &.active {
-    color: #fff;
-    background-color: transparent;
-  }
-}
-
-.btn-check:active + .btn-primary,
-.btn-check:checked + .btn-primary,
-.btn-primary.active,
-.btn-primary:active,
-.show > .btn-primary.dropdown-toggle {
-  color: #fff;
-  background-color: var(--color-primary);
-}
-
 .theme_box {
   display: flex;
   align-items: center;

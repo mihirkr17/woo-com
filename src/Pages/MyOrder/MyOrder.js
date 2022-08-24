@@ -52,7 +52,7 @@ const MyOrder = () => {
 
    const removeOrderHandler = async (orderId) => {
       if (window.confirm("Want to cancel this order ?")) {
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/remove-order/${orderId}`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/remove-order/${userInfo?.email}/${orderId}`, {
             method: "DELETE",
             withCredentials: true,
             credentials: "include",
@@ -161,8 +161,8 @@ const MyOrder = () => {
                      {
                         orderItems && orderItems.length > 0 ? orderItems.map(order => {
 
-                           const { product_name, quantity, payment_mode, discount, status, orderId,
-                              price_total_amount, image, productId, seller, category, cancel_reason, time_canceled, time_pending, time_placed, time_shipped, isRating, slug } = order;
+                           const { title, quantity, payment_mode, discount, status, orderId,
+                              totalAmount, image, productId, seller, category, cancel_reason, time_canceled, time_pending, time_placed, time_shipped, isRating, slug } = order;
                            return (
                               <div className="col-12 mb-3" key={orderId}>
                                  <div className="order_card">
@@ -178,10 +178,9 @@ const MyOrder = () => {
                                              <div className="row">
                                                 <div className="col-lg-5">
                                                    <p>
-                                                      {product_name.length > 30 ? product_name.slice(0, 30) + "..." : product_name} <br />
+                                                      {title.length > 30 ? title.slice(0, 30) + "..." : title} <br />
                                                       <small className="text-muted">
                                                          Seller : {seller} <br />
-                                                         Category : {category} <br />
                                                          Payment Mode : {payment_mode}
                                                       </small>
                                                    </p>
@@ -189,7 +188,7 @@ const MyOrder = () => {
 
                                                 <div className="col-lg-3">
                                                    <p>
-                                                      {price_total_amount}&nbsp;$ <br />
+                                                      {totalAmount}&nbsp;Tk <br />
                                                       <small className="text-muted">
                                                          {"Discount : " + discount + "%"} <br />
                                                          {"Qty : " + quantity}

@@ -17,14 +17,14 @@ const OrderTable = ({ orderList, updateOrderStatusHandler, cancelOrderHandler, s
          <tbody>
             {
                orderList && orderList.map((odr) => {
-                  const { orderId, user_email, payment_mode, status, owner_commission, productId, quantity, price_total_amount, seller } = odr?.orders;
-                  let total_earn = price_total_amount - parseFloat(owner_commission);
+                  const { orderId, user_email, payment_mode, status, owner_commission, productId, quantity, totalAmount, seller } = odr?.orders;
+                  let total_earn = totalAmount - parseFloat(owner_commission);
                   return (
                      <tr key={orderId}>
                         <td># <span className="text-info">{orderId}</span> </td>
                         <td>{user_email}</td>
                         <td>{payment_mode}</td>
-                        <td>{price_total_amount}$</td>
+                        <td>{totalAmount} Tk</td>
                         <td>{status}</td>
                         {
                            updateOrderStatusHandler &&

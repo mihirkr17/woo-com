@@ -1,9 +1,9 @@
-import { faCartShopping, faGauge, faHome, faUserAlt } from '@fortawesome/free-solid-svg-icons';
+import { faCartShopping, faGauge, faHome, faSearch, faUserAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
-import { Container, Navbar } from 'react-bootstrap';
+import { Navbar } from 'react-bootstrap';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { useAuthUser, useCart } from '../../App';
+import { useAuthUser } from '../../App';
 import { useAuthContext } from '../../lib/AuthProvider';
 import { loggedOut } from '../../Shared/common';
 import SearchPage from '../../Pages/SearchPage/SearchPage';
@@ -13,10 +13,11 @@ const NavigationBar = ({ theme, setTheme }) => {
    const user = useAuthUser();
    const [openAccount, setOpenAccount] = useState(false);
    const { role, userInfo } = useAuthContext();
-   const { cartProductCount } = useCart();
    const navigate = useNavigate();
    const [query, setQuery] = useState("");
-   const { data, loading } = useFetch(query && `${process.env.REACT_APP_BASE_URL}api/search-products/${query}`);
+   const [loading, setLoading] = useState(false);
+   const [data, setData] = useState([])
+   // const { data, loading } = useFetch(query && `${process.env.REACT_APP_BASE_URL}api/search-products/${query}`);
 
    const handleToSeller = async () => {
       const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/switch-role/seller`, {
@@ -39,21 +40,40 @@ const NavigationBar = ({ theme, setTheme }) => {
       }
    }
 
+   const handleSearch = async (e) => {
+      e.preventDefault();
+      setLoading(true);
+      try {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/search-products/${query}`);
+         const resData = await response.json();
+         setData(resData);
+         setLoading(false)
+      } catch (error) {
+         console.log(error);
+         setLoading(false)
+      } finally {
+         setLoading(false);
+      }
+   }
+
    return (
       <>
          <Navbar sticky='top' className='navigation_bar' expand="lg">
-            <Container className='nav_container'>
+            <div className='container nav_container'>
                <div className="nav_brand_logo">
                   <Navbar.Brand className="nav_link" as={NavLink} to="/">WooCom</Navbar.Brand>
                </div>
 
                <div className="nav_right_items">
-               
-                  <div className="search_box nv_items">
 
-                     <input type="search" className='form-control form-control-sm'
-                        onChange={(e) => setQuery(e.target.value)} value={query}
-                        placeholder='Search product by title, brand, seller' name="s_query" />
+                  <div className="search_box">
+
+                     <form onSubmit={handleSearch} className='nv_items'>
+                        <input type="search" className='form-control form-control-sm'
+                           onChange={(e) => setQuery(e.target.value)} value={query}
+                           placeholder='Search product by title, brand, seller' name="s_query" />
+                        <button type='submit' className='btn btn-sm' style={{ border: "1px solid" }}><FontAwesomeIcon icon={faSearch} /></button>
+                     </form>
 
                      {
                         query !== "" &&
@@ -71,7 +91,7 @@ const NavigationBar = ({ theme, setTheme }) => {
                      {
                         (role !== "owner" && role !== "admin" && role !== "seller") &&
                         <NavLink className="nav_link cart_link" to='/my-cart'><FontAwesomeIcon icon={faCartShopping}></FontAwesomeIcon>
-                           {user && <div className="bg-info cart_badge">{cartProductCount || 0}</div>}
+                           {user && <div className="bg-info cart_badge">{(userInfo?.myCartProduct && userInfo?.myCartProduct.length )|| 0}</div>}
                         </NavLink>
                      }
                   </div>
@@ -101,7 +121,7 @@ const NavigationBar = ({ theme, setTheme }) => {
                   {!user && <Link to="/login">Login</Link>}
 
                </div>
-            </Container>
+            </div>
 
          </Navbar>
 

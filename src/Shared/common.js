@@ -43,19 +43,23 @@ export const cartCalculate = (product) => {
       p = {
          totalPrice: (product.map(p => (parseFloat(p?.price)) * parseInt(p?.quantity)).reduce((p, c) => p + c, 0).toFixed(2)),
          totalQuantity: product.map(p => parseInt(p?.quantity)).reduce((p, c) => p + c, 0),
-         totalDiscount: (product.map(p => (parseFloat(p?.discount_amount_fixed)) * parseInt(p?.quantity)).reduce((p, c) => p + c, 0).toFixed(2)),
-         totalAmount: function () {
-            return (this.totalPrice - this.totalDiscount).toFixed(2)
-         }
+         shippingFee: product.map(p => parseFloat(p?.shipping_fee)).reduce((p, c) => p + c, 0) || 0,
+         totalAmount: (product.map(p => (parseFloat(p?.totalAmount) + parseFloat(p?.shipping_fee || 0))).reduce((p, c) => p + c, 0).toFixed(2))
       }
+      // p = {
+      //    totalPrice: (product.map(p => (parseFloat(p?.price)) * parseInt(p?.quantity)).reduce((p, c) => p + c, 0).toFixed(2)),
+      //    totalQuantity: product.map(p => parseInt(p?.quantity)).reduce((p, c) => p + c, 0),
+      //    totalDiscount: (product.map(p => (parseFloat(p?.discount_amount_fixed)) * parseInt(p?.quantity)).reduce((p, c) => p + c, 0).toFixed(2)),
+      //    totalAmount: function () {
+      //       return (this.totalPrice - this.totalDiscount).toFixed(2)
+      //    }
+      // }
    } else {
       p = {
          totalPrice: 0,
          totalQuantity: 0,
-         totalDiscount: 0,
-         totalAmount: function () {
-            return 0;
-         }
+         shippingFee: 0,
+         totalAmount: 0
       }
    }
 

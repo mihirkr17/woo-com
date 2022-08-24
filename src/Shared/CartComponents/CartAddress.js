@@ -7,7 +7,7 @@ import { loggedOut } from '../common';
 import AddressForm from './AddressForm';
 import AddressUpdateForm from './AddressUpdateForm';
 
-const CartAddress = ({ refetch, addr, setStep, navigate }) => {
+const CartAddress = ({ authRefetch, addr, setStep, navigate }) => {
 
    const [openAddressForm, setOpenAddressForm] = useState(false);
    const [openAddressUpdateForm, setOpenAddressUpdateForm] = useState(false);
@@ -47,7 +47,7 @@ const CartAddress = ({ refetch, addr, setStep, navigate }) => {
       const resData = await response.json();
 
       if (response.ok) {
-         setStep(false); refetch()
+         setStep(false); authRefetch()
       } else {
          await loggedOut();
          navigate(`/login?err=${resData?.message} token not found`);
@@ -77,7 +77,7 @@ const CartAddress = ({ refetch, addr, setStep, navigate }) => {
 
       const resData = await response.json();
 
-      if (response.ok) { setStep(false); refetch() } else {
+      if (response.ok) { setStep(false); authRefetch() } else {
          await loggedOut();
          navigate(`/login?err=${resData?.message} token not found`);
       };
@@ -99,7 +99,7 @@ const CartAddress = ({ refetch, addr, setStep, navigate }) => {
       const resData = await response.json();
 
       if (response.ok) {
-         refetch()
+         authRefetch()
       } else {
          await loggedOut();
          navigate(`/login?err=${resData?.message} token not found`);
@@ -115,7 +115,7 @@ const CartAddress = ({ refetch, addr, setStep, navigate }) => {
          });
          const resData = await response.json();
 
-         if (response.ok) { refetch() } else {
+         if (response.ok) { authRefetch() } else {
             await loggedOut();
             navigate(`/login?err=${resData?.message} token not found`);
          }

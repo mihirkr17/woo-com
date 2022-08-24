@@ -48,13 +48,13 @@ const CheckOrder = () => {
                <tbody>
                   {
                      order.map((order, index) => {
-                        const { orderId, status, payment_mode, price_total_amount, user_email } = order?.orders;
+                        const { orderId, status, payment_mode, price_total, user_email } = order?.orders;
                         return (
                            <tr key={index}>
                               <td>{orderId}</td>
                               <td>{status}</td>
                               <td>{payment_mode}</td>
-                              <td>{price_total_amount}&nbsp;$</td>
+                              <td>{price_total}&nbsp;$</td>
                               <td>
                                  <button className='status_btn me-2' onClick={() => orderDispatchHandler(orderId, user_email)}>Dispatch</button>
                                  <button className="status_btn" onClick={() => setOpenModal(true && order?.orders)}>Details</button>

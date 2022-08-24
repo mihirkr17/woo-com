@@ -6,7 +6,7 @@ import "./ViewProduct.css";
 import { useMessage } from '../../Hooks/useMessage';
 import Product from '../../Shared/Product';
 import ProductModel from '../../Shared/ProductModel';
-import { useAuthUser, useCart } from '../../App';
+import { useAuthUser } from '../../App';
 import { useState } from 'react';
 import { averageRating, loggedOut } from '../../Shared/common';
 import { useAuthContext } from '../../lib/AuthProvider';
@@ -15,8 +15,7 @@ import { useAuthContext } from '../../lib/AuthProvider';
 const ViewProduct = () => {
    const { product_slug } = useParams();
    const user = useAuthUser();
-   const { role, authRefetch } = useAuthContext();
-   const { refetch } = useCart();
+   const { authRefetch, role } = useAuthContext();
    const { data: product, loading, refetch: productRefetch } = useFetch(`${process.env.REACT_APP_BASE_URL}api/fetch-single-product/${product_slug}/${user?.email}`);
    const { data: productByCategory } = useFetch(`${process.env.REACT_APP_BASE_URL}api/product-by-category?sub_category=${product?.genre?.sub_category}`);
    const navigate = useNavigate();
@@ -37,19 +36,18 @@ const ViewProduct = () => {
          size: product?.size,
          image: product.image[0],
          quantity: 1,
-         price: parseFloat(product?.price),
-         price_fixed: parseFloat(product.price_fixed),
-         price_total: parseFloat(product.price_fixed) * 1,
+         price: parseFloat(product?.price_fixed),
+         totalAmount: parseFloat(product.price_fixed) * 1,
          discount: product?.discount,
-         discount_amount_fixed: parseFloat(product?.discount_amount_fixed),
-         discount_amount_total: parseFloat(product?.discount_amount_fixed) * 1,
-         user_email: user?.email,
          seller: product?.seller,
-         seller_sku: product?.seller_sku,
+         sku: product?.sku,
          package_dimension: product?.package_dimension,
          in_box: product?.info?.in_box,
          stock: product?.stock,
-         available: product?.available
+         available: product?.available,
+         delivery_service: product?.delivery_service,
+         payment_option: product?.payment_option,
+         shipping_fee: product?.shipping_fee || 0
       }
 
 
@@ -73,7 +71,7 @@ const ViewProduct = () => {
          const resData = await response.json();
 
          if (response.ok) {
-            refetch();
+            authRefetch();
             productRefetch();
             setMessage(resData?.message);
 
@@ -82,7 +80,7 @@ const ViewProduct = () => {
                navigate(`/product/purchase/${product?._id}`);
             } else {
                setAddCartLoading(false);
-               navigate('/my-cart');
+               // navigate('/my-cart');
             }
 
          } else {

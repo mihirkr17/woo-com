@@ -2,7 +2,7 @@ import { faCheckCircle, faLeftLong } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuthUser, useCart } from '../../App';
+import { useAuthUser } from '../../App';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { useMessage } from '../../Hooks/useMessage';
 
@@ -12,19 +12,20 @@ import CartItem from '../../Shared/CartComponents/CartItem';
 import CartPayment from '../../Shared/CartComponents/CartPayment';
 import { commissionRate } from '../../Shared/commissionRate';
 import { loggedOut } from '../../Shared/common';
+import { useAuthContext } from '../../lib/AuthProvider';
 
 const CheckOut = () => {
    const user = useAuthUser();
    const navigate = useNavigate();
    const { msg, setMessage } = useMessage()
-   const { cartLoading, cart } = useCart();
-   let products = cart?.product && cart?.product.filter(p => p?.stock === "in");
+   const { authLoading, userInfo } = useAuthContext();
+   let products = userInfo?.myCartProduct && userInfo?.myCartProduct.filter(p => p?.stock === "in");
 
-   if (cartLoading) {
+   if (authLoading) {
       return <Spinner></Spinner>;
    }
 
-   const selectedAddress = cart && cart.address && cart?.address.find(a => a?.select_address === true); //finding selected address to checkout page
+   const selectedAddress = userInfo && userInfo.address && userInfo?.address.find(a => a?.select_address === true); //finding selected address to checkout page
 
    const buyBtnHandler = async (e) => {
       e.preventDefault();
@@ -40,29 +41,30 @@ const CheckOut = () => {
       for (let i = 0; i < products.length; i++) {
          let elem = products[i];
          let orderId = Math.floor(Math.random() * 1000000000);
-         const { commission, commission_rate } = commissionRate(elem?.price_fixed, elem?.quantity);
+         const { commission, commission_rate } = commissionRate(elem?.price, elem?.quantity);
+         let trackingId = ("TR00" + orderId); 
 
          let product = {
             orderId: orderId,
-            user_email: user?.email,
+            trackingId,
+            user_email: userInfo?.email,
             owner_commission_rate: parseFloat(commission_rate.toFixed(2)),
             owner_commission: parseFloat(commission.toFixed(2)),
             productId: elem._id,
-            product_name: elem.title,
+            title: elem.title,
             slug: elem?.slug,
             brand: elem?.brand,
             image: elem.image,
+            sku: elem?.sku,
             quantity: elem.quantity,
-            price: elem.price,
-            price_fixed: elem.price_fixed,
-            price_total: elem.price_total,
-            price_total_amount: (parseFloat(elem.price_fixed) * parseInt(elem.quantity)),
+            price: elem?.price,
+            totalAmount: elem?.totalAmount,
             discount: elem.discount,
-            discount_amount_fixed: elem.discount_amount_fixed,
-            discount_amount_total: elem.discount_amount_total,
             seller: elem.seller,
-            address: selectedAddress,
             payment_mode: payment_mode,
+            shipping_address: selectedAddress,
+            package_dimension: elem?.package_dimension,
+            delivery_service: elem?.delivery_service,
             status: "pending",
             time_pending: new Date().toLocaleString()
          }
@@ -121,9 +123,9 @@ const CheckOut = () => {
                      <hr />
                      <div className="row">
                         {
-                           cart?.product && cart?.product.filter(p => p?.stock === "in").map((cart, index) => {
+                           userInfo?.myCartProduct && userInfo?.myCartProduct.filter(p => p?.stock === "in").map((userInfo, index) => {
                               return (
-                                 <CartItem cartTypes={"toCart"} checkOut={true} product={cart} key={index}></CartItem>
+                                 <CartItem cartTypes={"toCart"} checkOut={true} product={userInfo} key={index}></CartItem>
                               )
                            })
                         }
@@ -131,7 +133,7 @@ const CheckOut = () => {
                   </div>
                </div>
                <div className="col-lg-4 mb-3">
-                  <CartCalculation product={cartCalculate(cart?.product)} headTitle={"Order Details"}></CartCalculation>
+                  <CartCalculation product={cartCalculate(userInfo?.myCartProduct)} headTitle={"Order Details"}></CartCalculation>
                   <br />
                   <CartPayment buyBtnHandler={buyBtnHandler} isStock={products && products.length > 0 ? true : false}></CartPayment>
                </div>

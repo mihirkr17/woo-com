@@ -22,7 +22,7 @@ export const useFetch = (url, headers = {}) => {
                const resData = await response.json();
 
                if (response.status === 400) {
-                  console.log(resData?.message);
+                  setErr(resData?.message);
                }
 
                if (response.status >= 200 && response.status <= 299) {

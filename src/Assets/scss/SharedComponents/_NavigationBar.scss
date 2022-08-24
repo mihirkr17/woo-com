@@ -4,19 +4,20 @@
   align-items: center;
   justify-content: space-between;
   flex-direction: row;
-  padding: 0.5rem 0;
+  padding: 0.5rem 0.3rem;
+  flex-wrap: nowrap !important;
 }
 
-.nav_brand_logo {
-  width: 30%;
-}
+// .nav_brand_logo {
+//   width: 30%;
+// }
 
 .nav_right_items {
   display: flex;
   align-items: center;
   justify-content: flex-end;
   flex-direction: row;
-  width: 70%;
+  // width: 70%;
 }
 
 .nv_items {
