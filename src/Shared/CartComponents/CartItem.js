@@ -1,11 +1,14 @@
 import { faClose } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import BtnSpinner from '../../Components/Shared/BtnSpinner/BtnSpinner';
 import { apiHandler, loggedOut } from '../common';
+import ConfirmDialog from '../ConfirmDialog';
 
 const CartItem = ({ product: cartProduct, setMessage, authRefetch, checkOut, cartTypes, cartLoading, navigate }) => {
+   const [openBox, setOpenBox] = useState(false);
 
    // update product quantity handler
    const quantityHandler = async (cp, action) => {
@@ -37,16 +40,14 @@ const CartItem = ({ product: cartProduct, setMessage, authRefetch, checkOut, car
    const removeItemFromCartHandler = async (cp) => {
       const { _id, title } = cp;
 
-      if (window.confirm("Want to remove this item from your cart ?")) {
-         const resData = await apiHandler(`${process.env.REACT_APP_BASE_URL}delete-cart-item/${cartTypes && cartTypes}`, "DELETE", `${_id}`);
+      const resData = await apiHandler(`${process.env.REACT_APP_BASE_URL}delete-cart-item/${cartTypes && cartTypes}`, "DELETE", `${_id}`);
 
-         if (resData) {
-            setMessage(`${title} ${resData?.message}`);
-            authRefetch();
-         } else {
-            await loggedOut();
-            navigate(`/login?err=Something went wrong`);
-         }
+      if (resData) {
+         setMessage(`${title} ${resData?.message}`);
+         authRefetch();
+      } else {
+         await loggedOut();
+         navigate(`/login?err=Something went wrong`);
       }
    }
 
@@ -86,7 +87,10 @@ const CartItem = ({ product: cartProduct, setMessage, authRefetch, checkOut, car
                   </div>
                   {
                      !checkOut && <div className="remove_btn col-1 text-end">
-                        <button className='btn btn-sm' onClick={() => removeItemFromCartHandler(cartProduct && cartProduct)}><FontAwesomeIcon icon={faClose} /></button>
+                        <button className='btn btn-sm' onClick={() => setOpenBox(true)}><FontAwesomeIcon icon={faClose} /></button>
+                        {
+                           openBox && <ConfirmDialog payload={{ reference: cartProduct, openBox, setOpenBox, handler: removeItemFromCartHandler }} />
+                        }
                      </div>
                   }
                </div>

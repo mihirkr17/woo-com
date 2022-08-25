@@ -280,10 +280,14 @@ input:checked + .slider:before {
   margin: 0.4rem 0;
   padding: 0.1rem 0;
 
-  > big {
+   big {
     color: var(--color-accent);
     padding-right: 0.3rem;
     font-weight: 500;
+  }
+
+  span {
+    color: var(--color-secondary);
   }
 }
 
@@ -308,4 +312,33 @@ input:checked + .slider:before {
   bottom: 10px;
   right: 10px;
   z-index: 99999999999;
+}
+
+.confirm_box {
+  padding: 2rem 0.8rem;
+  background-color: whitesmoke;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 99999999;
+  border-radius: 10px;
+  width: 80%;
+  display: none;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  box-shadow: 0 0 10px 0 black;
+
+  .confirm_box_btn {
+    padding: 0.8rem 0;
+    margin-top: 1rem;
+    button {
+      margin: 0 0.5rem;
+    }
+  }
+
+  &.active {
+    display: flex;
+  }
 }

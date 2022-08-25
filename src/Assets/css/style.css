@@ -451,10 +451,14 @@ input:checked + .slider:before {
   padding: 0.1rem 0;
 }
 
-.product_price_model > big {
+.product_price_model big {
   color: var(--color-accent);
   padding-right: 0.3rem;
   font-weight: 500;
+}
+
+.product_price_model span {
+  color: var(--color-secondary);
 }
 
 .product_rating_model small {
@@ -467,6 +471,47 @@ input:checked + .slider:before {
   bottom: 10px;
   right: 10px;
   z-index: 99999999999;
+}
+
+.confirm_box {
+  padding: 2rem 0.8rem;
+  background-color: whitesmoke;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+  z-index: 99999999;
+  border-radius: 10px;
+  width: 80%;
+  display: none;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-shadow: 0 0 10px 0 black;
+          box-shadow: 0 0 10px 0 black;
+}
+
+.confirm_box .confirm_box_btn {
+  padding: 0.8rem 0;
+  margin-top: 1rem;
+}
+
+.confirm_box .confirm_box_btn button {
+  margin: 0 0.5rem;
+}
+
+.confirm_box.active {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
 }
 
 .nav_container {

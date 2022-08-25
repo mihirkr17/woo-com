@@ -134,7 +134,7 @@ const MyDashboard = () => {
                                                 </td>
                                                 <td><small>{product?.genre?.category}</small></td>
                                                 <td><small>{product?.brand}</small></td>
-                                                <td><small>{product?.price_fixed}</small></td>
+                                                <td><small>{product?.pricing?.sellingPrice}</small></td>
                                                 {role !== "seller" && <td>{product?.seller}</td>}
                                                 <td><small>{product?.top_sell || 0}</small></td>
                                              </tr>

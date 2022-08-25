@@ -16,8 +16,8 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, refetch }) => {
    // input variables states
    const [description, setDescription] = useState((data?.info?.description && data?.info?.description) || "CKEditor v5");
    const [shortDescription, setShortDescription] = useState((data?.info?.short_description && data?.info?.short_description) || "");
-   const [inputPriceDiscount, setInputPriceDiscount] = useState({ price: (data?.price && data?.price) || "", discount: (data?.discount && data?.discount) || "" });
-   const { price_fixed, discount_amount_fixed } = usePrice(inputPriceDiscount.price, inputPriceDiscount.discount);
+   const [inputPriceDiscount, setInputPriceDiscount] = useState({ price: (data?.pricing?.price && data?.pricing?.price) || "", sellingPrice: (data?.pricing?.sellingPrice && data?.pricing?.sellingPrice) || "" });
+   const { discount } = usePrice(inputPriceDiscount.price, inputPriceDiscount.sellingPrice);
    const [status, setStatus] = useState(data?.status || "");
    const [images, setImages] = useState(data?.image || []);
    const [specification, setSpecification] = useState((data?.info?.specification.length > 0 && data?.info?.specification) || [{ type: "", value: "" }]);
@@ -27,9 +27,11 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, refetch }) => {
    const [sizes, setSizes] = useState({ size: data?.info?.size || [] });
    const [brand, setBrand] = useState(data?.brand || "");
    const [sku, setSku] = useState(data?.sku || "");
-   const [available, setAvailable] = useState(data?.available || 0);
+   const [available, setAvailable] = useState(data?.available || "");
    const [inBox, setInBox] = useState(data?.delivery_service?.in_box || "");
    const [paymentOption, setPaymentOption] = useState({ payment_option: data?.payment_option || [] });
+   const [warrantyType, setWarrantyType] = useState(data?.delivery_service?.warrantyType || "");
+   const [warrantyTime, setWarrantyTime] = useState(data?.delivery_service?.warrantyTime || "");
 
    // others necessary states
    const { msg, setMessage } = useMessage();
@@ -91,7 +93,7 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, refetch }) => {
       }
    }
 
-   const handlePaymentMode =(e) => {
+   const handlePaymentMode = (e) => {
       const { value, checked } = e.target;
       const { payment_option } = paymentOption;
       if (checked) {
@@ -127,10 +129,14 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, refetch }) => {
          specification,
          size: sizes?.size,
          inBox,
-         price: parseFloat(inputPriceDiscount.price),
-         price_fixed,
-         discount: parseFloat(inputPriceDiscount.discount),
-         discount_amount_fixed,
+         warrantyType,
+         warrantyTime,
+         pricing: {
+            price: parseFloat(inputPriceDiscount.price),
+            sellingPrice: parseFloat(inputPriceDiscount.sellingPrice),
+            discount: discount,
+            currency: "BDT"
+         },
          available: parseInt(available),
          packageWeight: parseFloat(packageWeight),
          packageLength: parseFloat(packageLength),
@@ -180,7 +186,7 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, refetch }) => {
             setActionLoading(false);
 
             if (formTypes === "create") {
-               refetch();
+
                setMessage(<p className='text-success'><small><strong>{resData?.message}</strong></small></p>);
                e.target.reset();
             } else {
@@ -242,17 +248,18 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, refetch }) => {
             <h6>Product Attributes</h6>
             <div className="row my-4">
                <div className='col-lg-3 mb-3'>
-                  <label htmlFor='price'>{required} Price <small>(Fixed Price : {price_fixed || inputPriceDiscount?.price || 0})</small></label>
+                  <label htmlFor='price'>{required} Price</label>
                   <input name='price' id='price' type='number' className="form-control form-control-sm" value={inputPriceDiscount.price || ""} onChange={e => setInputPriceDiscount({ ...inputPriceDiscount, [e.target.name]: e.target.value })} />
                </div>
 
                <div className='col-lg-3 mb-3'>
-                  <label htmlFor='discount'>Discount <small>(Fixed Discount : {discount_amount_fixed || 0})</small></label>
-                  <input name='discount' id='discount' type='number' className="form-control form-control-sm" value={inputPriceDiscount.discount} onChange={e => setInputPriceDiscount({ ...inputPriceDiscount, [e.target.name]: e.target.value })} />
+                  <label htmlFor='sellingPrice'>Selling Price<small>(Discount : {discount || 0})</small></label>
+                  <input name='sellingPrice' id='sellingPrice' type='number' className="form-control form-control-sm" value={inputPriceDiscount.sellingPrice} onChange={e => setInputPriceDiscount({ ...inputPriceDiscount, [e.target.name]: e.target.value })} />
                </div>
+
                <div className='col-lg-3 mb-3'>
                   <label htmlFor='available'>{required} Stock</label>
-                  <input className='form-control form-control-sm' name='available' id='available' type='number' value={(available || 0)} onChange={e => setAvailable(e.target.value)} />
+                  <input className='form-control form-control-sm' name='available' id='available' type='number' value={(available)} onChange={e => setAvailable(e.target.value)} />
                </div>
                <div className='col-lg-3 mb-3'>
                   <label htmlFor='sku'>{required} SKU</label>
@@ -363,12 +370,12 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, refetch }) => {
                            <div className="py-2 d-flex align-items-end" key={i}>
 
                               <div className="row w-100">
-                                 <div className="col-lg-6 mb-3">
+                                 <div className="col-lg-6">
                                     <label htmlFor='type'>Specification Type</label>
                                     <input className="form-control form-control-sm" name="type" id='type' type="text" placeholder='Spec type' value={x.type} onChange={(e) => specificationInputHandler(e, i)}></input>
                                  </div>
 
-                                 <div className="col-lg-6 mb-3">
+                                 <div className="col-lg-6">
                                     <label htmlFor='value'>Specification Value</label>
                                     <input className="form-control form-control-sm" name="value" id='value' type="text" placeholder='Spec_value' value={x.value} onChange={(e) => specificationInputHandler(e, i)}></input>
                                  </div>
@@ -435,7 +442,7 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, refetch }) => {
                   </select>
                </div>
                <div className="col-lg-3">
-               <label htmlFor="status">Set Payment Options</label>
+                  <label htmlFor="status">Set Payment Options</label>
                   {
                      paymentMode && paymentMode.map((e, i) => {
                         return (
@@ -449,6 +456,36 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, refetch }) => {
                      })
                   }
                </div>
+               <div className="col-lg-3">
+                  <label htmlFor="warrantyType">Warranty</label>
+                  <select className='form-select form-select-sm' name="warrantyType" id="warrantyType" onChange={(e) => setWarrantyType(e.target.value)}>
+                     {data?.delivery_service?.warrantyType && 
+                     <option value={data?.delivery_service?.warrantyType}>{data?.delivery_service?.warrantyType}</option>}
+                     <option value="">Choose Warranty Types</option>
+                     <option value={"seller_warranty"}>Seller Warranty</option>
+                     <option value="brand_warranty">Brand Warranty</option>
+                     <option value="no_warranty">No Warranty</option>
+                  </select>
+               </div>
+
+               {
+                  warrantyType === "seller_warranty" &&
+                  <div className="col-lg-3">
+                     <label htmlFor="warrantyTime">Choose Warranty Time</label>
+                     <select className='form-select form-select-sm' name="warrantyTime" id="warrantyTime" onChange={(e) => setWarrantyTime(e.target.value)}>
+
+                        {
+                           data?.delivery_service?.warrantyTime &&
+                           <option value={data?.delivery_service?.warrantyTime}>{data?.delivery_service?.warrantyTime}</option>
+                        }
+                        <option value="">Choose Warranty Time</option>
+                        <option value={"6-months"}>6 Months</option>
+                        <option value="1-year">1 Year</option>
+                        <option value="1.5-years">1.5 Years</option>
+                        <option value="2-years">2 Years</option>
+                     </select>
+                  </div>
+               }
             </div>
          </div>
 

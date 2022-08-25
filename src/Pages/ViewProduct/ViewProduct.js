@@ -36,8 +36,8 @@ const ViewProduct = () => {
          size: product?.size,
          image: product.image[0],
          quantity: 1,
-         price: parseFloat(product?.price_fixed),
-         totalAmount: parseFloat(product.price_fixed) * 1,
+         price: parseFloat(product?.pricing?.specialPrice || product?.pricing?.sellingPrice),
+         totalAmount: parseFloat(product?.pricing?.specialPrice || product?.pricing?.sellingPrice) * 1,
          discount: product?.discount,
          seller: product?.seller,
          sku: product?.sku,
@@ -80,7 +80,7 @@ const ViewProduct = () => {
                navigate(`/product/purchase/${product?._id}`);
             } else {
                setAddCartLoading(false);
-               // navigate('/my-cart');
+               navigate('/my-cart');
             }
 
          } else {
@@ -94,24 +94,13 @@ const ViewProduct = () => {
 
    const addToWishlist = async (product) => {
 
-      let quantity = 1;
-      let productPrice = parseInt(product?.price);
-      let discount_amount_fixed = parseFloat(product?.discount_amount_fixed)
-      let discount_amount_total = discount_amount_fixed * quantity;
-
       let wishlistProduct = {
          _id: product._id,
          title: product.title,
          slug: product.slug,
          brand: product.brand,
          image: product.image[0],
-         quantity: quantity,
-         price: productPrice,
-         price_total: (productPrice * quantity) - discount_amount_total,
-         price_fixed: product.price_fixed,
-         discount: product.discount,
-         discount_amount_fixed: discount_amount_fixed,
-         discount_amount_total: discount_amount_total,
+         pricing: product?.pricing,
          stock: product?.stock,
          user_email: user?.email,
          seller: product?.seller

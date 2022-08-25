@@ -53,7 +53,7 @@ const Wishlist = () => {
                                           <div className="d-flex align-items-center justify-content-between flex-wrap">
                                              <small>
                                                 <strike className='text-muted'>{product && product?.price}</strike>&nbsp;
-                                                <big className='text-info'>{product && product?.price_fixed} TK</big>&nbsp;{product && product?.discount + "% Off"}
+                                                <big className='text-info'>{product && product?.pricing?.sellingPrice} TK</big>&nbsp;{product && product?.discount + "% Off"}
                                              </small>
                                              <small className="text-muted">Qty : {product && product?.quantity}</small>
                                              <small className="text-muted">Seller : {product && product?.seller}</small>

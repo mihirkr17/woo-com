@@ -3,9 +3,8 @@ import Spinner from '../../../Components/Shared/Spinner/Spinner';
 import { useFetch } from '../../../Hooks/useFetch';
 import { useMessage } from '../../../Hooks/useMessage';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faPenAlt, faPenToSquare, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faPenToSquare, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import ProductDetailsModal from './Components/ProductDetailsModal';
-import { Table } from 'react-bootstrap';
 import { useAuthContext } from '../../../lib/AuthProvider';
 import { loggedOut } from '../../../Shared/common';
 import { Link, useNavigate } from 'react-router-dom';
@@ -83,6 +82,38 @@ const ManageProduct = () => {
       pageBtn.push(i);
    }
 
+   const stockHandler = async (e, productId) => {
+      const { value } = e.target;
+      let available = parseInt(value);
+
+      try {
+
+         setTimeout(async () => {
+            const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/update-stock/`, {
+               method: "PUT",
+               headers: {
+                  "Content-Type": "application/json",
+                  authorization: `${productId}`
+               },
+               withCredentials: true,
+               credentials: "include",
+               body: JSON.stringify({ available })
+            });
+
+            const resData = await response.json();
+            if (response.ok) {
+               resData && setMessage(<p className='text-success'><strong>Stock updated successfully</strong></p>);
+               refetch();
+            } else {
+               await loggedOut();
+               navigate(`login?err=${resData?.message}`);
+            }
+         }, 400)
+      } catch (error) {
+         setMessage(error?.message);
+      }
+   }
+
    return (
 
       <div className='section_default'>
@@ -103,11 +134,11 @@ const ManageProduct = () => {
                         <div className="product_header">
 
                            <div className="d-flex justify-content-between align-items-center flex-wrap">
-                              <h5 className='py-3'>{role === "seller" ? "My Products" : "All Products (" + counter?.count + ")"}</h5>
+                              <h5 className='py-3'>{role === "seller" ? "My Products (" + counter?.count + ")" : "All Products (" + counter?.count + ")"}</h5>
                               <div className='py-3'>
 
                                  <select name="filter_product" style={{ textTransform: "capitalize" }} className='form-select form-select-sm' onChange={e => setFilterCategory(e.target.value)}>
-                                    <option value="all">Choose...</option>
+                                    <option value="all">All</option>
                                     {
                                        newCategory && newCategory.map((opt, index) => {
                                           return (
@@ -132,14 +163,14 @@ const ManageProduct = () => {
 
                         {
                            loading ? <Spinner /> :
-                              <>
-                                 <Table responsive>
+                              <div className='table-responsive'>
+                                 <table className='table table-striped table-bordered'>
                                     <thead>
                                        <tr>
                                           {/* <th>Product</th> */}
                                           <th>Title</th>
                                           <th>Price</th>
-                                          <th>Price Fixed</th>
+                                          <th>Selling Price</th>
                                           <th>Discount</th>
                                           <th>Stock</th>
                                           <th>Category</th>
@@ -150,7 +181,7 @@ const ManageProduct = () => {
                                     <tbody>
                                        {products && products.map((p, index) => {
 
-                                          const { genre, available, price, price_fixed, discount, sku } = p;
+                                          const { genre, available, pricing, sku } = p;
                                           return (
                                              <tr key={index}>
                                                 <td>
@@ -163,16 +194,17 @@ const ManageProduct = () => {
                                                    </div>
                                                 </td>
                                                 <td>
-                                                   {price} Tk
+                                                   {pricing?.price} Tk
                                                 </td>
                                                 <td>
-                                                   {price_fixed} Tk
+                                                   {pricing?.sellingPrice} Tk
+
                                                 </td>
                                                 <td>
-                                                   {discount} %
+                                                   {pricing?.discount} %
                                                 </td>
                                                 <td>
-                                                   {available}
+                                                   <input type="text" style={{ width: "50px", border: "none", backgroundColor: "inherit" }} onChange={(e) => stockHandler(e, p?._id)} defaultValue={available} readOnly onDoubleClick={e => e.target.readOnly = false} />
                                                 </td>
                                                 <td>{genre?.category}</td>
                                                 <td>{p?.seller}</td>
@@ -194,7 +226,7 @@ const ManageProduct = () => {
                                           )
                                        })}
                                     </tbody>
-                                 </Table>
+                                 </table>
                                  {
                                     <div className="py-3 text-center pagination_system">
                                        <ul className='pagination justify-content-center pagination-sm'>
@@ -222,7 +254,7 @@ const ManageProduct = () => {
                                     modalClose={() => setProductDetailsModal(false)}
                                     showFor={role}
                                  />
-                              </>
+                              </div>
                         }
                      </>
             }

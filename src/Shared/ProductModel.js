@@ -17,8 +17,8 @@ const ProductModel = ({ product, addToCartHandler, addCartLoading, buyLoading, s
    const [zoom, setZoom] = useState({ transform: "translate3d('0px, 0px, 0px')" });
    useEffect(() => setTabImg(product?.image && product?.image[0]), [product?.image]);
    useEffect(() => setSize(product?.info?.size && product?.info?.size[0]), [product?.info?.size]);
-   
-    if (product) {
+
+   if (product) {
       product['size'] = (size);
    }
 
@@ -74,18 +74,18 @@ const ProductModel = ({ product, addToCartHandler, addCartLoading, buyLoading, s
                </div>
 
                <div className="product_price_model">
-                  <big>BDT {product?.price_fixed} TK</big>
-                  <small><strike><i>BDT {product?.price} TK</i></strike> (-{product?.discount || 0}%) off</small>
+                  <big>{product?.pricing?.sellingPrice || product?.pricing?.price} TK</big>
+                  <span><strike>{product?.pricing?.price} TK</strike> (-{product?.pricing?.discount || 0}%) off</span>
                </div>
 
 
                <small className='text-muted'><i>{product?.stock === "out" ? "Out of Stock" : "Hurry, Only " + product?.available + " Left !"} </i></small><br />
                <small className='text-muted'>Seller : {product?.seller}</small><br />
                {
-                  product?.info?.size && 
+                  product?.info?.size &&
                   product?.info?.size.map((e, i) => {
-                     return(
-                        <button key={i} className='btn btn-sm' style={size && size === e ? {backgroundColor: "gray"} : {}} onClick={() => setSize(e)}>{e}</button>
+                     return (
+                        <button key={i} className='btn btn-sm' style={size && size === e ? { backgroundColor: "gray" } : {}} onClick={() => setSize(e)}>{e}</button>
                      )
                   })
                }
