@@ -2,18 +2,14 @@ import { faCheckCircle, faLeftLong } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuthUser } from '../../App';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { cartCalculate, loggedOut } from '../../Shared/common';
 import CartCalculation from '../../Shared/CartComponents/CartCalculation';
 import CartItem from '../../Shared/CartComponents/CartItem';
 import CartPayment from '../../Shared/CartComponents/CartPayment';
-import { commissionRate } from '../../Shared/commissionRate';
 import { useAuthContext } from '../../lib/AuthProvider';
 
 const CheckoutSingle = () => {
-
-   const user = useAuthUser();
    const navigate = useNavigate();
    const { userInfo, authLoading } = useAuthContext();
    const product = userInfo && userInfo?.buy_product;
@@ -25,50 +21,51 @@ const CheckoutSingle = () => {
       e.preventDefault();
       let payment_mode = e.target.payment.value;
       let orderId = Math.floor(Math.random() * 1000000000);
-      let productQuantity = parseInt(product?.quantity);
-      const { commission, commission_rate } = commissionRate(parseFloat(product?.price), productQuantity)
-      let trackingId = ("TR00" + orderId); 
+      let trackingId = ("TR00" + orderId);
       let products = {
          orderId: orderId,
          trackingId,
          user_email: userInfo?.email,
-         owner_commission_rate: parseFloat(commission_rate.toFixed(2)),
-         owner_commission: parseFloat(commission.toFixed(2)),
-         productId: product._id,
-         title: product.title,
+         productId: product?._id,
+         title: product?.title,
          slug: product?.slug,
          brand: product?.brand,
          image: product.image,
          sku: product?.sku,
-         quantity: product.quantity,
-         price: product.price,
+         price: product?.price,
          totalAmount: product?.totalAmount,
-         discount: product.discount,
-         seller: product.seller,
-         shipping_address: selectedAddress,
+         quantity: product?.quantity,
+         seller: product?.seller,
          payment_mode: payment_mode,
+         shipping_address: selectedAddress,
          package_dimension: product?.package_dimension,
          delivery_service: product?.delivery_service,
-         status: "pending",
-         time_pending: new Date().toLocaleString(),
       }
 
       if (window.confirm("Buy Now")) {
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}set-order/${user?.email}`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/set-order/`, {
             method: "POST",
             withCredentials: true,
             credentials: "include",
             headers: {
-               "Content-Type": "application/json"
+               "Content-Type": "application/json",
+               authorization: `${userInfo?.email}`
             },
             body: JSON.stringify({ ...products })
          });
 
          const resData = await response.json();
 
+         // if (response.status === 400) {
+         //    setMessage(resData?.message);
+         //    return
+         // }
+
          if (response.status >= 200 && response.status <= 299) {
             navigate(`/my-profile/my-order?order=${resData?.message}`);
-         } else {
+         }
+
+         if ((response.status === 401) || (response.status === 403)) {
             await loggedOut();
             navigate(`/login?err=${resData?.message} token not found`);
          }

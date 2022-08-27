@@ -17,7 +17,6 @@ const ProductCategory = () => {
    const [brands, setBrands] = useState({ brand: [] });
    const [getBrand, setGetBrand] = useState(["all"]);
    const [products, setProducts] = useState([]);
-
    const subCategory = newCategory && newCategory.find(e => e.category === category);
    const postCategory = subCategory?.sub_category_items && subCategory?.sub_category_items.find(e => e.sub_category === sub_category);
 

@@ -2,9 +2,7 @@ import React from 'react';
 import "./Modal.css";
 
 const Modal = ({ data, closeModal }) => {
-   const { orderId, title, user_email, payment_mode, image, trackingId,delivery_service, package_dimension, status, quantity, time_pending, shipping_address, discount, price, totalAmount } = data && data;
-
-
+   const { orderId, title, user_email, payment_mode, image, trackingId, delivery_service, package_dimension, status, quantity, time_pending, shipping_address, discount, price, totalAmount } = data && data;
 
    return (
       <div className='modal_c' style={data ? { display: "block" } : { display: "none" }}>
@@ -12,6 +10,8 @@ const Modal = ({ data, closeModal }) => {
             <button className="modal_close" onClick={closeModal}>x</button>
             <div className="modal_wrapper">
                <div className="modal_text">
+
+
                   <table className='table table-responsive'>
                      <thead>
                         <tr>

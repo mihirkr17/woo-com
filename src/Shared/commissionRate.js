@@ -1,38 +1,44 @@
-export const commissionRate = (pf, pq) => {
-   const priceFixed = parseFloat(pf);
-   const productQuantity = parseInt(pq);
-   let commission = 0;
-   let commission_rate = 0;
+export const commissionRate = (prices = 0, quantity = 0) => {
+   const price = parseFloat(prices);
+   const productQuantity = parseInt(quantity);
+   let ownerProfit = 0;
 
-   if (priceFixed > 50) {
-      commission = (priceFixed * 3) / 100;
-      commission_rate = commission;
-      commission = commission * productQuantity;
-   } else if (priceFixed > 100) {
-      commission = (priceFixed * 6) / 100;
-      commission_rate = commission;
-      commission = commission * productQuantity;
-   } else if (priceFixed > 150) {
-      commission = (priceFixed * 9) / 100;
-      commission_rate = commission;
-      commission = commission * productQuantity;
-   } else if (priceFixed > 200) {
-      commission = (priceFixed * 12) / 100;
-      commission_rate = commission;
-      commission = commission * productQuantity;
-   } else if (priceFixed > 250) {
-      commission = (priceFixed * 15) / 100;
-      commission_rate = commission;
-      commission = commission * productQuantity;
-   } else if (priceFixed > 300) {
-      commission = (priceFixed * 18) / 100;
-      commission_rate = commission;
-      commission = commission * productQuantity;
-   } else {
-      commission = (priceFixed * 1.5) / 100;
-      commission_rate = commission;
-      commission = commission * productQuantity;
-   }
+   ownerProfit = (price * 5) / 100;
+   ownerProfit = (ownerProfit * productQuantity);
+   ownerProfit = parseFloat(ownerProfit.toFixed(2));
+   // commission_rate = commission;
+   // commission = commission * productQuantity;
 
-   return { commission, commission_rate }
+
+   // if (price <= 300) {
+   //    commission = (price * 3) / 100;
+   //    commission_rate = commission;
+   //    commission = commission * productQuantity;
+   // } else if (price > 100) {
+   //    commission = (price * 6) / 100;
+   //    commission_rate = commission;
+   //    commission = commission * productQuantity;
+   // } else if (price > 150) {
+   //    commission = (price * 9) / 100;
+   //    commission_rate = commission;
+   //    commission = commission * productQuantity;
+   // } else if (price > 200) {
+   //    commission = (price * 12) / 100;
+   //    commission_rate = commission;
+   //    commission = commission * productQuantity;
+   // } else if (price > 250) {
+   //    commission = (price * 15) / 100;
+   //    commission_rate = commission;
+   //    commission = commission * productQuantity;
+   // } else if (price > 300) {
+   //    commission = (price * 18) / 100;
+   //    commission_rate = commission;
+   //    commission = commission * productQuantity;
+   // } else {
+   //    commission = (price * 1.5) / 100;
+   //    commission_rate = commission;
+   //    commission = commission * productQuantity;
+   // }
+
+   return { ownerProfit }
 }

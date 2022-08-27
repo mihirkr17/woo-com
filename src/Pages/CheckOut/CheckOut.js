@@ -2,20 +2,16 @@ import { faCheckCircle, faLeftLong } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuthUser } from '../../App';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { useMessage } from '../../Hooks/useMessage';
-
 import { cartCalculate } from '../../Shared/common';
 import CartCalculation from '../../Shared/CartComponents/CartCalculation';
 import CartItem from '../../Shared/CartComponents/CartItem';
 import CartPayment from '../../Shared/CartComponents/CartPayment';
-import { commissionRate } from '../../Shared/commissionRate';
 import { loggedOut } from '../../Shared/common';
 import { useAuthContext } from '../../lib/AuthProvider';
 
 const CheckOut = () => {
-   const user = useAuthUser();
    const navigate = useNavigate();
    const { msg, setMessage } = useMessage()
    const { authLoading, userInfo } = useAuthContext();
@@ -41,49 +37,52 @@ const CheckOut = () => {
       for (let i = 0; i < products.length; i++) {
          let elem = products[i];
          let orderId = Math.floor(Math.random() * 1000000000);
-         const { commission, commission_rate } = commissionRate(elem?.price, elem?.quantity);
-         let trackingId = ("TR00" + orderId); 
+         let trackingId = ("TR00" + orderId);
 
          let product = {
             orderId: orderId,
             trackingId,
             user_email: userInfo?.email,
-            owner_commission_rate: parseFloat(commission_rate.toFixed(2)),
-            owner_commission: parseFloat(commission.toFixed(2)),
             productId: elem._id,
-            title: elem.title,
+            title: elem?.title,
             slug: elem?.slug,
             brand: elem?.brand,
             image: elem.image,
             sku: elem?.sku,
-            quantity: elem.quantity,
             price: elem?.price,
             totalAmount: elem?.totalAmount,
-            discount: elem.discount,
-            seller: elem.seller,
+            quantity: elem?.quantity,
+            seller: elem?.seller,
             payment_mode: payment_mode,
             shipping_address: selectedAddress,
             package_dimension: elem?.package_dimension,
             delivery_service: elem?.delivery_service,
-            status: "pending",
-            time_pending: new Date().toLocaleString()
          }
 
          if (buyAlert) {
-            const response = await fetch(`${process.env.REACT_APP_BASE_URL}set-order/${user?.email}`, {
+            const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/set-order/`, {
                method: "POST",
                withCredentials: true,
                credentials: "include",
                headers: {
-                  "Content-Type": "application/json"
+                  "Content-Type": "application/json",
+                  authorization: `${userInfo?.email}`
                },
                body: JSON.stringify({ ...product })
             });
 
+            const resData = await response.json();
+
+            if (response.status === 400) {
+               setMessage(resData?.message);
+               return
+            }
+
             if (response.status >= 200 && response.status <= 299) {
-               const resData = await response.json();
                navigate(`/my-profile/my-order?order=${resData?.message}`);
-            } else {
+            }
+
+            if ((response.status === 401) || (response.status === 403)) {
                await loggedOut();
             }
          }

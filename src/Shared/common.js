@@ -80,3 +80,13 @@ export const apiHandler = async (url, method = "GET", authorization, body = {}) 
       return resData;
    }
 }
+
+export const commissionRate = (prices = 0, quantity = 0) => {
+   const price = parseFloat(prices);
+   const productQuantity = parseInt(quantity);
+   let ownerProfit = 0;
+   ownerProfit = (price * 5) / 100;
+   ownerProfit = (ownerProfit * productQuantity);
+   ownerProfit = parseFloat(ownerProfit.toFixed(2));
+   return { ownerProfit }
+}

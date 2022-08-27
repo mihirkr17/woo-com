@@ -122,7 +122,7 @@ const ProductModel = ({ product, addToCartHandler, addCartLoading, buyLoading, s
             </div>
             <div className="dp_fgk card_description">
                {
-                  tab === "description" && <Interweave className='pt-4 product_spec' content={product?.description} />
+                  tab === "description" && <Interweave className='pt-4 product_spec' content={product?.info?.description} />
                }
                {
                   tab === "spec" && <table className='table table-sm'>

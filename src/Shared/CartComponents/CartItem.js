@@ -27,10 +27,17 @@ const CartItem = ({ product: cartProduct, setMessage, authRefetch, checkOut, car
 
       const resData = await response.json();
 
+      if (response.status === 400) {
+         setMessage(resData?.message);
+         return
+      }
+
       if (response.ok) {
          authRefetch();
          setMessage(resData?.message);
-      } else {
+      }
+
+      if ((response.status === 401) || (response.status === 403)) {
          await loggedOut();
          navigate(`/login?err=Something went wrong`);
       }
@@ -79,10 +86,12 @@ const CartItem = ({ product: cartProduct, setMessage, authRefetch, checkOut, car
                         <div className="product_price_model">
                            <big>{cartProduct?.price} TK</big>
                         </div>
-
-                        <small className="text-muted">Size : {cartProduct && cartProduct?.size}</small>
+                        {
+                           (cartProduct && cartProduct?.size) && <small className="text-muted">Size : {cartProduct && cartProduct?.size}</small>
+                        }
                         <small className="text-muted">Qty : {cartProduct && cartProduct?.quantity}</small>
                         <small className="text-muted">Seller : {cartProduct && cartProduct?.seller}</small>
+                        <small className="text-muted">Stock : {cartProduct && cartProduct?.stock}</small>
                      </div>
                   </div>
                   {

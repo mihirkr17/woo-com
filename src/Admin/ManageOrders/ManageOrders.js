@@ -4,27 +4,30 @@ import Modal from './Components/Modal/Modal';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { useEffect } from 'react';
 import OrderTable from './Components/OrderTable';
-import { useAuthUser } from '../../App';
 import { useOrder } from '../../lib/OrderProvider';
 import { loggedOut } from '../../Shared/common';
 import { useNavigate } from 'react-router-dom';
+import ModalLabel from './Components/ModalLabel/ModalLabel';
+import { useAuthContext } from '../../lib/AuthProvider';
 
 const ManageOrders = () => {
-
-   const user = useAuthUser();
+   const { userInfo } = useAuthContext();
    const { msg, setMessage } = useMessage();
    const { order, orderRefetch, orderLoading } = useOrder();
    const [openModal, setOpenModal] = useState(false);
+   const [labelModal, setLabelModal] = useState(false);
    const [pendingOrders, setPendingOrders] = useState([]);
-   const [placeOrder, setPlaceOrder] = useState([]);
+   const [dispatchOrder, setDispatchOrder] = useState([]);
    const [shipOrder, setShipOrder] = useState([]);
+   const [oid, setOid] = useState(0);
    const navigate = useNavigate();
+
 
    // Filtering orders by status
    useEffect(() => {
       if (order) {
          setPendingOrders(order.filter(odr => odr?.orders?.status === "pending").reverse());
-         setPlaceOrder(order.filter(odr => odr?.orders?.status === "placed").reverse())
+         setDispatchOrder(order.filter(odr => odr?.orders?.status === "dispatch").reverse())
          setShipOrder(order.filter(odr => odr?.orders?.status === "shipped").reverse());
       }
    }, [order]);
@@ -81,6 +84,27 @@ const ManageOrders = () => {
       }
    }
 
+   const orderDispatchHandler = async (orderId, user_email) => {
+      if (orderId && user_email) {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/dispatch-order-request/${orderId}/${user_email}`, {
+            method: "PUT",
+            withCredentials: true,
+            credentials: "include",
+            headers: {
+               "Content-Type": "application/json",
+            }
+         });
+
+         if (response.status >= 200 && response.status <= 299) {
+            const resData = await response.json();
+            setMessage(<p className='text-success'><small><strong>{resData?.message}</strong></small></p>)
+            orderRefetch();
+         } else {
+            await loggedOut();
+         }
+      }
+   }
+
    return (
       <div className='section_default'>
          <div className="container">
@@ -96,10 +120,13 @@ const ManageOrders = () => {
                         {
                            orderLoading ? <Spinner /> : pendingOrders.length > 0 ?
                               <OrderTable
+                                 setOid={setOid}
                                  orderList={pendingOrders}
                                  updateOrderStatusHandler={updateOrderStatusHandler}
+                                 orderDispatchHandler={orderDispatchHandler}
                                  cancelOrderHandler={cancelOrderHandler}
                                  setOpenModal={setOpenModal}
+                                 setLabelModal={setLabelModal}
                               /> : <i className='text-muted'>No pending orders</i>
                         }
                      </div>
@@ -107,12 +134,12 @@ const ManageOrders = () => {
                </div>
                <div className="col-lg-12  mb-4 p-3">
                   <div className='card_default card_description'>
-                     <h6>Placed Orders ({placeOrder.length})</h6>
+                     <h6>Placed Orders ({dispatchOrder.length})</h6>
                      <div className="py-1" style={{ maxHeight: "300px", overflowY: "auto" }}>
                         {
-                           orderLoading ? <Spinner /> : placeOrder.length > 0 ?
+                           orderLoading ? <Spinner /> : dispatchOrder.length > 0 ?
                               <OrderTable
-                                 orderList={placeOrder}
+                                 orderList={dispatchOrder}
                                  updateOrderStatusHandler={updateOrderStatusHandler}
                                  setOpenModal={setOpenModal}
                               />
@@ -141,6 +168,12 @@ const ManageOrders = () => {
             data={openModal}
             closeModal={() => setOpenModal(false)}
          ></Modal>
+
+         <ModalLabel
+            data={labelModal}
+            userInfo={userInfo}
+            closeModal={() => setLabelModal(false)}
+         ></ModalLabel>
       </div >
    );
 };
