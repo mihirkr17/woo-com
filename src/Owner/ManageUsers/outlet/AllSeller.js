@@ -5,7 +5,7 @@ import { useFetch } from '../../../Hooks/useFetch';
 
 const AllSeller = () => {
    
-   const { data, loading } = useFetch(`${process.env.REACT_APP_BASE_URL}api/manage-user?uTyp=seller`);
+   const { data, loading } = useFetch(`${process.env.REACT_APP_BASE_URL}api/user/manage-user?uTyp=seller`);
    if (loading) return <Spinner></Spinner>;
    return (
       <div className='table-responsive pt-4'>

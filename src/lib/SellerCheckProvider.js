@@ -18,7 +18,7 @@ const reducer = (state, action) => {
 
 const SellerCheckProvider = ({ children }) => {
    
-   const url = `${process.env.REACT_APP_BASE_URL}api/check-seller-request`;
+   const url = `${process.env.REACT_APP_BASE_URL}api/user/check-seller-request`;
    const { data, refetch, loading } = useFetch(url);
 
    const initialState = {

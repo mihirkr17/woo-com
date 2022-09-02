@@ -22,7 +22,7 @@ const Modal = ({ data, closeModal }) => {
                         <tr>
                            <th>Product</th>
                            <td>
-                              <img src={image} alt="" style={{ width: "55px", height: "55px" }} />
+                              <img src={image} alt="" style={{ width: "55px", height: "55px" }} />&nbsp;&nbsp;
                               <span>{title}</span>
                            </td>
                         </tr>
@@ -45,10 +45,6 @@ const Modal = ({ data, closeModal }) => {
                         <tr>
                            <th>Quantity</th>
                            <td>{quantity}</td>
-                        </tr>
-                        <tr>
-                           <th>Discount</th>
-                           <td>{discount}%</td>
                         </tr>
                         <tr>
                            <th>Total Amount</th>

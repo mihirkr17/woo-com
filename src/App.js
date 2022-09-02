@@ -14,7 +14,7 @@ import Cart from './Pages/Cart/Cart';
 import Purchase from './Pages/Purchase/Purchase';
 import CheckOut from './Pages/CheckOut/CheckOut';
 import MyOrder from './Pages/MyOrder/MyOrder';
-import ManageOrders from './Admin/ManageOrders/ManageOrders';
+import ManageOrders from './Seller/ManageOrders/ManageOrders';
 import ProductCategory from './Pages/ProductCategory/ProductCategory';
 import Dashboard from './Pages/Dashboard/Dashboard';
 import MyProfile from './Pages/Dashboard/MyProfile/MyProfile';
@@ -64,9 +64,9 @@ function App() {
           <Route path='/search' element={<SearchPage></SearchPage>}></Route>
 
           <Route path='/product/:product_slug' element={<ViewProduct></ViewProduct>}></Route>
-          <Route path='/:category' element={<ProductCategory></ProductCategory>}></Route>
-          <Route path='/:category/:sub_category' element={<ProductCategory></ProductCategory>}></Route>
-          <Route path='/:category/:sub_category/:post_category' element={<ProductCategory></ProductCategory>}></Route>
+          <Route path='/c/:category' element={<ProductCategory></ProductCategory>}></Route>
+          <Route path='/c/:category/:sub_category' element={<ProductCategory></ProductCategory>}></Route>
+          <Route path='/c/:category/:sub_category/:post_category' element={<ProductCategory></ProductCategory>}></Route>
 
           <Route path='/my-cart' element={<RequireAuth><Cart></Cart></RequireAuth>}></Route>
           <Route path='/product/purchase/:productId' element={<RequireAuth><Purchase></Purchase></RequireAuth>}></Route>

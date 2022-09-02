@@ -1,4 +1,4 @@
-import { faCartShopping, faGauge, faHome, faSearch, faUserAlt } from '@fortawesome/free-solid-svg-icons';
+import { faCartShopping, faGauge, faSearch, faUserAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 import { Navbar } from 'react-bootstrap';
@@ -7,7 +7,7 @@ import { useAuthUser } from '../../App';
 import { useAuthContext } from '../../lib/AuthProvider';
 import { loggedOut } from '../../Shared/common';
 import SearchPage from '../../Pages/SearchPage/SearchPage';
-import { useFetch } from '../../Hooks/useFetch';
+import CategoryHeader from '../../Pages/Home/Components/CategoryHeader';
 
 const NavigationBar = ({ theme, setTheme }) => {
    const user = useAuthUser();
@@ -17,10 +17,9 @@ const NavigationBar = ({ theme, setTheme }) => {
    const [query, setQuery] = useState("");
    const [loading, setLoading] = useState(false);
    const [data, setData] = useState([])
-   // const { data, loading } = useFetch(query && `${process.env.REACT_APP_BASE_URL}api/search-products/${query}`);
 
    const handleToSeller = async () => {
-      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/switch-role/seller`, {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/user/switch-role/seller`, {
          method: "PUT",
          withCredentials: true,
          credentials: "include",
@@ -32,24 +31,29 @@ const NavigationBar = ({ theme, setTheme }) => {
       const resData = await response.json();
 
       if (response.ok) {
-         navigate(`/dashboard`);
-         window.location.reload();
-      } else {
+         window.location.href = `/dashboard`;
+      }
+
+      if (response.status === 401 || response.status === 403) {
          await loggedOut();
          navigate(`/login?err=${resData?.message} token not found`);
       }
    }
 
    const handleSearch = async (e) => {
-      e.preventDefault();
-      setLoading(true);
       try {
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/search-products/${query}`);
-         const resData = await response.json();
-         setData(resData);
-         setLoading(false)
+         e.preventDefault();
+         if (query) {
+            setLoading(true);
+            const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/product/search-products/${query}`);
+            const resData = await response.json();
+            setData(resData);
+            setLoading(false);
+         } else {
+            window.alert("Search by product name or category");
+         }
+
       } catch (error) {
-         console.log(error);
          setLoading(false)
       } finally {
          setLoading(false);
@@ -91,7 +95,7 @@ const NavigationBar = ({ theme, setTheme }) => {
                      {
                         (role !== "owner" && role !== "admin" && role !== "seller") &&
                         <NavLink className="nav_link cart_link" to='/my-cart'><FontAwesomeIcon icon={faCartShopping}></FontAwesomeIcon>
-                           {user && <div className="bg-info cart_badge">{(userInfo?.myCartProduct && userInfo?.myCartProduct.length )|| 0}</div>}
+                           {user && <div className="bg-info cart_badge">{(userInfo?.myCartProduct && userInfo?.myCartProduct.length) || 0}</div>}
                         </NavLink>
                      }
                   </div>
@@ -122,10 +126,8 @@ const NavigationBar = ({ theme, setTheme }) => {
 
                </div>
             </div>
-
          </Navbar>
-
-
+         <CategoryHeader />
       </>
 
    );

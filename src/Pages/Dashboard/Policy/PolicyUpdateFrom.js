@@ -100,7 +100,7 @@ console.log(paymentInformation);
       let policy = {
          replace_policy: replacePolicy, refund_policy: refundPolicy, purchase_policy: purchasePolicy, pay_information : paymentInformation
       }
-      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/update-policy/${data?._id}`, {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/policy/update-policy/${data?._id}`, {
          method: "PUT",
          withCredentials: true,
          credentials: "include",

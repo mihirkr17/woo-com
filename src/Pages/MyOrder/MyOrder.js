@@ -6,17 +6,15 @@ import { Link, useNavigate } from 'react-router-dom';
 import BtnSpinner from '../../Components/Shared/BtnSpinner/BtnSpinner';
 import FilterOption from "../../Shared/FilterOption";
 import { useEffect } from 'react';
-import { useAuthUser } from '../../App';
 import { loggedOut } from '../../Shared/common';
 import "./MyOrder.css";
 import { useAuthContext } from '../../lib/AuthProvider';
 
 
 const MyOrder = () => {
-   const user = useAuthUser();
    const { userInfo } = useAuthContext();
    const { msg, setMessage } = useMessage();
-   const { data, refetch, loading } = useFetch(`${process.env.REACT_APP_BASE_URL}my-order/${user?.email}`);
+   const { data, refetch, loading } = useFetch(`${process.env.REACT_APP_BASE_URL}api/order/my-order/${userInfo?.email}`);
    const [actLoading, setActLoading] = useState(false);
    const [ratPoint, setRatPoint] = useState("5");
    const [reason, setReason] = useState("");
@@ -52,7 +50,7 @@ const MyOrder = () => {
 
    const removeOrderHandler = async (orderId) => {
       if (window.confirm("Want to cancel this order ?")) {
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/remove-order/${userInfo?.email}/${orderId}`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/order/remove-order/${userInfo?.email}/${orderId}`, {
             method: "DELETE",
             withCredentials: true,
             credentials: "include",
@@ -83,7 +81,7 @@ const MyOrder = () => {
          ratingId, orderId: parseInt(orderId), rating_customer: userInfo?.displayName, rating_point: ratingPoint, rating_description: ratingDesc
       }
 
-      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/add-product-rating/${productId}`, {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/review/add-product-rating/${productId}`, {
          method: "PUT",
          withCredentials: true,
          credentials: "include",
@@ -99,13 +97,15 @@ const MyOrder = () => {
          setMessage(<p className='text-success'><small><strong>{resData?.message}</strong></small></p>);
          setActLoading(false);
          refetch()
-      } else {
+      }
+
+      if (response.status === 401 || response.status === 403) {
          await loggedOut();
          navigate(`/login?err=${resData?.message} token not found`);
       }
    }
 
-   const handleCancelOrder = async (e) => {
+   const handleCancelOrder = async (e, quantity, productId) => {
       e.preventDefault();
       let cancel_reason = reason;
       let status = "canceled";
@@ -117,21 +117,24 @@ const MyOrder = () => {
          setMessage(<strong className='text-success'>Please Select Cancel Reason...</strong>);
          return;
       } else {
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/cancel-my-order/${userEmail}/${orderId}`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/order/cancel-my-order/${userEmail}/${orderId}`, {
             method: "PUT",
             withCredentials: true,
             credentials: "include",
             headers: {
                "Content-Type": "application/json"
             },
-            body: JSON.stringify({ status, cancel_reason, time_canceled })
+            body: JSON.stringify({ status, cancel_reason, time_canceled, quantity, productId })
          });
 
          const resData = await response.json();
+
          if (response.ok) {
             refetch();
             setMessage(<strong className='text-success'>{resData?.message}</strong>);
-         } else {
+         }
+
+         if (response.status === 401 || response.status === 403) {
             await loggedOut();
             navigate(`/login?err=${resData?.message} token not found`);
          }
@@ -149,7 +152,11 @@ const MyOrder = () => {
 
             <div className="row">
                <div className="col-lg-2">
-                  <h6>Filter Order</h6>
+                  <h5>Filters</h5>
+                  <hr />
+                  <strong>
+                     Order Status
+                  </strong>
                   <FilterOption
                      options={["all", "pending", "placed", "shipped", "canceled"]}
                      filterHandler={setFilterOrder}
@@ -161,8 +168,9 @@ const MyOrder = () => {
                      {
                         orderItems && orderItems.length > 0 ? orderItems.map(order => {
 
-                           const { title, quantity, payment_mode, discount, status, orderId,
-                              totalAmount, image, productId, seller, category, cancel_reason, time_canceled, time_pending, time_placed, time_shipped, isRating, slug } = order;
+                           const { title, quantity, payment_mode, status, orderId, price,
+                              totalAmount, image, productId, seller, cancel_reason, time_canceled,
+                              time_pending, time_placed, time_shipped, isRating, slug } = order && order;
                            return (
                               <div className="col-12 mb-3" key={orderId}>
                                  <div className="order_card">
@@ -177,22 +185,20 @@ const MyOrder = () => {
                                           <div className="col-lg-11">
                                              <div className="row">
                                                 <div className="col-lg-5">
-                                                   <p>
-                                                      {title.length > 30 ? title.slice(0, 30) + "..." : title} <br />
-                                                      <small className="text-muted">
-                                                         Seller : {seller} <br />
+                                                   <div>
+                                                      {title && title.length > 30 ? title.slice(0, 30) + "..." : title} <br />
+                                                      <pre className="text-muted">
+                                                         Price        : {price} Tk<br />
+                                                         Qty          : {quantity} <br />
+                                                         Seller       : {seller} <br />
                                                          Payment Mode : {payment_mode}
-                                                      </small>
-                                                   </p>
+                                                      </pre>
+                                                   </div>
                                                 </div>
 
                                                 <div className="col-lg-3">
                                                    <p>
-                                                      {totalAmount}&nbsp;Tk <br />
-                                                      <small className="text-muted">
-                                                         {"Discount : " + discount + "%"} <br />
-                                                         {"Qty : " + quantity}
-                                                      </small>
+                                                      Amount : {totalAmount}&nbsp;Tk <br />
                                                    </p>
                                                 </div>
 
@@ -224,7 +230,7 @@ const MyOrder = () => {
                                                                Cancel Order
                                                             </button>
                                                             <div className="py-4" style={openCancelForm === orderId ? { display: "block" } : { display: "none" }}>
-                                                               <form onSubmit={handleCancelOrder} >
+                                                               <form onSubmit={(e) => handleCancelOrder(e, quantity, productId)} >
                                                                   <label htmlFor="reason">Select Reason</label>
                                                                   <div className="form-group d-flex">
 

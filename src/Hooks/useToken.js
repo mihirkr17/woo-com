@@ -12,7 +12,7 @@ export const useToken = (user) => {
          try {
             if (user) {
                const email = user?.user?.email;
-               const url = `${process.env.REACT_APP_BASE_URL}api/sign-user/${email}`;
+               const url = `${process.env.REACT_APP_BASE_URL}api/user/sign-user/${email}`;
                const response = await fetch(url, {
                   method: "PUT",
                   withCredentials: true,

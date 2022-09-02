@@ -21,7 +21,7 @@ const Breadcrumbs = ({path : newPath}) => {
                let lastOne = arr.length - 1 === i;
                return (
                   <React.Fragment key={i}>
-                     <Link to={"/" + routeTo} style={lastOne ? { pointerEvents: "none", color: "gray" } : { pointerEvents: "auto" }}>
+                     <Link to={"/c/" + routeTo} style={lastOne ? { pointerEvents: "none", color: "gray" } : { pointerEvents: "auto" }}>
                         {e.replace(/[-]/g, " ").toUpperCase()}
                      </Link>
                      {i < path.length - 1 && <span>&nbsp;<FontAwesomeIcon style={{ fontSize: "13px", color: "orange" }} icon={faChevronRight}/>&nbsp;</span>}

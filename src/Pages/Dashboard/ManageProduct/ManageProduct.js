@@ -17,8 +17,8 @@ const ManageProduct = () => {
    const { userInfo, role } = useAuthContext();
    const [items, setItems] = useState(1);
    const [url, setUrl] = useState("");
-   let url2 = role === "seller" ? `${process.env.REACT_APP_BASE_URL}api/product-count?seller=${userInfo?.seller}` :
-      `${process.env.REACT_APP_BASE_URL}api/product-count`
+   let url2 = role === "seller" ? `${process.env.REACT_APP_BASE_URL}api/product/product-count?seller=${userInfo?.seller}` :
+      `${process.env.REACT_APP_BASE_URL}api/product/product-count`
    const { data: counter, refetch: counterRefetch } = useFetch(url2);
    const { data: products, loading, refetch } = useFetch(url);
    const [searchValue, setSearchValue] = useState("");
@@ -31,15 +31,13 @@ const ManageProduct = () => {
    const querySeller = new URLSearchParams(window.location.search).get("s");
    const queryPage = parseInt(new URLSearchParams(window.location.search).get("page")) || 1;
 
-
-
    useEffect(() => {
       let url;
       const setTimeUrl = setTimeout(() => {
          if (userInfo?.seller) {
-            url = `${process.env.REACT_APP_BASE_URL}api/manage-product?seller=${userInfo?.seller}&page=${queryPage}&items=${8}&category=${filterCategory}&search=${searchValue}`
+            url = `${process.env.REACT_APP_BASE_URL}api/product/manage-product?seller=${userInfo?.seller}&page=${queryPage}&items=${8}&category=${filterCategory}&search=${searchValue}`
          } else {
-            url = `${process.env.REACT_APP_BASE_URL}api/manage-product?page=${queryPage}&items=${8}&category=${filterCategory}&search=${searchValue}`
+            url = `${process.env.REACT_APP_BASE_URL}api/product/manage-product?page=${queryPage}&items=${8}&category=${filterCategory}&search=${searchValue}`
          }
          setUrl(url);
       }, 200);
@@ -58,7 +56,7 @@ const ManageProduct = () => {
    // delete product
    const productDeleteHandler = async (productId) => {
       if (window.confirm("Want to delete this product ?")) {
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/delete-product/${productId}`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/product/delete-product/${productId}`, {
             method: "DELETE",
             withCredentials: true,
             credentials: "include"
@@ -89,7 +87,7 @@ const ManageProduct = () => {
       try {
 
          setTimeout(async () => {
-            const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/update-stock/`, {
+            const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/product/update-stock`, {
                method: "PUT",
                headers: {
                   "Content-Type": "application/json",

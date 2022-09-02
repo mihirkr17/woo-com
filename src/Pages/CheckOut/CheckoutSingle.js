@@ -43,7 +43,7 @@ const CheckoutSingle = () => {
       }
 
       if (window.confirm("Buy Now")) {
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/set-order/`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/order/set-order/`, {
             method: "POST",
             withCredentials: true,
             credentials: "include",

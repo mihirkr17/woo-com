@@ -9,14 +9,14 @@ import { loggedOut } from '../../../Shared/common';
 const AllUsers = () => {
    // const token = new URLSearchParams(document.cookie.replaceAll("; ", "&")).get('accessToken');
    const { role } = useAuthContext();
-   const { data, loading, refetch } = useFetch(`${process.env.REACT_APP_BASE_URL}api/manage-user?uTyp=user`);
+   const { data, loading, refetch } = useFetch(`${process.env.REACT_APP_BASE_URL}api/user/manage-user?uTyp=user`);
    const navigate = useNavigate();
 
    if (loading) return <Spinner></Spinner>;
 
    const makeAdminHandler = async (userId) => {
       if (window.confirm("Want to give permission 'admin'")) {
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}make-admin/${userId}`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/user/make-admin/${userId}`, {
             method: "PUT",
             withCredentials: true,
             credentials: "include",

@@ -10,7 +10,7 @@ const HomeStore = () => {
    const { data, loading } = useFetch(url);
 
    useEffect(() => {
-      setUrl(limit && `${process.env.REACT_APP_BASE_URL}all-products/${limit}`)
+      setUrl(limit && `${process.env.REACT_APP_BASE_URL}api/product/all-products/${limit}`)
    }, [limit]);
 
    const showMoreHandler = () => {

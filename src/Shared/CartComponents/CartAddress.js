@@ -34,7 +34,7 @@ const CartAddress = ({ authRefetch, addr, setStep, navigate }) => {
       let final = { addressId, name, village, city, country, phone, zip };
       final["select_address"] = false;
 
-      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/add-cart-address`, {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/cart/add-cart-address`, {
          method: "POST",
          withCredentials: true,
          credentials: "include",
@@ -65,7 +65,7 @@ const CartAddress = ({ authRefetch, addr, setStep, navigate }) => {
       let final = { addressId: parseInt(openAddressUpdateForm?.addressId), name, village, city, country, phone, zip };
       final["select_address"] = false;
 
-      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/update-cart-address`, {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/cart/update-cart-address`, {
          method: "PUT",
          withCredentials: true,
          credentials: "include",
@@ -86,7 +86,7 @@ const CartAddress = ({ authRefetch, addr, setStep, navigate }) => {
    const selectAddressHandler = async (addressId, selectAddress) => {
       let select_address = selectAddress === true ? false : true;
 
-      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/select-address`, {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/cart/select-address`, {
          method: "PUT",
          withCredentials: true,
          credentials: "include",
@@ -108,7 +108,7 @@ const CartAddress = ({ authRefetch, addr, setStep, navigate }) => {
 
    const deleteAddressHandler = async (addressId) => {
       if (window.confirm("Want to remove address ?")) {
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/delete-cart-address/${addressId}`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/cart/delete-cart-address/${addressId}`, {
             method: "DELETE",
             withCredentials: true,
             credentials: "include"

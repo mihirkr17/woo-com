@@ -21,9 +21,9 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, refetch }) => {
    const [status, setStatus] = useState(data?.status || "");
    const [images, setImages] = useState(data?.image || []);
    const [specification, setSpecification] = useState((data?.info?.specification.length > 0 && data?.info?.specification) || [{ type: "", value: "" }]);
-   const [category, setCategory] = useState("");
-   const [subCategory, setSubCategory] = useState("");
-   const [postCategory, setPostCategory] = useState("");
+   const [category, setCategory] = useState(data?.genre?.category || "");
+   const [subCategory, setSubCategory] = useState(data?.genre?.sub_category || "");
+   const [postCategory, setPostCategory] = useState(data?.genre?.post_category || "");
    const [sizes, setSizes] = useState({ size: data?.info?.size || [] });
    const [brand, setBrand] = useState(data?.brand || "");
    const [sku, setSku] = useState(data?.sku || "");
@@ -50,10 +50,6 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, refetch }) => {
       setImages(list);
    }
 
-   const addImageInputFieldHandler = () => {
-      setImages([...images, '']);
-   }
-
    const removeImageInputFieldHandler = (index) => {
       let listArr = [...images];
       listArr.splice(index, 1);
@@ -61,10 +57,6 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, refetch }) => {
    }
 
    // specification input handlers
-   const addSpecificationInputFieldHandler = () => {
-      setSpecification([...specification, { type: "", value: "" }])
-   }
-
    const specificationInputHandler = (e, index) => {
       const { name, value } = e.target;
       let list = [...specification];
@@ -156,7 +148,8 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, refetch }) => {
       }
 
       const requestType = {
-         url: formTypes === "update" ? `${process.env.REACT_APP_BASE_URL}api/update-product/${data?._id && data?._id}` : `${process.env.REACT_APP_BASE_URL}api/add-product`,
+         url: formTypes === "update" ? `${process.env.REACT_APP_BASE_URL}api/product/update-product/${data?._id && data?._id}` :
+            `${process.env.REACT_APP_BASE_URL}api/product/add-product`,
          method: formTypes === "update" ? "PUT" : "POST"
       }
 
@@ -186,17 +179,18 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, refetch }) => {
             setActionLoading(false);
 
             if (formTypes === "create") {
-
-               setMessage(<p className='text-success'><small><strong>{resData?.message}</strong></small></p>);
                e.target.reset();
             } else {
                refetch();
-               setMessage(<p className='text-success'><small><strong>{resData?.message}</strong></small></p>);
             }
+            setMessage(<p className='text-success'><small><strong>{resData?.message}</strong></small></p>);
          } else {
             setActionLoading(false);
-            await loggedOut();
-            navigate("/login?err= token not found");
+
+            if (response.status === 401 || response.status === 403) {
+               await loggedOut();
+               navigate(`/login?err=${resData?.message}`);
+            }
          }
       }
    }
@@ -215,7 +209,7 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, refetch }) => {
 
                <div className="col-lg-12 mb-3">
                   <label htmlFor='image'>{required} Image(<small>Product Image</small>)&nbsp;
-                     <span className="badge bg-primary p-2 btn-sm" onClick={addImageInputFieldHandler}>Add New Image</span>
+                     <span className="badge bg-primary p-2 btn-sm" onClick={() => setImages([...images, ''])}>Add New Image</span>
                   </label>
                   {
                      images && images.map((img, index) => {
@@ -240,6 +234,15 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, refetch }) => {
                         )
                      })
                   }
+                  <div className="py-2">
+                     {
+                        images && images.map((img, index) => {
+                           return (
+                              <img style={{ width: "70px", height: "70px" }} key={index} src={img} alt="" srcset="" />
+                           )
+                        })
+                     }
+                  </div>
                </div>
             </div>
          </div>
@@ -385,7 +388,7 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, refetch }) => {
                                  {specification.length !== 1 && <button
                                     className="btn me-2 btn-sm"
                                     onClick={() => removeSpecificationInputFieldHandler(i)}> <FontAwesomeIcon icon={faMinusSquare} /></button>}
-                                 {specification.length - 1 === i && <button className="btn btn-sm" onClick={addSpecificationInputFieldHandler}>
+                                 {specification.length - 1 === i && <button className="btn btn-sm" onClick={() => setSpecification([...specification, { type: "", value: "" }])}>
                                     <FontAwesomeIcon icon={faPlusSquare} />
                                  </button>}
                               </div>
@@ -459,8 +462,8 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, refetch }) => {
                <div className="col-lg-3">
                   <label htmlFor="warrantyType">Warranty</label>
                   <select className='form-select form-select-sm' name="warrantyType" id="warrantyType" onChange={(e) => setWarrantyType(e.target.value)}>
-                     {data?.delivery_service?.warrantyType && 
-                     <option value={data?.delivery_service?.warrantyType}>{data?.delivery_service?.warrantyType}</option>}
+                     {data?.delivery_service?.warrantyType &&
+                        <option value={data?.delivery_service?.warrantyType}>{data?.delivery_service?.warrantyType}</option>}
                      <option value="">Choose Warranty Types</option>
                      <option value={"seller_warranty"}>Seller Warranty</option>
                      <option value="brand_warranty">Brand Warranty</option>

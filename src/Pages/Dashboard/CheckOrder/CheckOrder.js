@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Modal from '../../../Admin/ManageOrders/Components/Modal/Modal';
+import Modal from '../../../Seller/ManageOrders/Components/Modal/Modal';
 import { useMessage } from '../../../Hooks/useMessage';
 import { useOrder } from '../../../lib/OrderProvider';
 import { loggedOut } from '../../../Shared/common';
@@ -12,7 +12,7 @@ const CheckOrder = () => {
    // console.log(order)
    const orderDispatchHandler = async (orderId, user_email) => {
       if (orderId && user_email) {
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/dispatch-order-request/${orderId}/${user_email}`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/order/dispatch-order-request/${orderId}/${user_email}`, {
             method: "PUT",
             withCredentials: true,
             credentials: "include",

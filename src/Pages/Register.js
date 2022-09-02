@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { useCreateUserWithEmailAndPassword, useUpdateProfile } from 'react-firebase-hooks/auth';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuthUser } from '../App';
 import BtnSpinner from "../Components/Shared/BtnSpinner/BtnSpinner";
 import { auth } from '../firebase.init';
 import { useMessage } from '../Hooks/useMessage';
@@ -14,6 +15,7 @@ const Register = () => {
    const [updateProfile, updating, error2] = useUpdateProfile(auth);
    const [isLogged] = useSignIn(user);
    const navigate = useNavigate();
+   let loggedUser = useAuthUser();
    let msg;
 
    useEffect(() => {
@@ -23,19 +25,29 @@ const Register = () => {
    if (error || error2) msg = <strong className="text-danger">{error?.message}</strong>
 
    const handleRegister = async (e) => {
+      try {
+         e.preventDefault();
+         if (loggedUser) {
+            setMessage(<small><strong className="text-danger py-2">You already logged in</strong></small>);
+            return;
+         } else {
+            let username = e.target.username.value;
+            let email = e.target.email.value;
+            let password = e.target.password.value;
 
-      e.preventDefault();
-      let username = e.target.username.value;
-      let email = e.target.email.value;
-      let password = e.target.password.value;
-
-      if (username === "" || email === "" || password === "") {
-         setMessage(<small><strong className="text-danger py-2">Please fill up all input fields!</strong></small>);
-      } else {
-         await createUserWithEmailAndPassword(email, password);
-         await updateProfile({ displayName: username });
+            if (username === "" || email === "" || password === "") {
+               setMessage(<small><strong className="text-danger py-2">Please fill up all input fields!</strong></small>);
+               return;
+            } else {
+               await createUserWithEmailAndPassword(email, password);
+               await updateProfile({ displayName: username });
+            }
+         }
+      } catch (error) {
+         setMessage(<small><strong className="text-danger py-2">{error?.message}</strong></small>);
       }
    }
+
    return (
       <div className='section_default' style={{ height: "90vh" }}>
          <div className="container">

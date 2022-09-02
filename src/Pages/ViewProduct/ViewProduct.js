@@ -16,8 +16,8 @@ const ViewProduct = () => {
    const { product_slug } = useParams();
    const user = useAuthUser();
    const { authRefetch, role } = useAuthContext();
-   const { data: product, loading, refetch: productRefetch } = useFetch(`${process.env.REACT_APP_BASE_URL}api/fetch-single-product/${product_slug}/${user?.email}`);
-   const { data: productByCategory } = useFetch(`${process.env.REACT_APP_BASE_URL}api/product-by-category?sub_category=${product?.genre?.sub_category}`);
+   const { data: product, loading, refetch: productRefetch } = useFetch(`${process.env.REACT_APP_BASE_URL}api/product/fetch-single-product/${product_slug}/${user?.email}`);
+   const { data: productByCategory } = useFetch(`${process.env.REACT_APP_BASE_URL}api/product/product-by-category?sub_category=${product?.genre?.sub_category}`);
    const navigate = useNavigate();
    const { msg, setMessage } = useMessage();
    const [addCartLoading, setAddCartLoading] = useState(false);
@@ -25,8 +25,8 @@ const ViewProduct = () => {
 
    const addToCartHandler = async (product, params) => {
 
-      const url = params === "buy" ? `${process.env.REACT_APP_BASE_URL}api/add-buy-product` :
-         `${process.env.REACT_APP_BASE_URL}api/add-to-cart`;
+      const url = params === "buy" ? `${process.env.REACT_APP_BASE_URL}api/cart/add-buy-product` :
+         `${process.env.REACT_APP_BASE_URL}api/cart/add-to-cart`;
 
       let cartProduct = {
          _id: product?._id,
@@ -106,7 +106,7 @@ const ViewProduct = () => {
          seller: product?.seller
       }
 
-      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/add-to-wishlist/${user?.email}`, {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/wishlist/add-to-wishlist/${user?.email}`, {
          method: "PUT",
          withCredentials: true,
          credentials: "include",
@@ -129,7 +129,7 @@ const ViewProduct = () => {
    }
 
    const removeToWishlist = async (productId) => {
-      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/remove-to-wishlist/${productId}`, {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/wishlist/remove-from-wishlist/${productId}`, {
          method: "DELETE",
          withCredentials: true,
          credentials: "include"
@@ -151,13 +151,13 @@ const ViewProduct = () => {
       <div className='view_product section_default'>
          <div className="container">
             {msg}
-            {/* {loading ? <Spinner /> : */}
+            {loading ? <Spinner /> :
             <ProductModel showFor={role} product={product} buyLoading={buyLoading}
                addCartLoading={addCartLoading} addToCartHandler={addToCartHandler}
                addToWishlist={addToWishlist}
                removeToWishlist={removeToWishlist}
             ></ProductModel>
-            {/* } */}
+            }
             <div className="row pt-5">
                <div className="col-lg-9">
                   <h5 id='rating' className='text-center py-1'>Rating And Review Of {product?.title}</h5>

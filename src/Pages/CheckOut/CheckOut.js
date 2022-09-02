@@ -14,7 +14,7 @@ import { useAuthContext } from '../../lib/AuthProvider';
 const CheckOut = () => {
    const navigate = useNavigate();
    const { msg, setMessage } = useMessage()
-   const { authLoading, userInfo } = useAuthContext();
+   const { authLoading, authRefetch, userInfo } = useAuthContext();
    let products = userInfo?.myCartProduct && userInfo?.myCartProduct.filter(p => p?.stock === "in");
 
    if (authLoading) {
@@ -60,7 +60,7 @@ const CheckOut = () => {
          }
 
          if (buyAlert) {
-            const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/set-order/`, {
+            const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/order/set-order/`, {
                method: "POST",
                withCredentials: true,
                credentials: "include",
@@ -79,11 +79,13 @@ const CheckOut = () => {
             }
 
             if (response.status >= 200 && response.status <= 299) {
+               authRefetch();
                navigate(`/my-profile/my-order?order=${resData?.message}`);
             }
 
             if ((response.status === 401) || (response.status === 403)) {
                await loggedOut();
+               navigate(`/login?err=${resData?.message}`);
             }
          }
       }

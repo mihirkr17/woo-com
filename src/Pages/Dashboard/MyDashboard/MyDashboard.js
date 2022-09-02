@@ -11,10 +11,10 @@ import CheckOrder from '../CheckOrder/CheckOrder';
 const MyDashboard = () => {
    const { userInfo, role } = useAuthContext();
    const { state } = useSellerChecker();
-   let url = role === "seller" ? `${process.env.REACT_APP_BASE_URL}api/fetch-top-selling-product?seller=${userInfo?.seller}` :
-      `${process.env.REACT_APP_BASE_URL}api/fetch-top-selling-product`;
+   let url = role === "seller" ? `${process.env.REACT_APP_BASE_URL}api/product/fetch-top-selling-product?seller=${userInfo?.seller}` :
+      `${process.env.REACT_APP_BASE_URL}api/product/fetch-top-selling-product`;
    const { data } = useFetch(url);
-   const { data: totalProduct } = useFetch(`${process.env.REACT_APP_BASE_URL}api/product-count?seller=${userInfo?.seller}`);
+   const { data: totalProduct } = useFetch(`${process.env.REACT_APP_BASE_URL}api/product/product-count?seller=${userInfo?.seller}`);
    const { orderCount } = useOrder();
    // search query params
    const queryParams = new URLSearchParams(window.location.search).get("check_order");

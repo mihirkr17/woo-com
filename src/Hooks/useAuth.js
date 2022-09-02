@@ -20,9 +20,9 @@ const useAuth = (user) => {
 
                if (user) {
                   setAuthLoading(true);
-                  const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/fetch-auth-user`, {
+                  const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/user/fetch-auth-user`, {
                      headers: {
-                        authorization: `Basic ${user?.email}`
+                        authorization: `${user?.email}`
                      }
                   });
                   const data = await response.json();
@@ -32,11 +32,11 @@ const useAuth = (user) => {
                   }
 
                   if (response.status === 400) {
-                     console.log(data?.message);
+                     console.log(data?.error);
                   }
 
                   if (response.status >= 200 && response.status <= 299) {
-                     const userData = data && data?.result;
+                     const userData = data && data?.data;
 
                      if (userData) {
                         setRole(userData?.role);

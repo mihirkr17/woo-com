@@ -14,7 +14,7 @@ const CartItem = ({ product: cartProduct, setMessage, authRefetch, checkOut, car
    const quantityHandler = async (cp, action) => {
       let quantity = action === "dec" ? cp?.quantity - 1 : cp?.quantity + 1;
 
-      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/update-product-quantity/${cartTypes && cartTypes}`, {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/cart/update-product-quantity/${cartTypes && cartTypes}`, {
          method: "PUT",
          withCredentials: true,
          credentials: "include",
@@ -47,7 +47,7 @@ const CartItem = ({ product: cartProduct, setMessage, authRefetch, checkOut, car
    const removeItemFromCartHandler = async (cp) => {
       const { _id, title } = cp;
 
-      const resData = await apiHandler(`${process.env.REACT_APP_BASE_URL}delete-cart-item/${cartTypes && cartTypes}`, "DELETE", `${_id}`);
+      const resData = await apiHandler(`${process.env.REACT_APP_BASE_URL}api/cart/delete-cart-item/${cartTypes && cartTypes}`, "DELETE", `${_id}`);
 
       if (resData) {
          setMessage(`${title} ${resData?.message}`);
@@ -98,7 +98,8 @@ const CartItem = ({ product: cartProduct, setMessage, authRefetch, checkOut, car
                      !checkOut && <div className="remove_btn col-1 text-end">
                         <button className='btn btn-sm' onClick={() => setOpenBox(true)}><FontAwesomeIcon icon={faClose} /></button>
                         {
-                           openBox && <ConfirmDialog payload={{ reference: cartProduct, openBox, setOpenBox, handler: removeItemFromCartHandler }} />
+                           openBox && <ConfirmDialog payload={{ reference: cartProduct, openBox, setOpenBox, 
+                              handler: removeItemFromCartHandler, types: "Delete", text: `Remove this from your cart` }} />
                         }
                      </div>
                   }

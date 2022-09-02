@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Button, Container, Form, Row } from 'react-bootstrap';
 import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAuthUser } from '../../App';
 import BtnSpinner from '../../Components/Shared/BtnSpinner/BtnSpinner';
 import { auth } from '../../firebase.init';
 import { useMessage } from '../../Hooks/useMessage';
@@ -16,6 +17,7 @@ const Login = () => {
    const [isLogged] = useSignIn(user);
    let from = location.state?.from?.pathname || '/';
    let msg;
+   let loggedUser = useAuthUser();
 
    const queryParams = new URLSearchParams(window.location.search);
    const term = queryParams.get("err");
@@ -27,14 +29,23 @@ const Login = () => {
    if (error) msg = <strong className="text-danger">{error?.message}</strong>
 
    const handleLogin = async (e) => {
-      e.preventDefault();
-      let email = e.target.email.value;
-      let password = e.target.password.value;
+      try {
+         e.preventDefault();
+         if (loggedUser) {
+            setMessage(<small><strong className="text-danger py-2">You already logged in</strong></small>);
+            return;
+         } else {
+            let email = e.target.email.value;
+            let password = e.target.password.value;
 
-      if (email === "" || password === "") {
-         setMessage(<small><strong className="text-danger py-2">Please fill up all input fields!</strong></small>);
-      } else {
-         await signInWithEmailAndPassword(email, password);
+            if (email === "" || password === "") {
+               setMessage(<small><strong className="text-danger py-2">Please fill up all input fields!</strong></small>);
+            } else {
+               await signInWithEmailAndPassword(email, password);
+            }
+         }
+      } catch (error) {
+         setMessage(<small><strong className="text-danger py-2">{error?.message}</strong></small>);
       }
    }
 

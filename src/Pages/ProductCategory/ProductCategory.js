@@ -34,15 +34,15 @@ const ProductCategory = () => {
       let filterUrl;
 
       if (category && filters) {
-         filterUrl = `api/product-by-category?category=${category}&filters=${filters}`;
+         filterUrl = `api/product/product-by-category?category=${category}&filters=${filters}`;
       }
 
       if (category && sub_category) {
-         filterUrl = `api/product-by-category?category=${category}&sb_category=${sub_category}&filters=${filters}`;
+         filterUrl = `api/product/product-by-category?category=${category}&sb_category=${sub_category}&filters=${filters}`;
       }
 
       if (category && sub_category && post_category) {
-         filterUrl = `api/product-by-category?category=${category}&sb_category=${sub_category}&pt_category=${post_category}&filters=${filters}`;
+         filterUrl = `api/product/product-by-category?category=${category}&sb_category=${sub_category}&pt_category=${post_category}&filters=${filters}`;
       }
 
       setUrl(filterUrl);
@@ -103,7 +103,7 @@ const ProductCategory = () => {
                               subCategory?.sub_category_items && subCategory?.sub_category_items.map((c, i) => {
                                  return (
                                     <li key={i} className="my-1">
-                                       <Nav.Item as={Link} to={`/${category}/${c?.sub_category}`}>
+                                       <Nav.Item as={Link} to={`/c/${category}/${c?.sub_category}`}>
                                           {c?.sub_category}
                                        </Nav.Item>
                                     </li>
@@ -121,7 +121,7 @@ const ProductCategory = () => {
                               postCategory?.post_category_items && postCategory?.post_category_items.map((c, i) => {
                                  return (
                                     <li key={i} className="my-1">
-                                       <Nav.Item as={Link} to={`/${category}/${sub_category}/${c}`}>
+                                       <Nav.Item as={Link} to={`/c/${category}/${sub_category}/${c}`}>
                                           {c.replace(/[-]/g, " ")}
                                        </Nav.Item>
                                     </li>

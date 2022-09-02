@@ -12,7 +12,7 @@ const Wishlist = () => {
    const navigate = useNavigate();
 
    const removeToWishlist = async (productId) => {
-      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/remove-to-wishlist/${productId}`, {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/wishlist/remove-from-wishlist/${productId}`, {
          method: "DELETE",
          withCredentials: true,
          credentials: "include"

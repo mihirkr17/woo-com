@@ -22,8 +22,8 @@ const MyProfile = () => {
       dob: ""
    });
 
-   let url2 = userInfo && userInfo?.seller ? `${process.env.REACT_APP_BASE_URL}api/product-count?seller=${userInfo?.seller}` :
-      `${process.env.REACT_APP_BASE_URL}api/product-count`
+   let url2 = userInfo && userInfo?.seller ? `${process.env.REACT_APP_BASE_URL}api/product/product-count?seller=${userInfo?.seller}` :
+      `${process.env.REACT_APP_BASE_URL}api/product/product-count`
    const { data: myProductCount } = useFetch(url2);
 
    let age = new Date().getFullYear() - (userInfo?.dob && parseInt((userInfo?.dob).split("-")[0]));
@@ -49,7 +49,7 @@ const MyProfile = () => {
          dob: inputValue.dob || "Not Set"
       }
 
-      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/update-profile-data/${userInfo?.email}`, {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/user/update-profile-data/${userInfo?.email}`, {
          method: "PUT",
          withCredentials: true,
          credentials: "include",

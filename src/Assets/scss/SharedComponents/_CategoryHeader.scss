@@ -13,7 +13,7 @@
 }
 
 .c_nav_btn {
-  padding: 1rem 0.6rem;
+  padding: 0.5rem 0.6rem;
   width: 130px;
   cursor: pointer;
 }
@@ -90,15 +90,15 @@
     z-index: 9999999;
     display: block;
   }
-  .category_navbar {
-    flex-direction: column;
-  }
-
   .category_header {
     position: fixed;
     top: 60px;
     left: 0;
     z-index: 99999;
+  }
+
+  .category_navbar {
+    flex-direction: column;
   }
 
   .c_nav {

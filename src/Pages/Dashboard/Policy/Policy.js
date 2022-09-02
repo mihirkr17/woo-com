@@ -6,7 +6,7 @@ import { useFetch } from '../../../Hooks/useFetch';
 import PolicyUpdateFrom from './PolicyUpdateFrom';
 
 const Policy = () => {
-   const { data, loading, refetch } = useFetch(`${process.env.REACT_APP_BASE_URL}api/privacy-policy`);
+   const { data, loading, refetch } = useFetch(`${process.env.REACT_APP_BASE_URL}api/policy/privacy-policy`);
    const [show, setShow] = useState(false);
    const [show2, setShow2] = useState(false);
    const [show3, setShow3] = useState(false);

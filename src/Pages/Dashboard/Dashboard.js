@@ -37,7 +37,7 @@ const Dashboard = () => {
    }, []);
 
    const handleToUser = async () => {
-      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/switch-role/user`, {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/user/switch-role/user`, {
          method: "PUT",
          withCredentials: true,
          credentials: "include",
@@ -49,9 +49,10 @@ const Dashboard = () => {
       const resData = await response.json();
 
       if (response.ok) {
-         navigate(`/`);
-         window.location.reload();
-      } else {
+         window.location.href = `/`;
+      } 
+      
+      if (response.status === 401 || response.status === 403) {
          await loggedOut();
          navigate(`/login?err=${resData?.message} token not found`);
       }

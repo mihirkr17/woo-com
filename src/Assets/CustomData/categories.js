@@ -79,14 +79,16 @@ export const newCategory = [
             sub_category: "modern-and-western",
             post_category_items: [
                "t-shirts", "tops", "leggings", "kurti-single-kamiz"
-            ]
+            ],
+            size: ["S", "M", "L", "XL", "XXL"]
          },
          {
             id: 2,
             sub_category: "winter-dress",
             post_category_items: [
                "punjabi", "katua-and-fotua", "blazer"
-            ]
+            ],
+            size: ["S", "M", "L", "XL", "XXL"]
          }
       ],
    }

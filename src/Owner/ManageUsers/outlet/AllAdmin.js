@@ -6,13 +6,13 @@ import { loggedOut } from '../../../Shared/common';
 
 const AllAdmin = () => {
    // const token = new URLSearchParams(document.cookie.replaceAll("; ", "&")).get('accessToken');
-   const { data, loading, refetch } = useFetch(`${process.env.REACT_APP_BASE_URL}api/manage-user?uTyp=admin`);
+   const { data, loading, refetch } = useFetch(`${process.env.REACT_APP_BASE_URL}api/user/manage-user?uTyp=admin`);
    const navigate = useNavigate();
    if (loading) return <Spinner></Spinner>;
 
    const demoteToUserHandler = async (userId) => {
       if (window.confirm("Demote to user ?")) {
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/demote-to-user/${userId}`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/api/user/demote-to-user/${userId}`, {
             method: "PUT",
             withCredentials: true,
             credentials: "include",
