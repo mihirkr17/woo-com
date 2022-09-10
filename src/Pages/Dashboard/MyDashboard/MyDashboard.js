@@ -58,7 +58,7 @@ const MyDashboard = () => {
                            <div className="d_p">
                               <div className="d_p_mid">
                                  <div className="d_p_mid_img">
-
+                                    <img src={userInfo?.photoURL} alt="" style={{ width: "100%", height: "100%" }} />
                                  </div>
                                  <h5>{role === "seller" ? userInfo?.seller : userInfo?.displayName}</h5>
                               </div>

@@ -1,6 +1,6 @@
 import { faCheckCircle, faLeftLong } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { cartCalculate, loggedOut } from '../../Shared/common';
@@ -8,10 +8,12 @@ import CartCalculation from '../../Shared/CartComponents/CartCalculation';
 import CartItem from '../../Shared/CartComponents/CartItem';
 import CartPayment from '../../Shared/CartComponents/CartPayment';
 import { useAuthContext } from '../../lib/AuthProvider';
+import CartAddress from '../../Shared/CartComponents/CartAddress';
 
 const CheckoutSingle = () => {
    const navigate = useNavigate();
-   const { userInfo, authLoading } = useAuthContext();
+   const { userInfo, authLoading, authRefetch } = useAuthContext();
+   const [step, setStep] = useState(false);
    const product = userInfo && userInfo?.buy_product;
 
    if (authLoading) return <Spinner></Spinner>
@@ -67,7 +69,7 @@ const CheckoutSingle = () => {
 
          if ((response.status === 401) || (response.status === 403)) {
             await loggedOut();
-            navigate(`/login?err=${resData?.message} token not found`);
+            navigate(`/login?err=${resData?.error}`);
          }
       }
    }
@@ -82,21 +84,10 @@ const CheckoutSingle = () => {
             <div className="row">
                <div className="col-lg-8 mb-3">
                   <div>
-                     <address className='cart_card'>
-                        <h6>Selected Address</h6>
-                        <hr />
-                        <div className="address_card">
-                           {
-                              <div style={{ wordBreak: "break-word" }}>
-                                 <h6><b className='me-3'>{selectedAddress?.name}</b>{selectedAddress?.select_address && <FontAwesomeIcon icon={faCheckCircle} />}</h6>
-                                 <p>
-                                    <small>{selectedAddress?.village}, {selectedAddress?.city}, {selectedAddress?.country}, {selectedAddress?.zip}</small> <br />
-                                    <small>Phone : {selectedAddress?.phone}</small>
-                                 </p>
-                              </div>
-                           }
-                        </div>
-                     </address>
+                     <CartAddress navigate={navigate}
+                        authRefetch={authRefetch}
+                        addr={userInfo && userInfo?.address ? userInfo?.address : []}
+                        setStep={setStep} />
                   </div>
                   <br />
                   <div className="cart_card">
@@ -112,7 +103,7 @@ const CheckoutSingle = () => {
                <div className="col-lg-4 mb-3">
                   <CartCalculation product={cartCalculate([userInfo && userInfo?.buy_product])} headTitle={"Order Details"}></CartCalculation>
                   <br />
-                  <CartPayment buyBtnHandler={buyBtnHandler} isStock={userInfo && userInfo?.buy_product ? true : false}></CartPayment>
+                  <CartPayment step={step} buyBtnHandler={buyBtnHandler} isStock={userInfo && userInfo?.buy_product ? true : false}></CartPayment>
                </div>
             </div>
          </div>

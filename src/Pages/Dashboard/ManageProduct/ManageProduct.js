@@ -69,7 +69,7 @@ const ManageProduct = () => {
             setMessage(<p className='text-success'><small><strong>{resData?.message}</strong></small></p>);
          } else {
             await loggedOut();
-            navigate(`/login?err=${resData?.message} token not found`)
+            navigate(`/login?err=${resData?.error}`)
          }
       }
    }
@@ -104,7 +104,7 @@ const ManageProduct = () => {
                refetch();
             } else {
                await loggedOut();
-               navigate(`login?err=${resData?.message}`);
+               navigate(`login?err=${resData?.error}`);
             }
          }, 400)
       } catch (error) {

@@ -5,8 +5,17 @@ export const useMessage = () => {
    const [msg, setMsg] = useState('');
    let setMessage;
 
-   setMessage = (message) => {
-      setMsg(message);
+   setMessage = (message, types = "success") => {
+
+      setMsg(
+         <p>
+            <small className={`${types === "warning" ? "text-warning" : types === "danger" ? "text-danger" : "text-success"}`}>
+               <strong>
+                  {message}
+               </strong>
+            </small>
+         </p>
+      );
    }
 
    useEffect(() => {

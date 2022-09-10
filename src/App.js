@@ -38,6 +38,7 @@ import RequiredOwnerAdmin from './Auth/RequiredOwnerAdmin';
 import OrderProvider from './lib/OrderProvider';
 import UserProvider, { UserContext } from './lib/UserProvider';
 import Wishlist from './Pages/Wishlist/Wishlist';
+import RequiredUser from './Auth/RequiredUser';
 
 function App() {
 
@@ -53,66 +54,71 @@ function App() {
 
 
   return (
-    <UserProvider>
-      <AuthProvider>
-        <NavigationBar theme={theme} setTheme={setTheme}></NavigationBar>
-        <Routes>
-          <Route path='/' element={<Home></Home>} ></Route>
-          <Route path='/blog' element={<Blog></Blog>} ></Route>
-          <Route path='/login' element={<Login></Login>}></Route>
-          <Route path='/register' element={<Register></Register>}></Route>
-          <Route path='/search' element={<SearchPage></SearchPage>}></Route>
+    <>
+      <UserProvider>
+        <AuthProvider>
+          <NavigationBar theme={theme} setTheme={setTheme}></NavigationBar>
+          <Routes>
+            <Route path='/' element={<Home></Home>} ></Route>
+            <Route path='/blog' element={<Blog></Blog>} ></Route>
+            <Route path='/login' element={<Login></Login>}></Route>
+            <Route path='/register' element={<Register></Register>}></Route>
+            <Route path='/search' element={<SearchPage></SearchPage>}></Route>
 
-          <Route path='/product/:product_slug' element={<ViewProduct></ViewProduct>}></Route>
-          <Route path='/c/:category' element={<ProductCategory></ProductCategory>}></Route>
-          <Route path='/c/:category/:sub_category' element={<ProductCategory></ProductCategory>}></Route>
-          <Route path='/c/:category/:sub_category/:post_category' element={<ProductCategory></ProductCategory>}></Route>
+            <Route path='/product/:product_slug' element={<ViewProduct></ViewProduct>}></Route>
+            <Route path='/c/:category' element={<ProductCategory></ProductCategory>}></Route>
+            <Route path='/c/:category/:sub_category' element={<ProductCategory></ProductCategory>}></Route>
+            <Route path='/c/:category/:sub_category/:post_category' element={<ProductCategory></ProductCategory>}></Route>
 
-          <Route path='/my-cart' element={<RequireAuth><Cart></Cart></RequireAuth>}></Route>
-          <Route path='/product/purchase/:productId' element={<RequireAuth><Purchase></Purchase></RequireAuth>}></Route>
-          <Route path='/my-cart/checkout/:cartId' element={<RequireAuth><CheckOut></CheckOut></RequireAuth>}></Route>
-          <Route path='/my-cart/checkout-single/:productId' element={<RequireAuth><CheckoutSingle></CheckoutSingle></RequireAuth>}></Route>
-          <Route path='/my-profile/my-order' element={<RequireAuth><MyOrder></MyOrder></RequireAuth>}></Route>
-          <Route path='/sell-online' element={<RequireAuth><SellOnline></SellOnline></RequireAuth>}></Route>
-          <Route path='/my-profile/my-wishlist' element={<RequireAuth><Wishlist></Wishlist></RequireAuth>}></Route>
+            <Route path='/my-cart' element={<RequireAuth><RequiredUser><Cart></Cart></RequiredUser></RequireAuth>}></Route>
+            <Route path='/product/purchase/:productId' element={<RequireAuth><RequiredUser><Purchase></Purchase></RequiredUser></RequireAuth>}></Route>
+            <Route path='/my-cart/checkout/:cartId' element={<RequireAuth><RequiredUser><CheckOut></CheckOut></RequiredUser></RequireAuth>}></Route>
+            <Route path='/my-cart/checkout-single/:productId' element={<RequireAuth><RequiredUser><CheckoutSingle></CheckoutSingle></RequiredUser></RequireAuth>}></Route>
+            <Route path='/my-profile/my-order' element={<RequireAuth><RequiredUser><MyOrder></MyOrder></RequiredUser></RequireAuth>}></Route>
+            <Route path='/sell-online' element={<RequireAuth><SellOnline></SellOnline></RequireAuth>}></Route>
+            <Route path='/my-profile/my-wishlist' element={<RequireAuth><Wishlist></Wishlist></RequireAuth>}></Route>
 
-          {/* // Admin path */}
-          <Route path='/dashboard' element={<RequiredDashboard>
-            <SellerCheckProvider>
-              <OrderProvider>
-                <Dashboard></Dashboard>
-              </OrderProvider>
-            </SellerCheckProvider>
-          </RequiredDashboard>}>
-            <Route index element={<MyDashboard></MyDashboard>}></Route>
-            <Route path='my-profile' element={<MyProfile></MyProfile>}></Route>
-            <Route path='manage-product' element={<ManageProduct></ManageProduct>}></Route>
+            {/* // Admin path */}
+            <Route path='/dashboard' element={<RequiredDashboard>
+              <SellerCheckProvider>
+                <OrderProvider>
+                  <Dashboard></Dashboard>
+                </OrderProvider>
+              </SellerCheckProvider>
+            </RequiredDashboard>}>
+              <Route index element={<MyDashboard></MyDashboard>}></Route>
+              <Route path='my-profile' element={<MyProfile></MyProfile>}></Route>
+              <Route path='manage-product' element={<ManageProduct></ManageProduct>}></Route>
 
 
-            {/* only admin route */}
-            <Route path='check-seller' element={<RequiredAdmin><CheckSeller></CheckSeller></RequiredAdmin>}></Route>
+              {/* only admin route */}
+              <Route path='check-seller' element={<RequiredAdmin><CheckSeller></CheckSeller></RequiredAdmin>}></Route>
 
-            {/*  seller routes  */}
-            <Route path='check-order' element={<RequiredSeller><CheckOrder></CheckOrder></RequiredSeller>}></Route>
-            <Route path='manage-orders' element={<RequiredSeller><ManageOrders></ManageOrders></RequiredSeller>}></Route>
+              {/*  seller routes  */}
+              <Route path='check-order' element={<RequiredSeller><CheckOrder></CheckOrder></RequiredSeller>}></Route>
+              <Route path='manage-orders' element={<RequiredSeller><ManageOrders></ManageOrders></RequiredSeller>}></Route>
 
-            {/* // owner and admin route */}
-            <Route path='manage-users' element={<RequiredOwnerAdmin><ManageUsers></ManageUsers></RequiredOwnerAdmin>}></Route>
-            <Route path='privacy-policy' element={<RequiredOwnerAdmin><Policy></Policy></RequiredOwnerAdmin>}></Route>
-          </Route>
-          <Route path='*' element={<NotFound></NotFound>}></Route>
-        </Routes>
-        <div className="theme_changer">
-          <div className='theme_box'>
-            <label className="switch">
-              <input type="checkbox" checked={theme ? true : ""} onChange={() => setTheme(!theme)} />
-              <span className="slider round"></span>
-            </label>
+              {/* // owner and admin route */}
+              <Route path='manage-users' element={<RequiredOwnerAdmin><ManageUsers></ManageUsers></RequiredOwnerAdmin>}></Route>
+              <Route path='privacy-policy' element={<RequiredOwnerAdmin><Policy></Policy></RequiredOwnerAdmin>}></Route>
+              <Route path='*' element={<NotFound></NotFound>}></Route>
+            </Route>
+
+          </Routes>
+
+          <div className="theme_changer">
+            <div className='theme_box'>
+              <label className="switch">
+                <input type="checkbox" checked={theme ? true : ""} onChange={() => setTheme(!theme)} />
+                <span className="slider round"></span>
+              </label>
+            </div>
           </div>
-        </div>
-        <Footer></Footer>
-      </AuthProvider>
-    </UserProvider>
+          <Footer></Footer>
+        </AuthProvider>
+      </UserProvider>
+
+    </>
   );
 }
 

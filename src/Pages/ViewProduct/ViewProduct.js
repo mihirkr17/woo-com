@@ -8,7 +8,7 @@ import Product from '../../Shared/Product';
 import ProductModel from '../../Shared/ProductModel';
 import { useAuthUser } from '../../App';
 import { useState } from 'react';
-import { averageRating, loggedOut } from '../../Shared/common';
+import { apiHandler, averageRating, loggedOut } from '../../Shared/common';
 import { useAuthContext } from '../../lib/AuthProvider';
 
 
@@ -16,7 +16,7 @@ const ViewProduct = () => {
    const { product_slug } = useParams();
    const user = useAuthUser();
    const { authRefetch, role } = useAuthContext();
-   const { data: product, loading, refetch: productRefetch } = useFetch(`${process.env.REACT_APP_BASE_URL}api/product/fetch-single-product/${product_slug}/${user?.email}`);
+   const { data: product, loading, refetch: productRefetch } = useFetch(`${process.env.REACT_APP_BASE_URL}api/product/fetch-single-product/${product_slug}?email=${user?.email}`);
    const { data: productByCategory } = useFetch(`${process.env.REACT_APP_BASE_URL}api/product/product-by-category?sub_category=${product?.genre?.sub_category}`);
    const navigate = useNavigate();
    const { msg, setMessage } = useMessage();
@@ -50,7 +50,6 @@ const ViewProduct = () => {
          shipping_fee: product?.shipping_fee || 0
       }
 
-
       if (product?.stock === "in") {
          if (params === "buy") {
             setBuyLoading(true);
@@ -58,19 +57,14 @@ const ViewProduct = () => {
             setAddCartLoading(true);
          }
 
-         const response = await fetch(url, {
-            method: "PUT",
-            withCredentials: true,
-            credentials: "include",
-            headers: {
-               'content-type': 'application/json'
-            },
-            body: JSON.stringify(cartProduct)
-         });
+         const resData = await apiHandler(url, "POST", null, cartProduct);
 
-         const resData = await response.json();
+         if (resData.status === 401 || resData.status === 403) {
+            await loggedOut();
+            return navigate(`/login?err=${resData?.error}`);
+         }
 
-         if (response.ok) {
+         if (resData.success) {
             authRefetch();
             productRefetch();
             setMessage(resData?.message);
@@ -86,8 +80,6 @@ const ViewProduct = () => {
          } else {
             setAddCartLoading(false);
             setBuyLoading(false);
-            await loggedOut();
-            navigate(`/login?err=${resData?.message} token not found`);
          }
       }
    }
@@ -124,7 +116,7 @@ const ViewProduct = () => {
          setMessage(<p className='py-2 text-success'><small><strong>{resData?.message}</strong></small></p>);
       } else {
          await loggedOut();
-         navigate(`/login?err=${resData?.message} token not found`);
+         navigate(`/login?err=${resData?.error}`);
       }
    }
 
@@ -143,7 +135,7 @@ const ViewProduct = () => {
          setMessage(<p className='py-2 text-success'><small><strong>{resData?.message}</strong></small></p>);
       } else {
          await loggedOut();
-         navigate(`/login?err=${resData?.message} token not found`);
+         navigate(`/login?err=${resData?.error}`);
       }
    }
 

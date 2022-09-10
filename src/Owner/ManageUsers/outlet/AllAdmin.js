@@ -27,7 +27,7 @@ const AllAdmin = () => {
             refetch();
          } else {
             await loggedOut();
-            navigate(`/login?err=${resData?.message} token not found`);
+            navigate(`/login?err=${resData?.error}`);
          }
       }
    }

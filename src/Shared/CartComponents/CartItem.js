@@ -14,33 +14,38 @@ const CartItem = ({ product: cartProduct, setMessage, authRefetch, checkOut, car
    const quantityHandler = async (cp, action) => {
       let quantity = action === "dec" ? cp?.quantity - 1 : cp?.quantity + 1;
 
-      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/cart/update-product-quantity/${cartTypes && cartTypes}`, {
-         method: "PUT",
-         withCredentials: true,
-         credentials: "include",
-         headers: {
-            "Content-Type": "application/json",
-            authorization: `${cp?._id}` || ""
-         },
-         body: JSON.stringify({ quantity })
-      });
+      // const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/cart/update-product-quantity/${cartTypes && cartTypes}`, {
+      //    method: "PUT",
+      //    withCredentials: true,
+      //    credentials: "include",
+      //    headers: {
+      //       "Content-Type": "application/json",
+      //       authorization: `${cp?._id}` || ""
+      //    },
+      //    body: JSON.stringify({ quantity })
+      // });
 
-      const resData = await response.json();
+      // const resData = await response.json();
+      const resData = await apiHandler(
+         `${process.env.REACT_APP_BASE_URL}api/cart/update-product-quantity/${cartTypes && cartTypes}`,
+         "PUT",
+         `${cp?._id}`,
+         { quantity }
+      );
 
-      if (response.status === 400) {
-         setMessage(resData?.message);
-         return
-      }
-
-      if (response.ok) {
-         authRefetch();
-         setMessage(resData?.message);
-      }
-
-      if ((response.status === 401) || (response.status === 403)) {
+      if ((resData?.status === 401) || (resData?.status === 403)) {
          await loggedOut();
-         navigate(`/login?err=Something went wrong`);
+         navigate(`/login?err=${resData?.error}`);
       }
+
+      if (resData?.success) {
+         authRefetch();
+         return setMessage(resData?.message);
+      } else {
+         return setMessage(resData?.message);
+      }
+
+
    }
 
    //  Remove product from cartProduct && cartProduct handler
@@ -49,12 +54,16 @@ const CartItem = ({ product: cartProduct, setMessage, authRefetch, checkOut, car
 
       const resData = await apiHandler(`${process.env.REACT_APP_BASE_URL}api/cart/delete-cart-item/${cartTypes && cartTypes}`, "DELETE", `${_id}`);
 
-      if (resData) {
+      if (resData?.success) {
          setMessage(`${title} ${resData?.message}`);
          authRefetch();
       } else {
+         setMessage(`${title} ${resData?.error}`);
+      }
+
+      if (resData?.status === 401 || resData?.status === 403) {
          await loggedOut();
-         navigate(`/login?err=Something went wrong`);
+         navigate(`/login?err=${resData?.error}`);
       }
    }
 
@@ -98,8 +107,10 @@ const CartItem = ({ product: cartProduct, setMessage, authRefetch, checkOut, car
                      !checkOut && <div className="remove_btn col-1 text-end">
                         <button className='btn btn-sm' onClick={() => setOpenBox(true)}><FontAwesomeIcon icon={faClose} /></button>
                         {
-                           openBox && <ConfirmDialog payload={{ reference: cartProduct, openBox, setOpenBox, 
-                              handler: removeItemFromCartHandler, types: "Delete", text: `Remove this from your cart` }} />
+                           openBox && <ConfirmDialog payload={{
+                              reference: cartProduct, openBox, setOpenBox,
+                              handler: removeItemFromCartHandler, types: "Delete", text: `Remove this from your cart`
+                           }} />
                         }
                      </div>
                   }

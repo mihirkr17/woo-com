@@ -58,26 +58,25 @@ export const cartCalculate = (product) => {
    return p;
 }
 
-export const apiHandler = async (url, method = "GET", authorization, body = {}) => {
+export const apiHandler = async (url, method = "GET", authorization = null, body = {}) => {
    const response = await fetch(url, {
       method,
       withCredentials: true,
       credentials: "include",
       headers: {
          "Content-Type": "application/json",
-         authorization: authorization || ""
+         authorization: authorization
       },
       body: JSON.stringify(body)
    });
 
    const resData = await response.json();
 
-   if (response.status === 400) {
-      console.log(resData?.message);
-   }
-
-   if (response.ok) {
-      return resData;
+   return {
+      success: resData?.success,
+      status : response.status,
+      error: resData?.error,
+      message: resData?.message
    }
 }
 

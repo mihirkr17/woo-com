@@ -1,6 +1,6 @@
 import { faCheckCircle, faLeftLong } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { useMessage } from '../../Hooks/useMessage';
@@ -10,25 +10,25 @@ import CartItem from '../../Shared/CartComponents/CartItem';
 import CartPayment from '../../Shared/CartComponents/CartPayment';
 import { loggedOut } from '../../Shared/common';
 import { useAuthContext } from '../../lib/AuthProvider';
+import CartAddress from '../../Shared/CartComponents/CartAddress';
 
 const CheckOut = () => {
    const navigate = useNavigate();
    const { msg, setMessage } = useMessage()
    const { authLoading, authRefetch, userInfo } = useAuthContext();
+   const [step, setStep] = useState(false);
+
+   // filter the products which stock is available
    let products = userInfo?.myCartProduct && userInfo?.myCartProduct.filter(p => p?.stock === "in");
 
-   if (authLoading) {
-      return <Spinner></Spinner>;
-   }
-
-   const selectedAddress = userInfo && userInfo.address && userInfo?.address.find(a => a?.select_address === true); //finding selected address to checkout page
+   // pick the address where selected address is true
+   const selectedAddress = userInfo && userInfo.address && userInfo?.address.find(a => a?.select_address === true);
 
    const buyBtnHandler = async (e) => {
       e.preventDefault();
 
-      if (products && products.length <= 0) {
-         setMessage(<p className='text-danger'><small><strong>No Products to buy</strong></small></p>);
-         return;
+      if ((products.length <= 0 || !step)) {
+         return setMessage("No Products to buy", "warning");
       }
 
       let buyAlert = window.confirm("Buy Now");
@@ -73,25 +73,26 @@ const CheckOut = () => {
 
             const resData = await response.json();
 
-            if (response.status === 400) {
-               setMessage(resData?.message);
-               return
+            if ((response.status === 401) || (response.status === 403)) {
+               await loggedOut();
+               navigate(`/login?err=${resData?.error}`);
             }
 
             if (response.status >= 200 && response.status <= 299) {
                authRefetch();
                navigate(`/my-profile/my-order?order=${resData?.message}`);
-            }
-
-            if ((response.status === 401) || (response.status === 403)) {
-               await loggedOut();
-               navigate(`/login?err=${resData?.message}`);
+            } else {
+               setMessage(resData?.error);
+               return;
             }
          }
       }
 
    }
 
+   if (authLoading) {
+      return <Spinner></Spinner>;
+   }
    return (
       <div className='section_default'>
          <div className="container">
@@ -102,21 +103,7 @@ const CheckOut = () => {
             <div className="row">
                <div className="col-lg-8 mb-3">
                   <div>
-                     <address className='cart_card'>
-                        <h6>Selected Address</h6>
-                        <hr />
-                        <div className="address_card">
-                           {
-                              <div style={{ wordBreak: "break-word" }}>
-                                 <h6><b className='me-3'>{selectedAddress?.name}</b>{selectedAddress?.select_address && <FontAwesomeIcon icon={faCheckCircle} />}</h6>
-                                 <p>
-                                    <small>{selectedAddress?.village}, {selectedAddress?.city}, {selectedAddress?.country}, {selectedAddress?.zip}</small> <br />
-                                    <small>Phone : {selectedAddress?.phone}</small>
-                                 </p>
-                              </div>
-                           }
-                        </div>
-                     </address>
+                     <CartAddress setMessage={setMessage} navigate={navigate} authRefetch={authRefetch} addr={userInfo?.address ? userInfo?.address : []} setStep={setStep} />
                   </div>
                   <br />
                   <div className="cart_card">
@@ -136,7 +123,7 @@ const CheckOut = () => {
                <div className="col-lg-4 mb-3">
                   <CartCalculation product={cartCalculate(userInfo?.myCartProduct)} headTitle={"Order Details"}></CartCalculation>
                   <br />
-                  <CartPayment buyBtnHandler={buyBtnHandler} isStock={products && products.length > 0 ? true : false}></CartPayment>
+                  <CartPayment buyBtnHandler={buyBtnHandler} step={step} isStock={products && products.length > 0 ? true : false}></CartPayment>
                </div>
             </div>
          </div>

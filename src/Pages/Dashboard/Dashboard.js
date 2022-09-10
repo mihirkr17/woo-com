@@ -54,7 +54,7 @@ const Dashboard = () => {
       
       if (response.status === 401 || response.status === 403) {
          await loggedOut();
-         navigate(`/login?err=${resData?.message} token not found`);
+         navigate(`/login?err=${resData?.error}`);
       }
    }
 

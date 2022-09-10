@@ -25,7 +25,7 @@ const Wishlist = () => {
          setMessage(<p className='py-2 text-success'><small><strong>{resData?.message}</strong></small></p>);
       } else {
          await loggedOut();
-         navigate(`/login?err=${resData?.message} token not found`);
+         navigate(`/login?err=${resData?.error}`);
       }
    }
    return (

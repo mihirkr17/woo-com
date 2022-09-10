@@ -7,7 +7,7 @@ export const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
    const user = useAuthUser();
-   const { role, userInfo, authRefetch, authLoading } = useAuth(user);
+   const { role, userInfo, authRefetch, authLoading } = useAuth(user && user);
 
    return (
       <AuthContext.Provider value={{ role, userInfo, authRefetch, authLoading }}>

@@ -3,7 +3,7 @@ import { loggedOut } from '../Shared/common';
 
 const useAuth = (user) => {
    const [role, setRole] = useState("");
-   const [userInfo, setUserInfo] = useState(null || {} || []);
+   const [userInfo, setUserInfo] = useState({});
    const [authLoading, setAuthLoading] = useState(false);
    const [err, setErr] = useState();
    const [ref, setRef] = useState(false);
@@ -21,19 +21,14 @@ const useAuth = (user) => {
                if (user) {
                   setAuthLoading(true);
                   const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/user/fetch-auth-user`, {
+                     withCredential: true,
+                     credentials: 'include',
                      headers: {
                         authorization: `${user?.email}`
                      }
                   });
+
                   const data = await response.json();
-
-                  if (!data) {
-                     await loggedOut();
-                  }
-
-                  if (response.status === 400) {
-                     console.log(data?.error);
-                  }
 
                   if (response.status >= 200 && response.status <= 299) {
                      const userData = data && data?.data;
@@ -43,10 +38,13 @@ const useAuth = (user) => {
                         setUserInfo(userData);
                      }
                      setAuthLoading(false);
-                  } else {
+                  }
+
+                  if (response.status === 401 || response.status === 403 || response.status === 400) {
                      setAuthLoading(false);
                      await loggedOut();
                   }
+
                } else {
                   setRole("");
                   setAuthLoading(false);
@@ -54,7 +52,7 @@ const useAuth = (user) => {
                }
 
             } catch (error) {
-               setErr(error);
+               setErr(error?.message);
             } finally {
                setAuthLoading(false);
             }

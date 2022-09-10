@@ -3,12 +3,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { useEffect } from 'react';
 import { useState } from 'react';
-import { loggedOut } from '../common';
+import { apiHandler, loggedOut } from '../common';
 import AddressForm from './AddressForm';
 import AddressUpdateForm from './AddressUpdateForm';
 
-const CartAddress = ({ authRefetch, addr, setStep, navigate }) => {
-
+const CartAddress = ({ authRefetch, addr, setStep, navigate, setMessage }) => {
    const [openAddressForm, setOpenAddressForm] = useState(false);
    const [openAddressUpdateForm, setOpenAddressUpdateForm] = useState(false);
 
@@ -46,12 +45,17 @@ const CartAddress = ({ authRefetch, addr, setStep, navigate }) => {
 
       const resData = await response.json();
 
-      if (response.ok) {
-         setStep(false); authRefetch()
-      } else {
+      if (response.status === 401 || response.status === 403) {
          await loggedOut();
-         navigate(`/login?err=${resData?.message} token not found`);
-      };
+         navigate(`/login?err=${resData?.error}`);
+      }
+
+      if (response.ok) {
+         setStep(false);
+         setMessage(resData?.message, "success");
+         authRefetch();
+      }
+
    }
 
    const updateAddressHandler = async (e) => {
@@ -65,21 +69,22 @@ const CartAddress = ({ authRefetch, addr, setStep, navigate }) => {
       let final = { addressId: parseInt(openAddressUpdateForm?.addressId), name, village, city, country, phone, zip };
       final["select_address"] = false;
 
-      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/cart/update-cart-address`, {
-         method: "PUT",
-         withCredentials: true,
-         credentials: "include",
-         headers: {
-            'content-type': 'application/json'
-         },
-         body: JSON.stringify(final)
-      });
+      const resData = await apiHandler(
+         `${process.env.REACT_APP_BASE_URL}api/cart/update-cart-address`,
+         "PUT",
+         null,
+         final
+      );
 
-      const resData = await response.json();
-
-      if (response.ok) { setStep(false); authRefetch() } else {
+      if (resData.status === 401 || resData.status === 403) {
          await loggedOut();
-         navigate(`/login?err=${resData?.message} token not found`);
+         return navigate(`/login?err=${resData?.error}`);
+      };
+
+      if (resData.success) {
+         setStep(false);
+         setMessage(resData?.message, "success");
+         authRefetch();
       };
    }
 
@@ -98,11 +103,16 @@ const CartAddress = ({ authRefetch, addr, setStep, navigate }) => {
 
       const resData = await response.json();
 
-      if (response.ok) {
-         authRefetch()
-      } else {
+      if (response.status === 401 || response.status === 403) {
          await loggedOut();
-         navigate(`/login?err=${resData?.message} token not found`);
+         navigate(`/login?err=${resData?.error}`);
+      };
+
+      if (response.ok) {
+         authRefetch();
+         setMessage(resData?.message, "success");
+      } else {
+         setMessage(resData?.error, "warning");
       }
    }
 
@@ -115,10 +125,12 @@ const CartAddress = ({ authRefetch, addr, setStep, navigate }) => {
          });
          const resData = await response.json();
 
-         if (response.ok) { authRefetch() } else {
+         if (response.status === 401 || response.status === 403) {
             await loggedOut();
-            navigate(`/login?err=${resData?.message} token not found`);
-         }
+            navigate(`/login?err=${resData?.error}`);
+         };
+
+         if (response.ok) { authRefetch() };
       }
    }
 
@@ -161,7 +173,7 @@ const CartAddress = ({ authRefetch, addr, setStep, navigate }) => {
                                     <div className="col-2 d-flex align-items-center flex-column justify-content-center">
                                        <button className='btn btn-sm'
                                           style={openAddressUpdateForm === false ? { display: "block" } : { display: "none" }}
-                                          onClick={() => setOpenAddressUpdateForm(true && address)}>
+                                          onClick={() => setOpenAddressUpdateForm(address)}>
                                           {address && <FontAwesomeIcon icon={faPenAlt} />}
                                        </button>
                                        <button onClick={() => deleteAddressHandler(addressId)} className="btn btn-sm mt-3"><FontAwesomeIcon icon={faClose}></FontAwesomeIcon></button>
@@ -171,7 +183,6 @@ const CartAddress = ({ authRefetch, addr, setStep, navigate }) => {
 
                            )
                         })
-
                      }
                      {
                         addr.length === 0 && <>
