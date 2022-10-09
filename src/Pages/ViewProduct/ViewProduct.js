@@ -8,7 +8,7 @@ import Product from '../../Shared/Product';
 import ProductModel from '../../Shared/ProductModel';
 import { useAuthUser } from '../../App';
 import { useState } from 'react';
-import { apiHandler, averageRating, loggedOut } from '../../Shared/common';
+import { apiHandler, averageRating, authLogout } from '../../Shared/common';
 import { useAuthContext } from '../../lib/AuthProvider';
 
 
@@ -60,7 +60,7 @@ const ViewProduct = () => {
          const resData = await apiHandler(url, "POST", null, cartProduct);
 
          if (resData.status === 401 || resData.status === 403) {
-            await loggedOut();
+            await authLogout();
             return navigate(`/login?err=${resData?.error}`);
          }
 
@@ -115,7 +115,7 @@ const ViewProduct = () => {
          authRefetch();
          setMessage(<p className='py-2 text-success'><small><strong>{resData?.message}</strong></small></p>);
       } else {
-         await loggedOut();
+         await authLogout();
          navigate(`/login?err=${resData?.error}`);
       }
    }
@@ -134,7 +134,7 @@ const ViewProduct = () => {
          authRefetch();
          setMessage(<p className='py-2 text-success'><small><strong>{resData?.message}</strong></small></p>);
       } else {
-         await loggedOut();
+         await authLogout();
          navigate(`/login?err=${resData?.error}`);
       }
    }

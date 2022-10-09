@@ -12,6 +12,7 @@ export const useSignIn = (user) => {
                   const name = user?.user?.displayName || email.slice(0, email.indexOf("@") - 1);
                   const photoURL = user?.user?.photoURL;
                   const url = `${process.env.REACT_APP_BASE_URL}api/user/sign-user`;
+                  
                   const response = await fetch(url, {
                      method: "POST",
                      withCredentials: true,

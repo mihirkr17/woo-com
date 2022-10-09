@@ -6,7 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import BtnSpinner from '../../Components/Shared/BtnSpinner/BtnSpinner';
 import FilterOption from "../../Shared/FilterOption";
 import { useEffect } from 'react';
-import { loggedOut } from '../../Shared/common';
+import { authLogout } from '../../Shared/common';
 import "./MyOrder.css";
 import { useAuthContext } from '../../lib/AuthProvider';
 
@@ -61,7 +61,7 @@ const MyOrder = () => {
             resData && refetch();
             setMessage(<strong className='text-success'>{resData?.message}</strong>);
          } else {
-            await loggedOut();
+            await authLogout();
             navigate(`/login?err=${resData?.error}`);
          }
       }
@@ -100,7 +100,7 @@ const MyOrder = () => {
       }
 
       if (response.status === 401 || response.status === 403) {
-         await loggedOut();
+         await authLogout();
          navigate(`/login?err=${resData?.error}`);
       }
    }
@@ -135,7 +135,7 @@ const MyOrder = () => {
          }
 
          if (response.status === 401 || response.status === 403) {
-            await loggedOut();
+            await authLogout();
             navigate(`/login?err=${resData?.error}`);
          }
       }

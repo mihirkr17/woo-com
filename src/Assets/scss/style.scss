@@ -1,5 +1,9 @@
-@import "Global/root";
-@import "Global/class";
+@import "Variables/color";
+@import "Variables/font";
+@import "Variables/util";
+@import "Partials/root";
+@import "Partials/reset";
+@import "Partials/class";
 
 // Shared Components 
 @import "SharedComponents/NavigationBar";
@@ -14,3 +18,4 @@
 @import "SharedComponents/MyDashboard";
 @import "SharedComponents/ManageUsers";
 @import "SharedComponents/ManageOrders";
+@import "Components/Login";

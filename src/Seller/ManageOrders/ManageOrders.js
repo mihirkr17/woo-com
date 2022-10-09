@@ -5,7 +5,7 @@ import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { useEffect } from 'react';
 import OrderTable from './Components/OrderTable';
 import { useOrder } from '../../lib/OrderProvider';
-import { loggedOut } from '../../Shared/common';
+import { authLogout } from '../../Shared/common';
 import { useNavigate } from 'react-router-dom';
 import ModalLabel from './Components/ModalLabel/ModalLabel';
 import { useAuthContext } from '../../lib/AuthProvider';
@@ -47,7 +47,7 @@ const ManageOrders = () => {
             setMessage(<strong className='text-success'>Order Cancelled...</strong>);
             orderRefetch();
          } else {
-            await loggedOut();
+            await authLogout();
             navigate(`/login?err=${resData?.error}`);
          }
       }
@@ -78,7 +78,7 @@ const ManageOrders = () => {
    //          setMessage(<p className='text-success'><small><strong>{successMsg}</strong></small></p>);
    //          orderRefetch();
    //       } else {
-   //          await loggedOut();
+   //          await authLogout();
    //          navigate(`/login?err=token not found`);
    //       }
 
@@ -107,7 +107,7 @@ const ManageOrders = () => {
          }
 
          if (response.status === 401 || response.status === 403) {
-            await loggedOut();
+            await authLogout();
             navigate(`/login?err=${resData?.error}`);
          }
       }

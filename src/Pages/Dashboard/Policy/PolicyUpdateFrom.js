@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { loggedOut } from '../../../Shared/common';
+import { authLogout } from '../../../Shared/common';
 
 const PolicyUpdateFrom = ({ data, refetch }) => {
    const navigate = useNavigate();
@@ -116,7 +116,7 @@ console.log(paymentInformation);
          console.log(resData?.message);
          refetch();
       } else {
-         await loggedOut();
+         await authLogout();
          navigate(`/login?err=${resData?.error}`);
       }
 

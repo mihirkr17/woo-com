@@ -3,7 +3,7 @@ import { Nav } from 'react-bootstrap';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useState } from 'react';
-import { loggedOut } from '../../Shared/common';
+import { authLogout } from '../../Shared/common';
 import { useAuthContext } from '../../lib/AuthProvider';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAddressCard, faBagShopping, faBlind, faCartFlatbed, faIndustry, faUserGroup } from '@fortawesome/free-solid-svg-icons';
@@ -53,7 +53,7 @@ const Dashboard = () => {
       } 
       
       if (response.status === 401 || response.status === 403) {
-         await loggedOut();
+         await authLogout();
          navigate(`/login?err=${resData?.error}`);
       }
    }
@@ -64,7 +64,7 @@ const Dashboard = () => {
             <div className={`${responsive < 567 ? "row" : "dashboard"}`}>
                <div className={`${responsive < 567 ? "col-12 pb-3 d_right_side" : "d_left card_default card_description"}`}>
                   <div className="pp_iyg">
-                     <button className='btn btn-sm btn-danger' onClick={async () => loggedOut()}>Log Out</button>
+                     <button className='btn btn-sm btn-danger' onClick={async () => authLogout()}>Log Out</button>
                      {
                         (userInfo?.isSeller && "seller") && <button className='btn btn-sm btn-primary mt-3' onClick={handleToUser}>Switch To User</button>
                      }

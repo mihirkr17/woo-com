@@ -1,92 +1,102 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
-import { useCreateUserWithEmailAndPassword, useUpdateProfile } from 'react-firebase-hooks/auth';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuthUser } from '../App';
 import BtnSpinner from "../Components/Shared/BtnSpinner/BtnSpinner";
-import { auth } from '../firebase.init';
+
 import { useMessage } from '../Hooks/useMessage';
-import { useSignIn } from '../Hooks/useSignIn';
+
 
 const Register = () => {
-   const { msg: regMsg, setMessage } = useMessage();
-   const [acc, setAcc] = useState(false);
-   const [createUserWithEmailAndPassword, user, loading, error] = useCreateUserWithEmailAndPassword(auth);
-   const [updateProfile, updating, error2] = useUpdateProfile(auth);
-   const [isLogged] = useSignIn(user);
+   const { msg, setMessage } = useMessage();
+   const [loading, setLoading] = useState(false);
+   const [accept, setAccept] = useState(false);
    const navigate = useNavigate();
-   let loggedUser = useAuthUser();
-   let msg;
 
-   useEffect(() => {
-      if (isLogged) navigate('/login');
-   }, [navigate, isLogged]);
-
-   if (error || error2) msg = <strong className="text-danger">{error?.message}</strong>
-
-   const handleRegister = async (e) => {
+   async function handleRegister(e) {
       try {
          e.preventDefault();
-         if (loggedUser) {
-            setMessage(<small><strong className="text-danger py-2">You already logged in</strong></small>);
-            return;
-         } else {
-            let username = e.target.username.value;
-            let email = e.target.email.value;
-            let password = e.target.password.value;
+         setLoading(true);
 
-            if (username === "" || email === "" || password === "") {
-               setMessage(<small><strong className="text-danger py-2">Please fill up all input fields!</strong></small>);
-               return;
-            } else {
-               await createUserWithEmailAndPassword(email, password);
-               await updateProfile({ displayName: username });
-            }
+         let formData = new FormData(e.currentTarget);
+
+         formData = Object.fromEntries(formData.entries());
+
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/user/register-user`, {
+            method: "POST",
+            headers: {
+               "Content-Type": "application/json"
+            },
+            body: JSON.stringify(formData)
+         });
+
+         setLoading(false);
+
+         const data = await response.json();
+
+         if (!response.ok) {
+            setMessage(data?.error, 'danger');
+            return;
          }
+
+         navigate(`/login?authenticate=${data?.data?.username}`);
+
+
       } catch (error) {
-         setMessage(<small><strong className="text-danger py-2">{error?.message}</strong></small>);
+         setMessage(error?.message, 'danger');
+      } finally {
+         setLoading(false);
       }
    }
 
    return (
       <div className='section_default' style={{ height: "90vh" }}>
+
          <div className="container">
-            <div className="row">
-               <div className="col-lg-4 mx-auto">
-                  <div className="card_default py-3 shadow">
-                     <div className="card_description">
-                        <h3>Register</h3>
-                        {msg || regMsg}
-                        <Form onSubmit={handleRegister}>
-                           <Form.Group className="mb-3" controlId="formBasicEmail">
-                              <Form.Label>Username</Form.Label>
-                              <Form.Control type="text" name='username' autoComplete='off' placeholder="Enter your name" />
-                           </Form.Group>
-
-                           <Form.Group className="mb-3" controlId="formBasicEmail">
-                              <Form.Label>Email address</Form.Label>
-                              <Form.Control type="email" name='email' autoComplete='off' placeholder="Enter your email" />
-                           </Form.Group>
-
-                           <Form.Group className="mb-3" controlId="formBasicPassword">
-                              <Form.Label>Password</Form.Label>
-                              <Form.Control type="password" name='password' autoComplete='off' placeholder="Enter your password" />
-                           </Form.Group>
-                           <Form.Group className="mb-3 text-muted" controlId="formBasicCheckbox">
-                              <Form.Check type="checkbox" onChange={() => setAcc(e => !e)} label="Accept our terms & condition ?" />
-                           </Form.Group>
-                           <Form.Group>
-                              <Button variant="primary" className='btn-sm' disabled={acc === false ? true : false} type="submit">
-                                 {loading || updating ? <BtnSpinner text={"Registering..."}></BtnSpinner> : "Register"}
-                              </Button>
-                           </Form.Group>
-                        </Form>
-                        <div className="py-3 text-center">
-                           <span>Already Have A Account ? &nbsp;</span>
-                           <Link to='/login'>Login</Link>
-                        </div>
-                     </div>
+            <div className="auth_container">
+               <div className="ac_left">
+                  <div className="ac_overlay">
+                     <h1>WooKart</h1>
+                     <p>
+                        Sign up with your email & username to get started
+                     </p>
                   </div>
+               </div>
+               <div className="ac_right">
+                  <h5>Register</h5>
+                  <p>Already have an account?
+                     &nbsp;<Link to={'/login'}>Go To Login</Link>&nbsp;
+                     it takes less than a minute
+                  </p>
+                  {msg}
+
+                  <Form onSubmit={handleRegister}>
+
+                     <Form.Group className="mb-3" controlId="formBasicEmail">
+                        <Form.Label>Username</Form.Label>
+                        <Form.Control type="text" name='username' autoComplete='off' placeholder="Enter username!!!" />
+                     </Form.Group>
+
+                     <Form.Group className="mb-3" controlId="formBasicEmail">
+                        <Form.Label>Email address</Form.Label>
+                        <Form.Control type="email" name='email' autoComplete='off' placeholder="Enter email address!!!" />
+                     </Form.Group>
+
+                     <Form.Group className="mb-3" controlId="formBasicPassword">
+                        <Form.Label>Password</Form.Label>
+                        <Form.Control type="password" name='password' autoComplete='off' placeholder="Please enter password !!!" />
+                     </Form.Group>
+
+                     <Form.Group className="mb-3 text-muted" controlId="formBasicCheckbox">
+                        <Form.Check type="checkbox" onChange={() => setAccept(e => !e)} label="Accept our terms & condition ?" />
+                     </Form.Group>
+
+                     <Form.Group>
+                        <Button id="submit_btn" variant="primary" className='bt9_auth' disabled={accept === false ? true : false} type="submit">
+                           {loading ? <BtnSpinner text={"Registering..."}></BtnSpinner> : "Register"}
+                        </Button>
+                     </Form.Group>
+
+                  </Form>
                </div>
             </div>
          </div>

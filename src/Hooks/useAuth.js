@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { loggedOut } from '../Shared/common';
+import { authLogout } from '../Shared/common';
 
-const useAuth = (user) => {
+const useAuth = () => {
    const [role, setRole] = useState("");
    const [userInfo, setUserInfo] = useState({});
    const [authLoading, setAuthLoading] = useState(false);
@@ -12,43 +12,31 @@ const useAuth = (user) => {
    authRefetch = () => setRef(e => !e);
 
    useEffect(() => {
-
-      // const controller = new AbortController();
+      setAuthLoading(true);
       const runFunc = setTimeout(() => {
          (async () => {
             try {
+               const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/user/fetch-auth-user`, {
+                  withCredential: true,
+                  credentials: 'include',
+               });
 
-               if (user) {
-                  setAuthLoading(true);
-                  const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/user/fetch-auth-user`, {
-                     withCredential: true,
-                     credentials: 'include',
-                     headers: {
-                        authorization: `${user?.email}`
-                     }
-                  });
+               const data = await response.json();
 
-                  const data = await response.json();
+               setAuthLoading(false);
 
-                  if (response.status >= 200 && response.status <= 299) {
-                     const userData = data && data?.data;
+               if (response.status === 401 || response.status === 403) {
+                  await authLogout();
+               }
 
-                     if (userData) {
-                        setRole(userData?.role);
-                        setUserInfo(userData);
-                     }
-                     setAuthLoading(false);
+               if (response.status >= 200 && response.status <= 299) {
+                  const userData = data && data?.data;
+
+                  if (userData) {
+                     setRole(userData?.role);
+                     setUserInfo(userData);
                   }
-
-                  if (response.status === 401 || response.status === 403 || response.status === 400) {
-                     setAuthLoading(false);
-                     await loggedOut();
-                  }
-
-               } else {
-                  setRole("");
                   setAuthLoading(false);
-                  setUserInfo({});
                }
 
             } catch (error) {
@@ -57,11 +45,11 @@ const useAuth = (user) => {
                setAuthLoading(false);
             }
          })()
-      }, 200);
+      }, 0);
 
       return () => clearTimeout(runFunc);
 
-   }, [user, ref]);
+   }, [ref]);
 
    return { role, authLoading, err, userInfo, authRefetch };
 };

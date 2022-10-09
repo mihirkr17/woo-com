@@ -4,7 +4,7 @@ import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { usePrice } from '../../../../Hooks/usePrice';
 import { useMessage } from '../../../../Hooks/useMessage';
-import { loggedOut, slugMaker } from '../../../../Shared/common';
+import { authLogout, slugMaker } from '../../../../Shared/common';
 import BtnSpinner from '../../../../Components/Shared/BtnSpinner/BtnSpinner';
 import { useNavigate } from 'react-router-dom';
 import { newCategory } from '../../../../Assets/CustomData/categories';
@@ -188,7 +188,7 @@ const ProductTemplateForm = ({ userInfo, formTypes, data, refetch }) => {
             setActionLoading(false);
 
             if (response.status === 401 || response.status === 403) {
-               await loggedOut();
+               await authLogout();
                navigate(`/login?err=${resData?.error}`);
             }
          }

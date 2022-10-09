@@ -1,5 +1,3 @@
-import { signOut } from 'firebase/auth';
-import { auth } from '../firebase.init';
 
 export const slugMaker = (string) => {
    return string.toLowerCase()
@@ -20,19 +18,14 @@ export const averageRating = (rating) => {
    return average;
 }
 // ${process.env.REACT_APP_BASE_URL}
-export const loggedOut = async () => {
-   signOut(auth);
+export const authLogout = async () => {
    const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/user/sign-out`, {
-      method: "GET",
+      method: "POST",
       withCredentials: true,
       credentials: "include",
-      headers: {
-         "Content-Type": "application/json",
-      },
    });
-   const resData = await response.json();
    if (response.ok) {
-      console.log(resData?.message);
+      window.location.reload();
    }
 };
 

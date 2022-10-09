@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Modal from '../../../Seller/ManageOrders/Components/Modal/Modal';
 import { useMessage } from '../../../Hooks/useMessage';
 import { useOrder } from '../../../lib/OrderProvider';
-import { loggedOut } from '../../../Shared/common';
+import { authLogout } from '../../../Shared/common';
 
 const CheckOrder = () => {
    const { order, orderRefetch } = useOrder();
@@ -26,7 +26,7 @@ const CheckOrder = () => {
             setMessage(<p className='text-success'><small><strong>{resData?.message}</strong></small></p>)
             orderRefetch();
          } else {
-            await loggedOut();
+            await authLogout();
          }
       }
    }

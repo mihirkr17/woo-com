@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { useEffect } from 'react';
 import { useState } from 'react';
-import { apiHandler, loggedOut } from '../common';
+import { apiHandler, authLogout } from '../common';
 import AddressForm from './AddressForm';
 import AddressUpdateForm from './AddressUpdateForm';
 
@@ -46,7 +46,7 @@ const CartAddress = ({ authRefetch, addr, setStep, navigate, setMessage }) => {
       const resData = await response.json();
 
       if (response.status === 401 || response.status === 403) {
-         await loggedOut();
+         await authLogout();
          navigate(`/login?err=${resData?.error}`);
       }
 
@@ -77,7 +77,7 @@ const CartAddress = ({ authRefetch, addr, setStep, navigate, setMessage }) => {
       );
 
       if (resData.status === 401 || resData.status === 403) {
-         await loggedOut();
+         await authLogout();
          return navigate(`/login?err=${resData?.error}`);
       };
 
@@ -104,7 +104,7 @@ const CartAddress = ({ authRefetch, addr, setStep, navigate, setMessage }) => {
       const resData = await response.json();
 
       if (response.status === 401 || response.status === 403) {
-         await loggedOut();
+         await authLogout();
          navigate(`/login?err=${resData?.error}`);
       };
 
@@ -126,7 +126,7 @@ const CartAddress = ({ authRefetch, addr, setStep, navigate, setMessage }) => {
          const resData = await response.json();
 
          if (response.status === 401 || response.status === 403) {
-            await loggedOut();
+            await authLogout();
             navigate(`/login?err=${resData?.error}`);
          };
 

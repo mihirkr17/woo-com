@@ -2,21 +2,21 @@ import { faCartShopping, faGauge, faSearch, faUserAlt } from '@fortawesome/free-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 import { Navbar } from 'react-bootstrap';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { useAuthUser } from '../../App';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../../lib/AuthProvider';
-import { loggedOut } from '../../Shared/common';
+import { authLogout } from '../../Shared/common';
 import SearchPage from '../../Pages/SearchPage/SearchPage';
 import CategoryHeader from '../../Pages/Home/Components/CategoryHeader';
 
-const NavigationBar = ({ theme, setTheme }) => {
-   const user = useAuthUser();
+const NavigationBar = () => {
    const [openAccount, setOpenAccount] = useState(false);
    const { role, userInfo } = useAuthContext();
    const navigate = useNavigate();
    const [query, setQuery] = useState("");
    const [loading, setLoading] = useState(false);
-   const [data, setData] = useState([])
+   const [data, setData] = useState([]);
+   const location = useLocation();
+   const path = location.pathname;
 
    const handleToSeller = async () => {
       const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/user/switch-role/seller`, {
@@ -35,7 +35,7 @@ const NavigationBar = ({ theme, setTheme }) => {
       }
 
       if (response.status === 401 || response.status === 403) {
-         await loggedOut();
+         await authLogout();
          navigate(`/login?err=${resData?.error}`);
       }
    }
@@ -60,15 +60,22 @@ const NavigationBar = ({ theme, setTheme }) => {
       }
    }
 
+   const handleLogout = async () => {
+      await authLogout();
+   }
+
    return (
       <>
          <Navbar sticky='top' className='navigation_bar' expand="lg">
             <div className='container nav_container'>
                <div className="nav_brand_logo">
-                  <Navbar.Brand className="nav_link" as={NavLink} to="/">WooCom</Navbar.Brand>
+                  <Navbar.Brand className="nav_link brand_logo" as={NavLink} to="/">WooKart</Navbar.Brand>
                </div>
 
                <div className="nav_right_items">
+                  {
+                     (path !== '/register' && path !== '/login') && 
+                  
 
                   <div className="search_box">
 
@@ -86,22 +93,23 @@ const NavigationBar = ({ theme, setTheme }) => {
                         </div>
                      }
                   </div>
+}
 
                   <div className="nv_items">
                      {
-                        (((role === "owner") || (role === "admin") || (role === "seller")) && user) &&
+                        (((role === "owner") || (role === "admin") || (role === "seller"))) &&
                         <NavLink className="nav_link" to="/dashboard"><FontAwesomeIcon icon={faGauge}></FontAwesomeIcon></NavLink>
                      }
                      {
-                        (role !== "owner" && role !== "admin" && role !== "seller") &&
+                        (role === 'user') &&
                         <NavLink className="nav_link cart_link" to='/my-cart'><FontAwesomeIcon icon={faCartShopping}></FontAwesomeIcon>
-                           {user && <div className="bg-info cart_badge">{(userInfo?.myCartProduct && userInfo?.myCartProduct.length) || 0}</div>}
+                           {<div className="bg-info cart_badge">{(userInfo?.myCartProduct && userInfo?.myCartProduct.length) || 0}</div>}
                         </NavLink>
                      }
                   </div>
 
                   {
-                     (user && (role !== "owner" && role !== "admin" && role !== "seller")) &&
+                     ((role === 'user')) &&
                      <div className="account_box nv_items">
                         <span onClick={() => setOpenAccount(e => !e)}>
                            <FontAwesomeIcon icon={faUserAlt}></FontAwesomeIcon>
@@ -117,17 +125,20 @@ const NavigationBar = ({ theme, setTheme }) => {
                            <Link className='drp_item' to='/my-profile/my-wishlist'>
                               My Wishlist ({(userInfo?.wishlist && userInfo?.wishlist.length) || 0})
                            </Link>
-                           <button className='drp_item' onClick={async () => loggedOut()}>Logout</button>
+                           <button className='drp_item' onClick={handleLogout}>Logout</button>
                         </div>
                      </div>
                   }
 
-                  {!user && <Link to="/login">Login</Link>}
+                  {!role && <Link to="/login">Login</Link>}
 
                </div>
             </div>
          </Navbar>
-         <CategoryHeader />
+
+         {
+            (path !== '/register' && path !== '/login') && <CategoryHeader />
+         }
       </>
 
    );

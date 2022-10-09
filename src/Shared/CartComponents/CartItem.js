@@ -4,7 +4,7 @@ import React from 'react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import BtnSpinner from '../../Components/Shared/BtnSpinner/BtnSpinner';
-import { apiHandler, loggedOut } from '../common';
+import { apiHandler, authLogout } from '../common';
 import ConfirmDialog from '../ConfirmDialog';
 
 const CartItem = ({ product: cartProduct, setMessage, authRefetch, checkOut, cartTypes, cartLoading, navigate }) => {
@@ -34,7 +34,7 @@ const CartItem = ({ product: cartProduct, setMessage, authRefetch, checkOut, car
       );
 
       if ((resData?.status === 401) || (resData?.status === 403)) {
-         await loggedOut();
+         await authLogout();
          navigate(`/login?err=${resData?.error}`);
       }
 
@@ -62,7 +62,7 @@ const CartItem = ({ product: cartProduct, setMessage, authRefetch, checkOut, car
       }
 
       if (resData?.status === 401 || resData?.status === 403) {
-         await loggedOut();
+         await authLogout();
          navigate(`/login?err=${resData?.error}`);
       }
    }

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import UpdateForm from './Components/UpdateForm';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
-import { loggedOut } from '../../../Shared/common';
+import { authLogout } from '../../../Shared/common';
 import { useAuthContext } from '../../../lib/AuthProvider';
 
 
@@ -67,7 +67,7 @@ const MyProfile = () => {
          // setInputValue({});
       } else {
          setActionLoading(false);
-         await loggedOut();
+         await authLogout();
          navigate(`/login?err=${resData?.error}`);
       }
    }

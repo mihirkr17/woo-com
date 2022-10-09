@@ -4,7 +4,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useMessage } from '../../Hooks/useMessage';
 import { useAuthContext } from '../../lib/AuthProvider';
-import { loggedOut } from '../../Shared/common';
+import { authLogout } from '../../Shared/common';
 
 const Wishlist = () => {
    const { userInfo, authRefetch } = useAuthContext();
@@ -24,7 +24,7 @@ const Wishlist = () => {
          authRefetch();
          setMessage(<p className='py-2 text-success'><small><strong>{resData?.message}</strong></small></p>);
       } else {
-         await loggedOut();
+         await authLogout();
          navigate(`/login?err=${resData?.error}`);
       }
    }

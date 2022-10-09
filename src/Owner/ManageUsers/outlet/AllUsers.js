@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Spinner from '../../../Components/Shared/Spinner/Spinner';
 import { useFetch } from '../../../Hooks/useFetch';
 import { useAuthContext } from '../../../lib/AuthProvider';
-import { loggedOut } from '../../../Shared/common';
+import { authLogout } from '../../../Shared/common';
 
 
 const AllUsers = () => {
@@ -29,7 +29,7 @@ const AllUsers = () => {
          if (response.ok) {
             refetch();
          } else {
-            await loggedOut();
+            await authLogout();
             navigate(`/login?err=${resData?.error}`);
          }
       }

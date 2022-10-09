@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faPenToSquare, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import ProductDetailsModal from './Components/ProductDetailsModal';
 import { useAuthContext } from '../../../lib/AuthProvider';
-import { loggedOut } from '../../../Shared/common';
+import { authLogout } from '../../../Shared/common';
 import { Link, useNavigate } from 'react-router-dom';
 import ProductTemplateForm from './Components/ProductTemplateForm';
 import { newCategory } from '../../../Assets/CustomData/categories';
@@ -68,7 +68,7 @@ const ManageProduct = () => {
             counterRefetch();
             setMessage(<p className='text-success'><small><strong>{resData?.message}</strong></small></p>);
          } else {
-            await loggedOut();
+            await authLogout();
             navigate(`/login?err=${resData?.error}`)
          }
       }
@@ -103,7 +103,7 @@ const ManageProduct = () => {
                resData && setMessage(<p className='text-success'><strong>Stock updated successfully</strong></p>);
                refetch();
             } else {
-               await loggedOut();
+               await authLogout();
                navigate(`login?err=${resData?.error}`);
             }
          }, 400)

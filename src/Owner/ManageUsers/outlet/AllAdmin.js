@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Spinner from '../../../Components/Shared/Spinner/Spinner';
 import { useFetch } from '../../../Hooks/useFetch';
-import { loggedOut } from '../../../Shared/common';
+import { authLogout } from '../../../Shared/common';
 
 const AllAdmin = () => {
    // const token = new URLSearchParams(document.cookie.replaceAll("; ", "&")).get('accessToken');
@@ -26,7 +26,7 @@ const AllAdmin = () => {
          if (response.ok) {
             refetch();
          } else {
-            await loggedOut();
+            await authLogout();
             navigate(`/login?err=${resData?.error}`);
          }
       }

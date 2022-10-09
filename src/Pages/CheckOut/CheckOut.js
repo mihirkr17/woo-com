@@ -8,7 +8,7 @@ import { cartCalculate } from '../../Shared/common';
 import CartCalculation from '../../Shared/CartComponents/CartCalculation';
 import CartItem from '../../Shared/CartComponents/CartItem';
 import CartPayment from '../../Shared/CartComponents/CartPayment';
-import { loggedOut } from '../../Shared/common';
+import { authLogout } from '../../Shared/common';
 import { useAuthContext } from '../../lib/AuthProvider';
 import CartAddress from '../../Shared/CartComponents/CartAddress';
 
@@ -74,7 +74,7 @@ const CheckOut = () => {
             const resData = await response.json();
 
             if ((response.status === 401) || (response.status === 403)) {
-               await loggedOut();
+               await authLogout();
                navigate(`/login?err=${resData?.error}`);
             }
 
