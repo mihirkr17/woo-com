@@ -61,7 +61,7 @@ const SocialAuth = () => {
    }, [user]);
 
    if (error) {
-      setMessage(<strong className='text-danger'>{error?.message}</strong>);
+      return setMessage(<strong className='text-danger'>{error?.message}</strong>);
    };
 
    const socialHandler = async () => {

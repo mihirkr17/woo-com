@@ -72,7 +72,12 @@
     align-items: center;
 
     .ac_right {
+      flex: auto;
       width: 100%;
+    }
+
+    .ac_left {
+      flex: auto;
     }
   }
 }

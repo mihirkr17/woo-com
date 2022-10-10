@@ -67,7 +67,7 @@ export const apiHandler = async (url, method = "GET", authorization = null, body
 
    return {
       success: resData?.success,
-      status : response.status,
+      status: response.status,
       error: resData?.error,
       message: resData?.message
    }
@@ -82,3 +82,9 @@ export const commissionRate = (prices = 0, quantity = 0) => {
    ownerProfit = parseFloat(ownerProfit.toFixed(2));
    return { ownerProfit }
 }
+
+export const emailValidator = (email) => {
+   const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+   return re.test(String(email).toLowerCase());
+}
+

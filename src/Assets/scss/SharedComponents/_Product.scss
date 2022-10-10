@@ -1,7 +1,7 @@
 .product_card {
   margin: auto;
   border-radius: 2px;
-  background: var(--color-trans-one);
+  background: var(--color-light);
   // box-shadow: 0 4px 30px var(--color-trans-two);
   backdrop-filter: blur(18px);
   width: 190px;
@@ -16,7 +16,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 90px;
+  height: 8vmax;
 
   > img {
     width: 100%;

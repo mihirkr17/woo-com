@@ -333,6 +333,8 @@ label {
   }
 
   &:disabled {
+    background-image: unset;
+    box-shadow: unset;
     user-select: none;
     cursor: not-allowed;
     background-color: var(--color-mute);
