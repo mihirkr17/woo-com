@@ -1,10 +1,7 @@
 import React from 'react';
-import Spinner from '../../../Components/Shared/Spinner/Spinner';
-import { useFetch } from '../../../Hooks/useFetch';
 import Product from '../../../Shared/Product';
 
-const TopRated = () => {
-   const { data, loading } = useFetch(`${process.env.REACT_APP_BASE_URL}api/product/top_rated`);
+const TopRated = ({data}) => {
 
    return (
       <div className='section_default recommended_comp'>
@@ -14,7 +11,7 @@ const TopRated = () => {
             </div>
             <div className="row">
                {
-                  loading ? <Spinner /> : data && data.map((product, index) => {
+                  data && data.map((product, index) => {
                      return (
                         <div className="col-lg-2 col-md-4" key={index}>
                            <Product product={product}></Product>

@@ -13,6 +13,7 @@ const ProductCategory = () => {
    const { category, sub_category, post_category } = useParams();
    const [url, setUrl] = useState("");
    const { data: productByCategory, loading } = useFetch(`${process.env.REACT_APP_BASE_URL + url}`);
+
    const [filters, setFilters] = useState('best_match');
    const [brands, setBrands] = useState({ brand: [] });
    const [getBrand, setGetBrand] = useState(["all"]);
@@ -29,22 +30,9 @@ const ProductCategory = () => {
       }
    }, [productByCategory]);
 
-   // filter product by price
+   // filter product by price and category
    useEffect(() => {
-      let filterUrl;
-
-      if (category && filters) {
-         filterUrl = `api/product/product-by-category?category=${category}&filters=${filters}`;
-      }
-
-      if (category && sub_category) {
-         filterUrl = `api/product/product-by-category?category=${category}&sb_category=${sub_category}&filters=${filters}`;
-      }
-
-      if (category && sub_category && post_category) {
-         filterUrl = `api/product/product-by-category?category=${category}&sb_category=${sub_category}&pt_category=${post_category}&filters=${filters}`;
-      }
-
+      let filterUrl = `api/product/product-by-category?filters=${filters}&categories=${[category, sub_category, post_category].filter(e => e)}`;
       setUrl(filterUrl);
    }, [category, filters, sub_category, post_category]);
 
@@ -83,7 +71,7 @@ const ProductCategory = () => {
                <div className="py-1 border-bottom">
                   <div className="sort_price">
                      <span>Sort By </span>
-                     <select name="filter" id="" onChange={(e) => setFilters(e.target.value)}>
+                     <select name="filter" id="filter" onChange={(e) => setFilters(e.target.value)}>
                         <option value="best_match">Best Match</option>
                         <option value="lowest">Lowest</option>
                         <option value="highest">Highest</option>
@@ -155,6 +143,8 @@ const ProductCategory = () => {
                   }
 
                </div>
+
+               
                <div className="category_right_side col-lg-10 col-md-9">
                {
                        products && products.length <= 0 && <p>No Result</p>

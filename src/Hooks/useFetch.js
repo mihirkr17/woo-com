@@ -1,33 +1,44 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom";
+import { authLogout } from "../Shared/common";
 
-export const useFetch = (url, headers = {}) => {
+export const useFetch = (url, authorization = "") => {
    const [data, setData] = useState();
-   const [loading, setLoading] = useState(false);
+   const [loading, setLoading] = useState(true);
    const [err, setErr] = useState(null);
    const [ref, setRef] = useState(false);
    const navigate = useNavigate();
 
-   let refetch;
-   refetch = () => setRef(e => !e);
+   const refetch = () => setRef(e => !e);
 
    useEffect(() => {
-
       const fetchData = setTimeout(() => {
          (async () => {
             try {
                setLoading(true);
-               const response = await fetch(url, headers);
+
+               const response = await fetch(url, {
+                  withCredential: true,
+                  credentials: 'include',
+                  headers: {
+                     authorization
+                  }
+               });
 
                const resData = await response.json();
 
-               if (response.status === 400) {
-                  setErr(resData?.message);
-               }
 
-               if (response.status >= 200 && response.status <= 299) {
+               if (response.ok) {
+                  setLoading(false);
                   setData(resData);
                } else {
+                  setLoading(false);
+
+                  if (response.status === 401) {
+                     await authLogout();
+                     return;
+                  }
+
                   navigate('/');
                }
             } catch (error) {
@@ -36,12 +47,12 @@ export const useFetch = (url, headers = {}) => {
                setLoading(false);
             }
          })();
-      }, 100);
+      }, 0);
 
 
       return () => clearTimeout(fetchData);
 
-   }, [url, ref, navigate]);
+   }, [url, authorization, ref, navigate]);
 
    return { data, loading, err, refetch };
 }

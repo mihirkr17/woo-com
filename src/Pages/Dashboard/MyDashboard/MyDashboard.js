@@ -7,14 +7,13 @@ import { useAuthContext } from '../../../lib/AuthProvider';
 import { useOrder } from '../../../lib/OrderProvider';
 import { useSellerChecker } from '../../../lib/SellerCheckProvider';
 import CheckOrder from '../CheckOrder/CheckOrder';
+import AdminTemplate from './Components/AdminTemplate';
 
 const MyDashboard = () => {
    const { userInfo, role } = useAuthContext();
    const { state } = useSellerChecker();
-   let url = role === "seller" ? `${process.env.REACT_APP_BASE_URL}api/product/fetch-top-selling-product?seller=${userInfo?.seller}` :
-      `${process.env.REACT_APP_BASE_URL}api/product/fetch-top-selling-product`;
-   const { data } = useFetch(url);
-   const { data: totalProduct } = useFetch(`${process.env.REACT_APP_BASE_URL}api/product/product-count?seller=${userInfo?.seller}`);
+   const { data } = useFetch(`${process.env.REACT_APP_BASE_URL}api/product/dashboard-overview`);
+
    const { orderCount } = useOrder();
    // search query params
    const queryParams = new URLSearchParams(window.location.search).get("check_order");
@@ -24,17 +23,7 @@ const MyDashboard = () => {
       <div className='section_default'>
          <div className="container">
             <div className="row">
-               <div className="col-12 mydb">
-                  <div className="mydb_head">
-                     {
-                        (role === "admin") &&
-                        <Link to='/dashboard/check-seller'>Check Seller {state?.slLength}</Link>
-                     }
-                  </div>
-                  <div className="search_result">
 
-                  </div>
-               </div>
                <div className="col-12">
                   <div className="row">
                      <div className="col-lg-4">
@@ -60,7 +49,7 @@ const MyDashboard = () => {
                                  <div className="d_p_mid_img">
                                     <img src={userInfo?.photoURL} alt="" style={{ width: "100%", height: "100%" }} />
                                  </div>
-                                 <h5>{role === "seller" ? userInfo?.seller : userInfo?.displayName}</h5>
+                                 <h5>{role === "seller" && userInfo?.username}</h5>
                               </div>
                            </div>
 
@@ -74,7 +63,7 @@ const MyDashboard = () => {
                                     <div className="t_p_right">
                                        <div className='t_p_right_text'>
                                           <strong>{
-                                             totalProduct && totalProduct.count
+                                             userInfo?.inventoryInfo?.totalProducts
                                           }</strong>
                                           <span>Products</span>
                                        </div>
@@ -89,7 +78,7 @@ const MyDashboard = () => {
                                  <div className="t_p_right">
                                     <div className='t_p_right_text'>
                                        <strong>{
-                                          totalProduct && totalProduct.count
+                                          data?.data?.topSoldProducts?.sold
                                        }</strong>
                                        <span>Followers</span>
                                     </div>
@@ -124,19 +113,19 @@ const MyDashboard = () => {
                                  </thead>
                                  <tbody>
                                     {
-                                       data && data.map((product, index) => {
+                                       data?.data?.topSoldProducts && data?.data?.topSoldProducts.map((product, index) => {
                                           return (
                                              <tr key={index}>
-                                                <td><img className='jjk_2m2' src={product?.image[0]} alt="" /></td>
+                                                <td><img className='jjk_2m2' src={product?.images && product?.images[0]} alt="" /></td>
                                                 <td>
                                                    <small>{product?.title.length > 30 ? product?.title.slice(0, 30) + "..." : product?.title}</small> <br />
                                                    <small className='pid'>#{product?._id}</small>
                                                 </td>
-                                                <td><small>{product?.genre?.category}</small></td>
+                                                <td><small>{product?.categories && product?.categories.join(' -> ')}</small></td>
                                                 <td><small>{product?.brand}</small></td>
                                                 <td><small>{product?.pricing?.sellingPrice}</small></td>
                                                 {role !== "seller" && <td>{product?.seller}</td>}
-                                                <td><small>{product?.top_sell || 0}</small></td>
+                                                <td><small>{product?.sold || 0}&nbsp;pcs</small></td>
                                              </tr>
                                           )
                                        })
@@ -146,6 +135,48 @@ const MyDashboard = () => {
                               </table>
                            </div>
                         </div>
+
+
+
+
+                        <div className="card_default card_description mb-3">
+                           <h6>Top Seller</h6>
+                           <div className="table-responsive">
+                              <table className='table table-borderless table-sm'>
+                                 <thead className="table-dark">
+                                    <tr>
+                                       <th>Seller</th>
+                                       <th>Username</th>
+                                       <th>Email Address</th>
+                                       <th>Products</th>
+                                       <th>Sold</th>
+                                    </tr>
+
+                                 </thead>
+                                 <tbody>
+                                    {
+                                       data?.data?.topSellers && data?.data?.topSellers.map((seller, index) => {
+                                          return (
+                                             <tr key={index}>
+                                                <td><img className='jjk_2m2' src={seller?.images && seller?.images[0]} alt="" /></td>
+                                                <td>
+                                                   <small>{seller?.username.length > 30 ? seller?.username.slice(0, 30) + "..." : seller?.username}</small> <br />
+                                                   <small className='pid'>#{seller?._id}</small>
+                                                </td>
+                                                <td><small>{seller?.email && seller?.email}</small></td>
+                                                <td><small>{seller?.totalProducts} pcs</small></td>
+                                                <td><small>{seller?.totalSell} Pcs</small></td>
+                                             </tr>
+                                          )
+                                       })
+                                    }
+
+                                 </tbody>
+                              </table>
+                           </div>
+                        </div>
+
+                     
 
                         {
                            (queryParams === "order_checking" && querySeller === userInfo?.seller && role === "seller") && <CheckOrder />

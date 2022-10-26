@@ -1,42 +1,13 @@
 import React from 'react';
 import { useState } from 'react';
-import { useAuthUser } from '../../App';
 import { useMessage } from '../../Hooks/useMessage';
 import { useAuthContext } from '../../lib/AuthProvider';
 
 
 const SellOnline = () => {
-   const user = useAuthUser();
    const { userInfo, authRefetch } = useAuthContext();
    const { msg, setMessage } = useMessage();
    const [categories, setCategories] = useState({ category: [] });
-
-   const apiReq = async (fields) => {
-      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/make-seller-request/${user?.email}`, {
-         method: "PUT",
-         headers: {
-            "Content-Type": "application/json"
-         },
-         body: JSON.stringify(fields)
-      });
-
-      if (response.ok) {
-         const resData = await response.json();
-         return resData;
-      }
-   }
-
-   const handleSellerPhone = async (e) => {
-      e.preventDefault();
-      let seller_phone = e.target.seller_phone.value;
-
-      if (seller_phone === "") {
-         return window.alert("please Enter phone number");
-      }
-
-      let data = await apiReq({ seller_phone });
-      if (data?.message === "success") authRefetch();
-   }
 
    const handleChange = (e) => {
       const { value, checked } = e.target;
@@ -52,34 +23,33 @@ const SellOnline = () => {
       }
    }
 
-   const handleSeller = async (e) => {
+   async function handleSellerRequest(e) {
       e.preventDefault();
+      let formData = new FormData(e.currentTarget);
 
-      let seller = e.target.seller.value;
-      let seller_village = e.target.seller_village.value;
-      let seller_district = e.target.seller_district.value;
-      let seller_country = e.target.seller_country.value;
-      let seller_zip = e.target.seller_zip.value;
-      let sell_category = categories?.category;
-      let seller_request = "pending";
+      formData = Object.fromEntries(formData.entries());
+      formData['categories'] = categories.category;
 
-      let seller_address = { seller_village, seller_district, seller_country, seller_zip };
-
-      if (seller === "" || seller_village === "" || seller_district === "" || seller_country === "" || seller_zip === "" || sell_category.length <= 0) {
-         return setMessage(<p className='text-danger'><small><strong>Please fill all input fields !</strong></small></p>);
-      }
 
       if (window.confirm("Submit the form ?")) {
-         let data = await apiReq({ seller, sell_category, seller_address, seller_request });
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/user/make-seller-request`, {
+            method: "PUT",
+            withCredential: true,
+            credentials: 'include',
+            headers: {
+               "Content-Type": "application/json"
+            },
+            body: JSON.stringify(formData)
+         });
 
-         if (data) {
-            setMessage(<p className='text-danger'><small><strong>{data?.message}</strong></small></p>);
+         const resData = await response.json();
 
-            if (data?.message === "success") {
-               e.target.reset();
-               authRefetch();
-            }
+         if (!response.ok) {
+            return setMessage(resData?.error, 'danger');
          }
+
+         setMessage(resData?.message, 'success');
+         authRefetch();
       }
    }
 
@@ -88,93 +58,97 @@ const SellOnline = () => {
          <div className="container">
             <h6>Want to sell your product online ? </h6>
             {
-               userInfo && (userInfo?.seller_request === "pending") ?
-                  <p className='text-success'>Your request is under pending...</p> :
-                  <p className='text-success'>Welcome {userInfo?.seller}</p>
+               userInfo && (userInfo?.isSeller === "pending") &&
+               <p className='text-success'>Your request is under pending...</p>
             }
 
-
-            {!userInfo?.seller_phone && <form onSubmit={handleSellerPhone}>
-               <div className="row">
-                  <div className="col-lg-6">
-                     <p>Launch your business in 10 minutes</p>
-                     <div className="my-3">
-                        <input type="number" className="form-control" name='seller_phone' placeholder='Enter your phone number here' />
-                     </div>
-                     <button type='submit' className='btn btn-sm btn-warning'>Start Selling</button>
-                  </div>
-               </div>
-            </form>}
-
             {
-               (userInfo?.seller_phone && !userInfo?.seller_request) && <div className="row">
+               <div className="row">
 
                   <div className="col-lg-7 mx-auto py-5">
+                     {msg}
 
-                     <form onSubmit={handleSeller} >
-                        <small><strong>Be a Seller ? Add your information below...</strong></small>
-                        <div className="my-3">
-                           <input type="text" className="form-control" name='seller' placeholder='Type name for seller' />
-                        </div>
-                        <div className="my-3">
-                           <input type="text" className="form-control" name='seller_village' placeholder='Type village' />
-                        </div>
-                        <div className="my-3">
-                           <input type="text" className="form-control" name='seller_district' placeholder='Type city' />
-                        </div>
-                        <div className="my-3">
-                           <input type="text" className="form-control" name='seller_country' placeholder='Type country' />
-                        </div>
-                        <div className="my-3">
-                           <input type="number" className="form-control" name='seller_zip' placeholder='Type zip' />
-                        </div>
+                     {
+                        (userInfo?.isSeller === "pending") ? <p className='text-success'>We are looking for your request as soon as possible.</p> :
+                           userInfo?.isSeller === "fulfilled" ? <p className='text-success'>You are a SELLER</p> :
+                              <form onSubmit={handleSellerRequest} encType='multipart/form-data'>
+                                 <small><strong>Be a Seller ? Add your information below...</strong></small>
+                                 <div className="my-3">
+                                    <input type="text" className="form-control" name='taxID' placeholder='Tax ID' />
+                                 </div>
+                                 <div className="my-3">
+                                    <input type="text" className="form-control" name='stateTaxID' placeholder='State Tax ID' />
+                                 </div>
+                                 <div className="my-3">
+                                    <input type="text" className="form-control" name='creditCard' placeholder='Credit Card details' />
+                                 </div>
+                                 <div className="my-3">
+                                    <input type="date" className="form-control" name='dateOfBirth' placeholder='Type city' />
+                                 </div>
 
-                        <div className='my-3'>
-                           <small><strong>Please select at least one particular product category for sell...</strong></small>
-                           <div className="row">
-                              <div className="col-12">
-                                 <label htmlFor="fashion">
-                                    <input type="checkbox" className='me-3' name="fashion" id="fashion" value="fashion" onChange={handleChange} />
-                                    Fashion
-                                 </label>
-                              </div>
-                              <div className="col-12">
-                                 <label htmlFor="electronics">
-                                    <input type="checkbox" className='me-3' name="electronics" id="electronics" value="electronics" onChange={handleChange} />
-                                    Electronics
-                                 </label>
-                              </div>
-                              <div className="col-12">
-                                 <label htmlFor="men-clothing">
-                                    <input type="checkbox" className='me-3' name="men-clothing" id="men-clothing" value="men-clothing" onChange={handleChange} />
-                                    Men Clothing
-                                 </label>
-                              </div>
-                           </div>
-                        </div>
-                        <div className="card_default my-3">
-                           <div className="card_description">
-                              <p>
-                                 <small className="text-muted">
-                                    NB. If you want to become seller your role will be changed to seller and your existing cart & order
-                                    information will be deleted from this account. <br />
-                                    So we recommended to you, create new account first and become seller.
-                                 </small>
-                              </p>
-                           </div>
-                        </div>
-                        {msg}
-                        <button type='submit' className='btn btn-sm btn-primary'>Submit</button>
-                     </form>
+                                 <div className="my-3">
+                                    <input type="text" className="form-control" name='street' placeholder='Street name' />
+                                 </div>
+                                 <div className="my-3">
+                                    <input type="text" className="form-control" name='thana' placeholder='Thana name' />
+                                 </div>
+                                 <div className="my-3">
+                                    <input type="text" className="form-control" name='district' placeholder='Type district name' />
+                                 </div>
+                                 <div className="my-3">
+                                    <input type="text" className="form-control" name='state' placeholder='Type state name' />
+                                 </div>
+                                 <div className="my-3">
+                                    <input type="text" className="form-control" name='country' placeholder='Type country name' />
+                                 </div>
+
+                                 <div className="my-3">
+                                    <input type="number" className="form-control" name='phone' placeholder='Phone number' />
+                                 </div>
+                                 <div className="my-3">
+                                    <input type="number" className="form-control" name='pinCode' placeholder='Type pinCode' />
+                                 </div>
+
+                                 <div className='my-3'>
+                                    <small><strong>Please select at least one particular product category for sell...</strong></small>
+                                    <div className="row">
+                                       <div className="col-12">
+                                          <label htmlFor="fashion">
+                                             <input type="checkbox" className='me-3' name="fashion" id="fashion" value="fashion" onChange={handleChange} />
+                                             Fashion
+                                          </label>
+                                       </div>
+                                       <div className="col-12">
+                                          <label htmlFor="electronics">
+                                             <input type="checkbox" className='me-3' name="electronics" id="electronics" value="electronics" onChange={handleChange} />
+                                             Electronics
+                                          </label>
+                                       </div>
+                                       <div className="col-12">
+                                          <label htmlFor="men-clothing">
+                                             <input type="checkbox" className='me-3' name="men-clothing" id="men-clothing" value="men-clothing" onChange={handleChange} />
+                                             Men Clothing
+                                          </label>
+                                       </div>
+                                    </div>
+                                 </div>
+                                 <div className="card_default my-3">
+                                    <div className="card_description">
+                                       <p>
+                                          <small className="text-muted">
+                                             NB. If you want to become seller your role will be changed to seller and your existing cart & order
+                                             information will be deleted from this account. <br />
+                                             So we recommended to you, create new account first and become seller.
+                                          </small>
+                                       </p>
+                                    </div>
+                                 </div>
+
+                                 <button type='submit' className='btn btn-sm btn-primary'>Submit</button>
+                              </form>
+                     }
                   </div>
                </div>
-            }
-
-            {
-               userInfo?.seller_request === "pending" && <p>We are looking for your request as soon as possible</p>
-            }
-            {
-               userInfo?.seller_request === "ok" && <p>I am seller now</p>
             }
          </div>
       </div>

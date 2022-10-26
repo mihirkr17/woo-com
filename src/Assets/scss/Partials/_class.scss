@@ -77,7 +77,6 @@
 
 .bt9_checkout {
   padding: 0.5rem 0.9rem;
-  border-radius: 3px;
   background-color: var(--color-accent);
   color: var(--color-light);
   font-weight: 500;
@@ -192,30 +191,7 @@ label {
   background-color: var(--color-bg);
 }
 
-.product_price_model {
-  display: flex;
-  align-items: flex-end;
-  justify-content: flex-start;
-  flex-direction: row;
-  flex-wrap: wrap;
-  margin: 0.4rem 0;
-  padding: 0.1rem 0;
 
-  big {
-    color: var(--color-accent);
-    padding-right: 0.3rem;
-    font-weight: 500;
-  }
-
-  span {
-    color: var(--color-secondary);
-  }
-}
-
-.product_rating_model small {
-  color: var(--color-orange);
-  font-weight: 500;
-}
 
 // .search_result {
 //   width: 50%;
@@ -343,4 +319,9 @@ label {
 
 .brand_logo {
   font-weight: bolder;
+}
+
+.textMute {
+  font-weight: 400;
+  color: #878787;
 }

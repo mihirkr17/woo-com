@@ -8,7 +8,7 @@ const CartHeader = ({ user }) => {
          <div className="row">
             <div className="col-lg-12">
                
-               <small>Email : {user?.email} <br /> Username : {user?.displayName}</small>
+               <small>Email : {user?.email} <br /> Username : {user?.username}</small>
             </div>
          </div>
       </div>

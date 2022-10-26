@@ -1,24 +1,27 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuthUser } from '../../App';
 import { useMessage } from '../../Hooks/useMessage';
 import { cartCalculate } from '../../Shared/common';
 import CartCalculation from '../../Shared/CartComponents/CartCalculation';
 import CartHeader from '../../Shared/CartComponents/CartHeader';
 import CartItem from '../../Shared/CartComponents/CartItem';
 import { useAuthContext } from '../../lib/AuthProvider';
+import { useFetch } from '../../Hooks/useFetch';
+
 
 const Cart = () => {
-   const user = useAuthUser();
-   const { userInfo, authRefetch } = useAuthContext();
+   const { userInfo } = useAuthContext();
    const { msg, setMessage } = useMessage();
    const navigate = useNavigate();
 
+   const { data: cartItems, loading, refetch } = useFetch(`${process.env.REACT_APP_BASE_URL}api/cart/show-my-cart-items`);
+
+   // Go checkout page
    const goCheckoutPage = async (id) => {
-      if ((!userInfo?.myCartProduct || typeof userInfo?.myCartProduct === "undefined") || (userInfo?.myCartProduct.length <= 0)) {
+      if ((!userInfo?.shoppingCartItems || typeof userInfo?.shoppingCartItems === "undefined")) {
          return setMessage("Your cart is empty. Please add product to your cart", "danger");
       }
-      return navigate(`/my-cart/checkout/${id}`);
+      return navigate(`/my-cart/checkout`);
    }
 
    return (
@@ -28,12 +31,18 @@ const Cart = () => {
             <div className="row">
                <div className="col-lg-8 mb-3">
                   <div className="cart_card">
-                     <h6>Total In Cart ({(userInfo?.myCartProduct && userInfo?.myCartProduct.length) || 0})</h6>
+                     <h6>Total In Cart ({(cartItems?.data?.items && cartItems?.data?.items) || 0})</h6>
                      <hr />
                      {
-                        (userInfo?.myCartProduct && userInfo?.myCartProduct.length > 0) ? userInfo?.myCartProduct.map(product => {
+                        (cartItems?.data?.products && cartItems?.data?.products.length > 0) ? cartItems?.data?.products.map(product => {
                            return (
-                              <CartItem navigate={navigate} authRefetch={authRefetch} key={product?._id} product={product} cartTypes={"toCart"} setMessage={setMessage}></CartItem>
+                              <CartItem
+                                 key={product?._id}
+                                 refetch={refetch}
+                                 product={product}
+                                 cartTypes={"toCart"}
+                                 setMessage={setMessage}
+                              ></CartItem>
                            )
                         }) :
                            <div className="card_default">
@@ -45,14 +54,18 @@ const Cart = () => {
                   </div>
                </div>
                <div className="col-lg-4 mb-3">
-                  <CartHeader user={user}></CartHeader>
+                  {/* <CartHeader user={userInfo}></CartHeader> */}
+                  {/* <br /> */}
+                  <CartCalculation
+                     product={cartCalculate(cartItems?.data?.products && cartItems?.data?.products)}
+                  />
+
                   <br />
-                  <CartCalculation product={cartCalculate(userInfo && userInfo?.myCartProduct)}></CartCalculation>
-                  <br />
+
                   <div className="text-center">
-                     {(typeof userInfo?.myCartProduct === "undefined") && <small className="my-2 p-1">Please Add Product To Your Cart</small>}
-                     <button className='bt9_checkout' disabled={(!userInfo?.myCartProduct || typeof userInfo?.myCartProduct === "undefined" || (userInfo?.myCartProduct.length <= 0)) ? true : false} onClick={() => goCheckoutPage(userInfo?._id)}>
-                        Checkout
+                     {(typeof userInfo?.shoppingCartItems === "undefined") && <small className="my-2 p-1">Please Add Product To Your Cart</small>}
+                     <button className='bt9_checkout' disabled={(!userInfo?.shoppingCartItems || typeof userInfo?.shoppingCartItems === "undefined" || (userInfo?.shoppingCartItems.length <= 0)) ? true : false} onClick={() => goCheckoutPage(userInfo?._id)}>
+                        Proceed To Checkout
                      </button>
                   </div>
                </div>

@@ -78,7 +78,7 @@ const MyOrder = () => {
       let ratingId = Math.floor(Math.random() * 1000000);
 
       let review = {
-         ratingId, orderId: parseInt(orderId), rating_customer: userInfo?.displayName, rating_point: ratingPoint, rating_description: ratingDesc
+         ratingId, orderId: parseInt(orderId), rating_customer: userInfo?.username, rating_point: ratingPoint, rating_description: ratingDesc
       }
 
       const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/review/add-product-rating/${productId}`, {

@@ -11,6 +11,7 @@ import CartPayment from '../../Shared/CartComponents/CartPayment';
 import { authLogout } from '../../Shared/common';
 import { useAuthContext } from '../../lib/AuthProvider';
 import CartAddress from '../../Shared/CartComponents/CartAddress';
+import { useFetch } from '../../Hooks/useFetch';
 
 const CheckOut = () => {
    const navigate = useNavigate();
@@ -18,11 +19,13 @@ const CheckOut = () => {
    const { authLoading, authRefetch, userInfo } = useAuthContext();
    const [step, setStep] = useState(false);
 
+   const { data: cartItems, loading, refetch } = useFetch(`${process.env.REACT_APP_BASE_URL}api/cart/show-my-cart-items`);
+
    // filter the products which stock is available
-   let products = userInfo?.myCartProduct && userInfo?.myCartProduct.filter(p => p?.stock === "in");
+   let products = cartItems?.data?.products && cartItems?.data?.products.filter(p => p?.stock === "in");
 
    // pick the address where selected address is true
-   const selectedAddress = userInfo && userInfo.address && userInfo?.address.find(a => a?.select_address === true);
+   const selectedAddress = userInfo && userInfo.shippingAddress && userInfo?.shippingAddress.find(a => a?.select_address === true);
 
    const buyBtnHandler = async (e) => {
       e.preventDefault();
@@ -103,7 +106,7 @@ const CheckOut = () => {
             <div className="row">
                <div className="col-lg-8 mb-3">
                   <div>
-                     <CartAddress setMessage={setMessage} navigate={navigate} authRefetch={authRefetch} addr={userInfo?.address ? userInfo?.address : []} setStep={setStep} />
+                     <CartAddress setMessage={setMessage} navigate={navigate} authRefetch={authRefetch} addr={userInfo?.shippingAddress ? userInfo?.shippingAddress : []} setStep={setStep} />
                   </div>
                   <br />
                   <div className="cart_card">
@@ -111,9 +114,14 @@ const CheckOut = () => {
                      <hr />
                      <div className="row">
                         {
-                           userInfo?.myCartProduct && userInfo?.myCartProduct.filter(p => p?.stock === "in").map((userInfo, index) => {
+                           cartItems?.data?.products && cartItems?.data?.products.filter(p => p?.stock === "in").map((products, index) => {
                               return (
-                                 <CartItem cartTypes={"toCart"} checkOut={true} product={userInfo} key={index}></CartItem>
+                                 <CartItem
+                                    cartTypes={"toCart"}
+                                    checkOut={true}
+                                    product={products}
+                                    key={index}
+                                 />
                               )
                            })
                         }
@@ -121,9 +129,10 @@ const CheckOut = () => {
                   </div>
                </div>
                <div className="col-lg-4 mb-3">
-                  <CartCalculation product={cartCalculate(userInfo?.myCartProduct)} headTitle={"Order Details"}></CartCalculation>
+                  <CartCalculation product={cartCalculate(cartItems?.data?.products && cartItems?.data?.products)}
+                     headTitle={"Order Details"}></CartCalculation>
                   <br />
-                  <CartPayment buyBtnHandler={buyBtnHandler} step={step} isStock={products && products.length > 0 ? true : false}></CartPayment>
+                  <CartPayment products={cartItems?.data?.products && cartItems?.data?.products} buyBtnHandler={buyBtnHandler} step={step} isStock={products && products.length > 0 ? true : false}></CartPayment>
                </div>
             </div>
          </div>

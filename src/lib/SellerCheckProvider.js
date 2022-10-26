@@ -20,7 +20,6 @@ const SellerCheckProvider = ({ children }) => {
    
    const url = `${process.env.REACT_APP_BASE_URL}api/user/check-seller-request`;
    const { data, refetch, loading } = useFetch(url);
-
    const initialState = {
       data: [],
       slLength: 0
@@ -28,7 +27,7 @@ const SellerCheckProvider = ({ children }) => {
    const [state, dispatch] = useReducer(reducer, initialState);
 
    useEffect(() => {
-      dispatch({ type: "INIT_CHECKER", payload: { data: data && data, slLength: data && data.length } })
+      dispatch({ type: "INIT_CHECKER", payload: { data: data && data.data, slLength: data && data?.data.length } })
    }, [data]);
 
    return (

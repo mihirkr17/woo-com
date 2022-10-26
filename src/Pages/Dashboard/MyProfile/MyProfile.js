@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { authLogout } from '../../../Shared/common';
 import { useAuthContext } from '../../../lib/AuthProvider';
+import SellerProfile from './SellerProfile/SellerProfile';
 
 
 const MyProfile = () => {
@@ -22,7 +23,7 @@ const MyProfile = () => {
       dob: ""
    });
 
-   let url2 = userInfo && userInfo?.seller ? `${process.env.REACT_APP_BASE_URL}api/product/product-count?seller=${userInfo?.seller}` :
+   let url2 = userInfo && userInfo?.username ? `${process.env.REACT_APP_BASE_URL}api/product/product-count?seller=${userInfo?.username}` :
       `${process.env.REACT_APP_BASE_URL}api/product/product-count`
    const { data: myProductCount } = useFetch(url2);
 
@@ -77,117 +78,81 @@ const MyProfile = () => {
          <div className="container">
 
             <div className="row">
-               <div className="col-12">
-                  <div className='tty_ssd'>
-                     {openEdit ? "Edit Information" : "Personal Information"}
-                     {
-                        openEdit ? <button className='bt9_edit' onClick={() => navigate(`/dashboard/my-profile`)}>Cancel</button> :
-                           <button className='bt9_edit' onClick={() => navigate(`/dashboard/my-profile?update=${userInfo?._id}`)}>Edit</button>
-                     }
-                  </div>
-
-
-                  <div className="pb-3">
-                     {
-                        openEdit ? <UpdateForm inputValue={inputValue} setInputValue={setInputValue} userInfo={userInfo} actionLoading={actionLoading} updateDocHandler={updateDocHandler} /> :
-                           <>
-                              <div className="profile_header">
-                                 {
-                                    (role === "owner") && <div className='ph_i'>
-                                       <span>Balance : {userInfo?.total_earn || 0}&nbsp;$</span>
-                                       <button className='bt9_withdraw'>Withdraw</button>
-                                    </div>
-                                 }
-                              </div>
-                              <table className='table table-sm table-borderless'>
-                                 <thead>
-                                    <tr>
-                                       <th></th>
-                                    </tr>
-                                 </thead>
-                                 <tbody>
-                                    <tr>
-                                       <th>ID</th>
-                                       <td>{userInfo?._id}</td>
-                                    </tr>
-                                    <tr>
-                                       <th>Email</th>
-                                       <td>{userInfo?.email}</td>
-                                    </tr>
-                                    <tr>
-                                       <th>Age</th>
-                                       <td>{age || 0}</td>
-                                    </tr>
-                                    <tr>
-                                       <th>Role</th>
-                                       <td>{userInfo?.role}</td>
-                                    </tr>
-                                    <tr>
-                                       <th>Country</th>
-                                       <td>{userInfo?.country || "Not Set"}</td>
-                                    </tr>
-                                    <tr>
-                                       <th>Division</th>
-                                       <td>{userInfo?.division || "Not Set"}</td>
-                                    </tr>
-                                    <tr>
-                                       <th>District</th>
-                                       <td>{userInfo?.district || "Not Set"}</td>
-                                    </tr>
-                                    <tr>
-                                       <th>Thana</th>
-                                       <td>{userInfo?.thana || "Not Set"}</td>
-                                    </tr>
-                                    <tr>
-                                       <th>DOB</th>
-                                       <td>
-                                          {userInfo?.dob || "Not Set"}
-                                       </td>
-                                    </tr>
-                                 </tbody>
-                              </table>
-                           </>
-
-                     }
-                  </div>
-
-               </div>
-
                {
-                  role === "seller" && <div className="col-12">
-                     <div className="card_default">
-                        <div className="card_description">
-                           <div className="profile_header">
-                              <h6>Seller Information</h6>
-
-                              {
-                                 (role === "seller") && <div className='ph_i'>
-                                    <span>Balance : {userInfo?.total_earn || 0}&nbsp;$</span>
-                                    <button className='bt9_withdraw'>Withdraw</button>
-                                 </div>
-                              }
-                           </div>
-                           <article>
-                              <address>
-                                 <pre>
-                                    <small><strong>Seller Name         : </strong>{userInfo?.seller}<span className="text-muted">(Not Changeable)</span> <br /></small>
-                                    <small><strong>Village             : </strong>{userInfo?.seller_address?.seller_village}</small><br />
-                                    <small><strong>District            : </strong>{userInfo?.seller_address?.seller_district}</small><br />
-                                    <small><strong>Country             : </strong>{userInfo?.seller_address?.seller_country}</small><br />
-                                    <small><strong>Zip Code            : </strong>{userInfo?.seller_address?.seller_zip}</small><br />
-                                    <small><strong>Registered Phone    : </strong>{userInfo?.seller_phone}</small> <br />
-                                 </pre>
-                              </address>
-                              <div>
-                                 <pre>
-                                    <small><strong>Total Product       : </strong>{(myProductCount && myProductCount.count) || 0}</small><br />
-                                    <small><strong>Total Earn          : </strong>{userInfo?.total_earn || 0}&nbsp;$</small><br />
-                                    <small><strong>Total Sold Product  : </strong>{userInfo?.success_sell || 0}&nbsp;Items</small>
-                                 </pre>
-                              </div>
-                           </article>
-                        </div>
+                  role === "seller" ? <SellerProfile userInfo={userInfo} role={role} myProductCount={myProductCount} /> : <div className="col-12">
+                     <div className='tty_ssd'>
+                        {openEdit ? "Edit Information" : "Personal Information"}
+                        {
+                           openEdit ? <button className='bt9_edit' onClick={() => navigate(`/dashboard/my-profile`)}>Cancel</button> :
+                              <button className='bt9_edit' onClick={() => navigate(`/dashboard/my-profile?update=${userInfo?._id}`)}>Edit</button>
+                        }
                      </div>
+
+
+                     <div className="pb-3">
+                        {
+                           openEdit ? <UpdateForm inputValue={inputValue} setInputValue={setInputValue} userInfo={userInfo} actionLoading={actionLoading} updateDocHandler={updateDocHandler} /> :
+                              <>
+                                 <div className="profile_header">
+                                    {
+                                       (role === "owner") && <div className='ph_i'>
+                                          <span>Balance : {userInfo?.total_earn || 0}&nbsp;$</span>
+                                          <button className='bt9_withdraw'>Withdraw</button>
+                                       </div>
+                                    }
+                                 </div>
+                                 <table className='table table-sm table-borderless'>
+                                    <thead>
+                                       <tr>
+                                          <th></th>
+                                       </tr>
+                                    </thead>
+                                    <tbody>
+                                       <tr>
+                                          <th>ID</th>
+                                          <td>{userInfo?._id}</td>
+                                       </tr>
+                                       <tr>
+                                          <th>Email</th>
+                                          <td>{userInfo?.email}</td>
+                                       </tr>
+                                       <tr>
+                                          <th>Age</th>
+                                          <td>{age || 0}</td>
+                                       </tr>
+                                       <tr>
+                                          <th>Role</th>
+                                          <td>{userInfo?.role}</td>
+                                       </tr>
+                                       <tr>
+                                          <th>Country</th>
+                                          <td>{userInfo?.country || "Not Set"}</td>
+                                       </tr>
+                                       <tr>
+                                          <th>Division</th>
+                                          <td>{userInfo?.division || "Not Set"}</td>
+                                       </tr>
+                                       <tr>
+                                          <th>District</th>
+                                          <td>{userInfo?.district || "Not Set"}</td>
+                                       </tr>
+                                       <tr>
+                                          <th>Thana</th>
+                                          <td>{userInfo?.thana || "Not Set"}</td>
+                                       </tr>
+                                       <tr>
+                                          <th>DOB</th>
+                                          <td>
+                                             {userInfo?.dob || "Not Set"}
+                                          </td>
+                                       </tr>
+                                    </tbody>
+                                 </table>
+                              </>
+
+                        }
+                     </div>
+
                   </div>
                }
             </div>

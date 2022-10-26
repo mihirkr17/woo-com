@@ -2,7 +2,7 @@ import { faCartShopping, faGauge, faSearch, faUserAlt } from '@fortawesome/free-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 import { Navbar } from 'react-bootstrap';
-import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { Link, Navigate, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../../lib/AuthProvider';
 import { authLogout } from '../../Shared/common';
 import SearchPage from '../../Pages/SearchPage/SearchPage';
@@ -12,51 +12,55 @@ const NavigationBar = () => {
    const [openAccount, setOpenAccount] = useState(false);
    const { role, userInfo } = useAuthContext();
    const navigate = useNavigate();
-   const [query, setQuery] = useState("");
+   // const [query, setQuery] = useState("");
    const [loading, setLoading] = useState(false);
    const [data, setData] = useState([]);
    const location = useLocation();
    const path = location.pathname;
+   const [inFocus, setInFocus] = useState(false);
+   const [searchQuery, setSearchQuery] = useState("");
 
-   const handleToSeller = async () => {
-      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/user/switch-role/seller`, {
-         method: "PUT",
-         withCredentials: true,
-         credentials: "include",
-         headers: {
-            authorization: `userID ${userInfo?._id}`
-         }
-      });
-
-      const resData = await response.json();
-
-      if (response.ok) {
-         window.location.href = `/dashboard`;
-      }
-
-      if (response.status === 401 || response.status === 403) {
-         await authLogout();
-         navigate(`/login?err=${resData?.error}`);
-      }
+   if (role === 'owner' || role === 'admin' || role === 'seller') {  
+      return;
    }
 
-   const handleSearch = async (e) => {
+
+
+   async function callApi(searchQuery) {
       try {
-         e.preventDefault();
-         if (query) {
+
+         if (searchQuery) {
             setLoading(true);
-            const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/product/search-products/${query}`);
+            const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/product/search-products/${searchQuery}`);
             const resData = await response.json();
             setData(resData);
             setLoading(false);
-         } else {
-            window.alert("Search by product name or category");
+            setInFocus(true);
          }
 
       } catch (error) {
          setLoading(false)
       } finally {
          setLoading(false);
+      }
+   }
+
+
+   function handleOnChange(e) {
+      let { value } = e.target;
+      setSearchQuery(value);
+      callApi(value)
+   }
+
+   async function handleSearch(e) {
+      try {
+
+         e.preventDefault();
+         setInFocus(true);
+         await callApi(searchQuery);
+
+      } catch (error) {
+         setLoading(false)
       }
    }
 
@@ -69,41 +73,60 @@ const NavigationBar = () => {
          <Navbar sticky='top' className='navigation_bar' expand="lg">
             <div className='container nav_container'>
                <div className="nav_brand_logo">
-                  <Navbar.Brand className="nav_link brand_logo" as={NavLink} to="/">WooKart</Navbar.Brand>
+                  <NavLink className="nav_link brand_logo" to="/">WooKart</NavLink>
+                  {
+                     (path !== '/register' && path !== '/login') &&
+
+                     <div className="search_box">
+
+                        <form className='search_form' onSubmit={handleSearch}>
+                           <input type="search"
+                              onChange={handleOnChange}
+                              onFocus={() => setInFocus(true)}
+                              onBlur={() => setInFocus(false)}
+                              placeholder='Search for products, brands and more'
+                              name="s_query"
+                              value={searchQuery}
+                           />
+                           <button type='submit'>
+                              <FontAwesomeIcon icon={faSearch} />
+                           </button>
+
+                           {
+                              <div className={`search_result ${inFocus ? 'active' : ""}`}>
+                                 <div className='card_default card_description'>
+                                    {
+                                       (data && data.length > 0) ? data.map((product, index) => {
+                                          return (
+                                             <div className="d-flex flex-row align-items-center justify-content-start mb-3" key={index}>
+                                                <img src={product?.images && product?.images[0]} style={{ width: "25px", height: "25px", marginRight: "0.8rem", marginBottom: "0.4rem" }} alt="" />
+                                                <Link to={`/c/${product?.categories && (product?.categories.join("/").toString())}`} style={{ fontSize: "0.7rem" }}>{product?.title}</Link>
+                                             </div>
+                                          )
+                                       }) : <p>No Product Found...</p>
+                                    }
+                                 </div>
+
+                              </div>
+                           }
+                        </form>
+
+
+
+                     </div>
+                  }
                </div>
 
                <div className="nav_right_items">
-                  {
-                     (path !== '/register' && path !== '/login') && 
-                  
-
-                  <div className="search_box">
-
-                     <form onSubmit={handleSearch} className='nv_items'>
-                        <input type="search" className='form-control form-control-sm'
-                           onChange={(e) => setQuery(e.target.value)} value={query}
-                           placeholder='Search product by title, brand, seller' name="s_query" />
-                        <button type='submit' className='btn btn-sm' style={{ border: "1px solid" }}><FontAwesomeIcon icon={faSearch} /></button>
-                     </form>
-
-                     {
-                        query !== "" &&
-                        <div className="search_result">
-                           <SearchPage data={data} loading={loading} />
-                        </div>
-                     }
-                  </div>
-}
-
                   <div className="nv_items">
                      {
                         (((role === "owner") || (role === "admin") || (role === "seller"))) &&
-                        <NavLink className="nav_link" to="/dashboard"><FontAwesomeIcon icon={faGauge}></FontAwesomeIcon></NavLink>
+                        <NavLink className="nav_link" to="/dashboard">Dashboard</NavLink>
                      }
                      {
-                        (role === 'user') &&
+                        (path !== '/register' && path !== '/login' && (role !== "seller") && (role !== "admin") && (role !== "owner")) &&
                         <NavLink className="nav_link cart_link" to='/my-cart'><FontAwesomeIcon icon={faCartShopping}></FontAwesomeIcon>
-                           {<div className="bg-info cart_badge">{(userInfo?.myCartProduct && userInfo?.myCartProduct.length) || 0}</div>}
+                           {<div className="bg-info cart_badge">{(userInfo?.shoppingCartItems && userInfo?.shoppingCartItems) || 0}</div>}
                         </NavLink>
                      }
                   </div>
@@ -115,12 +138,7 @@ const NavigationBar = () => {
                            <FontAwesomeIcon icon={faUserAlt}></FontAwesomeIcon>
                         </span>
                         <div className={`account_field ${openAccount ? "active" : ""}`}>
-                           {
-                              (userInfo?.isSeller && role === "user") &&
-                              <button className='drp_item' onClick={handleToSeller}>Switch To Seller</button>
-                           }
-                           {!userInfo?.isSeller &&
-                              <Link className="drp_item" to="/sell-online">Become a Seller</Link>}
+                           <Link className="drp_item" to="/sell-online">Become a Seller</Link>
                            <Link className='drp_item' to='/my-profile/my-order'>My Order</Link>
                            <Link className='drp_item' to='/my-profile/my-wishlist'>
                               My Wishlist ({(userInfo?.wishlist && userInfo?.wishlist.length) || 0})
@@ -130,15 +148,19 @@ const NavigationBar = () => {
                      </div>
                   }
 
-                  {!role && <Link to="/login">Login</Link>}
+                  {!role && <Link className='nv_items nav_link' to="/login">Login</Link>}
 
                </div>
+
             </div>
+
+            {
+               (path !== '/register' && path !== '/login' && !path.startsWith('/dashboard')) && <CategoryHeader />
+            }
+
          </Navbar>
 
-         {
-            (path !== '/register' && path !== '/login') && <CategoryHeader />
-         }
+
       </>
 
    );

@@ -6,7 +6,6 @@ import { useAuthContext } from '../../lib/AuthProvider';
 import SocialAuth from './SocialAuth';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import VerifyAuthToken from './VerifyAuthToken';
 
 const Login = () => {
    const { msg, setMessage } = useMessage();

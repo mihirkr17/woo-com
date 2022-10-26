@@ -23,14 +23,16 @@ const CartAddress = ({ authRefetch, addr, setStep, navigate, setMessage }) => {
    const addAddressHandler = async (e) => {
       e.preventDefault();
       let name = e.target.name.value;
-      let village = e.target.village.value;
-      let city = e.target.city.value;
+      let street = e.target.street.value;
+      let district = e.target.district.value;
+      let state = e.target.state.value;
       let country = e.target.country.value;
-      let phone = e.target.phone.value;
-      let zip = e.target.zip.value;
+      let phoneNumber = e.target.phoneNumber.value;
+      let altPhoneNumber = e.target.altPhoneNumber.value;
+      let pinCode = e.target.pinCode.value;
       let addressId = Math.floor(Math.random() * 100000000)
 
-      let final = { addressId, name, village, city, country, phone, zip };
+      let final = { addressId, name, street, district, state, country, phoneNumber, altPhoneNumber, pinCode };
       final["select_address"] = false;
 
       const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/cart/add-cart-address`, {
@@ -61,12 +63,14 @@ const CartAddress = ({ authRefetch, addr, setStep, navigate, setMessage }) => {
    const updateAddressHandler = async (e) => {
       e.preventDefault();
       let name = e.target.name.value;
-      let village = e.target.village.value;
-      let city = e.target.city.value;
+      let street = e.target.street.value;
+      let district = e.target.district.value;
+      let state = e.target.state.value;
       let country = e.target.country.value;
-      let phone = e.target.phone.value;
-      let zip = e.target.zip.value;
-      let final = { addressId: parseInt(openAddressUpdateForm?.addressId), name, village, city, country, phone, zip };
+      let phoneNumber = e.target.phoneNumber.value;
+      let altPhoneNumber = e.target.altPhoneNumber.value;
+      let pinCode = e.target.pinCode.value;
+      let final = { addressId: parseInt(openAddressUpdateForm?.addressId), name, street, district, state, country, phoneNumber, altPhoneNumber, pinCode };
       final["select_address"] = false;
 
       const resData = await apiHandler(
@@ -139,7 +143,7 @@ const CartAddress = ({ authRefetch, addr, setStep, navigate, setMessage }) => {
          <div className="row">
             <div className="col-lg-12">
                <div className="d-flex align-items-center justify-content-between flex-wrap w-100">
-                  <h6 className=''>Delivery Address</h6>
+                  <h6 className=''>Shipping Address</h6>
                   <button onClick={() => setOpenAddressForm(true)} title="Add New Address" className="ms-2 badge bg-primary">
                      <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>
                   </button>
@@ -150,7 +154,7 @@ const CartAddress = ({ authRefetch, addr, setStep, navigate, setMessage }) => {
                   <div className="row">
                      {
                         addr && addr.map(address => {
-                           const { addressId, select_address, name, village, city, country, phone, zip } = address;
+                           const { addressId, select_address, name, street, district, country, phoneNumber, pinCode } = address;
 
                            return (
                               <div className="col-lg-6" key={addressId}>
@@ -162,8 +166,8 @@ const CartAddress = ({ authRefetch, addr, setStep, navigate, setMessage }) => {
                                                 <div style={{ wordBreak: "break-word" }} className={`${select_address ? '' : 'text-muted'}`}>
                                                    <small><b className='me-3'>{name}</b>{select_address && <FontAwesomeIcon icon={faCheckCircle} />}</small>
                                                    <p>
-                                                      <small>{village}, {city}, {country}, {zip}</small> <br />
-                                                      <small>Phone : {phone}</small>
+                                                      <small>{street}, {district}, {country}, {pinCode}</small> <br />
+                                                      <small>Phone : {phoneNumber}</small>
                                                    </p>
                                                 </div>
                                              }

@@ -10,7 +10,6 @@ const CategoryHeader = () => {
    const [active, setActive] = useState(false);
    const cateRef = useRef();
    const [ctg, setCtg] = useState({});
-   const [show, setShow] = useState(false);
 
    useEffect(() => {
       function reportWindowSize() {
@@ -34,18 +33,14 @@ const CategoryHeader = () => {
 
    return (
       <div className='category_header'>
-         <button className='btn btn-sm nv_btn' onClick={() => setShow(e => !e)}>
-            <FontAwesomeIcon icon={faBarsProgress} />
-         </button>
-         <div className={show ? "c_nav active" : "c_nav"} ref={cateRef}>
+         <div className='c_nav' ref={cateRef}>
 
             <div className="category_navbar shadow-bottom">
-
                {
                   newCategory && newCategory.map((c, i) => {
                      return (
                         <div className="c_nav_btn" key={i} onMouseOver={() => handleCategories(c && c)}>
-                           <Nav.Item className='a' as={Link} to={`/c/${c.category}`}>
+                           <Nav.Item className='a'>
                               {/* {
                                  active ? "" : <img src={c?.img} alt="" />
                               } */}
@@ -65,8 +60,8 @@ const CategoryHeader = () => {
                            return (
                               <div className='col-lg-4 gg_tr' key={ind}>
                                  <p className="ai_tj">
-                                    <Nav.Item as={Link} to={`/c/${ctg?.category}/${subCtg?.sub_category}`}>
-                                       {subCtg?.sub_category}
+                                    <Nav.Item as={Link} to={`/c/${ctg?.category}/${subCtg?.name}`}>
+                                       {subCtg?.name}
                                     </Nav.Item>
                                  </p>
 
@@ -75,7 +70,7 @@ const CategoryHeader = () => {
                                        subCtg?.post_category_items && subCtg?.post_category_items.map((scCtg, i) => {
                                           return (
                                              <p key={i}>
-                                                <Nav.Item as={Link} to={`/c/${ctg?.category}/${subCtg?.sub_category}/${scCtg}`}>
+                                                <Nav.Item as={Link} to={`/c/${ctg?.category}/${subCtg?.sub_category}/${scCtg?.name}`}>
                                                    {scCtg.charAt(0).toUpperCase() + scCtg.slice(1).replace(/[-]/g, ' ')}
                                                 </Nav.Item>
                                              </p>

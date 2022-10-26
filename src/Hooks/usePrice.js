@@ -8,7 +8,7 @@ export const usePrice = (price, sellPrice) => {
 
       let oldPrice = parseFloat(price);
       let discount = 100 - ((parseFloat(sellPrice) * 100) / oldPrice);
-      setDiscount(parseFloat(discount.toFixed(2)));
+      setDiscount(parseInt(discount));
 
    }, [price, sellPrice]);
 

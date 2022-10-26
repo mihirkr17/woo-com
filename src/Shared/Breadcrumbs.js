@@ -9,7 +9,7 @@ const Breadcrumbs = ({path : newPath}) => {
    // const path = location.pathname.split("/").filter(x => x);
    // let tyt = location.href.split("=").filter(e => e);
    // tyt.shift();
-   let path = newPath.filter(x => x);
+   let path = newPath && newPath.filter(x => x);
    return (
       <Breadcrumb className="py-3">
          <Link to={"/"}><FontAwesomeIcon style={{ fontSize: "13px", color: "var(--color-dark)" }} icon={faHome} /></Link>

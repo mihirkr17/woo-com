@@ -11,9 +11,9 @@ const RequiredOwner = ({ children }) => {
    if (role) {
       if (role === "owner") {
          return children;
-      } else {
-         return <Navigate to={'/'} replace></Navigate>;
       }
+
+      return <Navigate to={'/'} replace></Navigate>;
    }
 };
 

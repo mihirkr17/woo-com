@@ -7,64 +7,73 @@ import BtnSpinner from '../../Components/Shared/BtnSpinner/BtnSpinner';
 import { apiHandler, authLogout } from '../common';
 import ConfirmDialog from '../ConfirmDialog';
 
-const CartItem = ({ product: cartProduct, setMessage, authRefetch, checkOut, cartTypes, cartLoading, navigate }) => {
+const CartItem = ({ product: cartProduct, setMessage, refetch, checkOut, cartTypes }) => {
    const [openBox, setOpenBox] = useState(false);
-
-   // update product quantity handler
-   const quantityHandler = async (cp, action) => {
-      let quantity = action === "dec" ? cp?.quantity - 1 : cp?.quantity + 1;
-
-      // const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/cart/update-product-quantity/${cartTypes && cartTypes}`, {
-      //    method: "PUT",
-      //    withCredentials: true,
-      //    credentials: "include",
-      //    headers: {
-      //       "Content-Type": "application/json",
-      //       authorization: `${cp?._id}` || ""
-      //    },
-      //    body: JSON.stringify({ quantity })
-      // });
-
-      // const resData = await response.json();
-      const resData = await apiHandler(
-         `${process.env.REACT_APP_BASE_URL}api/cart/update-product-quantity/${cartTypes && cartTypes}`,
-         "PUT",
-         `${cp?._id}`,
-         { quantity }
-      );
-
-      if ((resData?.status === 401) || (resData?.status === 403)) {
-         await authLogout();
-         navigate(`/login?err=${resData?.error}`);
-      }
-
-      if (resData?.success) {
-         authRefetch();
-         return setMessage(resData?.message);
-      } else {
-         return setMessage(resData?.message);
-      }
-
-
-   }
 
    //  Remove product from cartProduct && cartProduct handler
    const removeItemFromCartHandler = async (cp) => {
-      const { _id, title } = cp;
+      const { productId, title } = cp;
 
-      const resData = await apiHandler(`${process.env.REACT_APP_BASE_URL}api/cart/delete-cart-item/${cartTypes && cartTypes}`, "DELETE", `${_id}`);
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/cart/delete-cart-item/${cartTypes && cartTypes}`, {
+         method: "DELETE",
+         withCredential: true,
+         credentials: 'include',
+         headers: {
+            authorization: productId
+         }
+      });
 
-      if (resData?.success) {
-         setMessage(`${title} ${resData?.message}`);
-         authRefetch();
+      const resData = await response.json();
+
+
+      if (response.ok) {
+         setMessage(`${title} ${resData?.message}`, 'success');
+         refetch();
       } else {
-         setMessage(`${title} ${resData?.error}`);
+         setMessage(`${title} ${resData?.error}`, 'danger');
+      }
+   }
+
+
+   const itemQuantityHandler = async (value, productId, cartId) => {
+
+      let quantity = parseInt(value);
+
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/cart/update-cart-product-quantity`, {
+         method: "PUT",
+         withCredential: true,
+         credentials: 'include',
+         headers: {
+            "Content-Type": "application/json",
+            authorization: productId
+         },
+         body: JSON.stringify({
+            actionRequestContext: {
+               pageUri: '/my-cart',
+               type: cartTypes,
+               pageNumber: 1
+            },
+            upsertRequest: {
+               cartContext: {
+                  productId, quantity: quantity, cartId
+               }
+            }
+         })
+      });
+
+      const resData = await response.json();
+
+      if (response.ok) {
+         refetch();
+         return setMessage(resData?.message, 'success');
       }
 
-      if (resData?.status === 401 || resData?.status === 403) {
-         await authLogout();
-         navigate(`/login?err=${resData?.error}`);
+      
+      if (response.status === 401) {
+         window.location.reload();
       }
+      
+      return setMessage(resData?.error, 'danger');
    }
 
    return (
@@ -74,13 +83,29 @@ const CartItem = ({ product: cartProduct, setMessage, authRefetch, checkOut, car
                <img src={cartProduct && cartProduct?.image} alt="" />
             </div>
             {
-               !checkOut && <div className="ms-2 cart_btn">
-                  <button className='badge bg-primary my-1' disabled={cartProduct && cartProduct?.quantity <= 1 ? true : false} onClick={(e) => quantityHandler(cartProduct && cartProduct, "dec")}>
-                     {cartLoading ? <BtnSpinner /> : "-"}
+               !checkOut &&
+               <div className="ms-2 cart_btn">
+
+                  <button
+                     className='badge bg-primary my-1'
+                     disabled={cartProduct && cartProduct?.quantity <= 1 ? true : false}
+                     onClick={() => itemQuantityHandler(parseInt(cartProduct?.quantity) - 1, cartProduct?.productId, cartProduct?._id)}>
+                     -
                   </button>
-                  <span className='border px-2'>{cartProduct && cartProduct?.quantity} </span>
-                  <button className='badge bg-primary my-1' disabled={cartProduct && cartProduct?.quantity >= cartProduct && cartProduct?.available ? true : false} onClick={(e) => quantityHandler(cartProduct && cartProduct, "inc")}>
-                     {cartLoading ? <BtnSpinner /> : "+"}
+
+                  <input
+                     className='border px-2' type="number"
+                     value={cartProduct?.quantity || 0}
+                     onChange={(e) => itemQuantityHandler(e.target.value, cartProduct?.productId, cartProduct?._id)}
+                     maxLength='3'
+                     style={{ width: '50px' }}
+                  />
+
+                  <button
+                     className='badge bg-primary my-1'
+                     disabled={cartProduct && cartProduct?.quantity >= cartProduct && cartProduct?.available ? true : false}
+                     onClick={(e) => itemQuantityHandler(parseInt(cartProduct?.quantity) + 1, cartProduct?.productId, cartProduct?._id)}>
+                     +
                   </button>
                </div>
             }
@@ -96,7 +121,7 @@ const CartItem = ({ product: cartProduct, setMessage, authRefetch, checkOut, car
                            <big>{cartProduct?.price} TK</big>
                         </div>
                         {
-                           (cartProduct && cartProduct?.size) && <small className="text-muted">Size : {cartProduct && cartProduct?.size}</small>
+                           // (cartProduct && cartProduct?.size) && <small className="text-muted">Size : {cartProduct && cartProduct?.size}</small>
                         }
                         <small className="text-muted">Qty : {cartProduct && cartProduct?.quantity}</small>
                         <small className="text-muted">Seller : {cartProduct && cartProduct?.seller}</small>
@@ -105,7 +130,7 @@ const CartItem = ({ product: cartProduct, setMessage, authRefetch, checkOut, car
                   </div>
                   {
                      !checkOut && <div className="remove_btn col-1 text-end">
-                        <button className='btn btn-sm' onClick={() => setOpenBox(true)}><FontAwesomeIcon icon={faClose} /></button>
+                        <button className='btn btn-sm' onClick={() => removeItemFromCartHandler(cartProduct)}><FontAwesomeIcon icon={faClose} /></button>
                         {
                            openBox && <ConfirmDialog payload={{
                               reference: cartProduct, openBox, setOpenBox,

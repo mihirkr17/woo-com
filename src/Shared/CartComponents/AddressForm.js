@@ -19,15 +19,22 @@ const AddressForm = ({ setOpenAddressForm, addAddressHandler }) => {
 
                <div className="col-lg-6">
                   <div className="form-group my-1">
-                     <label htmlFor="address">Village</label>
-                     <input type="text" className='form-control form-control-sm' name='village' required />
+                     <label htmlFor="street">Street</label>
+                     <input type="text" className='form-control form-control-sm' name='street' required />
                   </div>
                </div>
 
                <div className="col-lg-6">
                   <div className="form-group my-1">
-                     <label htmlFor="city">City</label>
-                     <input type="text" className='form-control form-control-sm' name='city' required />
+                     <label htmlFor="district">District</label>
+                     <input type="text" className='form-control form-control-sm' name='district' required />
+                  </div>
+               </div>
+
+               <div className="col-lg-6">
+                  <div className="form-group my-1">
+                     <label htmlFor="state">State</label>
+                     <input type="text" className='form-control form-control-sm' name='state' required />
                   </div>
                </div>
 
@@ -40,15 +47,22 @@ const AddressForm = ({ setOpenAddressForm, addAddressHandler }) => {
 
                <div className="col-lg-6">
                   <div className="form-group my-1">
-                     <label htmlFor="zip">Zip</label>
-                     <input type="text" className='form-control form-control-sm' name='zip' required />
+                     <label htmlFor="pinCode">Pin Code</label>
+                     <input type="text" className='form-control form-control-sm' name='pinCode' required />
                   </div>
                </div>
 
                <div className="col-lg-6">
                   <div className="form-group my-1">
-                     <label htmlFor="phone">Phone</label>
-                     <input type="number" className='form-control form-control-sm' name='phone' required />
+                     <label htmlFor="phoneNumber">Phone</label>
+                     <input type="number" className='form-control form-control-sm' name='phoneNumber' required />
+                  </div>
+               </div>
+
+               <div className="col-lg-6">
+                  <div className="form-group my-1">
+                     <label htmlFor="altPhoneNumber">Alternative Phone</label>
+                     <input type="number" className='form-control form-control-sm' name='altPhoneNumber' required />
                   </div>
                </div>
 

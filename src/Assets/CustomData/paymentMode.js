@@ -1,1 +1,1 @@
-export const paymentMode = ["cod", "mastercard", "net-banking"];
+export const paymentMode = ["cod", "card", "net-banking"];

@@ -4,14 +4,14 @@ import { Link } from 'react-router-dom';
 const Product = ({ product }) => {
    return (
       <div className='product_card my-2'>
-         <Link to={`/product/${product?.slug}`}>
+         <Link to={`/product/${product?.variations?.slug}?pId=${product?._id}&vId=${product?.variations?.vId}`}>
             <div className="product_card_img">
-               <img src={product?.image[0]} alt='' />
+               <img src={product?.variations?.images && product?.variations?.images[0]} alt='' />
             </div>
             <article className='product_card_description'>
                <div className="product_title">
                   <h6>
-                     {product?.title && product?.title.length > 20 ? product?.title.slice(0, 20) + "..." : product?.title}
+                     {product?.variations?.title && product?.variations?.title.length > 20 ? product?.variations?.title.slice(0, 20) + "..." : product?.variations?.title}
                   </h6>
                </div>
 
@@ -21,12 +21,12 @@ const Product = ({ product }) => {
                   </div>
 
                   <div className="product_rating_model">
-                     <small>{product?.rating_average || 0} out of 5</small>
+                     <small>{product?.ratingAverage || 0} out of 5</small>
                   </div>
 
                   <div className="product_price_model">
-                     <big>{product?.pricing?.sellingPrice || product?.pricing?.price} TK</big>
-                     <span><strike>{product?.pricing?.price} TK</strike> (-{product?.pricing?.discount || 0}%) off</span>
+                     <big>{product?.variations?.pricing?.sellingPrice || product?.variations?.pricing?.price} TK</big>
+                     <span><strike>{product?.variations?.pricing?.price} TK</strike> (-{product?.variations?.pricing?.discount || 0}%) off</span>
                   </div>
 
                </div>
