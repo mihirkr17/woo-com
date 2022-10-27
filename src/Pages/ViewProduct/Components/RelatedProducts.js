@@ -7,13 +7,11 @@ const RelatedProducts = ({ relatedProducts }) => {
    return (
       <>
          <h5 className="text-center py-1">Related Product</h5>
-         <div className="row">
+         <div className="row product_wrapper">
             {
-               relatedProducts && relatedProducts.map(p => {
+               relatedProducts && relatedProducts.map((p, i) => {
                   return (
-                     <div key={p?.variations?.vId} className="col-10 mx-auto mb-2">
-                        <Product product={p}></Product>
-                     </div>
+                     <Product key={i} product={p}></Product>
                   )
                }).reverse().slice(0, 4)
             }

@@ -22,7 +22,7 @@ const CheckOut = () => {
    const { data: cartItems, loading, refetch } = useFetch(`${process.env.REACT_APP_BASE_URL}api/cart/show-my-cart-items`);
 
    // filter the products which stock is available
-   let products = cartItems?.data?.products && cartItems?.data?.products.filter(p => p?.stock === "in");
+   let products = cartItems?.data?.products && cartItems?.data?.products.filter(p => p?.variations?.stock === "in");
 
    // pick the address where selected address is true
    const selectedAddress = userInfo && userInfo.shippingAddress && userInfo?.shippingAddress.find(a => a?.select_address === true);
@@ -114,7 +114,7 @@ const CheckOut = () => {
                      <hr />
                      <div className="row">
                         {
-                           cartItems?.data?.products && cartItems?.data?.products.filter(p => p?.stock === "in").map((products, index) => {
+                           cartItems?.data?.products && cartItems?.data?.products.filter(p => p?.variations?.stock === "in").map((products, index) => {
                               return (
                                  <CartItem
                                     cartTypes={"toCart"}

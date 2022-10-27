@@ -11,13 +11,12 @@ const ProductContents = ({ product, variationId, authRefetch, productRefetch, se
 
    const navigate = useNavigate();
 
-   const addToCartHandler = async (pId, vId, params) => {
-
+   const addToCartHandler = async (pId, _lId, vId, params) => {
 
       const url = params === "buy" ? `${process.env.REACT_APP_BASE_URL}api/cart/add-buy-product` :
          `${process.env.REACT_APP_BASE_URL}api/cart/add-to-cart`;
 
-      if (product?.stockInfo?.stock === "in") {
+      if (product?.variations?.stock === "in") {
          if (params === "buy") {
             setBuyLoading(true);
          } else {
@@ -28,7 +27,10 @@ const ProductContents = ({ product, variationId, authRefetch, productRefetch, se
             method: "POST",
             withCredentials: true,
             credentials: 'include',
-            body: JSON.stringify({ productId: pId, vId })
+            headers: {
+               "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ productId: pId, listingId: _lId, variationId: vId })
          });
 
          const resData = await response.json();
@@ -134,11 +136,11 @@ const ProductContents = ({ product, variationId, authRefetch, productRefetch, se
             <div className="py-3 mt-4 product_handler">
 
                {
-                  (!product?.inCart && typeof product?.inCart === 'undefined') ?
+                  (!product?.inCart || typeof product?.inCart === 'undefined') ?
                      <button
                         className='addToCartBtn'
                         disabled={product?.stockInfo?.stock === "out" ? true : false}
-                        onClick={() => addToCartHandler(product?._id, product?.variations?.vId, "toCart")}
+                        onClick={() => addToCartHandler(product?._id, product?._lId, product?.variations?.vId, "toCart")}
                      >
                         {
                            addCartLoading ? <BtnSpinner text={"Adding..."} /> : <>
@@ -154,7 +156,7 @@ const ProductContents = ({ product, variationId, authRefetch, productRefetch, se
                <button
                   className='ms-4 buyBtn'
                   disabled={product?.stockInfo?.stock === "out" ? true : false}
-                  onClick={() => addToCartHandler(product?._id, product?.variations?.vId, "buy")}
+                  onClick={() => addToCartHandler(product?._lId, product?.variations?.vId, "buy")}
                >
                   {
                      buyLoading ? <BtnSpinner text={"Buying..."}>

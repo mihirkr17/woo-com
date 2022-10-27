@@ -1,7 +1,7 @@
 import React from 'react';
 import Product from '../../../Shared/Product';
 
-const TopRated = ({data}) => {
+const TopRated = ({ data }) => {
 
    return (
       <div className='section_default recommended_comp'>
@@ -9,13 +9,11 @@ const TopRated = ({data}) => {
             <div className="d-flex justify-content-between py-2">
                <h5 className="py-2">Top Rated</h5>
             </div>
-            <div className="row">
+            <div className="row product_wrapper">
                {
                   data && data.map((product, index) => {
                      return (
-                        <div className="col-lg-2 col-md-4" key={index}>
-                           <Product product={product}></Product>
-                        </div>
+                        <Product key={index} product={product}></Product>
                      )
                   })
                }

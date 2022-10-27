@@ -9,6 +9,7 @@ import ConfirmDialog from '../ConfirmDialog';
 
 const CartItem = ({ product: cartProduct, setMessage, refetch, checkOut, cartTypes }) => {
    const [openBox, setOpenBox] = useState(false);
+   const [qtyLoading, setQtyLoading] = useState(false);
 
    //  Remove product from cartProduct && cartProduct handler
    const removeItemFromCartHandler = async (cp) => {
@@ -35,52 +36,59 @@ const CartItem = ({ product: cartProduct, setMessage, refetch, checkOut, cartTyp
    }
 
 
-   const itemQuantityHandler = async (value, productId, cartId) => {
+   const itemQuantityHandler = async (value, productId, variationId, cartId) => {
+      try {
+         setQtyLoading(true);
+         let quantity = parseInt(value);
 
-      let quantity = parseInt(value);
-
-      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/cart/update-cart-product-quantity`, {
-         method: "PUT",
-         withCredential: true,
-         credentials: 'include',
-         headers: {
-            "Content-Type": "application/json",
-            authorization: productId
-         },
-         body: JSON.stringify({
-            actionRequestContext: {
-               pageUri: '/my-cart',
-               type: cartTypes,
-               pageNumber: 1
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/cart/update-cart-product-quantity`, {
+            method: "PUT",
+            withCredential: true,
+            credentials: 'include',
+            headers: {
+               "Content-Type": "application/json",
+               authorization: productId
             },
-            upsertRequest: {
-               cartContext: {
-                  productId, quantity: quantity, cartId
+            body: JSON.stringify({
+               actionRequestContext: {
+                  pageUri: '/my-cart',
+                  type: cartTypes,
+                  pageNumber: 1
+               },
+               upsertRequest: {
+                  cartContext: {
+                     productId, variationId, quantity: quantity, cartId
+                  }
                }
-            }
-         })
-      });
+            })
+         });
 
-      const resData = await response.json();
+         const resData = await response.json();
 
-      if (response.ok) {
-         refetch();
-         return setMessage(resData?.message, 'success');
+         if (response.ok) {
+            setQtyLoading(false);
+            refetch();
+            // return setMessage(resData?.message, 'success');
+            return;
+         }
+         setQtyLoading(false);
+
+
+         if (response.status === 401) {
+            window.location.reload();
+         }
+
+         return setMessage(resData?.error, 'danger');
+      } catch (error) {
+         return setMessage(error?.message, 'danger');
       }
-
-      
-      if (response.status === 401) {
-         window.location.reload();
-      }
-      
-      return setMessage(resData?.error, 'danger');
    }
 
    return (
       <div className="card_default d-flex mb-2">
          <div className="d-flex px-3">
             <div className="cart_img d-flex align-items-center justify-content-center">
-               <img src={cartProduct && cartProduct?.image} alt="" />
+              {qtyLoading ? "Loading" : <img src={cartProduct?.variations?.images && cartProduct?.variations?.images[0]} alt="" /> }
             </div>
             {
                !checkOut &&
@@ -89,22 +97,22 @@ const CartItem = ({ product: cartProduct, setMessage, refetch, checkOut, cartTyp
                   <button
                      className='badge bg-primary my-1'
                      disabled={cartProduct && cartProduct?.quantity <= 1 ? true : false}
-                     onClick={() => itemQuantityHandler(parseInt(cartProduct?.quantity) - 1, cartProduct?.productId, cartProduct?._id)}>
+                     onClick={() => itemQuantityHandler(parseInt(cartProduct?.quantity) - 1, cartProduct?.productId, cartProduct?.variationId, cartProduct?._id)}>
                      -
                   </button>
 
                   <input
                      className='border px-2' type="number"
                      value={cartProduct?.quantity || 0}
-                     onChange={(e) => itemQuantityHandler(e.target.value, cartProduct?.productId, cartProduct?._id)}
+                     onChange={(e) => itemQuantityHandler(e.target.value, cartProduct?.productId, cartProduct?.variationId, cartProduct?._id)}
                      maxLength='3'
                      style={{ width: '50px' }}
                   />
 
                   <button
                      className='badge bg-primary my-1'
-                     disabled={cartProduct && cartProduct?.quantity >= cartProduct && cartProduct?.available ? true : false}
-                     onClick={(e) => itemQuantityHandler(parseInt(cartProduct?.quantity) + 1, cartProduct?.productId, cartProduct?._id)}>
+                     disabled={cartProduct && cartProduct?.quantity >= cartProduct && cartProduct?.variations?.available ? true : false}
+                     onClick={() => itemQuantityHandler(parseInt(cartProduct?.quantity) + 1, cartProduct?.productId, cartProduct?.variationId, cartProduct?._id)}>
                      +
                   </button>
                </div>
@@ -115,17 +123,23 @@ const CartItem = ({ product: cartProduct, setMessage, refetch, checkOut, cartTyp
             <div className="col-12">
                <div className="row">
                   <div className="col-11">
-                     <p className="card_title"><Link to={`/product/${cartProduct?.slug}`}>{cartProduct && cartProduct?.title}</Link></p>
+
+                     <p className="card_title">
+                        <Link to={`/product/${cartProduct?.variations?.slug}?pId=${cartProduct?.productId}&vId=${cartProduct?.variationId}`}>
+                           {cartProduct && cartProduct?.variations?.title}
+                        </Link>
+                     </p>
+
                      <div className="d-flex align-items-center justify-content-between flex-wrap">
                         <div className="product_price_model">
-                           <big>{cartProduct?.price} TK</big>
+                           <big>{cartProduct?.variations?.pricing?.sellingPrice} TK</big>
                         </div>
                         {
-                           // (cartProduct && cartProduct?.size) && <small className="text-muted">Size : {cartProduct && cartProduct?.size}</small>
+                           (cartProduct && cartProduct?.variations?.attributes?.size) &&
+                           <small className="text-muted">Size : {cartProduct?.variations?.attributes?.size}</small>
                         }
-                        <small className="text-muted">Qty : {cartProduct && cartProduct?.quantity}</small>
-                        <small className="text-muted">Seller : {cartProduct && cartProduct?.seller}</small>
-                        <small className="text-muted">Stock : {cartProduct && cartProduct?.stock}</small>
+                        <small className="text-muted">Qty : {cartProduct?.quantity}</small>
+                        <small className="text-muted">Stock : {cartProduct?.variations?.stock}</small>
                      </div>
                   </div>
                   {

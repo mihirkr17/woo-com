@@ -30,14 +30,15 @@ export const authLogout = async () => {
 };
 
 // for cart calculation
-export const cartCalculate = (product) => {
+export function cartCalculate (product) {
    let p;
    if (product) {
       p = {
          totalPrice: (product.map(p => (parseFloat(p?.price)) * parseInt(p?.quantity)).reduce((p, c) => p + c, 0).toFixed(2)),
          totalQuantity: product.map(p => parseInt(p?.quantity)).reduce((p, c) => p + c, 0),
-         shippingFee: product.map(p => parseFloat(p?.shipping_fee)).reduce((p, c) => p + c, 0) || 0,
-         totalAmount: (product.map(p => (parseFloat(p?.totalAmount) + parseFloat(p?.shipping_fee || 0))).reduce((p, c) => p + c, 0).toFixed(2))
+         shippingFee: product.map(p => parseFloat(p?.shippingCharge)).reduce((p, c) => p + c, 0) || 0,
+         totalAmount: (product.map(p => (parseFloat(p?.totalAmount))).reduce((p, c) => p + c, 0).toFixed(2)),
+         finalAmount: (product.map(p => (parseFloat(p?.totalAmount) + p?.shippingCharge|| 0)).reduce((p, c) => p + c, 0).toFixed(2)),
       }
    } else {
       p = {

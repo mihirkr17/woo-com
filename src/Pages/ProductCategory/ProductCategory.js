@@ -144,18 +144,18 @@ const ProductCategory = () => {
 
                </div>
 
-               
+
                <div className="category_right_side col-lg-10 col-md-9">
-               {
-                       products && products.length <= 0 && <p>No Result</p>
-                     }
-                  <div className="row py-3">
+                  {
+                     products && products.length <= 0 && <p>No Result</p>
+                  }
+                  <div className="row py-3 product_wrapper">
                      {
-                        loading ? <Spinner /> : products && products.map(p => {
+                        loading ? <Spinner /> : products && products.map((p, i) => {
                            return (
-                              <div key={p?._id} className="col-lg-3 col-md-6 mb-4">
-                                 <Product product={p}></Product>
-                              </div>
+
+                              <Product key={i} product={p}></Product>
+
                            )
                         })
                      }

@@ -70,8 +70,8 @@ const CategoryHeader = () => {
                                        subCtg?.post_category_items && subCtg?.post_category_items.map((scCtg, i) => {
                                           return (
                                              <p key={i}>
-                                                <Nav.Item as={Link} to={`/c/${ctg?.category}/${subCtg?.sub_category}/${scCtg?.name}`}>
-                                                   {scCtg.charAt(0).toUpperCase() + scCtg.slice(1).replace(/[-]/g, ' ')}
+                                                <Nav.Item as={Link} to={`/c/${ctg?.category}/${subCtg?.name}/${scCtg?.name}`}>
+                                                   {scCtg?.name.charAt(0).toUpperCase() + scCtg?.name.slice(1).replace(/[-]/g, ' ')}
                                                 </Nav.Item>
                                              </p>
                                           )

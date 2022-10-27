@@ -35,6 +35,7 @@ const Cart = () => {
                      <hr />
                      {
                         (cartItems?.data?.products && cartItems?.data?.products.length > 0) ? cartItems?.data?.products.map(product => {
+                     
                            return (
                               <CartItem
                                  key={product?._id}

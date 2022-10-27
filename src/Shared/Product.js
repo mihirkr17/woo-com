@@ -10,23 +10,27 @@ const Product = ({ product }) => {
             </div>
             <article className='product_card_description'>
                <div className="product_title">
-                  <h6>
+                  <span>{product?.brand}</span>
+                  <h1>
                      {product?.variations?.title && product?.variations?.title.length > 20 ? product?.variations?.title.slice(0, 20) + "..." : product?.variations?.title}
-                  </h6>
+                  </h1>
+                  <small>{product?.packageInfo?.inTheBox}</small>
                </div>
 
                <div className='product_meta'>
-                  <div className="product_brand">
-                     <small>Brand : {product?.brand}</small><br />
+
+                  <div className="rating_model">
+                     <small>{product?.ratingAverage || 0} ({product?.reviews && product?.reviews.length})</small>
                   </div>
 
-                  <div className="product_rating_model">
-                     <small>{product?.ratingAverage || 0} out of 5</small>
-                  </div>
-
-                  <div className="product_price_model">
+                  <div className="price_model">
                      <big>{product?.variations?.pricing?.sellingPrice || product?.variations?.pricing?.price} TK</big>
-                     <span><strike>{product?.variations?.pricing?.price} TK</strike> (-{product?.variations?.pricing?.discount || 0}%) off</span>
+                     <p>
+                        <strike>
+                           {product?.variations?.pricing?.price} TK
+                        </strike>
+                        ({product?.variations?.pricing?.discount || 0}%) off
+                     </p>
                   </div>
 
                </div>

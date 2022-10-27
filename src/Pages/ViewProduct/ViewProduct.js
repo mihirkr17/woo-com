@@ -49,25 +49,23 @@ const ViewProduct = () => {
                      productRefetch={productRefetch}
                      setMessage={setMessage}
                   />
-
-                  <br />
-                  <br />
-
-                  <ProductAdditionalDetails
-                     product={data?.data?.product ? data?.data?.product : {}}
-                  />
-
                </div>
+            </div>
+
+            <div className="row">
+               <ProductAdditionalDetails
+                  product={data?.data?.product ? data?.data?.product : {}}
+               />
             </div>
 
 
             <div className="row pt-5">
-               <div className="col-lg-9">
+               <div className="col-lg-12">
                   <ProductReviews
                      product={data?.data?.product ? data?.data?.product : {}}
                   />
                </div>
-               <div className="col-lg-3">
+               <div className="col-lg-12 pt-4">
                   <RelatedProducts
                      relatedProducts={data?.data?.relatedProducts ? data?.data?.relatedProducts : []}
                   />

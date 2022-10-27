@@ -35,16 +35,18 @@ const HomeStore = () => {
                <div className="d-flex justify-content-between py-2">
                   <h5 className="py-2">Just For You</h5>
                </div>
-               <div className='row'>
-                  {
-                     data?.data?.store && data?.data?.store.map((product, index) => {
-                        return (
-                           <div className="col-sm-5 col-md-4 col-lg-2" key={index}>
-                              <Product product={product} key={product._id}></Product>
-                           </div>
-                        )
-                     })
-                  }
+               <div className='row product_wrapper'>
+
+                     {
+                        data?.data?.store && data?.data?.store.map((product, index) => {
+                           return (
+
+                              <Product key={index} product={product} ></Product>
+
+                           )
+                        })
+                     }
+
                </div>
                <div className="py-3 text-center">
                   <button
