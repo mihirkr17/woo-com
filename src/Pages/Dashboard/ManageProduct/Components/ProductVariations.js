@@ -1,30 +1,32 @@
 import React from 'react';
 import { useState } from 'react';
 import { usePrice } from '../../../../Hooks/usePrice';
-
 import { useMessage } from '../../../../Hooks/useMessage';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMinusSquare, faPlusSquare } from '@fortawesome/free-solid-svg-icons';
-import { slugMaker } from '../../../../Shared/common';
 
-const VariationFormOne = ({ required, data, formTypes }) => {
+
+const ProductVariations = ({ required, data, formTypes, super_category }) => {
    const variation = data?.variations && data?.variations;
+
 
    // Price and discount states
    const [inputPriceDiscount, setInputPriceDiscount] = useState({ price: (variation?.pricing?.price && variation?.pricing?.price) || "", sellingPrice: (variation?.pricing?.sellingPrice && variation?.pricing?.sellingPrice) || "" });
    const { discount } = usePrice(inputPriceDiscount.price, inputPriceDiscount.sellingPrice);
 
-
-   const [slug, setSlug] = useState(variation?.slug || "");
-
    const [images, setImages] = useState((variation?.images && variation?.images) || [""]);
+
    const { msg, setMessage } = useMessage();
 
-   const handleTitle = (value) => {
-      let slugs = slugMaker(value);
+   const [variant, setVariant] = useState(variation?.variant || {});
 
-      setSlug(slugs);
+   function setVariation(e) {
+      let { name, value } = e.target;
+      variant[name] = value;
+
+      setVariant({ ...variant });
    }
+
 
    // images upload handlers 
    const imageInputHandler = (e, index) => {
@@ -47,29 +49,28 @@ const VariationFormOne = ({ required, data, formTypes }) => {
          e.preventDefault();
          // setActionLoading(true);
 
-         const title = e.target.title.value;
          let sku = e.target.sku.value;
          let status = e.target.status.value;
          let available = e.target.available.value;
 
 
+
          let model = {
             pageURL: '/VariationOne',
             variations: {
-               title,
-               slug,
                images,
                sku,
                price: parseFloat(inputPriceDiscount.price),
                sellingPrice: parseFloat(inputPriceDiscount.sellingPrice),
                discount,
+               variant,
                status,
-               available,
+               available
             }
          }
 
 
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/product/set-product-variation?formType=${formTypes}&vId=${variation?.vId || ""}&attr=variationOne`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/product/set-product-variation?formType=${formTypes}&vId=${variation?._vId || ""}&attr=ProductVariations`, {
             withCredentials: true,
             credentials: 'include',
             method: 'PUT',
@@ -104,23 +105,55 @@ const VariationFormOne = ({ required, data, formTypes }) => {
    }
 
 
+   function cSl(variant, existVar = {}) {
+
+      let attObject = Object.entries(variant);
+
+      let str = [];
+
+      for (let [key, value] of attObject) {
+
+         str.push(
+            (Array.isArray(value) && <div className="col-lg-3 mb-3">
+               <label htmlFor={key}>{key.replace(/_+/gi, " ").toUpperCase()}</label>
+               <select name={key} id={key} className='form-select form-select-sm' onChange={setVariation}>
+
+
+                  {
+                     Object.keys(existVar).includes(key) && <option value={existVar[key]}>{existVar[key]}</option>
+                  }
+
+                  <option value="">Select {key.replace("_", " ")}</option>
+                  {
+                     value && value.map((type, index) => {
+                        return (<option key={index} value={type}>{type}</option>)
+                     })
+                  }
+               </select>
+            </div>
+
+            ), typeof value !== 'object' && <div className="col-lg-3 mb-3">
+               <label htmlFor={key}>{required} {key.replace(/_+/gi, " ").toUpperCase()}</label>
+               <input type="text" name={key} id={key} placeholder={"Write " + key} onChange={setVariation} defaultValue={Object.keys(existVar).includes(key) ? existVar[key] : ""} className='form-control form-control-sm' />
+            </div>
+
+         )
+      }
+
+      return str;
+   }
+
 
    return (
+
       <form onSubmit={handleVariationOne}>
          {/* Price Stock And Shipping Information */}
          <div className="row my-4">
-            <div className="col-lg-12 my-2">
-               <label htmlFor="title">Title</label>
-               <input className='form-control form-control-sm' type="text" name='title' id='title' defaultValue={variation?.title || ""} onChange={(e) => handleTitle(e.target.value)} />
-               <input className='form-control form-control-sm mt-1' key={slug || ""} defaultValue={slug || ""} type="text" disabled />
-            </div>
-
-
 
             <div className="col-lg-12 py-2">
                <label htmlFor='image'>{required} Image(<small>Product Image</small>)&nbsp;</label>
                {
-                  images && images.map((img, index) => {
+                  Array.isArray(images) && images.map((img, index) => {
                      return (
                         <div className="py-2 d-flex align-items-end justify-content-start" key={index}>
                            <input className="form-control form-control-sm" name="image" id='image' type="text"
@@ -199,7 +232,13 @@ const VariationFormOne = ({ required, data, formTypes }) => {
                </div>
             </div>
 
+            {
+               cSl(super_category?.variant, variation?.variant)
+            }
+
          </div>
+
+
 
 
          <div className="col-lg-12 my-2 pt-4">
@@ -210,4 +249,4 @@ const VariationFormOne = ({ required, data, formTypes }) => {
    )
 }
 
-export default VariationFormOne;
+export default ProductVariations;

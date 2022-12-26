@@ -1,18 +1,25 @@
 .swatch_size_btn {
   border: 1px solid var(--color-mute);
-  width: 40px;
-  height: 40px;
+  width: 25px;
+  height: 25px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--color-mute);
   background-color: transparent;
   margin: 0 0.3rem;
+  font-size: 70%;
 
   &.active {
     color: var(--color-green);
     border: 1px solid var(--color-green);
   }
+}
+
+.seeMore {
+  color: var(--color-blued);
+  cursor: pointer;
+  font-weight: 500;
 }
 
 .product_price_model {
@@ -80,4 +87,43 @@
   }
 }
 
+.vp_row {
+  position: relative;
+}
 
+.vp_col_one {
+  position: fixed;
+  top: 50%;
+  left: auto;
+  width: 35%;
+  transform: translateY(-50%);
+  height: 30vmax;
+}
+
+.vp_col_two {
+  padding-left: 45%;
+  width: 100%;
+}
+
+@media (max-width: 576px) {
+  .vp_row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+
+  .vp_col_one {
+    margin-top: 50px;
+    position: unset;
+    top: unset;
+    width: 100%;
+    height: auto;
+    transform: unset;
+  }
+
+  .vp_col_two {
+    padding-left: unset;
+    padding: 0 2%;
+  }
+}

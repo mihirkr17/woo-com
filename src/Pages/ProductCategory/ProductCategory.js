@@ -18,8 +18,11 @@ const ProductCategory = () => {
    const [brands, setBrands] = useState({ brand: [] });
    const [getBrand, setGetBrand] = useState(["all"]);
    const [products, setProducts] = useState([]);
-   const subCategory = newCategory && newCategory.find(e => e.category === category);
-   const postCategory = subCategory?.sub_category_items && subCategory?.sub_category_items.find(e => e.sub_category === sub_category);
+
+   const ctg = newCategory && newCategory.find(c => c.category === category);
+   const subCtg = ctg && ctg?.sub_category_items.find(s => s?.name === sub_category);
+
+
 
    useEffect(() => {
       if (productByCategory) {
@@ -83,34 +86,18 @@ const ProductCategory = () => {
 
             <div className="row" style={{ position: "relative", height: "77vh" }}>
                <div className="category_left_side col-lg-2 col-md-3 border-end">
+
                   {
                      (category && !sub_category && !post_category) && <div className="py-1 ggt_ffo">
-                        <small><strong>{category}</strong></small>
+                        <Link to={`/c/${category}`}><strong>{category.replace(/[-]/g, " ")}</strong></Link>
                         <ul>
                            {
-                              subCategory?.sub_category_items && subCategory?.sub_category_items.map((c, i) => {
+                              ctg?.sub_category_items && ctg?.sub_category_items.map((sc, i) => {
+
                                  return (
-                                    <li key={i} className="my-1">
-                                       <Nav.Item as={Link} to={`/c/${category}/${c?.sub_category}`}>
-                                          {c?.sub_category}
-                                       </Nav.Item>
-                                    </li>
-                                 )
-                              })
-                           }
-                        </ul>
-                     </div>
-                  }
-                  {
-                     (sub_category && !post_category) && <div className="py-1 ggt_ffo">
-                        <Link to={`/${category}`}><strong>{sub_category.replace(/[-]/g, " ")}</strong></Link>
-                        <ul>
-                           {
-                              postCategory?.post_category_items && postCategory?.post_category_items.map((c, i) => {
-                                 return (
-                                    <li key={i} className="my-1">
-                                       <Nav.Item as={Link} to={`/c/${category}/${sub_category}/${c}`}>
-                                          {c.replace(/[-]/g, " ")}
+                                    <li key={i} className="my-1 ms-2">
+                                       <Nav.Item as={Link} to={`/c/${category}/${sc?.name}`}>
+                                          {sc?.name}
                                        </Nav.Item>
                                     </li>
                                  )
@@ -120,6 +107,49 @@ const ProductCategory = () => {
                      </div>
                   }
 
+                  {
+                     (category && sub_category && !post_category) && <div className="py-1 ggt_ffo">
+                        <Link to={`/c/${category}`}>
+                           <strong>{category.replace(/[-]/g, " ")}</strong>
+                        </Link> <br />
+                        <Link to={`/c/${category}/${sub_category}`} className='ms-2'>
+                           <strong>
+                              {sub_category.replace(/[-]/g, " ")}
+                           </strong>
+                        </Link>
+                        <ul>
+                           {
+                              subCtg?.post_category_items && subCtg?.post_category_items.map((pc, i) => {
+                                 return (
+                                    <li key={i} className="my-1 ms-2">
+                                       <Nav.Item as={Link} to={`/c/${category}/${sub_category}/${pc?.name}`}>
+                                          {pc?.name.replace(/[-]/g, " ")}
+                                       </Nav.Item>
+                                    </li>
+                                 )
+                              })
+                           }
+                        </ul>
+                     </div>
+                  }
+
+                  {
+                     (category && sub_category && post_category) && <div className="py-1 ggt_ffo">
+                        <Link to={`/c/${category}`}><strong>{category.replace(/[-]/g, " ")}</strong></Link> <br />
+                        <Link to={`/c/${category}/${sub_category}`} className='ms-2'>
+                           <strong>
+                              {sub_category.replace(/[-]/g, " ")}
+                           </strong>
+                        </Link> <br />
+                        <ul>
+                           <li className="my-1 ms-2">
+                              <Nav.Item as={Link} to={`/c/${category}/${sub_category}/${post_category}`}>
+                                 {post_category.replace(/[-]/g, " ")}
+                              </Nav.Item>
+                           </li>
+                        </ul>
+                     </div>
+                  }
 
                   {
                      <div className='py-1 ggt_ffo'>

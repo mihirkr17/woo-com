@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 const Product = ({ product }) => {
    return (
       <div className='product_card my-2'>
-         <Link to={`/product/${product?.variations?.slug}?pId=${product?._id}&vId=${product?.variations?.vId}`}>
+         <Link to={`/product/${product?.slug}?pId=${product?._id}&vId=${product?.variations?._vId}`}>
             <div className="product_card_img">
                <img src={product?.variations?.images && product?.variations?.images[0]} alt='' />
             </div>
@@ -12,7 +12,7 @@ const Product = ({ product }) => {
                <div className="product_title">
                   <span>{product?.brand}</span>
                   <h1>
-                     {product?.variations?.title && product?.variations?.title.length > 20 ? product?.variations?.title.slice(0, 20) + "..." : product?.variations?.title}
+                     {product?.title && product?.title.length > 20 ? product?.title.slice(0, 20) + "..." : product?.title}
                   </h1>
                   <small>{product?.packageInfo?.inTheBox}</small>
                </div>

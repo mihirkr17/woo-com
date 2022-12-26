@@ -29,8 +29,8 @@ const ViewProduct = () => {
          <div className="container">
             {msg}
 
-            <div className="row mb-5">
-               <div className="col-lg-5 pb-3">
+            <div className=" mb-5 vp_row">
+               <div className="pb-3 vp_col_one">
                   <ProductImages
                      product={data?.data?.product ? data?.data?.product : {}}
                      userInfo={userInfo}
@@ -41,7 +41,7 @@ const ViewProduct = () => {
                </div>
 
 
-               <div className="col-lg-7 pb-3 product_description">
+               <div className="pb-3 product_description vp_col_two">
                   <ProductContents
                      product={data?.data?.product ? data?.data?.product : {}}
                      variationId={variationId}
@@ -49,23 +49,15 @@ const ViewProduct = () => {
                      productRefetch={productRefetch}
                      setMessage={setMessage}
                   />
-               </div>
-            </div>
 
-            <div className="row">
-               <ProductAdditionalDetails
-                  product={data?.data?.product ? data?.data?.product : {}}
-               />
-            </div>
+                  <ProductAdditionalDetails
+                     product={data?.data?.product ? data?.data?.product : {}}
+                  />
 
-
-            <div className="row pt-5">
-               <div className="col-lg-12">
                   <ProductReviews
                      product={data?.data?.product ? data?.data?.product : {}}
                   />
-               </div>
-               <div className="col-lg-12 pt-4">
+
                   <RelatedProducts
                      relatedProducts={data?.data?.relatedProducts ? data?.data?.relatedProducts : []}
                   />

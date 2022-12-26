@@ -20,10 +20,11 @@ const NavigationBar = () => {
    const [inFocus, setInFocus] = useState(false);
    const [searchQuery, setSearchQuery] = useState("");
 
-   if (role === 'owner' || role === 'admin' || role === 'seller') {  
+   if (role === 'owner' || role === 'admin' || role === 'seller') {
       return;
    }
 
+   const cp = parseInt(new URLSearchParams(document.cookie.replaceAll("; ", "&")).get('cart_p'));
 
 
    async function callApi(searchQuery) {
@@ -126,7 +127,7 @@ const NavigationBar = () => {
                      {
                         (path !== '/register' && path !== '/login' && (role !== "seller") && (role !== "admin") && (role !== "owner")) &&
                         <NavLink className="nav_link cart_link" to='/my-cart'><FontAwesomeIcon icon={faCartShopping}></FontAwesomeIcon>
-                           {<div className="bg-info cart_badge">{(userInfo?.shoppingCartItems && userInfo?.shoppingCartItems) || 0}</div>}
+                           {<div className="bg-info cart_badge">{(cp) || 0}</div>}
                         </NavLink>
                      }
                   </div>

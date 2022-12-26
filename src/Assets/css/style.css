@@ -21,6 +21,7 @@
   --color-mute: #878787;
   --color-link: #ff7019;
   --color-link-alt: #e75900;
+  --color-blued: #2874f0;
   --color-danger: red;
   --color-trans-one: #ffffff91;
   --color-trans-two: #0000001a;
@@ -778,6 +779,7 @@ label {
           backdrop-filter: blur(10px);
   width: 200px;
   min-height: 190px;
+  padding: 0;
 }
 .product_card:hover {
   -webkit-box-shadow: 0 0 6px rgba(0, 0, 0, 0.5254901961);
@@ -801,8 +803,8 @@ label {
 .product_card_img > img {
   width: 100%;
   height: 100%;
-  -o-object-fit: contain;
-     object-fit: contain;
+  -o-object-fit: cover;
+     object-fit: cover;
   margin: auto;
 }
 
@@ -815,6 +817,7 @@ label {
       -ms-flex-direction: column;
           flex-direction: column;
   color: var(--color-dark);
+  padding: 0 0.7rem;
 }
 .product_title {
   position: relative;
@@ -1981,8 +1984,8 @@ label {
 }
 .swatch_size_btn {
   border: 1px solid var(--color-mute);
-  width: 40px;
-  height: 40px;
+  width: 25px;
+  height: 25px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -1995,10 +1998,17 @@ label {
   color: var(--color-mute);
   background-color: transparent;
   margin: 0 0.3rem;
+  font-size: 70%;
 }
 .swatch_size_btn.active {
   color: var(--color-green);
   border: 1px solid var(--color-green);
+}
+
+.seeMore {
+  color: var(--color-blued);
+  cursor: pointer;
+  font-weight: 500;
 }
 
 .product_price_model {
@@ -2067,4 +2077,54 @@ label {
 }
 .product-details__items > li > span:nth-child(2) {
   color: var(--color-text);
+}
+
+.vp_row {
+  position: relative;
+}
+
+.vp_col_one {
+  position: fixed;
+  top: 50%;
+  left: auto;
+  width: 35%;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+  height: 30vmax;
+}
+
+.vp_col_two {
+  padding-left: 45%;
+  width: 100%;
+}
+
+@media (max-width: 576px) {
+  .vp_row {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+  }
+  .vp_col_one {
+    margin-top: 50px;
+    position: unset;
+    top: unset;
+    width: 100%;
+    height: auto;
+    -webkit-transform: unset;
+            transform: unset;
+  }
+  .vp_col_two {
+    padding-left: unset;
+    padding: 0 2%;
+  }
 }

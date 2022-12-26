@@ -27,6 +27,8 @@ const CheckOut = () => {
    // pick the address where selected address is true
    const selectedAddress = userInfo && userInfo.shippingAddress && userInfo?.shippingAddress.find(a => a?.select_address === true);
 
+   console.log(products, selectedAddress)
+
    const buyBtnHandler = async (e) => {
       e.preventDefault();
 

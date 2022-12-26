@@ -5,9 +5,9 @@ const RelatedProducts = ({ relatedProducts }) => {
 
 
    return (
-      <>
-         <h5 className="text-center py-1">Related Product</h5>
-         <div className="row product_wrapper">
+      <div className='pt-5'>
+         <h5>Related Product</h5>
+         <div className="row product_wrapper w-100">
             {
                relatedProducts && relatedProducts.map((p, i) => {
                   return (
@@ -17,7 +17,7 @@ const RelatedProducts = ({ relatedProducts }) => {
             }
 
          </div>
-      </>
+      </div>
    );
 };
 

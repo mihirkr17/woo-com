@@ -18,7 +18,7 @@ const Cart = () => {
 
    // Go checkout page
    const goCheckoutPage = async (id) => {
-      if ((!userInfo?.shoppingCartItems || typeof userInfo?.shoppingCartItems === "undefined")) {
+      if (cartItems?.data?.products && cartItems?.data?.products.length < 0) {
          return setMessage("Your cart is empty. Please add product to your cart", "danger");
       }
       return navigate(`/my-cart/checkout`);
@@ -64,8 +64,8 @@ const Cart = () => {
                   <br />
 
                   <div className="text-center">
-                     {(typeof userInfo?.shoppingCartItems === "undefined") && <small className="my-2 p-1">Please Add Product To Your Cart</small>}
-                     <button className='bt9_checkout' disabled={(!userInfo?.shoppingCartItems || typeof userInfo?.shoppingCartItems === "undefined" || (userInfo?.shoppingCartItems.length <= 0)) ? true : false} onClick={() => goCheckoutPage(userInfo?._id)}>
+                     {(cartItems?.data?.products && cartItems?.data?.products.length <= 0) && <small className="my-2 p-1">Please Add Product To Your Cart</small>}
+                     <button className='bt9_checkout' disabled={(cartItems?.data?.products && cartItems?.data?.products.length <= 0) ? true : false} onClick={() => goCheckoutPage(userInfo?._id)}>
                         Proceed To Checkout
                      </button>
                   </div>

@@ -6,14 +6,12 @@ import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import BtnSpinner from '../../../../Components/Shared/BtnSpinner/BtnSpinner';
 
-const VariationFormThree = ({ required, data, formTypes }) => {
+const BodyInformation = ({ required, data, formTypes }) => {
    const variations = data.variations && data?.variations;
+
    const { msg, setMessage } = useMessage();
    // Description states
    const [description, setDescription] = useState((data?.bodyInfo?.description && data?.bodyInfo?.description) || "CKEditor v5");
-
-   const [specification, setSpecification] = useState(
-      (data?.specification && data?.specification) || [{ type: "", value: "" }]);
 
 
    // search keywords
@@ -55,19 +53,6 @@ const VariationFormThree = ({ required, data, formTypes }) => {
       setKeyFeatures(list);
    }
 
-   // specification input handlers
-   const specificationInputHandler = (e, index) => {
-      const { name, value } = e.target;
-      let list = [...specification];
-      list[index][name] = value;
-      setSpecification(list);
-   };
-
-   const removeSpecificationInputFieldHandler = index => {
-      const list = [...specification];
-      list.splice(index, 1);
-      setSpecification(list);
-   };
 
    const btnStyle = {
       cursor: "pointer",
@@ -76,7 +61,7 @@ const VariationFormThree = ({ required, data, formTypes }) => {
       marginLeft: "0.5rem"
    }
 
-   async function variationHandlerThree(e) {
+   async function productBodyInfoHandler(e) {
       try {
          e.preventDefault();
          let metaDescription = e.target.metaDescription.value;
@@ -85,11 +70,11 @@ const VariationFormThree = ({ required, data, formTypes }) => {
             keyFeatures,
             searchKeywords,
             metaDescription,
-            description,
+            description
          }
 
 
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/product/set-product-variation?formType=${formTypes}&vId=${variations?.vId || ""}&attr=variationThree`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/product/set-product-variation?formType=${formTypes}&vId=${variations?.vId || ""}&attr=bodyInformation`, {
             method: "PUT",
             withCredentials: true,
             credentials: "include",
@@ -110,9 +95,8 @@ const VariationFormThree = ({ required, data, formTypes }) => {
 
    }
 
-
    return (
-      <form onSubmit={variationHandlerThree}>
+      <form onSubmit={productBodyInfoHandler}>
          <div className="row">
             <div className='col-lg-12 my-2'>
                <label htmlFor='searchKeyword'>{required} Search Keywords</label>
@@ -146,7 +130,6 @@ const VariationFormThree = ({ required, data, formTypes }) => {
                   })
                }
             </div>
-
 
             <div className="col-lg-12 my-2">
                <label htmlFor='keyFeatures'>{required} Key Features&nbsp;</label>
@@ -202,50 +185,6 @@ const VariationFormThree = ({ required, data, formTypes }) => {
             </div>
 
             <div className="col-lg-12 my-2">
-               {
-                  specification && specification.map((x, i) => {
-                     return (
-                        <div className="py-2 d-flex align-items-end" key={i}>
-
-                           <div className="row w-100">
-                              <div className="col-lg-6">
-                                 <label htmlFor='type'>Specification Type</label>
-                                 <input className="form-control form-control-sm"
-                                    name="type" id='type' type="text"
-                                    placeholder='Spec type' value={x.type}
-                                    onChange={(e) => specificationInputHandler(e, i)}
-                                 />
-                              </div>
-
-                              <div className="col-lg-6">
-                                 <label htmlFor='value'>Specification Value</label>
-                                 <input className="form-control form-control-sm"
-                                    name="value" id='value' type="text"
-                                    placeholder='Spec_value' value={x.value}
-                                    onChange={(e) => specificationInputHandler(e, i)}
-                                 />
-                              </div>
-                           </div>
-
-                           <div className="btn-box d-flex mb-3">
-                              {specification.length !== 1 && <span
-                                 style={btnStyle}
-                                 onClick={() => removeSpecificationInputFieldHandler(i)}>
-                                 <FontAwesomeIcon icon={faMinusSquare} />
-                              </span>}
-                              {
-                                 specification.length - 1 === i && <span style={btnStyle}
-                                    onClick={() => setSpecification([...specification, { type: "", value: "" }])}>
-                                    <FontAwesomeIcon icon={faPlusSquare} />
-                                 </span>}
-                           </div>
-                        </div>
-                     )
-                  })
-               }
-            </div>
-
-            <div className="col-lg-12 my-2">
                {msg}
                <button className='bt9_edit' type="submit">
                   {
@@ -260,4 +199,4 @@ const VariationFormThree = ({ required, data, formTypes }) => {
    );
 };
 
-export default VariationFormThree;
+export default BodyInformation;

@@ -1,8 +1,8 @@
 import React from 'react';
-import ProductIntroForm from './ProductIntroForm';
-import VariationFormOne from './VariationFormOne';
-import VariationFormTwo from './VariationFormTwo';
-import VariationFormThree from './VariationFormThree';
+import ProductListing from './ProductListing';
+import ProductVariations from './ProductVariations';
+import ProductSpecification from './ProductSpecification';
+import BodyInformation from './BodyInformation';
 import { newCategory } from '../../../../Assets/CustomData/categories';
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -40,62 +40,86 @@ const ProductTemplateForm = ({ formTypes, data, refetch }) => {
       navigate(from, { replace: true });
    }
 
+   function getAttrs(obj = {}) {
+
+      let str = [];
+
+      for (const [key, value] of Object.entries(obj)) {
+         str.push(
+            <div className="col-lg-6"><small>{key.replace("_", " ").toUpperCase()} : {value}</small></div>
+         )
+      }
+
+      return str.slice(0, 6);
+   }
+
    return (
       <>
          <button className='btn' onClick={() => goThere()}>
             Back
          </button>
-         {/* {
-            data?._id ?
-               <div className="card_default card_description">
-                  <div className='row py-2'>
-                     <div className="col-lg-6"><small>CATEGORIES : {data?.categories && data?.categories.join("-->")}</small></div>
-                     <div className="col-lg-6"><small>SELLER : {data?.seller?.name}</small></div>
-                     <div className="col-lg-6"><small>BRAND : {data?.brand}</small></div>
-                     <div className="col-lg-6"><small>SAVE AS : {data?.save_as}</small></div>
-                  </div>
-               </div>
-               : <ProductIntroForm required={required} formTypes={formTypes} data={data} refetch={refetch} />
-         } */}
 
          <div className="card_default card_description">
             <div className="d-flex align-items-start justify-content-between pb-3">
                <h5>Product Intro</h5>
-               <button className='bt9_edit' onClick={() => handleToggle('productIntro')}>
-                  {toggle === 'productIntro' ? 'Cancel' : 'Edit'}
-               </button>
+               {
+
+                  formTypes !== 'update-variation' &&
+
+                  <button className='bt9_edit' onClick={() => handleToggle('productIntro')}>
+                     {toggle === 'productIntro' ? 'Cancel' : 'Edit'}
+                  </button>
+               }
             </div>
 
             {toggle === 'productIntro' ?
-               <ProductIntroForm required={required} formTypes={formTypes} data={data} refetch={refetch} />
+               <ProductListing required={required} formTypes={formTypes} data={data} refetch={refetch} />
                : <div className='row py-2'>
                   <div className="col-lg-6"><small>CATEGORIES : {data?.categories && data?.categories.join("-->")}</small></div>
                   <div className="col-lg-6"><small>SELLER : {data?.seller?.name}</small></div>
                   <div className="col-lg-6"><small>BRAND : {data?.brand}</small></div>
                   <div className="col-lg-6"><small>SAVE AS : {data?.save_as}</small></div>
+                  <div className="col-lg-6"><small>Product Title : {data?.title}</small></div>
                </div>
             }
          </div>
 
-
          <br />
 
          {
-            data?._id && <div className="card_default card_description">
+            (formTypes === 'update-variation' || formTypes === 'new-variation') && <div className="card_default card_description">
                <div className="d-flex align-items-start justify-content-between pb-3">
-                  <h5>Product Variations And Shipping Information (24)</h5>
-                  <button className='bt9_edit' onClick={() => handleToggle('variationOne')}>
-                     {toggle === 'variationOne' ? 'Cancel' : 'Edit'}
-                  </button>
+                  <h5>
+                     {
+                        formTypes === 'update-variation' ? "Update Product Variation" : "Create Product Variation"
+                     }
+                  </h5>
+
+                  {
+                     formTypes === 'update-variation' ? <button className='bt9_edit' onClick={() => handleToggle('productVariation')}>
+                        {toggle === 'productVariation' ? 'Cancel' : 'Edit'}
+                     </button> : <button className='bt9_edit' onClick={() => handleToggle('productVariation')}>
+                        {toggle === 'productVariation' ? 'Cancel' : 'Create Variation'}
+                     </button>
+                  }
                </div>
 
-               {toggle === 'variationOne' ?
-                  <VariationFormOne required={required} formTypes={formTypes} data={data} refetch={refetch} />
+               {toggle === 'productVariation' ?
+                  <ProductVariations required={required} formTypes={formTypes} data={data} refetch={refetch} super_category={super_category} />
                   : <div className='row py-2'>
-                     <div className="col-lg-6"><small>SKU : {data?.variations?.sku}</small></div>
-                     <div className="col-lg-6"><small>STATUS : {data?.variations?.status}</small></div>
-                     <div className="col-lg-6"><small>BDT : {data?.variations?.pricing?.price}</small></div>
-                     <div className="col-lg-6"><small>SELLING PRICE : {data?.variations?.sellingPrice}</small></div>
+                     {
+                        formTypes === 'update-variation' && getAttrs(data?.variations?.variant)
+                     }
+                     {
+                        formTypes === 'update-variation' && getAttrs(data?.variations?.pricing)
+                     }
+
+                     {
+                        formTypes === 'new-variation' && <button className='bt9_edit py-3' onClick={() => handleToggle('productVariation')}>
+                           {toggle === 'productVariation' ? 'Cancel' : 'Add New Variation'}
+                        </button>
+                     }
+
                   </div>
                }
             </div>
@@ -104,44 +128,55 @@ const ProductTemplateForm = ({ formTypes, data, refetch }) => {
          <br />
 
          {
-            data?.variations?.vId &&
+            formTypes === 'update' &&
             <>
-               <div className="card_default card_description">
-                  <div className="d-flex align-items-start justify-content-between pb-3">
-                     <h5>Product Description</h5>
-                     <button className='bt9_edit' onClick={() => handleToggle('variationTwo')}>
-                        {toggle === 'variationTwo' ? 'Cancel' : 'Edit'}
-                     </button>
-                  </div>
+               {
+                  super_category?.specification &&
+                  <div className="card_default card_description">
+                     <div className="d-flex align-items-start justify-content-between pb-3">
+                        <h5>Product Specification</h5>
+                        <button className='bt9_edit' onClick={() => handleToggle('variationTwo')}>
+                           {toggle === 'variationTwo' ? 'Cancel' : 'Edit'}
+                        </button>
+                     </div>
 
-                  {
-                     toggle === 'variationTwo' ?
-                        <VariationFormTwo required={required} formTypes={formTypes} data={data} refetch={refetch} super_category={super_category} />
-                        : <div className='row py-2'>
-                           <div className="col-lg-6"><small>TYPE : {data?.variations?.attributes?.pType}</small></div>
-                           <div className="col-lg-6"><small>SIZE : {data?.variations?.attributes?.size}</small></div>
-                           <div className="col-lg-6"><small>COLOR : {data?.variations?.attributes?.color}</small></div>
-                           <div className="col-lg-6"><small>PATTERN : {data?.variations?.attributes?.pattern}</small></div>
-                        </div>
-                  }
-               </div>
+                     {
+                        toggle === 'variationTwo' ?
+                           <ProductSpecification required={required} formTypes={formTypes} data={data} refetch={refetch} super_category={super_category} />
+                           : <div className='row py-2'>
+                              {
+                                 data?.attributes ? getAttrs(data?.attributes) : <p>No attributes present here</p>
+                              }
+                           </div>
+                     }
+                  </div>
+               }
 
                <br />
 
                <div className="card_default card_description">
                   <div className="d-flex align-items-start justify-content-between pb-3">
                      <h5>Additional Description</h5>
-                     <button className='bt9_edit' onClick={() => handleToggle('variationThree')}>
-                        {toggle === 'variationThree' ? 'Cancel' : 'Edit'}
+                     <button className='bt9_edit' onClick={() => handleToggle('bodyInformation')}>
+                        {toggle === 'bodyInformation' ? 'Cancel' : 'Edit'}
                      </button>
                   </div>
 
                   {
-                     toggle === 'variationThree' ?
-                        <VariationFormThree required={required} formTypes={formTypes} data={data} refetch={refetch} />
+                     toggle === 'bodyInformation' ?
+                        <BodyInformation required={required} formTypes={formTypes} data={data} refetch={refetch} super_category={super_category} />
                         : <div className='row py-2'>
-                           <div className="col-lg-6"><small>MODEL NAME : {data?.variations?.attributes?.pType}</small></div>
-                           <div className="col-lg-6"><small>EAN/UPC : {data?.variations?.attributes?.size}</small></div>
+                           <div className="col-lg-6"><small>Meta Information: {data?.bodyInfo?.metaDescription.slice(0, 20) + "..."}</small></div>
+
+                           {
+                              data?.bodyInfo?.searchKeywords &&
+                              <div className="col-lg-6"><small>Search Keywords : {data?.bodyInfo?.searchKeywords.join(", ")}</small></div>
+                           }
+                           {
+                              data?.bodyInfo?.keyFeatures &&
+                              <div className="col-lg-6"><small>Key Features : {data?.bodyInfo?.keyFeatures.join(", ")}</small></div>
+                           }
+
                         </div>
                   }
                </div>

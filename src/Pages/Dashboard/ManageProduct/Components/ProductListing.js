@@ -6,8 +6,9 @@ import { useMessage } from '../../../../Hooks/useMessage';
 import { newCategory } from '../../../../Assets/CustomData/categories';
 import { paymentMode } from '../../../../Assets/CustomData/paymentMode';
 
-const ProductIntroForm = ({ required, userInfo, formTypes, data, refetch }) => {
+const ProductListing = ({ required, userInfo, formTypes, data, refetch }) => {
 
+   const [slug, setSlug] = useState(data?.slug || "");
 
    const [actionLoading, setActionLoading] = useState(false);
    const navigate = useNavigate();
@@ -29,6 +30,12 @@ const ProductIntroForm = ({ required, userInfo, formTypes, data, refetch }) => {
    const super_category = post_category?.post_category_items && post_category?.post_category_items.find(e => e.name === postCategory);
 
 
+   const handleTitle = (value) => {
+      let slugs = slugMaker(value);
+
+      setSlug(slugs);
+   }
+
    const handlePaymentMode = (e) => {
       const { value, checked } = e.target;
       const { payment_info } = paymentInfo;
@@ -47,6 +54,7 @@ const ProductIntroForm = ({ required, userInfo, formTypes, data, refetch }) => {
    async function productIntroHandler(e) {
       try {
          e.preventDefault();
+         const title = e.target.title.value;
          let brand = e.target.brand.value;
          let shippingProvider = e.target.shippingProvider.value;
          let localDeliveryCharge = e.target.localDeliveryCharge.value;
@@ -67,6 +75,8 @@ const ProductIntroForm = ({ required, userInfo, formTypes, data, refetch }) => {
          let procurementSLA = e.target.procurementSLA.value;
 
          let obj = {
+            title,
+            slug,
             brand,
             shippingProvider,
             localDeliveryCharge,
@@ -134,6 +144,12 @@ const ProductIntroForm = ({ required, userInfo, formTypes, data, refetch }) => {
             <h6>Product Intro</h6>
             {msg}
             <div className="row my-4">
+
+               <div className="col-lg-12 my-2">
+                  <label htmlFor="title">{required} Title</label>
+                  <input className='form-control form-control-sm' type="text" name='title' id='title' defaultValue={data?.title || ""} onChange={(e) => handleTitle(e.target.value)} />
+                  <input className='form-control form-control-sm mt-1' key={slug || ""} defaultValue={slug || ""} type="text" disabled />
+               </div>
 
                {/* Brand */}
                <div className='col-lg-3 mb-3'>
@@ -414,4 +430,4 @@ const ProductIntroForm = ({ required, userInfo, formTypes, data, refetch }) => {
    );
 };
 
-export default ProductIntroForm;
+export default ProductListing;

@@ -2,12 +2,12 @@ import React from 'react';
 
 const ProductReviews = ({ product }) => {
    return (
-      <>
-         <h5 id='rating' className='text-center py-1'>Rating And Review Of {product?.variations?.title}</h5>
-         <div className="row mt-5 border">
+      <div className='pt-5 w-100'>
+         <h5 id='rating'>Rating And Review Of {product?.variations?.title}</h5>
+         <div className="row mt-5 border w-100">
             <div className="py-1 my-4 border-bottom">
                <div className="row">
-                  <div className="col-lg-6">
+                  <div className="col-lg-12">
                      <div className="p-4">
                         <p className='text-warning'>
                            <span className="fs-1">
@@ -40,7 +40,7 @@ const ProductReviews = ({ product }) => {
                </div>
             }
          </div>
-      </>
+      </div>
    );
 };
 

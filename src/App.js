@@ -73,12 +73,14 @@ function App() {
 
           {/* // Admin path */}
           <Route path='/dashboard' element={<RequiredDashboard>
+
             <SellerCheckProvider>
               <OrderProvider>
                 <Dashboard></Dashboard>
               </OrderProvider>
             </SellerCheckProvider>
           </RequiredDashboard>}>
+
             <Route index element={<MyDashboard></MyDashboard>}></Route>
             <Route path='my-profile' element={<MyProfile></MyProfile>}></Route>
             <Route path='manage-product' element={<ManageProduct></ManageProduct>}></Route>

@@ -57,6 +57,7 @@ const ProductContents = ({ product, variationId, authRefetch, productRefetch, se
       }
    }
 
+
    return (
       <>
          <article>
@@ -66,7 +67,7 @@ const ProductContents = ({ product, variationId, authRefetch, productRefetch, se
 
             <h5 className="product_title py-2">
                <span className='textMute'>{product?.brand}</span> <br />
-               {product?.variations?.title}
+               {product?.title}
             </h5>
 
             <div className="product_rating_model">
@@ -95,41 +96,81 @@ const ProductContents = ({ product, variationId, authRefetch, productRefetch, se
 
             <br />
 
-            <small className='textMute'>
-               Seller : {product?.seller?.name}
-            </small>
+            {
+               product?.swatch && Array.isArray(product?.swatch) &&
+               <div className="p-3 my-4 d-flex align-items-center justify-content-start flex-column">
+                  {
+                     <div className="d-flex align-items-center justify-content-start w-100">
+
+                        <span>Variants</span>
+                        <div className="px-3 d-flex flex-row">
+
+                           {
+                              product?.swatch.map((e, i) => {
+
+                                 let hex = e?.variant?.color.split(",")[1];
+
+                                 return (
+
+                                    <div key={i} className='d-flex align-items-center justify-content-center flex-column'>
+                                       {
+                                          e?.variant?.size && <Link className={`swatch_size_btn ${e._vId === variationId ? 'active' : ''}`}
+                                             to={`/product/${product?.slug}?pId=${product?._id}&vId=${e._vId}`}>
+                                             {e?.variant?.size && e?.variant?.size}
+                                          </Link>
+                                       }
+
+                                       {
+                                          e?.variant?.color && <Link className={`swatch_size_btn ${e._vId === variationId ? 'active' : ''}`}
+                                             to={`/product/${product?.slug}?pId=${product?._id}&vId=${e._vId}`}>
+                                             <div style={{
+                                                backgroundColor: hex,
+                                                display: 'block',
+                                                width: '90%',
+                                                height: '90%',
+                                                borderRadius: "100%"
+                                             }}>
+                                             </div>
+                                          </Link>
+                                       }
+
+
+                                    </div>
+                                 )
+                              })
+                           }
+                        </div>
+                     </div>
+
+                  }
+               </div>
+            }
 
             <br />
 
+            <div className="py-3">
+               <small className='textMute'>
+                  Seller : &nbsp;&nbsp;
+               </small>
+               <span className='seeMore'>
+                  {product?.seller?.name}
+               </span>
+            </div>
+
+
             {
-               product?.swatch &&
-               <div className="p-3 my-4 d-flex align-items-center justify-content-start flex-column">
-
+               product?.bodyInfo?.keyFeatures && <ul>
                   {
-                     product?.swatch.some(e => e.attr?.size) && <>
-                        {/* Size Swatch */}
-                        <div className="d-flex align-items-center justify-content-start w-100">
-
-                           <span>Size</span>
-                           <div className="px-3 d-flex flex-row">
-                              {
-                                 product?.swatch &&
-                                 product?.swatch.map((e, i) => {
-                                    return (
-                                       <Link key={i} className={`swatch_size_btn ${e.vId === variationId ? 'active' : ''}`}
-                                          to={`/product/${e?.slug}?pId=${product?._id}&vId=${e.vId}`}>
-                                          {e.attr?.size}
-                                       </Link>
-                                    )
-                                 })
-                              }
-                           </div>
-                        </div>
-                     </>
+                     Array.isArray(product?.bodyInfo?.keyFeatures) ? product?.bodyInfo?.keyFeatures.map((item, index) => {
+                        return (
+                           <li style={{ color: "green" }}>* {item}</li>
+                        )
+                     }) : ""
                   }
-
-               </div>
+               </ul>
             }
+
+
          </article>
 
          {
