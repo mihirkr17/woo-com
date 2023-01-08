@@ -11,7 +11,7 @@ const CartPayment = ({ buyBtnHandler, isStock, step, products }) => {
 
 
    return (
-      <div className='cart_card'>
+      <div className='py-1'>
          <h6>Select Payment Mode</h6>
          <hr />
          <div className="row">

@@ -13,7 +13,8 @@ const ProductTemplateForm = ({ formTypes, data, refetch }) => {
    const location = useLocation();
    const from = location?.state?.from?.pathname;
    const navigate = useNavigate();
-   let super_category;
+
+   var sub_category, post_category, super_category;
 
    const required = <span style={{ color: "red" }}>*</span>;
 
@@ -23,8 +24,8 @@ const ProductTemplateForm = ({ formTypes, data, refetch }) => {
       let sc = data?.categories && data?.categories[1];
       let tc = data?.categories && data?.categories[2];
 
-      const sub_category = newCategory && newCategory.find(e => e.category === fc);
-      const post_category = sub_category?.sub_category_items && sub_category?.sub_category_items.find(e => e.name === sc);
+      sub_category = newCategory && newCategory.find(e => e.category === fc);
+      post_category = sub_category?.sub_category_items && sub_category?.sub_category_items.find(e => e.name === sc);
       super_category = post_category?.post_category_items && post_category?.post_category_items.find(e => e.name === tc);
    }
 
@@ -145,7 +146,7 @@ const ProductTemplateForm = ({ formTypes, data, refetch }) => {
                            <ProductSpecification required={required} formTypes={formTypes} data={data} refetch={refetch} super_category={super_category} />
                            : <div className='row py-2'>
                               {
-                                 data?.attributes ? getAttrs(data?.attributes) : <p>No attributes present here</p>
+                                 data?.specification ? getAttrs(data?.specification) : <p>No attributes present here</p>
                               }
                            </div>
                      }

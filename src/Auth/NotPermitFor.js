@@ -8,7 +8,7 @@ const NotPermitFor = ({ children }) => {
 
 
    if (role) {
-      if (role === 'owner' || role === 'admin' || role === 'seller') {
+      if (role === 'OWNER' || role === 'ADMIN' || role === 'SELLER') {
          return <Navigate to='/dashboard' state={{ from: location }} replace />
       }
       return children;

@@ -12,7 +12,7 @@ const RequiredAdmin = ({ children }) => {
    }
 
    if (role) {
-      if (role === "admin") {
+      if (role === 'ADMIN') {
          return children;
       }
 

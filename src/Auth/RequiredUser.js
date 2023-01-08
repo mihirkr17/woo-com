@@ -12,7 +12,7 @@ const RequiredUser = ({ children }) => {
    }
 
    if (role) {
-      if (role === "user") {
+      if (role === 'BUYER') {
          return children;
       }
 

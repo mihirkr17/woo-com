@@ -19,6 +19,7 @@
   --color-nav: #0084ff;
   --color-nav-down: #f8f8f8;
   --color-mute: #878787;
+  --color-mute-alt: #6e6e6e;
   --color-link: #ff7019;
   --color-link-alt: #e75900;
   --color-blued: #2874f0;
@@ -260,6 +261,26 @@ svg {
   background-color: var(--color-accent-alt);
 }
 
+.bt9_cancel {
+  padding: 0.2rem 0.3rem;
+  border: 1px solid var(--color-mute);
+  border-radius: 3px;
+  background-color: var(--color-mute);
+  color: var(--color-light);
+  font-size: 0.7rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+  -webkit-transition: all 0.4s linear;
+  transition: all 0.4s linear;
+  cursor: pointer;
+  -webkit-appearance: button;
+     -moz-appearance: button;
+          appearance: button;
+}
+.bt9_cancel:hover {
+  background-color: var(--color-mute-alt);
+}
+
 .bt9_withdraw {
   padding: 0.2rem 0.3rem;
   border: 1px solid var(--color-orange);
@@ -271,9 +292,18 @@ svg {
   letter-spacing: 1px;
   -webkit-transition: all 0.4s linear;
   transition: all 0.4s linear;
+  -webkit-appearance: button;
+     -moz-appearance: button;
+          appearance: button;
+  cursor: pointer;
 }
 .bt9_withdraw:hover {
   background-color: var(--color-orange-alt);
+}
+
+.bt9_big {
+  padding: 0.5rem 0.8rem;
+  font-size: 1rem;
 }
 
 .form-control {
@@ -463,6 +493,14 @@ label {
 .textMute {
   font-weight: 400;
   color: #878787;
+}
+
+.content_wrapper {
+  background-color: var(--color-card);
+  padding: 0.8rem;
+  border: 1px solid #e7e7e7;
+  border-top: 8px solid var(--color-accent);
+  min-height: 80vh;
 }
 
 .nav_container {
@@ -934,24 +972,17 @@ label {
           flex-direction: column;
 }
 
-.address_card {
-  position: relative;
+.shipping_address_card {
   background-color: var(--color-bg);
-  cursor: pointer;
-  -webkit-transition: all 0.4s linear;
-  transition: all 0.4s linear;
-  padding: 0.2rem 0.5rem;
-  margin: 0.6rem 0;
-  border: 1px solid #e7e7e7;
-  height: 112px;
-  display: block;
-  color: var(--color-text-primary);
+  padding: 0.2rem;
+  margin: 0.3rem;
+  position: relative;
 }
-.address_card:hover {
-  background-color: whitesmoke;
-  border: 1px solid var(--color-accent);
+.shipping_address_card.selected {
+  background-color: var(--color-active);
+  border: 1px solid var(--color-accent-alt);
 }
-.address_card::before {
+.shipping_address_card::before {
   content: "";
   top: 0;
   right: 0;
@@ -959,14 +990,24 @@ label {
   border-bottom: 30px solid transparent;
   position: absolute;
 }
-
-.address_card.selected {
-  background-color: var(--color-active);
-  border: 1px solid var(--color-accent-alt);
+.shipping_address_card.selected::before {
+  border-right: 30px solid var(--color-accent-alt);
 }
 
-.address_card.selected::before {
-  border-right: 30px solid var(--color-accent-alt);
+.address_card {
+  position: relative;
+  cursor: pointer;
+  -webkit-transition: all 0.4s linear;
+  transition: all 0.4s linear;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid #e7e7e7;
+  height: 135px;
+  display: block;
+  color: var(--color-text-primary);
+}
+.address_card:hover {
+  background-color: whitesmoke;
+  border: 1px solid var(--color-accent);
 }
 
 .cart_card {
@@ -974,6 +1015,7 @@ label {
   padding: 0.8rem;
   border: 1px solid #e7e7e7;
   border-top: 8px solid var(--color-accent);
+  min-height: 80vh;
 }
 
 .cart_card_body p {
@@ -2056,8 +2098,19 @@ label {
 .p_details {
   margin-bottom: 1.2rem;
 }
+.p_details h5 {
+  padding: 0.6rem 0 1rem 0;
+}
 
-.product-details__items > li {
+.product-details__items ul {
+  -webkit-column-count: 2;
+     -moz-column-count: 2;
+          column-count: 2;
+  -webkit-column-gap: 30px;
+     -moz-column-gap: 30px;
+          column-gap: 30px;
+}
+.product-details__items ul > li {
   padding: 0.2rem 0;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -2067,64 +2120,61 @@ label {
   -webkit-box-direction: normal;
       -ms-flex-direction: row;
           flex-direction: row;
+  font-size: 0.8rem;
 }
-.product-details__items > li > span {
+.product-details__items ul > li > span {
   color: var(--color-mute);
   margin-right: 0.6rem;
   font-weight: 500;
   width: 50%;
   display: block;
 }
-.product-details__items > li > span:nth-child(2) {
+.product-details__items ul > li > span:nth-child(2) {
   color: var(--color-text);
 }
 
-.vp_row {
-  position: relative;
+.order_card {
+  padding: 0.6rem;
+  border: 1px solid #f6f6f6;
+  -webkit-box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.3019607843);
+          box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.3019607843);
+  border-radius: 3px;
 }
 
-.vp_col_one {
-  position: fixed;
-  top: 50%;
-  left: auto;
-  width: 35%;
-  -webkit-transform: translateY(-50%);
-          transform: translateY(-50%);
-  height: 30vmax;
+.order_card:hover {
+  -webkit-box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.3647058824);
+          box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.3647058824);
 }
 
-.vp_col_two {
-  padding-left: 45%;
-  width: 100%;
+.order_card small {
+  font-size: 12px;
 }
 
-@media (max-width: 576px) {
-  .vp_row {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-align: center;
-        -ms-flex-align: center;
-            align-items: center;
-    -webkit-box-pack: center;
-        -ms-flex-pack: center;
-            justify-content: center;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-        -ms-flex-direction: column;
-            flex-direction: column;
-  }
-  .vp_col_one {
-    margin-top: 50px;
-    position: unset;
-    top: unset;
-    width: 100%;
-    height: auto;
-    -webkit-transform: unset;
-            transform: unset;
-  }
-  .vp_col_two {
-    padding-left: unset;
-    padding: 0 2%;
-  }
+.cart_card_body p {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  font-size: 0.9rem;
+}
+
+.my-profile {
+  -webkit-column-count: 2;
+     -moz-column-count: 2;
+          column-count: 2;
+}
+.my-profile li {
+  padding-bottom: 1.3rem;
+}
+.my-profile li h6 {
+  font-size: 0.8rem;
+  color: var(--color-mute);
+}
+.my-profile li span {
+  font-size: 0.9rem;
 }

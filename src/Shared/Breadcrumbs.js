@@ -11,7 +11,7 @@ const Breadcrumbs = ({path : newPath}) => {
    // tyt.shift();
    let path = newPath && newPath.filter(x => x);
    return (
-      <Breadcrumb className="py-3">
+      <Breadcrumb className="py-2">
          <Link to={"/"}><FontAwesomeIcon style={{ fontSize: "13px", color: "var(--color-dark)" }} icon={faHome} /></Link>
          <span>&nbsp;<FontAwesomeIcon style={{ fontSize: "13px", color: "orange" }} icon={faChevronRight}/>&nbsp;</span>
          {

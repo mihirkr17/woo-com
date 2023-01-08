@@ -18,16 +18,16 @@ const ProductListing = ({ required, userInfo, formTypes, data, refetch }) => {
    const [subCategory, setSubCategory] = useState((data?.categories && data?.categories[1]) || '');
    const [postCategory, setPostCategory] = useState((data?.categories && data?.categories[2]) || '');
 
-   const [paymentInfo, setPaymentInfo] = useState({ payment_info: data?.pInformation || [] });
+   const [paymentInfo, setPaymentInfo] = useState({ payment_info: data?.paymentInfo || [] });
 
 
-   const [warrantyType, setWarrantyType] = useState(data?.bodyInfo?.warranty?.wType || "");
-   const [warrantyTime, setWarrantyTime] = useState(data?.bodyInfo?.warranty?.wTime || "");
+   const [warrantyType, setWarrantyType] = useState(data?.warranty?.wType || "");
+   const [warrantyTime, setWarrantyTime] = useState(data?.warranty?.wTime || "");
 
    // this is global variable of categories states
    const sub_category = newCategory && newCategory.find(e => e.category === category);
    const post_category = sub_category?.sub_category_items && sub_category?.sub_category_items.find(e => e.name === subCategory);
-   const super_category = post_category?.post_category_items && post_category?.post_category_items.find(e => e.name === postCategory);
+   // const super_category = post_category?.post_category_items && post_category?.post_category_items.find(e => e.name === postCategory);
 
 
    const handleTitle = (value) => {
@@ -54,54 +54,31 @@ const ProductListing = ({ required, userInfo, formTypes, data, refetch }) => {
    async function productIntroHandler(e) {
       try {
          e.preventDefault();
-         const title = e.target.title.value;
-         let brand = e.target.brand.value;
-         let shippingProvider = e.target.shippingProvider.value;
-         let localDeliveryCharge = e.target.localDeliveryCharge.value;
-         let zonalDeliveryCharge = e.target.zonalDeliveryCharge.value;
-         let nationalDeliveryCharge = e.target.nationalDeliveryCharge.value;
-         let packageWeight = e.target.package_weight.value;
-         let packageLength = e.target.package_length.value;
-         let packageWidth = e.target.package_width.value;
-         let packageHeight = e.target.package_height.value;
-         let inTheBox = e.target.inTheBox.value;
-         let hsn = e.target.hsn.value;
-         let taxCode = e.target.taxCode.value;
-         let countryOfOrigin = e.target.countryOfOrigin.value;
-         let manufacturerDetails = e.target.manufacturerDetails.value;
-         let packerDetails = e.target.packerDetails.value;
-         let fulfillmentBy = e.target.fulfillmentBy.value;
-         let procurementType = e.target.procurementType.value;
-         let procurementSLA = e.target.procurementSLA.value;
 
-         let obj = {
-            title,
-            slug,
-            brand,
-            shippingProvider,
-            localDeliveryCharge,
-            zonalDeliveryCharge,
-            nationalDeliveryCharge,
-            packageWeight,
-            packageHeight,
-            packageLength,
-            packageWidth,
-            inTheBox,
-            hsn,
-            taxCode,
-            countryOfOrigin,
-            manufacturerDetails,
-            packerDetails,
-            fulfillmentBy,
-            procurementType,
-            procurementSLA,
-            paymentInfo: paymentInfo?.payment_info,
-            category, subCategory, postCategory,
-            productId: data?._id,
-            warranty: {
-               wType: warrantyType,
-               wTime: warrantyTime
-            }
+         let warranty = {
+            wType: warrantyType,
+            wTime: warrantyTime
+         }
+
+         let payments = paymentInfo?.payment_info;
+
+         let formData = new FormData(e.currentTarget);
+         formData.append('slug', slug)
+
+         if (formTypes !== 'update') {
+            formData.append('category', category);
+            formData.append('subCategory', subCategory);
+            formData.append('postCategory', postCategory);
+         }
+
+         formData = Object.fromEntries(formData.entries());
+         formData['warranty'] = warranty;
+         formData['paymentInformation'] = payments;
+
+         const notEmpty = Object.values(formData).every(x => x !== null && x !== '');
+
+         if (!notEmpty) {
+            return setMessage("Required all fields!!!", 'danger');
          }
 
          const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/product/set-product-intro/${formTypes}`, {
@@ -109,9 +86,10 @@ const ProductListing = ({ required, userInfo, formTypes, data, refetch }) => {
             withCredentials: true,
             credentials: "include",
             headers: {
-               "Content-Type": "application/json"
+               "Content-Type": "application/json",
+               authorization: data?._id
             },
-            body: JSON.stringify(obj)
+            body: JSON.stringify(formData)
          });
 
          const resData = await response.json();
@@ -139,7 +117,7 @@ const ProductListing = ({ required, userInfo, formTypes, data, refetch }) => {
    }
 
    return (
-      <form onSubmit={productIntroHandler}>
+      <form onSubmit={productIntroHandler} encType="multipart/form-data">
          <div className="card_default card_description">
             <h6>Product Intro</h6>
             {msg}
@@ -157,55 +135,59 @@ const ProductListing = ({ required, userInfo, formTypes, data, refetch }) => {
                   <input name="brand" id='brand' className='form-control form-control-sm' type="text" defaultValue={data?.brand || ""} placeholder="Brand Name..." />
                </div>
 
-               <div className='col-lg-3 mb-3'>
-                  <label htmlFor='category'>{required} Category</label> <br />
-                  <select className="form-select form-select-sm text-capitalize" name="category" id="category" onChange={(e) => setCategory(e.target.value)}>
+               {
+                  formTypes !== 'update' && <>
+                     <div className='col-lg-3 mb-3'>
+                        <label htmlFor='category'>{required} Category</label> <br />
+                        <select className="form-select form-select-sm text-capitalize" name="category" id="category" onChange={(e) => setCategory(e.target.value)}>
 
-                     {category && <option value={category}>{category}</option>}
-                     <option value={""}>{"Choose"}</option>
-                     {
-                        newCategory && newCategory.map((category, index) => {
-                           return (
-                              <option value={category?.category} key={index}>{category?.category}</option>
-                           )
-                        })
-                     }
-                  </select>
-               </div>
+                           {category && <option value={category}>{category}</option>}
+                           <option value={""}>{"Choose"}</option>
+                           {
+                              newCategory && newCategory.map((category, index) => {
+                                 return (
+                                    <option value={category?.category} key={index}>{category?.category}</option>
+                                 )
+                              })
+                           }
+                        </select>
+                     </div>
 
-               {/* Sub Category */}
-               <div className='col-lg-3 mb-3'>
-                  <label htmlFor='sub_category'>{required} Sub Category</label> <br />
-                  <select className="form-select form-select-sm text-capitalize" name="sub_category" id="sub_category" onChange={(e) => setSubCategory(e.target.value)}>
-                     {subCategory && <option value={subCategory}>{subCategory}</option>}
-                     <option value="">Choose</option>
+                     {/* Sub Category */}
+                     <div className='col-lg-3 mb-3'>
+                        <label htmlFor='sub_category'>{required} Sub Category</label> <br />
+                        <select className="form-select form-select-sm text-capitalize" name="sub_category" id="sub_category" onChange={(e) => setSubCategory(e.target.value)}>
+                           {subCategory && <option value={subCategory}>{subCategory}</option>}
+                           <option value="">Choose</option>
 
-                     {
-                        sub_category?.sub_category_items && sub_category?.sub_category_items.map((category, index) => {
-                           return (
-                              <option value={category?.name} key={index}>{category?.name}</option>
-                           )
-                        })
-                     }
-                  </select>
-               </div>
+                           {
+                              sub_category?.sub_category_items && sub_category?.sub_category_items.map((category, index) => {
+                                 return (
+                                    <option value={category?.name} key={index}>{category?.name}</option>
+                                 )
+                              })
+                           }
+                        </select>
+                     </div>
 
-               {/* Post Category */}
-               <div className='col-lg-3 mb-3'>
-                  <label htmlFor='post_category'>{required} Post Category</label> <br />
-                  <select className="form-select form-select-sm text-capitalize" name="post_category" id="post_category" onChange={(e) => setPostCategory(e.target.value)}>
-                     {postCategory && <option value={postCategory}>{postCategory}</option>}
-                     <option value={""}>{"Choose"}</option>
-                     {
-                        post_category?.post_category_items && post_category?.post_category_items.map((c, i) => {
-                           return (
-                              <option value={c.name} key={i}>{c.name}</option>
-                           )
-                        })
-                     }
-                  </select>
-               </div>
+                     {/* Post Category */}
+                     <div className='col-lg-3 mb-3'>
+                        <label htmlFor='post_category'>{required} Post Category</label> <br />
+                        <select className="form-select form-select-sm text-capitalize" name="post_category" id="post_category" onChange={(e) => setPostCategory(e.target.value)}>
+                           {postCategory && <option value={postCategory}>{postCategory}</option>}
+                           <option value={""}>{"Choose"}</option>
+                           {
+                              post_category?.post_category_items && post_category?.post_category_items.map((c, i) => {
+                                 return (
+                                    <option value={c.name} key={i}>{c.name}</option>
+                                 )
+                              })
+                           }
+                        </select>
+                     </div>
 
+                  </>
+               }
 
 
                {/* Inventory Details */}
@@ -213,18 +195,19 @@ const ProductListing = ({ required, userInfo, formTypes, data, refetch }) => {
                   <h6>Inventory Details</h6>
                   <div className="row">
                      <div className="col-lg-3 mb-3">
-                        <label htmlFor="fulfillmentBy">{required} Fulfillment By</label>
-                        <select name="fulfillmentBy" id="fulfillmentBy" className='form-select form-select-sm'>
-                           <option value={data?.inventoryDetails?.fulfillmentBy || ""}>{data?.inventoryDetails?.fulfillmentBy || "Select One"}</option>
+                        <label htmlFor="fulfilledBy">{required} Fulfillment By</label>
+                        <select name="fulfilledBy" id="fulfilledBy" className='form-select form-select-sm'>
+                           <option value={data?.shipping?.fulfilledBy || ""}>{data?.shipping?.fulfilledBy || "Select One"}</option>
+                           <option value="wooKart">WooKart</option>
                            <option value="seller">Seller</option>
-                           <option value="seller-smart">Seller Smart</option>
+                           <option value="smart-seller">Seller Smart</option>
                         </select>
                      </div>
 
                      <div className="col-lg-3 mb-3">
                         <label htmlFor="procurementType">{required} Procurement Type</label>
                         <select name="procurementType" id="procurementType" className='form-select form-select-sm'>
-                           <option value={data?.inventoryDetails?.procurementType || ""}>{data?.inventoryDetails?.procurementType || "Select One"}</option>
+                           <option value={data?.shipping?.procurementType || ""}>{data?.shipping?.procurementType || "Select One"}</option>
                            <option value="instock">Instock</option>
                            <option value="express">Express</option>
                         </select>
@@ -233,7 +216,7 @@ const ProductListing = ({ required, userInfo, formTypes, data, refetch }) => {
                      <div className="col-lg-3 mb-3">
                         <label htmlFor="procurementSLA">{required} Procurement SLA</label>
                         <input type={'number'} name="procurementSLA" id="procurementSLA" className='form-control form-control-sm'
-                           defaultValue={data?.inventoryDetails?.procurementSLA || 0} />
+                           defaultValue={data?.shipping?.procurementSLA || 0} />
                      </div>
 
                   </div>
@@ -247,7 +230,7 @@ const ProductListing = ({ required, userInfo, formTypes, data, refetch }) => {
                      <div className='col-lg-3 mb-3'>
                         <label htmlFor='shippingProvider'>{required} Shipping Provider</label>
                         <select name="shippingProvider" id="shippingProvider" className='form-select form-select-sm'>
-                           <option value={data?.deliveryDetails?.shippingProvider || ""}>{data?.deliveryDetails?.shippingProvider || "Select One"}</option>
+                           <option value={data?.shipping?.provider || ""}>{data?.shipping?.provider || "Select One"}</option>
                            <option value="wooKart">WooKart</option>
                            <option value="seller">Seller</option>
                            <option value="seller-wooKart">Seller And WooKart</option>
@@ -261,24 +244,18 @@ const ProductListing = ({ required, userInfo, formTypes, data, refetch }) => {
                   <h6>Delivery Charge To Customers</h6>
                   <div className="row">
                      <div className="col-lg-3">
-                        <label htmlFor="localDeliveryCharge">Local Delivery Charge</label>
+                        <label htmlFor="localCharge">Local Delivery Charge</label>
                         <input type="number" className='form-control form-control-sm'
-                           name="localDeliveryCharge" id="localDeliveryCharge"
-                           defaultValue={data?.deliveryDetails?.localDeliveryCharge || 0} />
+                           name="localCharge" id="localCharge"
+                           defaultValue={data?.shipping?.delivery?.localCharge || 0} />
                      </div>
+
                      <div className="col-lg-3">
-                        <label htmlFor="zonalDeliveryCharge">Zonal Delivery Charge</label>
+                        <label htmlFor="zonalCharge">Zonal Delivery Charge</label>
                         <input type="number" className='form-control form-control-sm'
-                           name="zonalDeliveryCharge"
-                           id="zonalDeliveryCharge"
-                           defaultValue={data?.deliveryDetails?.zonalDeliveryCharge || 0}
-                        />
-                     </div>
-                     <div className="col-lg-3">
-                        <label htmlFor="nationalDeliveryCharge">National Delivery Charge</label>
-                        <input type="number" className='form-control form-control-sm'
-                           name="nationalDeliveryCharge" id="nationalDeliveryCharge"
-                           defaultValue={data?.deliveryDetails?.nationalDeliveryCharge || 0}
+                           name="zonalCharge"
+                           id="zonalCharge"
+                           defaultValue={data?.shipping?.delivery?.zonalCharge || 0}
                         />
                      </div>
                   </div>
@@ -290,29 +267,29 @@ const ProductListing = ({ required, userInfo, formTypes, data, refetch }) => {
                   <div className="row ">
 
                      <div className="col-lg-3 col-sm-6 mb-2">
-                        <label htmlFor="package_weight">Weight (kg)</label>
-                        <input className='form-control form-control-sm' type="number" id='package_weight' name="package_weight"
-                           defaultValue={(data?.packageInfo?.weight) || ""} />
+                        <label htmlFor="packageWeight">Weight (kg)</label>
+                        <input className='form-control form-control-sm' type="number" id='packageWeight' name="packageWeight"
+                           defaultValue={(data?.shipping?.package?.weight) || ""} />
                      </div>
                      <div className="col-lg-3 col-sm-6 mb-2">
-                        <label htmlFor="package_length">Length (cm)</label>
-                        <input className='form-control form-control-sm' type="number" id='package_length' name='package_length'
-                           defaultValue={(data?.packageInfo?.dimension?.length) || ""} />
+                        <label htmlFor="packageLength">Length (cm)</label>
+                        <input className='form-control form-control-sm' type="number" id='packageLength' name='packageLength'
+                           defaultValue={(data?.shipping?.package?.dimension?.length) || ""} />
                      </div>
                      <div className="col-lg-3 col-sm-6 mb-2">
-                        <label htmlFor="package_width">Width (cm)</label>
-                        <input className='form-control form-control-sm' type="number" id='package_width' name='package_width'
-                           defaultValue={(data?.packageInfo?.dimension?.width) || ""} />
+                        <label htmlFor="packageWidth">Width (cm)</label>
+                        <input className='form-control form-control-sm' type="number" id='packageWidth' name='packageWidth'
+                           defaultValue={(data?.shipping?.package?.dimension?.width) || ""} />
                      </div>
                      <div className="col-lg-3 col-sm-6 mb-2">
-                        <label htmlFor="package_height">Height (cm)</label>
-                        <input className='form-control form-control-sm' type="number" id='package_height' name='package_height'
-                           defaultValue={((data?.packageInfo?.dimension?.height) || "") || ""} />
+                        <label htmlFor="packageHeight">Height (cm)</label>
+                        <input className='form-control form-control-sm' type="number" id='packageHeight' name='packageHeight'
+                           defaultValue={((data?.shipping?.package?.dimension?.height) || "") || ""} />
                      </div>
                      <div className='col-lg-12 mb-3'>
                         <label htmlFor='inTheBox'>{required} What is in the box</label>
                         <input className='form-control form-control-sm' name="inTheBox" id='inTheBox' type="text"
-                           defaultValue={(data?.packageInfo?.inTheBox || "")} placeholder="e.g: 1 x hard disk" />
+                           defaultValue={(data?.shipping?.package?.inTheBox || "")} placeholder="e.g: 1 x hard disk" />
                      </div>
 
                   </div>
@@ -323,15 +300,15 @@ const ProductListing = ({ required, userInfo, formTypes, data, refetch }) => {
                   <h6>Tax Details</h6>
                   <div className="row">
                      <div className="col-lg-3">
-                        <label htmlFor="hsn">{required} HSN</label>
-                        <input type="text" className='form-control form-control-sm' name='hsn' id='hsn'
-                           defaultValue={data?.taxDetails?.hsn || ""} />
+                        <label htmlFor="taxHsn">{required} HSN</label>
+                        <input type="text" className='form-control form-control-sm' name='taxHsn' id='taxHsn'
+                           defaultValue={data?.tax?.hsn || ""} />
                      </div>
 
                      <div className="col-lg-3">
                         <label htmlFor="taxCode">{required} Tax Code</label>
                         <input type="text" className='form-control form-control-sm' name='taxCode' id='taxCode'
-                           defaultValue={data?.taxDetails?.taxCode || ''} />
+                           defaultValue={data?.tax?.code || ''} />
                      </div>
                   </div>
                </div>
@@ -341,23 +318,16 @@ const ProductListing = ({ required, userInfo, formTypes, data, refetch }) => {
                   <h6>Manufacturing Details</h6>
                   <div className="row">
                      <div className="col-lg-3">
-                        <label htmlFor="countryOfOrigin">{required} Country Of Origin</label>
-                        <select name="countryOfOrigin" id="countryOfOrigin" className='form-select form-select-sm'>
-                           <option value={data?.manufacturing?.countryOfOrigin || 'bangladesh'}>{data?.manufacturing?.countryOfOrigin || 'bangladesh'}</option>
+                        <label htmlFor="manufacturerOrigin">{required} Country Of Origin</label>
+                        <select name="manufacturerOrigin" id="manufacturerOrigin" className='form-select form-select-sm'>
+                           <option value={data?.manufacturer?.origin || 'bangladesh'}>{data?.manufacturer?.origin || 'bangladesh'}</option>
                         </select>
                      </div>
 
                      <div className="col-lg-3">
                         <label htmlFor="manufacturerDetails">Manufacturer Details</label>
                         <input type="text" className='form-control form-control-sm' name='manufacturerDetails' id='manufacturerDetails'
-                           defaultValue={data?.manufacturing?.manufacturerDetails || ''}
-                        />
-                     </div>
-
-                     <div className="col-lg-3">
-                        <label htmlFor="packerDetails">Packer Details</label>
-                        <input type="text" className='form-control form-control-sm' name='packerDetails' id='packerDetails'
-                           defaultValue={data?.manufacturing?.packerDetails || ''}
+                           defaultValue={data?.manufacturer?.details || ''}
                         />
                      </div>
                   </div>

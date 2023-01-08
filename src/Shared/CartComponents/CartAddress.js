@@ -1,15 +1,10 @@
-import { faCheckCircle, faPlus, faPenAlt, faClose } from '@fortawesome/free-solid-svg-icons';
+import { faCheckCircle, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { useEffect } from 'react';
-import { useState } from 'react';
-import { apiHandler, authLogout } from '../common';
-import AddressForm from './AddressForm';
-import AddressUpdateForm from './AddressUpdateForm';
+import { authLogout } from '../common';
 
 const CartAddress = ({ authRefetch, addr, setStep, navigate, setMessage }) => {
-   const [openAddressForm, setOpenAddressForm] = useState(false);
-   const [openAddressUpdateForm, setOpenAddressUpdateForm] = useState(false);
 
    useEffect(() => {
       const selectAddress = addr && addr.map(a => a?.select_address);
@@ -20,89 +15,16 @@ const CartAddress = ({ authRefetch, addr, setStep, navigate, setMessage }) => {
       }
    }, [addr, setStep]);
 
-   const addAddressHandler = async (e) => {
-      e.preventDefault();
-      let name = e.target.name.value;
-      let street = e.target.street.value;
-      let district = e.target.district.value;
-      let state = e.target.state.value;
-      let country = e.target.country.value;
-      let phoneNumber = e.target.phoneNumber.value;
-      let altPhoneNumber = e.target.altPhoneNumber.value;
-      let pinCode = e.target.pinCode.value;
-      let addressId = Math.floor(Math.random() * 100000000)
+   const selectAddressHandler = async (addressId, selectAddress) => {
 
-      let final = { addressId, name, street, district, state, country, phoneNumber, altPhoneNumber, pinCode };
-      final["select_address"] = false;
-
-      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/cart/add-cart-address`, {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/user/shipping-address-select`, {
          method: "POST",
          withCredentials: true,
          credentials: "include",
          headers: {
             'content-type': 'application/json'
          },
-         body: JSON.stringify(final)
-      });
-
-      const resData = await response.json();
-
-      if (response.status === 401 || response.status === 403) {
-         await authLogout();
-         navigate(`/login?err=${resData?.error}`);
-      }
-
-      if (response.ok) {
-         setStep(false);
-         setMessage(resData?.message, "success");
-         authRefetch();
-      }
-
-   }
-
-   const updateAddressHandler = async (e) => {
-      e.preventDefault();
-      let name = e.target.name.value;
-      let street = e.target.street.value;
-      let district = e.target.district.value;
-      let state = e.target.state.value;
-      let country = e.target.country.value;
-      let phoneNumber = e.target.phoneNumber.value;
-      let altPhoneNumber = e.target.altPhoneNumber.value;
-      let pinCode = e.target.pinCode.value;
-      let final = { addressId: parseInt(openAddressUpdateForm?.addressId), name, street, district, state, country, phoneNumber, altPhoneNumber, pinCode };
-      final["select_address"] = false;
-
-      const resData = await apiHandler(
-         `${process.env.REACT_APP_BASE_URL}api/cart/update-cart-address`,
-         "PUT",
-         null,
-         final
-      );
-
-      if (resData.status === 401 || resData.status === 403) {
-         await authLogout();
-         return navigate(`/login?err=${resData?.error}`);
-      };
-
-      if (resData.success) {
-         setStep(false);
-         setMessage(resData?.message, "success");
-         authRefetch();
-      };
-   }
-
-   const selectAddressHandler = async (addressId, selectAddress) => {
-      let select_address = selectAddress === true ? false : true;
-
-      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/cart/select-address`, {
-         method: "PUT",
-         withCredentials: true,
-         credentials: "include",
-         headers: {
-            'content-type': 'application/json'
-         },
-         body: JSON.stringify({ addressId, select_address })
+         body: JSON.stringify({ _SA_UID: addressId, default_shipping_address: selectAddress })
       });
 
       const resData = await response.json();
@@ -120,102 +42,52 @@ const CartAddress = ({ authRefetch, addr, setStep, navigate, setMessage }) => {
       }
    }
 
-   const deleteAddressHandler = async (addressId) => {
-      if (window.confirm("Want to remove address ?")) {
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/cart/delete-cart-address/${addressId}`, {
-            method: "DELETE",
-            withCredentials: true,
-            credentials: "include"
-         });
-         const resData = await response.json();
-
-         if (response.status === 401 || response.status === 403) {
-            await authLogout();
-            navigate(`/login?err=${resData?.error}`);
-         };
-
-         if (response.ok) { authRefetch() };
-      }
-   }
 
    return (
-      <div className="cart_card">
+      <div className="py-2">
+         <h6 className=''>Shipping Address</h6>
+         <hr />
          <div className="row">
-            <div className="col-lg-12">
-               <div className="d-flex align-items-center justify-content-between flex-wrap w-100">
-                  <h6 className=''>Shipping Address</h6>
-                  <button onClick={() => setOpenAddressForm(true)} title="Add New Address" className="ms-2 badge bg-primary">
-                     <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>
-                  </button>
+            {
+               addr ? addr.map(addrs => {
+                  const { _SA_UID, name, division, city, phone_number, postal_code, landmark, default_shipping_address } = addrs;
 
-               </div>
-               <hr />
-               <div className="py-2">
-                  <div className="row">
-                     {
-                        addr && addr.map(address => {
-                           const { addressId, select_address, name, street, district, country, phoneNumber, pinCode } = address;
-
-                           return (
-                              <div className="col-lg-6" key={addressId}>
-                                 <div className="row">
-                                    <div className="col-10">
-                                       <address title={select_address ? "Selected" : 'Select This Address'} onClick={() => selectAddressHandler(addressId, select_address)}>
-                                          <div className={`address_card ${select_address ? "selected" : ""}`}>
+                  return (
+                     <div className="col-lg-6" key={_SA_UID}>
+                        <div className={`row shipping_address_card ${default_shipping_address ? "selected" : ""}`}>
+                           <div className="col-10">
+                              <address title={default_shipping_address ? "Default shipping address." : 'Select as a default shipping address.'} onClick={() => selectAddressHandler(_SA_UID, default_shipping_address)}>
+                                 <div className="address_card">
+                                    {
+                                       <div style={{ wordBreak: "break-word" }} className={`${default_shipping_address ? '' : 'text-muted'}`}>
+                                          <small><b className='me-3'>{name}</b>{default_shipping_address && <FontAwesomeIcon icon={faCheckCircle} />}</small>
+                                          <p>
+                                             <small>{division}, {city}, {postal_code}</small> <br />
+                                             <small>{landmark}</small> <br />
+                                             <small>Phone : {phone_number}</small> <br />
                                              {
-                                                <div style={{ wordBreak: "break-word" }} className={`${select_address ? '' : 'text-muted'}`}>
-                                                   <small><b className='me-3'>{name}</b>{select_address && <FontAwesomeIcon icon={faCheckCircle} />}</small>
-                                                   <p>
-                                                      <small>{street}, {district}, {country}, {pinCode}</small> <br />
-                                                      <small>Phone : {phoneNumber}</small>
-                                                   </p>
-                                                </div>
+                                                default_shipping_address === true &&
+                                                <span className="badge bg-danger">
+                                                   Default Shipping Address
+                                                </span>
                                              }
-                                          </div>
-                                       </address>
-                                    </div>
-                                    <div className="col-2 d-flex align-items-center flex-column justify-content-center">
-                                       <button className='btn btn-sm'
-                                          style={openAddressUpdateForm === false ? { display: "block" } : { display: "none" }}
-                                          onClick={() => setOpenAddressUpdateForm(address)}>
-                                          {address && <FontAwesomeIcon icon={faPenAlt} />}
-                                       </button>
-                                       <button onClick={() => deleteAddressHandler(addressId)} className="btn btn-sm mt-3"><FontAwesomeIcon icon={faClose}></FontAwesomeIcon></button>
-                                    </div>
+                                          </p>
+                                       </div>
+                                    }
                                  </div>
-                              </div>
+                              </address>
+                           </div>
+                        </div>
+                     </div>
 
-                           )
-                        })
-                     }
-                     {
-                        addr.length === 0 && <>
-                           <button onClick={() => setOpenAddressForm(true)} title="Insert Your Address" className="btn mb-3">
-                              Insert Your Address
-                           </button>
-                        </>
-                     }
-                  </div>
-                  {
-                     openAddressForm === true ?
-                        <AddressForm
-                           setOpenAddressForm={setOpenAddressForm}
-                           addAddressHandler={addAddressHandler}
-                        />
-                        : ""
-                  }
-                  {
-                     openAddressUpdateForm ?
-                        <AddressUpdateForm
-                           setOpenAddressUpdateForm={setOpenAddressUpdateForm}
-                           addr={openAddressUpdateForm}
-                           updateAddressHandler={updateAddressHandler} /> :
-                        ""
-                  }
+                  )
+               }) : <div className="col-12">
+                  <button onClick={() => navigate("/user/my-account/address-book")} title="Insert Your Address" className="btn mb-3">
+                     Insert Your Address
+                  </button>
                </div>
-            </div>
+            }
          </div>
-
       </div>
    );
 };

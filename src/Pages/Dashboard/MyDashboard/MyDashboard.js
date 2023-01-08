@@ -31,7 +31,7 @@ const MyDashboard = () => {
                            <div className="d_p_head">
                               <div className='d_p_icon'>
                                  {
-                                    (role === "seller") &&
+                                    (role === 'SELLER') &&
                                     <>
                                        <Link to={`/dashboard?check_order=order_checking&seller=${userInfo?.seller}`}>
                                           <FontAwesomeIcon icon={faBell} />
@@ -49,13 +49,13 @@ const MyDashboard = () => {
                                  <div className="d_p_mid_img">
                                     <img src={userInfo?.photoURL} alt="" style={{ width: "100%", height: "100%" }} />
                                  </div>
-                                 <h5>{role === "seller" && userInfo?.username}</h5>
+                                 <h5>{role === 'SELLER' && userInfo?.seller?.storeInfos?.storeName}</h5>
                               </div>
                            </div>
 
                            <div className="d_p_footer">
                               {
-                                 role === "seller" && <div className='t_p'>
+                                 role === 'SELLER' && <div className='t_p'>
                                     <div className='t_p_icon'>
                                        <FontAwesomeIcon icon={faBagShopping} />
                                     </div>
@@ -63,7 +63,7 @@ const MyDashboard = () => {
                                     <div className="t_p_right">
                                        <div className='t_p_right_text'>
                                           <strong>{
-                                             userInfo?.inventoryInfo?.totalProducts
+                                             userInfo?.seller?.storeInfos?.totalProducts || 0
                                           }</strong>
                                           <span>Products</span>
                                        </div>
@@ -78,7 +78,7 @@ const MyDashboard = () => {
                                  <div className="t_p_right">
                                     <div className='t_p_right_text'>
                                        <strong>{
-                                          data?.data?.topSoldProducts?.sold
+                                          data?.data?.topSoldProducts?.sold || 0
                                        }</strong>
                                        <span>Followers</span>
                                     </div>
@@ -106,7 +106,7 @@ const MyDashboard = () => {
                                        <th>Category</th>
                                        <th>Brand</th>
                                        <th>Price(tk)</th>
-                                       {role !== "seller" && <th>Seller</th>}
+                                       {role !== 'SELLER' && <th>Seller</th>}
                                        <th>Sell</th>
                                     </tr>
 
@@ -124,7 +124,7 @@ const MyDashboard = () => {
                                                 <td><small>{product?.categories && product?.categories.join(' -> ')}</small></td>
                                                 <td><small>{product?.brand}</small></td>
                                                 <td><small>{product?.pricing?.sellingPrice}</small></td>
-                                                {role !== "seller" && <td>{product?.seller}</td>}
+                                                {role !== 'SELLER' && <td>{product?.seller}</td>}
                                                 <td><small>{product?.sold || 0}&nbsp;pcs</small></td>
                                              </tr>
                                           )
@@ -136,57 +136,56 @@ const MyDashboard = () => {
                            </div>
                         </div>
 
+                        {
+                           userInfo?.role !== "SELLER" && <div className="card_default card_description mb-3">
+                              <h6>Top Seller</h6>
+                              <div className="table-responsive">
+                                 <table className='table table-borderless table-sm'>
+                                    <thead className="table-dark">
+                                       <tr>
+                                          <th>Seller</th>
+                                          <th>Username</th>
+                                          <th>Email Address</th>
+                                          <th>Products</th>
+                                          <th>Sold</th>
+                                       </tr>
 
+                                    </thead>
+                                    <tbody>
+                                       {
+                                          data?.data?.topSellers && data?.data?.topSellers.map((seller, index) => {
+                                             return (
+                                                <tr key={index}>
+                                                   <td><img className='jjk_2m2' src={seller?.images && seller?.images[0]} alt="" /></td>
+                                                   <td>
+                                                      <small>{seller?.username && seller?.username.length > 30 ? seller?.username.slice(0, 30) + "..." : seller?.username}</small> <br />
+                                                      <small className='pid'>#{seller?._id}</small>
+                                                   </td>
+                                                   <td><small>{seller?.email && seller?.email}</small></td>
+                                                   <td><small>{seller?.totalProducts} pcs</small></td>
+                                                   <td><small>{seller?.totalSell} Pcs</small></td>
+                                                </tr>
+                                             )
+                                          })
+                                       }
 
-
-                        <div className="card_default card_description mb-3">
-                           <h6>Top Seller</h6>
-                           <div className="table-responsive">
-                              <table className='table table-borderless table-sm'>
-                                 <thead className="table-dark">
-                                    <tr>
-                                       <th>Seller</th>
-                                       <th>Username</th>
-                                       <th>Email Address</th>
-                                       <th>Products</th>
-                                       <th>Sold</th>
-                                    </tr>
-
-                                 </thead>
-                                 <tbody>
-                                    {
-                                       data?.data?.topSellers && data?.data?.topSellers.map((seller, index) => {
-                                          return (
-                                             <tr key={index}>
-                                                <td><img className='jjk_2m2' src={seller?.images && seller?.images[0]} alt="" /></td>
-                                                <td>
-                                                   <small>{seller?.username.length > 30 ? seller?.username.slice(0, 30) + "..." : seller?.username}</small> <br />
-                                                   <small className='pid'>#{seller?._id}</small>
-                                                </td>
-                                                <td><small>{seller?.email && seller?.email}</small></td>
-                                                <td><small>{seller?.totalProducts} pcs</small></td>
-                                                <td><small>{seller?.totalSell} Pcs</small></td>
-                                             </tr>
-                                          )
-                                       })
-                                    }
-
-                                 </tbody>
-                              </table>
+                                    </tbody>
+                                 </table>
+                              </div>
                            </div>
-                        </div>
+                        }
 
-                     
+
 
                         {
-                           (queryParams === "order_checking" && querySeller === userInfo?.seller && role === "seller") && <CheckOrder />
+                           (queryParams === "order_checking" && querySeller === userInfo?.seller && role === 'SELLER') && <CheckOrder />
                         }
                      </div>
                   </div>
                </div>
             </div>
          </div>
-      </div>
+      </div >
    );
 };
 

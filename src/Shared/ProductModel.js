@@ -111,7 +111,7 @@ const ProductModel = ({ product, addToCartHandler, addCartLoading, buyLoading, v
             </article>
 
             {
-               (showFor !== "admin" && showFor !== "owner" && showFor !== "seller") && <div className="py-3 mt-4 product_handler">
+               (showFor !== 'ADMIN' && showFor !== 'OWNER' && showFor !== 'SELLER') && <div className="py-3 mt-4 product_handler">
 
                   {
                      product?.inCart === false ?

@@ -1,10 +1,9 @@
-import { faCheckCircle, faLeftLong } from '@fortawesome/free-solid-svg-icons';
+import { faLeftLong } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { useMessage } from '../../Hooks/useMessage';
-import { cartCalculate } from '../../Shared/common';
 import CartCalculation from '../../Shared/CartComponents/CartCalculation';
 import CartItem from '../../Shared/CartComponents/CartItem';
 import CartPayment from '../../Shared/CartComponents/CartPayment';
@@ -18,21 +17,17 @@ const CheckOut = () => {
    const { msg, setMessage } = useMessage()
    const { authLoading, authRefetch, userInfo } = useAuthContext();
    const [step, setStep] = useState(false);
-
-   const { data: cartItems, loading, refetch } = useFetch(`${process.env.REACT_APP_BASE_URL}api/cart/show-my-cart-items`);
-
-   // filter the products which stock is available
-   let products = cartItems?.data?.products && cartItems?.data?.products.filter(p => p?.variations?.stock === "in");
+   const { data: cartItems } = useFetch(`${process.env.REACT_APP_BASE_URL}api/cart/show-my-cart-items`);
 
    // pick the address where selected address is true
-   const selectedAddress = userInfo && userInfo.shippingAddress && userInfo?.shippingAddress.find(a => a?.select_address === true);
+   const selectedAddress = userInfo?.buyer?.shippingAddress && userInfo?.buyer?.shippingAddress.find(a => a?.default_shipping_address === true);
 
-   console.log(products, selectedAddress)
+   const products = Array.isArray(cartItems?.data?.products) ? cartItems?.data?.products : [];
 
    const buyBtnHandler = async (e) => {
       e.preventDefault();
 
-      if ((products.length <= 0 || !step)) {
+      if ((cartItems?.data?.numberOfProducts <= 0 || !step)) {
          return setMessage("No Products to buy", "warning");
       }
 
@@ -105,13 +100,14 @@ const CheckOut = () => {
                <Link to='/my-cart'> <FontAwesomeIcon icon={faLeftLong} /> Back To Cart</Link>
             </div>
             {msg}
+
+
             <div className="row">
                <div className="col-lg-8 mb-3">
-                  <div>
-                     <CartAddress setMessage={setMessage} navigate={navigate} authRefetch={authRefetch} addr={userInfo?.shippingAddress ? userInfo?.shippingAddress : []} setStep={setStep} />
-                  </div>
-                  <br />
                   <div className="cart_card">
+                     <CartAddress setMessage={setMessage} navigate={navigate} authRefetch={authRefetch} addr={userInfo?.buyer?.shippingAddress ? userInfo?.buyer?.shippingAddress : []} setStep={setStep} />
+                     <br />
+
                      <h6>Order Summary</h6>
                      <hr />
                      <div className="row">
@@ -128,13 +124,21 @@ const CheckOut = () => {
                            })
                         }
                      </div>
+
                   </div>
+
+
+                  <br />
                </div>
                <div className="col-lg-4 mb-3">
-                  <CartCalculation product={cartCalculate(cartItems?.data?.products && cartItems?.data?.products)}
-                     headTitle={"Order Details"}></CartCalculation>
-                  <br />
-                  <CartPayment products={cartItems?.data?.products && cartItems?.data?.products} buyBtnHandler={buyBtnHandler} step={step} isStock={products && products.length > 0 ? true : false}></CartPayment>
+
+                  <div className="cart_card">
+                     <CartCalculation product={cartItems?.data?.container_p && cartItems?.data?.container_p}
+                        headTitle={"Order Details"}></CartCalculation>
+                     <br />
+                     <CartPayment products={cartItems?.data?.products && cartItems?.data?.products}
+                        buyBtnHandler={buyBtnHandler} step={step} isStock={products && products.length > 0 ? true : false}></CartPayment>
+                  </div>
                </div>
             </div>
          </div>

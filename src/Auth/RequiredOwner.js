@@ -9,7 +9,7 @@ const RequiredOwner = ({ children }) => {
    if (authLoading) return <Spinner />;
 
    if (role) {
-      if (role === "owner") {
+      if (role === 'OWNER') {
          return children;
       }
 

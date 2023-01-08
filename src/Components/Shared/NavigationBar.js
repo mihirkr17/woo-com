@@ -20,7 +20,7 @@ const NavigationBar = () => {
    const [inFocus, setInFocus] = useState(false);
    const [searchQuery, setSearchQuery] = useState("");
 
-   if (role === 'owner' || role === 'admin' || role === 'seller') {
+   if (role === 'OWNER' || role === 'ADMIN' || role === 'SELLER') {
       return;
    }
 
@@ -121,11 +121,11 @@ const NavigationBar = () => {
                <div className="nav_right_items">
                   <div className="nv_items">
                      {
-                        (((role === "owner") || (role === "admin") || (role === "seller"))) &&
+                        (((role === 'OWNER') || (role === 'ADMIN') || (role === 'SELLER'))) &&
                         <NavLink className="nav_link" to="/dashboard">Dashboard</NavLink>
                      }
                      {
-                        (path !== '/register' && path !== '/login' && (role !== "seller") && (role !== "admin") && (role !== "owner")) &&
+                        (path !== '/register' && path !== '/login' && (role !== 'SELLER') && (role !== 'ADMIN') && (role !== 'OWNER')) &&
                         <NavLink className="nav_link cart_link" to='/my-cart'><FontAwesomeIcon icon={faCartShopping}></FontAwesomeIcon>
                            {<div className="bg-info cart_badge">{(cp) || 0}</div>}
                         </NavLink>
@@ -133,14 +133,15 @@ const NavigationBar = () => {
                   </div>
 
                   {
-                     ((role === 'user')) &&
+                     ((role === 'BUYER')) &&
                      <div className="account_box nv_items">
                         <span onClick={() => setOpenAccount(e => !e)}>
                            <FontAwesomeIcon icon={faUserAlt}></FontAwesomeIcon>
                         </span>
                         <div className={`account_field ${openAccount ? "active" : ""}`}>
                            <Link className="drp_item" to="/sell-online">Become a Seller</Link>
-                           <Link className='drp_item' to='/my-profile/my-order'>My Order</Link>
+                           <Link className="drp_item" to="/user/my-account">My Account</Link>
+                           <Link className='drp_item' to='/user/my-account/orders-management'>My Order</Link>
                            <Link className='drp_item' to='/my-profile/my-wishlist'>
                               My Wishlist ({(userInfo?.wishlist && userInfo?.wishlist.length) || 0})
                            </Link>

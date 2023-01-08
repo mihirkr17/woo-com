@@ -148,7 +148,7 @@ const ManageProductHome = (
          <div className="product_header">
 
             <div className="d-flex justify-content-between align-items-center flex-wrap">
-               <h5 className='py-3'>{role === "seller" ? "My Products (" + counter?.count + ")" : "All Products (" + counter?.count + ")"}</h5>
+               <h5 className='py-3'>{role === 'SELLER' ? "My Products (" + counter?.count + ")" : "All Products (" + counter?.count + ")"}</h5>
                <div className='py-3'>
 
                   <select name="filter_product" style={{ textTransform: "capitalize" }} className='form-select form-select-sm' onChange={e => setFilterCategory(e.target.value)}>
@@ -213,7 +213,7 @@ const ManageProductHome = (
                                  </td>
                                  <td>
                                     {
-                                       role === "seller" ?
+                                       role === 'SELLER' ?
 
                                           <input type="text" style={{ width: "50px", border: "none", backgroundColor: "inherit" }}
                                              onBlur={(e) => stockHandler(e, p?._id)}
@@ -252,7 +252,7 @@ const ManageProductHome = (
                                     </button>
 
                                     {
-                                       role === 'seller' &&
+                                       role === 'SELLER' &&
                                        <Link className='bt9_edit' to={`/dashboard/manage-product?np=edit_product&s=${p?.seller?.name}&pid=${p?._id}`}>
                                           <FontAwesomeIcon icon={faPenToSquare} />
                                        </Link>
@@ -342,7 +342,7 @@ const ManageProductHome = (
                                     </td>
                                     <td>
                                        {
-                                          role === "seller" ?
+                                          role === 'SELLER' ?
 
                                              <input type="text" style={{ width: "50px", border: "none", backgroundColor: "inherit" }}
                                                 onBlur={(e) => stockHandler(e, p?._id)}
@@ -370,7 +370,7 @@ const ManageProductHome = (
                                        </button>
 
                                        {
-                                          role === 'seller' &&
+                                          role === 'SELLER' &&
                                           <Link className='bt9_edit' to={`/dashboard/manage-product?np=edit_product&s=${p?.seller?.name}&pid=${p?._id}`}>
                                              <FontAwesomeIcon icon={faPenToSquare} />
                                           </Link>
@@ -394,7 +394,7 @@ const ManageProductHome = (
 
 
          {
-            role === 'seller' &&
+            role === 'SELLER' &&
             <div className="mt-3">
                <h6>Draft Products</h6>
 
@@ -502,7 +502,8 @@ const ManageProductHome = (
 
                                           }
 
-                                          <Link className='bt9_edit me-2' state={{ from: location }} replace to={`/dashboard/manage-product?np=add-new-variation&s=${mProduct?.seller?.name}&pid=${mProduct?._id}`}>
+                                          <Link className='bt9_edit me-2' state={{ from: location }} replace
+                                             to={`/dashboard/manage-product?np=add-new-variation&s=${mProduct?.sellerData?.storeName}&pid=${mProduct?._id}`}>
                                              Create Variation
                                           </Link>
                                        </div>

@@ -16,7 +16,7 @@ const CheckSeller = () => {
 
    if (loading) return <Spinner></Spinner>;
 
-   const makeSellerHandler = async (userId, userEmail) => {
+   const makeSellerHandler = async (userId, uuid, userEmail) => {
 
       if (window.confirm("Make Seller ?")) {
          const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/user/permit-seller-request`, {
@@ -25,7 +25,7 @@ const CheckSeller = () => {
             credentials: "include",
             headers: {
                "Content-Type": "application/json",
-               authorization: userId + ',' + userEmail
+               authorization: userId + ',' + uuid + ',' + userEmail
             }
          });
 
@@ -51,6 +51,7 @@ const CheckSeller = () => {
                   <thead>
                      <tr>
                         <th>Seller Name</th>
+                        <th>Store Name</th>
                         <th>Seller Phone</th>
                         <th>Status</th>
                         <th>Action</th>
@@ -62,8 +63,9 @@ const CheckSeller = () => {
                            
                            return (
                               <tr key={index}>
-                                 <td>{user?.username}</td>
-                                 <td>{user?.sellerInfo?.phone}</td>
+                                 <td>{user?.fullName}</td>
+                                 <td>{user?.seller?.storeInfos?.storeName}</td>
+                                 <td>{user?.phone}</td>
                                  <td>{user?.isSeller}</td>
                                  <td>
                                     <button className="btn btn-sm" onClick={() => setModals(true && user)}><FontAwesomeIcon icon={faEye} /></button>
@@ -86,16 +88,22 @@ const CheckSeller = () => {
                   <Modal.Body>
                      <div className="card_default">
                         <div className="card_description">
-                           <small><strong>Seller Name</strong> : {modals?.username}</small><br />
+                           <small><strong>Seller Name</strong> : {modals?.fullName}</small><br />
                            <small><strong>Seller Email</strong> : {modals?.email}</small><br />
-                           <small><strong>Seller Thana</strong> : {modals?.sellerInfo?.address?.thana}</small><br />
-                           <small><strong>Seller District</strong> : {modals?.sellerInfo?.address?.district}</small><br />
-                           <small><strong>Seller Country</strong> : {modals?.sellerInfo?.address?.country}</small><br />
-                           <small><strong>Seller Zip Code</strong> : {modals?.sellerInfo?.address?.pinCode}</small><br />
-                           <small><strong>Seller Phone</strong> : {modals?.sellerInfo?.phone}</small><br />
+                           <small><strong>Tax ID</strong> : {modals?.seller?.taxId}</small><br />
+                           <address>
+                              <h6>Address</h6>
+                              <small>
+                                 {modals?.seller?.address?.country} ,&nbsp;{modals?.seller?.address?.division},&nbsp;
+                                 {modals?.seller?.address?.city},&nbsp;{modals?.seller?.address?.area}
+                              </small>
+                           </address> <br />
+                           <small><strong>Seller Phone</strong> : {modals?.phone}</small><br />
                            <small><strong>Seller Request</strong> : {modals?.isSeller}</small><br />
+                           <small><strong>Store Name</strong> : {modals?.seller?.storeInfos?.storeName}</small><br />
+                           <small><strong>Store License</strong> : {modals?.seller?.storeInfos?.storeLicense}</small><br />
                            <div className="py-3">
-                              <button className="btn btn-sm btn-primary me-3" onClick={() => makeSellerHandler(modals?._id, modals?.email)}>Make Seller</button>
+                              <button className="btn btn-sm btn-primary me-3" onClick={() => makeSellerHandler(modals?._id, modals?._UUID, modals?.email)}>Make Seller</button>
                               <button className="btn btn-sm btn-danger">Delete Request</button>
                            </div>
                         </div>

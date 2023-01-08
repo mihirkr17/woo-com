@@ -13,7 +13,7 @@ import ViewProduct from './Pages/ViewProduct/ViewProduct';
 import Cart from './Pages/Cart/Cart';
 import Purchase from './Pages/Purchase/Purchase';
 import CheckOut from './Pages/CheckOut/CheckOut';
-import MyOrder from './Pages/MyOrder/MyOrder';
+import MyOrder from './Pages/UserAccount/MyOrder';
 import ManageOrders from './Seller/ManageOrders/ManageOrders';
 import ProductCategory from './Pages/ProductCategory/ProductCategory';
 import Dashboard from './Pages/Dashboard/Dashboard';
@@ -42,6 +42,10 @@ import ManageSellers from './Admin/ManageSellers/ManageSellers';
 import NotPermitFor from './Auth/NotPermitFor';
 import AddProduct from './Pages/Dashboard/AddProduct/AddProduct';
 import AddSingleProduct from './Pages/Dashboard/AddProduct/Components/AddSingleProduct';
+import UserAccount from './Pages/UserAccount/UserAccount';
+import MyAddressBook from './Pages/UserAccount/MyAddressBook';
+import Profile from './Pages/UserAccount/Profile';
+import MyPayment from './Pages/UserAccount/MyPayment';
 
 function App() {
   const location = useLocation();
@@ -51,9 +55,23 @@ function App() {
     <>
       <AuthProvider>
         <NavigationBar></NavigationBar>
+
+        {/*  Only User routes  */}
         <Routes>
-          <Route path='/' element={<NotPermitFor><Home></Home></NotPermitFor>} ></Route>
-          <Route path='/blog' element={<Blog></Blog>} ></Route>
+          <Route path='/user/my-account' element={<RequiredUser><UserAccount></UserAccount></RequiredUser>}>
+            <Route index element={<Profile></Profile>}></Route>
+            <Route path='address-book' element={<MyAddressBook></MyAddressBook>}></Route>
+            <Route path='payment-management' element={<MyPayment></MyPayment>}></Route>
+            <Route path='orders-management' element={<MyOrder></MyOrder>}></Route>
+          </Route>
+
+          <Route path='/my-cart' element={<RequiredUser><Cart></Cart></RequiredUser>}></Route>
+          <Route path='/product/purchase/:productId' element={<RequiredUser><Purchase></Purchase></RequiredUser>}></Route>
+          <Route path='/my-cart/checkout' element={<RequiredUser><CheckOut></CheckOut></RequiredUser>}></Route>
+          <Route path='/my-cart/checkout-single/:productId' element={<RequiredUser><CheckoutSingle></CheckoutSingle></RequiredUser>}></Route>
+   
+          <Route path='/' element={<NotPermitFor><Home></Home></NotPermitFor>}></Route>
+          <Route path='/blog' element={<Blog></Blog>}></Route>
           <Route path='/login' element={<Login></Login>}></Route>
           <Route path='/register' element={<Register></Register>}></Route>
           <Route path='/search' element={<SearchPage></SearchPage>}></Route>
@@ -63,11 +81,6 @@ function App() {
           <Route path='/c/:category/:sub_category' element={<NotPermitFor><ProductCategory></ProductCategory></NotPermitFor>}></Route>
           <Route path='/c/:category/:sub_category/:post_category' element={<NotPermitFor><ProductCategory></ProductCategory></NotPermitFor>}></Route>
 
-          <Route path='/my-cart' element={<RequiredUser><Cart></Cart></RequiredUser>}></Route>
-          <Route path='/product/purchase/:productId' element={<RequiredUser><Purchase></Purchase></RequiredUser>}></Route>
-          <Route path='/my-cart/checkout' element={<RequiredUser><CheckOut></CheckOut></RequiredUser>}></Route>
-          <Route path='/my-cart/checkout-single/:productId' element={<RequiredUser><CheckoutSingle></CheckoutSingle></RequiredUser>}></Route>
-          <Route path='/my-profile/my-order' element={<RequiredUser><MyOrder></MyOrder></RequiredUser>}></Route>
           <Route path='/sell-online' element={<SellOnline></SellOnline>}></Route>
           <Route path='/my-profile/my-wishlist' element={<RequiredUser><Wishlist></Wishlist></RequiredUser>}></Route>
 
@@ -102,6 +115,7 @@ function App() {
           </Route>
 
         </Routes>
+
         {
           (path !== '/login' && path !== '/register' && !path.startsWith('/dashboard')) && <Footer></Footer>
         }

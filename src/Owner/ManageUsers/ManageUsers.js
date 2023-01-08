@@ -16,7 +16,7 @@ const ManageUsers = () => {
    if (loading) return <Spinner></Spinner>;
 
    const makeAdminHandler = async (userId) => {
-      if (window.confirm("Want to give permission 'admin'")) {
+      if (window.confirm("Want to give permission 'ADMIN'")) {
          const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/user/make-admin/${userId}`, {
             method: "PUT",
             withCredentials: true,
@@ -51,7 +51,7 @@ const ManageUsers = () => {
                            <th>Registered</th>
                            <th>Group</th>
                            {
-                              role === "owner" &&
+                              role === 'OWNER' &&
                               <th>Action</th>
                            }
                         </tr>
@@ -73,7 +73,7 @@ const ManageUsers = () => {
                                     <td>{usr?.role}</td>
 
                                     {
-                                       role === "owner" && <td>
+                                       role === 'OWNER' && <td>
                                           <button onClick={() => makeAdminHandler(usr?._id)} className="btn btn-sm btn-primary">
                                              Make Admin
                                           </button>

@@ -14,7 +14,7 @@ const RequiredDashboard = ({ children }) => {
 
 
    if (role) {
-      if (role === "owner" || role === "admin" || role === "seller") {
+      if (role === 'OWNER' || role === 'ADMIN' || role === 'SELLER') {
          return children;
       }
 

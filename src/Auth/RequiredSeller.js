@@ -7,7 +7,7 @@ const RequiredSeller = ({ children }) => {
    const location = useLocation();
 
    if (role) {
-      if (role === "seller") {
+      if (role === 'SELLER') {
          return children;
       }
       return <Navigate to={'/'} state={{ from: location }} replace></Navigate>;

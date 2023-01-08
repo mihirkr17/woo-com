@@ -30,7 +30,7 @@ const Login = () => {
       try {
          setLoading(true);
          e.preventDefault();
-         let username = e.target.email.value;
+         let email = e.target.email.value;
          let password = e.target.password.value;
          let verify_token;
 
@@ -38,7 +38,7 @@ const Login = () => {
             verify_token = e.target.verify_token.value;
          }
 
-         if (username.length <= 0) {
+         if (email.length <= 0) {
             return setMessage('Username or email address required !!!', 'danger');
          }
 
@@ -55,7 +55,7 @@ const Login = () => {
                   "Content-Type": "application/json",
                   authorization: `Bearer ${verify_token}`
                },
-               body: JSON.stringify({ username, password })
+               body: JSON.stringify({ email, password })
             });
 
             setLoading(false);
@@ -105,8 +105,8 @@ const Login = () => {
                   {msg}
                   <form onSubmit={handleLogin} className='text-start'>
                      <div className="mb-3 input_group">
-                        <label htmlFor='email'>Username Or Email address</label>
-                        <input className='form-control' type="text" name='email' id='email' defaultValue={sTerm || ""} autoComplete='off' placeholder="Enter your email" />
+                        <label htmlFor='email'>Email address</label>
+                        <input className='form-control' type="email" name='email' id='email' defaultValue={sTerm || ""} autoComplete='off' placeholder="Enter your email" />
                      </div>
 
                      <div className="mb-3 input_group">

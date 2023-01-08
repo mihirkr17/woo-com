@@ -18,7 +18,7 @@ const ManageProduct = () => {
    const [items, setItems] = useState(1);
    const [url, setUrl] = useState("");
 
-   let url2 = role === "seller" ? `${process.env.REACT_APP_BASE_URL}api/product/product-count?seller=${userInfo?.username}` :
+   let url2 = role === 'SELLER' ? `${process.env.REACT_APP_BASE_URL}api/product/product-count?seller=${userInfo?.seller?.storeInfos?.storeName}` :
       `${process.env.REACT_APP_BASE_URL}api/product/product-count`;
 
    // Fetching Data 
@@ -65,7 +65,7 @@ const ManageProduct = () => {
       <div className='section_default'>
          <div className="container">
             {
-               (queryParams === "edit_product" && querySeller === userInfo?.username) ?
+               (queryParams === "edit_product" && querySeller === userInfo?.seller?.storeInfos?.storeName) ?
                   <>
                      <h6>Edit This Product</h6>
                      <button className='bt9_edit mb-4' onClick={() => navigate('/dashboard/manage-product')}>Cancel</button>
@@ -75,13 +75,13 @@ const ManageProduct = () => {
                         formTypes='update'
                         setMessage={setMessage}
                      />
-                  </> : (queryParams === 'add-new-variation' && querySeller === userInfo?.username) ?
+                  </> : (queryParams === 'add-new-variation' && querySeller === userInfo?.seller?.storeInfos?.storeName) ?
                      <ProductUpdate
                         userInfo={userInfo}
                         formTypes='new-variation'
                         setMessage={setMessage}
                      />
-                     : (queryParams === 'update-variation' && querySeller === userInfo?.username) ?
+                     : (queryParams === 'update-variation' && querySeller === userInfo?.seller?.storeInfos?.storeName) ?
 
                         <ProductUpdate
                            userInfo={userInfo}

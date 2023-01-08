@@ -19,7 +19,7 @@ const AddProduct = () => {
             <div className="row">
                <div className="col-lg-6">
                   <div className="card_default card_description">
-                     <Link to={`/dashboard/add-product?np=add_product&s=${userInfo?.username}`}>Add Single Product</Link>
+                     <Link to={`/dashboard/add-product?np=add_product&s=${userInfo?.seller?.storeInfos?.storeName}`}>Add Single Product</Link>
                   </div>
                </div>
             </div>

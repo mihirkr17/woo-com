@@ -12,7 +12,7 @@ const RequiredOwnerAdmin = ({ children }) => {
    }
 
    if (role) {
-      if (role === "owner" || role === "admin") {
+      if (role === 'OWNER' || role === 'ADMIN') {
          return children;
       }
       return <Navigate to={'/'} state={{ from: location }} replace></Navigate>;

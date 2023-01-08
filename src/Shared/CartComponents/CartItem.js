@@ -125,8 +125,8 @@ const CartItem = ({ product: cartProduct, setMessage, refetch, checkOut, cartTyp
                   <div className="col-11">
 
                      <p className="card_title">
-                        <Link to={`/product/${cartProduct?.variations?.slug}?pId=${cartProduct?.productId}&vId=${cartProduct?.variationId}`}>
-                           {cartProduct && cartProduct?.variations?.title}
+                        <Link to={`/product/${cartProduct?.slug}?pId=${cartProduct?.productId}&vId=${cartProduct?.variationId}`}>
+                           {cartProduct && cartProduct?.title}
                         </Link>
                      </p>
 

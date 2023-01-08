@@ -1,12 +1,11 @@
 import React from 'react';
-import { Nav } from 'react-bootstrap';
-import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { authLogout } from '../../Shared/common';
 import { useAuthContext } from '../../lib/AuthProvider';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAddressCard, faBagShopping, faBlind, faBarsStaggered, faCartFlatbed, faIndustry, faUserGroup, faDatabase } from '@fortawesome/free-solid-svg-icons';
+import { faBlind, faBarsStaggered, faCartFlatbed, faIndustry, faUserGroup, faDatabase } from '@fortawesome/free-solid-svg-icons';
 import { useSellerChecker } from '../../lib/SellerCheckProvider';
 
 
@@ -95,7 +94,7 @@ const Dashboard = () => {
                         </li>
 
                         {
-                           role === "seller" &&
+                           role === 'SELLER' &&
                            <li className="link_group">
                               <NavLink className={act === "manage-orders" ? "active_link" : ""} to='manage-orders'>
                                  <FontAwesomeIcon icon={faCartFlatbed} />
@@ -106,7 +105,7 @@ const Dashboard = () => {
                         }
 
                         {
-                           (role === "admin" || role === "owner") &&
+                           (role === 'ADMIN' || role === 'OWNER') &&
                            <>
                               <li className='link_group'>
                                  <button onClick={() => setAccordion('users')}>
@@ -148,7 +147,7 @@ const Dashboard = () => {
 
 
                   {
-                     (role === "admin" || role === 'owner') &&
+                     (role === 'ADMIN' || role === 'OWNER') &&
                      <div className="notification">
                         <NavLink to='/dashboard/check-seller'>Seller Request ({state?.slLength})</NavLink>
                      </div>
@@ -157,7 +156,7 @@ const Dashboard = () => {
 
                   <div className="db_dropdown_profile">
                      <button onClick={() => setDropdown(e => !e)}>
-                        <strong>{userInfo?.username}</strong>
+                        <strong>{userInfo?.seller?.storeInfos?.storeName}</strong>
                      </button>
 
                      <ul className="db_dropdown_profile_body" style={dropdown ? { display: 'block' } : { display: 'none' }}>

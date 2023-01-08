@@ -23,7 +23,7 @@ const MyProfile = () => {
       dob: ""
    });
 
-   let url2 = userInfo && userInfo?.username ? `${process.env.REACT_APP_BASE_URL}api/product/product-count?seller=${userInfo?.username}` :
+   let url2 = userInfo && userInfo?.seller?.storeInfos?.storeName ? `${process.env.REACT_APP_BASE_URL}api/product/product-count?seller=${userInfo?.seller?.storeInfos?.storeName}` :
       `${process.env.REACT_APP_BASE_URL}api/product/product-count`
    const { data: myProductCount } = useFetch(url2);
 
@@ -50,12 +50,13 @@ const MyProfile = () => {
          dob: inputValue.dob || "Not Set"
       }
 
-      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/user/update-profile-data/${userInfo?.email}`, {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/user/update-profile-data`, {
          method: "PUT",
          withCredentials: true,
          credentials: "include",
          headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            authorization: userInfo?.email
          },
          body: JSON.stringify(data)
       });
@@ -79,7 +80,7 @@ const MyProfile = () => {
 
             <div className="row">
                {
-                  role === "seller" ? <SellerProfile userInfo={userInfo} role={role} myProductCount={myProductCount} /> : <div className="col-12">
+                  role === 'SELLER' ? <SellerProfile userInfo={userInfo} role={role} myProductCount={myProductCount} /> : <div className="col-12">
                      <div className='tty_ssd'>
                         {openEdit ? "Edit Information" : "Personal Information"}
                         {
@@ -95,7 +96,7 @@ const MyProfile = () => {
                               <>
                                  <div className="profile_header">
                                     {
-                                       (role === "owner") && <div className='ph_i'>
+                                       (role === 'OWNER') && <div className='ph_i'>
                                           <span>Balance : {userInfo?.total_earn || 0}&nbsp;$</span>
                                           <button className='bt9_withdraw'>Withdraw</button>
                                        </div>

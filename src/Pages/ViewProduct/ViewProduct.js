@@ -9,6 +9,7 @@ import ProductReviews from './Components/ProductReviews';
 import ProductImages from './Components/ProductImages';
 import ProductContents from './Components/ProductContents';
 import ProductAdditionalDetails from './Components/ProductAdditionalDetails';
+import Breadcrumbs from '../../Shared/Breadcrumbs';
 
 
 const ViewProduct = () => {
@@ -24,15 +25,23 @@ const ViewProduct = () => {
 
    const { msg, setMessage } = useMessage();
 
+   const product = data?.data?.product ? data?.data?.product : {};
+
+   console.log(product);
+
    return (
       <div className='view_product section_default'>
          <div className="container">
+            {/* breadcrumbs  */}
+            <Breadcrumbs
+               path={(Array.isArray(product?.categories)) && product?.categories}
+            />
             {msg}
-
-            <div className=" mb-5 vp_row">
-               <div className="pb-3 vp_col_one">
+            {/* first content  */}
+            <div className=" mb-5 row">
+               <div className="pb-3 col-lg-4">
                   <ProductImages
-                     product={data?.data?.product ? data?.data?.product : {}}
+                     product={product}
                      userInfo={userInfo}
                      authRefetch={authRefetch}
                      setMessage={setMessage}
@@ -41,23 +50,29 @@ const ViewProduct = () => {
                </div>
 
 
-               <div className="pb-3 product_description vp_col_two">
+               <div className="pb-3 product_description col-lg-8">
                   <ProductContents
-                     product={data?.data?.product ? data?.data?.product : {}}
+                     product={product}
                      variationId={variationId}
                      authRefetch={authRefetch}
                      productRefetch={productRefetch}
                      setMessage={setMessage}
                   />
+               </div>
+            </div>
 
+            <div className="row">
+               <div className="col-lg-12">
                   <ProductAdditionalDetails
-                     product={data?.data?.product ? data?.data?.product : {}}
+                     product={product}
                   />
-
+               </div>
+               <div className="col-lg-12">
                   <ProductReviews
-                     product={data?.data?.product ? data?.data?.product : {}}
+                     product={product}
                   />
-
+               </div>
+               <div className="col-lg-12">
                   <RelatedProducts
                      relatedProducts={data?.data?.relatedProducts ? data?.data?.relatedProducts : []}
                   />

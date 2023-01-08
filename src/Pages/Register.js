@@ -32,10 +32,10 @@ const Register = () => {
 
          formData = Object.fromEntries(formData.entries());
 
-         const { username, email, password } = formData;
+         const { phone, email, password } = formData;
 
-         if (username.length <= 0) {
-            return setMessage('Username required !!!', 'danger');
+         if (phone.length <= 0) {
+            return setMessage('Phone number required !!!', 'danger');
          }
 
          else if (email.length <= 0) {
@@ -111,8 +111,8 @@ const Register = () => {
                         <form onSubmit={handleRegister}>
 
                            <div className="mb-3">
-                              <label htmlFor='username'>Username</label>
-                              <input className='form-control' id='username' type="text" name='username' autoComplete='off' placeholder="Enter username!!!" />
+                              <label htmlFor='phone'>Phone Number</label>
+                              <input className='form-control' id='phone' type="number" pattern="[0-9]*" name='phone' autoComplete='off' placeholder="Enter Phone Number!!!" />
                            </div>
 
                            <div className="mb-3">
