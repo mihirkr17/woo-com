@@ -6,14 +6,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import BtnSpinner from '../../Components/Shared/BtnSpinner/BtnSpinner';
 import FilterOption from "../../Shared/FilterOption";
 import { useEffect } from 'react';
-import { authLogout } from '../../Shared/common';
 import { useAuthContext } from '../../lib/AuthProvider';
 
 
 const MyOrder = () => {
    const { userInfo } = useAuthContext();
    const { msg, setMessage } = useMessage();
-   const { data, refetch, loading } = useFetch(`${process.env.REACT_APP_BASE_URL}api/order/my-order/${userInfo?.email}`);
+   const { data, refetch, loading } = useFetch(`${process.env.REACT_APP_BASE_URL}api/v1/order/my-order/${userInfo?.email}`);
    const [actLoading, setActLoading] = useState(false);
    const [ratPoint, setRatPoint] = useState("5");
    const [reason, setReason] = useState("");
@@ -49,7 +48,7 @@ const MyOrder = () => {
 
    const removeOrderHandler = async (orderId) => {
       if (window.confirm("Want to cancel this order ?")) {
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/order/remove-order/${userInfo?.email}/${orderId}`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/order/remove-order/${userInfo?.email}/${orderId}`, {
             method: "DELETE",
             withCredentials: true,
             credentials: "include",
@@ -58,10 +57,7 @@ const MyOrder = () => {
          const resData = await response.json();
          if (response.ok) {
             resData && refetch();
-            setMessage(<strong className='text-success'>{resData?.message}</strong>);
-         } else {
-            await authLogout();
-            navigate(`/login?err=${resData?.error}`);
+            setMessage(resData?.message, 'success');
          }
       }
    }
@@ -80,7 +76,7 @@ const MyOrder = () => {
          ratingId, orderId: parseInt(orderId), rating_customer: userInfo?.fullName, rating_point: ratingPoint, rating_description: ratingDesc
       }
 
-      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/review/add-product-rating/${productId}`, {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/review/add-product-rating/${productId}`, {
          method: "PUT",
          withCredentials: true,
          credentials: "include",
@@ -93,14 +89,9 @@ const MyOrder = () => {
       const resData = await response.json();
 
       if (response.ok) {
-         setMessage(<p className='text-success'><small><strong>{resData?.message}</strong></small></p>);
+         setMessage(resData?.message, 'success');
          setActLoading(false);
          refetch()
-      }
-
-      if (response.status === 401 || response.status === 403) {
-         await authLogout();
-         navigate(`/login?err=${resData?.error}`);
       }
    }
 
@@ -116,7 +107,7 @@ const MyOrder = () => {
          setMessage(<strong className='text-success'>Please Select Cancel Reason...</strong>);
          return;
       } else {
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/order/cancel-my-order/${userEmail}/${orderId}`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/order/cancel-my-order/${userEmail}/${orderId}`, {
             method: "PUT",
             withCredentials: true,
             credentials: "include",
@@ -130,12 +121,7 @@ const MyOrder = () => {
 
          if (response.ok) {
             refetch();
-            setMessage(<strong className='text-success'>{resData?.message}</strong>);
-         }
-
-         if (response.status === 401 || response.status === 403) {
-            await authLogout();
-            navigate(`/login?err=${resData?.error}`);
+            setMessage(resData?.message, 'success');
          }
       }
    }

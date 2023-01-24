@@ -8,7 +8,7 @@ export const OrderContext = createContext();
 
 const OrderProvider = ({ children }) => {
    const { role, userInfo } = useAuthContext();
-   let url = role === 'SELLER' && `${process.env.REACT_APP_BASE_URL}api/order/manage-orders?seller=${userInfo?.seller}`;
+   let url = role === 'SELLER' && `${process.env.REACT_APP_BASE_URL}api/v1/order/manage-orders?storeName=${userInfo?.seller?.storeInfos?.storeName}`;
    // fetching order information and data from mongodb
    const { data: order, loading: orderLoading, refetch: orderRefetch } = useFetch(url);
 

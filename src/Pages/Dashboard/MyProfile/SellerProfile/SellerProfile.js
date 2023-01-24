@@ -1,6 +1,7 @@
 import React from 'react';
 
-const SellerProfile = ({ userInfo, role, myProductCount }) => {
+const SellerProfile = ({ userInfo, role }) => {
+
    return (
       <div className="col-12">
          <div className="card_default">
@@ -30,7 +31,9 @@ const SellerProfile = ({ userInfo, role, myProductCount }) => {
                   </address>
                   <div>
                      <pre>
-                        <p><strong>Total Product       : </strong>{(myProductCount && myProductCount.count) || 0}&nbsp;Pcs</p>
+                        <p><strong>Total Product       : </strong>{(userInfo?.seller?.storeInfos?.numOfProducts) || 0}&nbsp;Pcs</p>
+                        <p><strong>In Draft            : </strong>{(userInfo?.seller?.storeInfos?.productInDraft) || 0}&nbsp;Pcs</p>
+                        <p><strong>In Fulfilled        : </strong>{(userInfo?.seller?.storeInfos?.productInFulfilled) || 0}&nbsp;Pcs</p>
                         <p><strong>Total Earn          : </strong>{userInfo?.seller?.earn || 0}&nbsp;Tk</p>
                         <p><strong>Total Sold Product  : </strong>{userInfo?.seller?.totalSell || 0}&nbsp;Items</p>
                      </pre>

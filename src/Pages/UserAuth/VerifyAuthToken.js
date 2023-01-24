@@ -11,7 +11,7 @@ const VerifyAuthToken = ({ vToken, setMessage, navigate }) => {
 
          let verifyToken = e.target.verify_token.value;
 
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/user/verify-register-user`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/auth/verify-register-user`, {
             method: "POST",
             withCredential: true,
             credentials: 'include',

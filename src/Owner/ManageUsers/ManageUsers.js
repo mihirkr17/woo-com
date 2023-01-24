@@ -3,21 +3,19 @@ import { useNavigate } from 'react-router-dom';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { useFetch } from '../../Hooks/useFetch';
 import { useAuthContext } from '../../lib/AuthProvider';
-import { authLogout } from '../../Shared/common';
 import "./ManageUsers.css";
 
 
 const ManageUsers = () => {
    // const token = new URLSearchParams(document.cookie.replaceAll("; ", "&")).get('accessToken');
    const { role } = useAuthContext();
-   const { data, loading, refetch } = useFetch(`${process.env.REACT_APP_BASE_URL}api/user/manage-user?uTyp=user`);
-   const navigate = useNavigate();
+   const { data, loading, refetch } = useFetch(`${process.env.REACT_APP_BASE_URL}api/v1/user/manage-user?uTyp=user`);
 
    if (loading) return <Spinner></Spinner>;
 
    const makeAdminHandler = async (userId) => {
       if (window.confirm("Want to give permission 'ADMIN'")) {
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/user/make-admin/${userId}`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/user/make-admin/${userId}`, {
             method: "PUT",
             withCredentials: true,
             credentials: "include",
@@ -29,9 +27,6 @@ const ManageUsers = () => {
 
          if (response.ok) {
             refetch();
-         } else {
-            await authLogout();
-            navigate(`/login?err=${resData?.error}`);
          }
       }
    }

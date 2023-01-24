@@ -35,7 +35,7 @@ const ProductCategory = () => {
 
    // filter product by price and category
    useEffect(() => {
-      let filterUrl = `api/product/product-by-category?filters=${filters}&categories=${[category, sub_category, post_category].filter(e => e)}`;
+      let filterUrl = `api/v1/product/product-by-category?filters=${filters}&categories=${[category, sub_category, post_category].filter(e => e)}`;
       setUrl(filterUrl);
    }, [category, filters, sub_category, post_category]);
 

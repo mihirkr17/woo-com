@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import Modal from '../../../Seller/ManageOrders/Components/Modal/Modal';
 import { useMessage } from '../../../Hooks/useMessage';
 import { useOrder } from '../../../lib/OrderProvider';
-import { authLogout } from '../../../Shared/common';
 
 const CheckOrder = () => {
    const { order, orderRefetch } = useOrder();
@@ -12,7 +11,7 @@ const CheckOrder = () => {
    // console.log(order)
    const orderDispatchHandler = async (orderId, user_email) => {
       if (orderId && user_email) {
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/order/dispatch-order-request/${orderId}/${user_email}`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/order/dispatch-order-request/${orderId}/${user_email}`, {
             method: "PUT",
             withCredentials: true,
             credentials: "include",
@@ -25,8 +24,6 @@ const CheckOrder = () => {
             const resData = await response.json();
             setMessage(<p className='text-success'><small><strong>{resData?.message}</strong></small></p>)
             orderRefetch();
-         } else {
-            await authLogout();
          }
       }
    }

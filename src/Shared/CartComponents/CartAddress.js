@@ -1,8 +1,7 @@
-import { faCheckCircle, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { useEffect } from 'react';
-import { authLogout } from '../common';
 
 const CartAddress = ({ authRefetch, addr, setStep, navigate, setMessage }) => {
 
@@ -17,7 +16,7 @@ const CartAddress = ({ authRefetch, addr, setStep, navigate, setMessage }) => {
 
    const selectAddressHandler = async (addressId, selectAddress) => {
 
-      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/user/shipping-address-select`, {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/v1/user/shipping-address-select`, {
          method: "POST",
          withCredentials: true,
          credentials: "include",
@@ -28,11 +27,6 @@ const CartAddress = ({ authRefetch, addr, setStep, navigate, setMessage }) => {
       });
 
       const resData = await response.json();
-
-      if (response.status === 401 || response.status === 403) {
-         await authLogout();
-         navigate(`/login?err=${resData?.error}`);
-      };
 
       if (response.ok) {
          authRefetch();

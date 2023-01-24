@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { authLogout, slugMaker } from '../../../../Shared/common';
+import { slugMaker } from '../../../../Shared/common';
 import { useNavigate } from 'react-router-dom';
 import BtnSpinner from '../../../../Components/Shared/BtnSpinner/BtnSpinner';
 import { useMessage } from '../../../../Hooks/useMessage';
@@ -81,24 +81,19 @@ const ProductListing = ({ required, userInfo, formTypes, data, refetch }) => {
             return setMessage("Required all fields!!!", 'danger');
          }
 
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/product/set-product-intro/${formTypes}`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/product/set-product-intro/${formTypes}`, {
             method: 'POST',
             withCredentials: true,
             credentials: "include",
             headers: {
                "Content-Type": "application/json",
-               authorization: data?._id
+               authorization: data?._lId
             },
             body: JSON.stringify(formData)
          });
 
          const resData = await response.json();
          setActionLoading(false);
-
-         if (response.status === 401 || response.status === 403) {
-            await authLogout();
-            navigate(`/login?err=${resData?.error}`);
-         }
 
          if (response.ok) {
             if (formTypes === "create") {

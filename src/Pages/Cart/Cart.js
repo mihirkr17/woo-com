@@ -12,7 +12,7 @@ const Cart = () => {
    const { msg, setMessage } = useMessage();
    const navigate = useNavigate();
 
-   const { data: cartItems, refetch } = useFetch(`${process.env.REACT_APP_BASE_URL}api/cart/show-my-cart-items`);
+   const { data: cartItems, refetch } = useFetch(`${process.env.REACT_APP_BASE_URL}api/v1/cart/show-my-cart-items`);
 
 
    // Go checkout page

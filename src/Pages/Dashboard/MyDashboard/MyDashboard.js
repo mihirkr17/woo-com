@@ -12,7 +12,7 @@ import AdminTemplate from './Components/AdminTemplate';
 const MyDashboard = () => {
    const { userInfo, role } = useAuthContext();
    const { state } = useSellerChecker();
-   const { data } = useFetch(`${process.env.REACT_APP_BASE_URL}api/product/dashboard-overview`);
+   const { data } = useFetch(`${process.env.REACT_APP_BASE_URL}api/v1/dashboard/overview`);
 
    const { orderCount } = useOrder();
    // search query params
@@ -63,9 +63,9 @@ const MyDashboard = () => {
                                     <div className="t_p_right">
                                        <div className='t_p_right_text'>
                                           <strong>{
-                                             userInfo?.seller?.storeInfos?.totalProducts || 0
+                                             userInfo?.seller?.storeInfos?.numOfProducts || 0
                                           }</strong>
-                                          <span>Products</span>
+                                          <span>All Products</span>
                                        </div>
                                     </div>
                                  </div>
@@ -78,9 +78,9 @@ const MyDashboard = () => {
                                  <div className="t_p_right">
                                     <div className='t_p_right_text'>
                                        <strong>{
-                                          data?.data?.topSoldProducts?.sold || 0
+                                          userInfo?.seller?.storeInfos?.productInFulfilled || 0
                                        }</strong>
-                                       <span>Followers</span>
+                                       <span>Fulfilled Products</span>
                                     </div>
                                  </div>
                               </div>
@@ -158,8 +158,8 @@ const MyDashboard = () => {
                                                 <tr key={index}>
                                                    <td><img className='jjk_2m2' src={seller?.images && seller?.images[0]} alt="" /></td>
                                                    <td>
-                                                      <small>{seller?.username && seller?.username.length > 30 ? seller?.username.slice(0, 30) + "..." : seller?.username}</small> <br />
-                                                      <small className='pid'>#{seller?._id}</small>
+                                                      <small>{seller?.fullName}</small> <br />
+                                                      <small className='pid'>#{seller?._UUID}</small>
                                                    </td>
                                                    <td><small>{seller?.email && seller?.email}</small></td>
                                                    <td><small>{seller?.totalProducts} pcs</small></td>

@@ -15,31 +15,35 @@ export const useFetch = (url, authorization = "") => {
       const fetchData = setTimeout(() => {
          (async () => {
             try {
-               setLoading(true);
+               if (url) {
 
-               const response = await fetch(url, {
-                  withCredential: true,
-                  credentials: 'include',
-                  headers: {
-                     authorization
+
+                  setLoading(true);
+
+                  const response = await fetch(url, {
+                     withCredential: true,
+                     credentials: 'include',
+                     headers: {
+                        authorization
+                     }
+                  });
+
+                  const resData = await response.json();
+
+
+                  if (response.ok) {
+                     setLoading(false);
+                     setData(resData);
+                  } else {
+                     setLoading(false);
+
+                     if (response.status === 401) {
+                        await authLogout();
+                        return;
+                     }
+
+                     navigate('/');
                   }
-               });
-
-               const resData = await response.json();
-
-
-               if (response.ok) {
-                  setLoading(false);
-                  setData(resData);
-               } else {
-                  setLoading(false);
-
-                  if (response.status === 401) {
-                     await authLogout();
-                     return;
-                  }
-
-                  navigate('/');
                }
             } catch (error) {
                setErr(error);

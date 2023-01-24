@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useContext } from 'react';
 import { createContext } from 'react';
 import { useFetch } from '../Hooks/useFetch';
+import { useAuthContext } from './AuthProvider';
 
 export const SellerCheckContext = createContext();
 
@@ -17,13 +18,17 @@ const reducer = (state, action) => {
 
 
 const SellerCheckProvider = ({ children }) => {
-   
-   const url = `${process.env.REACT_APP_BASE_URL}api/user/check-seller-request`;
+
+   const { userInfo } = useAuthContext();
+
+   const url = userInfo?.role === 'ADMIN' && `${process.env.REACT_APP_BASE_URL}api/v1/user/check-seller-request`;
    const { data, refetch, loading } = useFetch(url);
+
    const initialState = {
       data: [],
       slLength: 0
    }
+   
    const [state, dispatch] = useReducer(reducer, initialState);
 
    useEffect(() => {

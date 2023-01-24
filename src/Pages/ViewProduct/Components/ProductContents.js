@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import BtnSpinner from '../../../Components/Shared/BtnSpinner/BtnSpinner';
-import Breadcrumbs from '../../../Shared/Breadcrumbs';
-import { faCartShopping } from '@fortawesome/free-solid-svg-icons';
+import { faCartShopping, faHandshake, faLocationPin, faTruck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { textToTitleCase } from '../../../Shared/common';
 
-const ProductContents = ({ product, variationId, authRefetch, productRefetch, setMessage }) => {
+
+const ProductContents = ({ product, variationId, authRefetch, productRefetch, setMessage, userInfo }) => {
    const [addCartLoading, setAddCartLoading] = useState(false);
    const [buyLoading, setBuyLoading] = useState(false);
 
@@ -13,8 +14,8 @@ const ProductContents = ({ product, variationId, authRefetch, productRefetch, se
 
    const addToCartHandler = async (pId, _lId, vId, params) => {
 
-      const url = params === "buy" ? `${process.env.REACT_APP_BASE_URL}api/cart/add-buy-product` :
-         `${process.env.REACT_APP_BASE_URL}api/cart/add-to-cart`;
+      const url = params === "buy" ? `${process.env.REACT_APP_BASE_URL}api/v1/cart/add-buy-product` :
+         `${process.env.REACT_APP_BASE_URL}api/v1/cart/add-to-cart`;
 
       if (product?.variations?.stock === "in") {
          if (params === "buy") {
@@ -56,12 +57,14 @@ const ProductContents = ({ product, variationId, authRefetch, productRefetch, se
          }
       }
    }
+   const defShipAddrs = Array.isArray(userInfo?.buyer?.shippingAddress) &&
+      userInfo?.buyer?.shippingAddress.find(addrs => addrs?.default_shipping_address === true);
 
    console.log(product);
 
    return (
       <div className='row w-100'>
-         <div className="col-lg-9">
+         <div className="col-lg-8">
             <article>
 
                <h5 className="product_title py-2">
@@ -197,21 +200,66 @@ const ProductContents = ({ product, variationId, authRefetch, productRefetch, se
             }
          </div>
 
-         <div className="col-lg-3">
-            <div className='pb-2'>
-               Fulfilled by {product?.fulfilledBy}
+         <div className="col-lg-4">
+            <h6>Delivery</h6>
+
+            <div className="pb-2 d-flex align-items-center justify-content-between">
+               <div className='pe-2'>
+                  <FontAwesomeIcon icon={faLocationPin} />
+               </div>
+               <div className='textMute'>
+                  {
+                     defShipAddrs ?
+                        <address>
+                           <span>
+                              {
+                                 defShipAddrs?.division + ", " + defShipAddrs?.city + ", " + defShipAddrs?.area
+                              }
+                           </span>
+                        </address>
+                        : "Not Found"
+                  }
+               </div>
+            </div>
+            <hr />
+
+            {
+               product?.fulfilledBy &&
+               <div className='pb-3 d-flex align-items-center justify-content-between'>
+                  <div className='textMute'>
+                  <FontAwesomeIcon icon={faHandshake} /> &nbsp;
+                     Fulfilled by
+                  </div>
+                  <div>
+                     {textToTitleCase(product?.fulfilledBy)}
+                  </div>
+               </div>
+            }
+
+
+
+            <div className='pb-2 d-flex align-items-center justify-content-between'>
+               <div className='textMute'>
+                  <FontAwesomeIcon icon={faTruck} /> &nbsp;
+                  Standard Delivery
+               </div>
+
+               <div>
+                  {
+                     defShipAddrs?.area_type === 'local' ?
+                        product?.deliveryCharge?.localCharge : (product?.deliveryCharge?.zonalCharge)
+                  }
+               </div>
             </div>
 
-            <div className='pb-2'>
-               Standard Delivery {product?.deliveryCharge?.zonalCharge}
-            </div>
+            <hr />
 
             <div className="py-3">
                <small className='textMute'>
                   Sold By : &nbsp;&nbsp;
                </small>
                <span className='seeMore'>
-                  {product?.seller?.name}
+                  {product?.sellerData?.storeName}
                </span>
             </div>
          </div>

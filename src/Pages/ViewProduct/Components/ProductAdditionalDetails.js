@@ -1,5 +1,7 @@
 import React from 'react';
 import { Interweave } from 'interweave';
+import { textToTitleCase } from '../../../Shared/common';
+
 
 const ProductAdditionalDetails = ({ product }) => {
 
@@ -13,7 +15,7 @@ const ProductAdditionalDetails = ({ product }) => {
       if (specs) {
 
          for (const [key, value] of Object.entries(specs)) {
-            let pp = <li key={value + Math.round(Math.random() * 999)}><span>{key.replace(/_+/gi, " ").toUpperCase()}</span> <span>{value.split(",#")[0]}</span></li>
+            let pp = <li key={value + Math.round(Math.random() * 999)}><span>{textToTitleCase(key)}</span> <span>{value.split(",#")[0]}</span></li>
             str.push(pp);
          }
       }

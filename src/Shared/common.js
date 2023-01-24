@@ -19,7 +19,7 @@ export const averageRating = (rating) => {
 }
 // ${process.env.REACT_APP_BASE_URL}
 export const authLogout = async () => {
-   const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/user/sign-out`, {
+   const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/user/sign-out`, {
       method: "POST",
       withCredentials: true,
       credentials: "include",
@@ -30,7 +30,7 @@ export const authLogout = async () => {
 };
 
 // for cart calculation
-export function cartCalculate (product) {
+export function cartCalculate(product) {
    let p;
    if (product) {
       p = {
@@ -38,7 +38,7 @@ export function cartCalculate (product) {
          totalQuantity: product.map(p => parseInt(p?.quantity)).reduce((p, c) => p + c, 0),
          shippingFee: product.map(p => parseFloat(p?.shippingCharge)).reduce((p, c) => p + c, 0) || 0,
          totalAmount: (product.map(p => (parseFloat(p?.totalAmount))).reduce((p, c) => p + c, 0).toFixed(2)),
-         finalAmount: (product.map(p => (parseFloat(p?.totalAmount) + p?.shippingCharge|| 0)).reduce((p, c) => p + c, 0).toFixed(2)),
+         finalAmount: (product.map(p => (parseFloat(p?.totalAmount) + p?.shippingCharge || 0)).reduce((p, c) => p + c, 0).toFixed(2)),
       }
    } else {
       p = {
@@ -89,3 +89,30 @@ export const emailValidator = (email) => {
    return re.test(String(email).toLowerCase());
 }
 
+export const camelToTitleCase = (str) => {
+   if (!str) {
+      return false;
+   }
+
+   let newStr = str.replace(/([A-Z])/g, " $1");
+
+   return newStr.charAt(0).toUpperCase() + newStr.slice(1);
+}
+
+
+export const textToTitleCase = (str) => {
+
+   if (!str) {
+      return false;
+   }
+
+   let newStr = str.split(/[-]|[_]|[A-Z]/g);
+
+   let finalStr = "";
+
+   for (let i = 0; i < newStr.length; i++) {
+      finalStr += newStr[i].charAt(0).toUpperCase() + newStr[i].slice(1) + " ";
+   }
+
+   return finalStr.trim();
+}

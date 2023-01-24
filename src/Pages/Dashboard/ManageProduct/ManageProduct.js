@@ -6,11 +6,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faPenToSquare, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import ProductDetailsModal from './Components/ProductDetailsModal';
 import { useAuthContext } from '../../../lib/AuthProvider';
-import { authLogout } from '../../../Shared/common';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { newCategory } from '../../../Assets/CustomData/categories';
-import ManageProductHome from './ManageProductHome/ManageProductHome';
-import ProductUpdate from './ProductUpdate/ProductUpdate';
+import ManageProductHome from './Components/ManageProductHome';
+import ProductTemplateForm from './Components/ProductTemplateForm';
 
 const ManageProduct = () => {
    const { msg, setMessage } = useMessage();
@@ -18,12 +17,9 @@ const ManageProduct = () => {
    const [items, setItems] = useState(1);
    const [url, setUrl] = useState("");
 
-   let url2 = role === 'SELLER' ? `${process.env.REACT_APP_BASE_URL}api/product/product-count?seller=${userInfo?.seller?.storeInfos?.storeName}` :
-      `${process.env.REACT_APP_BASE_URL}api/product/product-count`;
-
-   // Fetching Data 
-   const { data: counter, refetch: counterRefetch } = useFetch(url2);
    const { data: manageProducts, loading, refetch } = useFetch(url);
+
+   let counter = userInfo && userInfo?.seller?.storeInfos?.productInFulfilled;
 
    // All States
    const [searchValue, setSearchValue] = useState("");
@@ -34,12 +30,12 @@ const ManageProduct = () => {
 
    // search query params
    const queryParams = new URLSearchParams(window.location.search).get("np");
-   const querySeller = new URLSearchParams(window.location.search).get("s");
+   const queryStoreName = new URLSearchParams(window.location.search).get("store");
    const queryPage = parseInt(new URLSearchParams(window.location.search).get("page")) || 1;
 
    useEffect(() => {
       const setTimeUrl = setTimeout(() => {
-         let url = `${process.env.REACT_APP_BASE_URL}api/product/manage-product?page=${queryPage}&items=${8}&category=${filterCategory}&search=${searchValue}`
+         let url = `${process.env.REACT_APP_BASE_URL}api/v1/product/manage-product?page=${queryPage}&items=${8}&category=${filterCategory}&search=${searchValue}`
 
          setUrl(url);
       }, 200);
@@ -64,62 +60,48 @@ const ManageProduct = () => {
    return (
       <div className='section_default'>
          <div className="container">
+
+
             {
-               (queryParams === "edit_product" && querySeller === userInfo?.seller?.storeInfos?.storeName) ?
-                  <>
-                     <h6>Edit This Product</h6>
-                     <button className='bt9_edit mb-4' onClick={() => navigate('/dashboard/manage-product')}>Cancel</button>
-
-                     <ProductUpdate
-                        userInfo={userInfo}
-                        formTypes='update'
-                        setMessage={setMessage}
-                     />
-                  </> : (queryParams === 'add-new-variation' && querySeller === userInfo?.seller?.storeInfos?.storeName) ?
-                     <ProductUpdate
-                        userInfo={userInfo}
-                        formTypes='new-variation'
-                        setMessage={setMessage}
-                     />
-                     : (queryParams === 'update-variation' && querySeller === userInfo?.seller?.storeInfos?.storeName) ?
-
-                        <ProductUpdate
-                           userInfo={userInfo}
-                           formTypes='update-variation'
-                           setMessage={setMessage}
-                        />
-                        :
-                        <ManageProductHome
-                           refetch={refetch}
-                           setMessage={setMessage}
-                           newCategory={newCategory}
-                           role={role}
-                           counter={counter}
-                           loading={loading}
-                           productDetailsModal={productDetailsModal}
-                           manageProducts={manageProducts}
-                           msg={msg}
-                           setSearchValue={setSearchValue}
-                           setFilterCategory={setFilterCategory}
-                           setProductDetailsModal={setProductDetailsModal}
-                           navigate={navigate}
-                           authLogout={authLogout}
-                           counterRefetch={counterRefetch}
-                           queryPage={queryPage}
-                           items={items}
-                           pageBtn={pageBtn}
-                           location={location}
-                           faEye={faEye}
-                           faPenToSquare={faPenToSquare}
-                           faTrashAlt={faTrashAlt}
-                           FontAwesomeIcon={FontAwesomeIcon}
-                           Spinner={Spinner}
-                           ProductDetailsModal={ProductDetailsModal}
-                        />
-
+               queryParams && queryStoreName === userInfo?.seller?.storeInfos?.storeName ?
+                  <ProductTemplateForm
+                     userInfo={userInfo}
+                     formTypes={
+                        (queryParams === 'update-variation' && 'update-variation') ||
+                        (queryParams === "edit_product" && 'update') ||
+                        (queryParams === 'add-new-variation' && 'new-variation')
+                     }
+                     setMessage={setMessage}
+                  /> :
+                  <ManageProductHome
+                     refetch={refetch}
+                     setMessage={setMessage}
+                     newCategory={newCategory}
+                     role={role}
+                     counter={counter}
+                     loading={loading}
+                     productDetailsModal={productDetailsModal}
+                     manageProducts={manageProducts}
+                     msg={msg}
+                     setSearchValue={setSearchValue}
+                     setFilterCategory={setFilterCategory}
+                     setProductDetailsModal={setProductDetailsModal}
+                     navigate={navigate}
+                     // counterRefetch={counterRefetch}
+                     queryPage={queryPage}
+                     items={items}
+                     pageBtn={pageBtn}
+                     location={location}
+                     faEye={faEye}
+                     faPenToSquare={faPenToSquare}
+                     faTrashAlt={faTrashAlt}
+                     FontAwesomeIcon={FontAwesomeIcon}
+                     Spinner={Spinner}
+                     ProductDetailsModal={ProductDetailsModal}
+                  />
             }
-         </div>
 
+         </div>
       </div>
    );
 };

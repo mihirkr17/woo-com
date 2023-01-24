@@ -86,6 +86,7 @@
   width: 99%;
   margin: auto;
   letter-spacing: 0.9px;
+  appearance: button;
 
   &:hover {
     background-color: var(--color-accent-alt);
@@ -107,12 +108,47 @@
   font-weight: bold;
   letter-spacing: 1px;
   transition: all 0.4s linear;
+  appearance: button;
 
   &:hover {
     background-color: var(--color-accent-alt);
   }
 }
 
+.bt9_delete {
+  padding: 0.2rem 0.3rem;
+  border: 1px solid var(--color-danger);
+  border-radius: 3px;
+  background-color: var(--color-danger);
+  color: var(--color-light);
+  font-size: 0.7rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+  transition: all 0.4s linear;
+  appearance: button;
+
+  &:hover {
+    background-color: var(--color-danger-alt);
+  }
+}
+
+
+.bt9_create {
+  padding: 0.2rem 0.3rem;
+  border: 1px solid var(--color-primary);
+  border-radius: 3px;
+  background-color: var(--color-primary);
+  color: var(--color-light);
+  font-size: 0.7rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+  transition: all 0.4s linear;
+  appearance: button;
+
+  &:hover {
+    background-color: var(--color-primary-alt);
+  }
+}
 
 
 .bt9_cancel {

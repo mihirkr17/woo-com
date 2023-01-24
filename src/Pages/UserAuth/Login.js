@@ -30,7 +30,7 @@ const Login = () => {
       try {
          setLoading(true);
          e.preventDefault();
-         let email = e.target.email.value;
+         let emailOrPhone = e.target.emailOrPhone.value;
          let password = e.target.password.value;
          let verify_token;
 
@@ -38,8 +38,8 @@ const Login = () => {
             verify_token = e.target.verify_token.value;
          }
 
-         if (email.length <= 0) {
-            return setMessage('Username or email address required !!!', 'danger');
+         if (emailOrPhone.length <= 0) {
+            return setMessage('Phone or email address required !!!', 'danger');
          }
 
          else if (password.length <= 0) {
@@ -47,7 +47,7 @@ const Login = () => {
          }
 
          else {
-            const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/user/login-user`, {
+            const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/auth/login`, {
                method: "POST",
                withCredential: true,
                credentials: 'include',
@@ -55,10 +55,11 @@ const Login = () => {
                   "Content-Type": "application/json",
                   authorization: `Bearer ${verify_token}`
                },
-               body: JSON.stringify({ email, password })
+               body: JSON.stringify({ emailOrPhone, password })
             });
 
             setLoading(false);
+
             const d = await response.json();
 
             let verifyTok = document.cookie.split('; ').find(e => e.startsWith('verifyToken='))?.split('=')[1];
@@ -66,16 +67,16 @@ const Login = () => {
             setVerifyToken(verifyTok);
 
             if (!response.ok) {
-               setMessage(d?.error, 'danger');
+               setMessage(d?.message, 'danger');
             }
 
-            if (d?.message === 'isLogin') {
+            if (d?.name === 'isLogin') {
                authRefetch();
             }
          }
 
       } catch (error) {
-
+         console.log(error);
       } finally {
          setLoading(false);
       }
@@ -105,8 +106,8 @@ const Login = () => {
                   {msg}
                   <form onSubmit={handleLogin} className='text-start'>
                      <div className="mb-3 input_group">
-                        <label htmlFor='email'>Email address</label>
-                        <input className='form-control' type="email" name='email' id='email' defaultValue={sTerm || ""} autoComplete='off' placeholder="Enter your email" />
+                        <label htmlFor='emailOrPhone'>Email address or phone</label>
+                        <input className='form-control' type="text" name='emailOrPhone' id='emailOrPhone' defaultValue={sTerm || ""} autoComplete='off' placeholder="Enter your email or phone" />
                      </div>
 
                      <div className="mb-3 input_group">

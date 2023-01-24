@@ -5,7 +5,6 @@ import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { useEffect } from 'react';
 import OrderTable from './Components/OrderTable';
 import { useOrder } from '../../lib/OrderProvider';
-import { authLogout } from '../../Shared/common';
 import { useNavigate } from 'react-router-dom';
 import ModalLabel from './Components/ModalLabel/ModalLabel';
 import { useAuthContext } from '../../lib/AuthProvider';
@@ -35,7 +34,7 @@ const ManageOrders = () => {
    // Cancel the order if any wrong 
    const cancelOrderHandler = async (email, orderId) => {
       if (window.confirm("Want to cancel this order ?")) {
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/order/remove-order/${email}/${orderId}`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/order/remove-order/${email}/${orderId}`, {
             method: "DELETE",
             withCredentials: true,
             credentials: "include",
@@ -44,11 +43,8 @@ const ManageOrders = () => {
          const resData = await response.json();
 
          if (response.ok) {
-            setMessage(<strong className='text-success'>Order Cancelled...</strong>);
+            setMessage(resData?.message, "success");
             orderRefetch();
-         } else {
-            await authLogout();
-            navigate(`/login?err=${resData?.error}`);
          }
       }
    }
@@ -77,9 +73,6 @@ const ManageOrders = () => {
    //          await response.json();
    //          setMessage(<p className='text-success'><small><strong>{successMsg}</strong></small></p>);
    //          orderRefetch();
-   //       } else {
-   //          await authLogout();
-   //          navigate(`/login?err=token not found`);
    //       }
 
    //    }
@@ -89,7 +82,7 @@ const ManageOrders = () => {
       const { orderId, trackingId, user_email } = order;
 
       if (orderId && trackingId) {
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/order/dispatch-order-request/${orderId}/${trackingId}`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/order/dispatch-order-request/${orderId}/${trackingId}`, {
             method: "PUT",
             withCredentials: true,
             credentials: "include",
@@ -102,13 +95,8 @@ const ManageOrders = () => {
          const resData = await response.json();
 
          if (response.status >= 200 && response.status <= 299) {
-            setMessage(<p className='text-success'><small><strong>{resData?.message}</strong></small></p>)
+            setMessage(resData?.message, "success")
             orderRefetch();
-         }
-
-         if (response.status === 401 || response.status === 403) {
-            await authLogout();
-            navigate(`/login?err=${resData?.error}`);
          }
       }
    }

@@ -33,7 +33,7 @@ const SocialAuth = () => {
             try {
                const email = user?.user?.email;
 
-               const url = `${process.env.REACT_APP_BASE_URL}api/user/login-user`;
+               const url = `${process.env.REACT_APP_BASE_URL}api/v1/user/login-user`;
 
                const obj = { username: email, authProvider: 'thirdParty' };
 

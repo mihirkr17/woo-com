@@ -70,7 +70,7 @@ const ProductVariations = ({ required, data, formTypes, super_category }) => {
          }
 
 
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/product/set-product-variation?formType=${formTypes}&vId=${variation?._vId || ""}&attr=ProductVariations`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/product/set-product-variation?formType=${formTypes}&vId=${variation?._vId || ""}&attr=ProductVariations`, {
             withCredentials: true,
             credentials: 'include',
             method: 'PUT',

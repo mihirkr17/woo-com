@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
-import { cartCalculate, authLogout } from '../../Shared/common';
+import { cartCalculate } from '../../Shared/common';
 import CartCalculation from '../../Shared/CartComponents/CartCalculation';
 import CartItem from '../../Shared/CartComponents/CartItem';
 import CartPayment from '../../Shared/CartComponents/CartPayment';
@@ -45,7 +45,7 @@ const CheckoutSingle = () => {
       }
 
       if (window.confirm("Buy Now")) {
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/order/set-order/`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/order/set-order/`, {
             method: "POST",
             withCredentials: true,
             credentials: "include",
@@ -65,11 +65,6 @@ const CheckoutSingle = () => {
 
          if (response.status >= 200 && response.status <= 299) {
             navigate(`/my-profile/my-order?order=${resData?.message}`);
-         }
-
-         if ((response.status === 401) || (response.status === 403)) {
-            await authLogout();
-            navigate(`/login?err=${resData?.error}`);
          }
       }
    }

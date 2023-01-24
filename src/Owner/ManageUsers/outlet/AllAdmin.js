@@ -2,17 +2,16 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Spinner from '../../../Components/Shared/Spinner/Spinner';
 import { useFetch } from '../../../Hooks/useFetch';
-import { authLogout } from '../../../Shared/common';
 
 const AllAdmin = () => {
    // const token = new URLSearchParams(document.cookie.replaceAll("; ", "&")).get('accessToken');
-   const { data, loading, refetch } = useFetch(`${process.env.REACT_APP_BASE_URL}api/user/manage-user?uTyp=admin`);
+   const { data, loading, refetch } = useFetch(`${process.env.REACT_APP_BASE_URL}api/v1/user/manage-user?uTyp=admin`);
    const navigate = useNavigate();
    if (loading) return <Spinner></Spinner>;
 
    const demoteToUserHandler = async (userId) => {
       if (window.confirm("Demote to user ?")) {
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/api/user/demote-to-user/${userId}`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/api/v1/user/demote-to-user/${userId}`, {
             method: "PUT",
             withCredentials: true,
             credentials: "include",
@@ -25,9 +24,6 @@ const AllAdmin = () => {
 
          if (response.ok) {
             refetch();
-         } else {
-            await authLogout();
-            navigate(`/login?err=${resData?.error}`);
          }
       }
    }

@@ -4,7 +4,6 @@ import React from 'react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import BtnSpinner from '../../Components/Shared/BtnSpinner/BtnSpinner';
-import { apiHandler, authLogout } from '../common';
 import ConfirmDialog from '../ConfirmDialog';
 
 const CartItem = ({ product: cartProduct, setMessage, refetch, checkOut, cartTypes }) => {
@@ -15,7 +14,7 @@ const CartItem = ({ product: cartProduct, setMessage, refetch, checkOut, cartTyp
    const removeItemFromCartHandler = async (cp) => {
       const { productId, title } = cp;
 
-      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/cart/delete-cart-item/${cartTypes && cartTypes}`, {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/cart/delete-cart-item/${cartTypes && cartTypes}`, {
          method: "DELETE",
          withCredential: true,
          credentials: 'include',
@@ -25,7 +24,6 @@ const CartItem = ({ product: cartProduct, setMessage, refetch, checkOut, cartTyp
       });
 
       const resData = await response.json();
-
 
       if (response.ok) {
          setMessage(`${title} ${resData?.message}`, 'success');
@@ -41,7 +39,7 @@ const CartItem = ({ product: cartProduct, setMessage, refetch, checkOut, cartTyp
          setQtyLoading(true);
          let quantity = parseInt(value);
 
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/cart/update-cart-product-quantity`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/cart/update-cart-product-quantity`, {
             method: "PUT",
             withCredential: true,
             credentials: 'include',

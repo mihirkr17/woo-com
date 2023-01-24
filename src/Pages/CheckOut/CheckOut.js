@@ -7,7 +7,6 @@ import { useMessage } from '../../Hooks/useMessage';
 import CartCalculation from '../../Shared/CartComponents/CartCalculation';
 import CartItem from '../../Shared/CartComponents/CartItem';
 import CartPayment from '../../Shared/CartComponents/CartPayment';
-import { authLogout } from '../../Shared/common';
 import { useAuthContext } from '../../lib/AuthProvider';
 import CartAddress from '../../Shared/CartComponents/CartAddress';
 import { useFetch } from '../../Hooks/useFetch';
@@ -17,7 +16,7 @@ const CheckOut = () => {
    const { msg, setMessage } = useMessage()
    const { authLoading, authRefetch, userInfo } = useAuthContext();
    const [step, setStep] = useState(false);
-   const { data: cartItems } = useFetch(`${process.env.REACT_APP_BASE_URL}api/cart/show-my-cart-items`);
+   const { data: cartItems } = useFetch(`${process.env.REACT_APP_BASE_URL}api/v1/cart/show-my-cart-items`);
 
    // pick the address where selected address is true
    const selectedAddress = userInfo?.buyer?.shippingAddress && userInfo?.buyer?.shippingAddress.find(a => a?.default_shipping_address === true);
@@ -60,7 +59,7 @@ const CheckOut = () => {
          }
 
          if (buyAlert) {
-            const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/order/set-order/`, {
+            const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/order/set-order/`, {
                method: "POST",
                withCredentials: true,
                credentials: "include",
@@ -73,16 +72,11 @@ const CheckOut = () => {
 
             const resData = await response.json();
 
-            if ((response.status === 401) || (response.status === 403)) {
-               await authLogout();
-               navigate(`/login?err=${resData?.error}`);
-            }
-
             if (response.status >= 200 && response.status <= 299) {
                authRefetch();
                navigate(`/my-profile/my-order?order=${resData?.message}`);
             } else {
-               setMessage(resData?.error);
+               setMessage(resData?.message, 'danger');
                return;
             }
          }

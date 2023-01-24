@@ -6,13 +6,19 @@ import BodyInformation from './BodyInformation';
 import { newCategory } from '../../../../Assets/CustomData/categories';
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useFetch } from '../../../../Hooks/useFetch';
 
 
-const ProductTemplateForm = ({ formTypes, data, refetch }) => {
+const ProductTemplateForm = ({ formTypes, userInfo, setMessage }) => {
    const [toggle, setToggle] = useState(null);
    const location = useLocation();
    const from = location?.state?.from?.pathname;
    const navigate = useNavigate();
+   
+   const queryPID = new URLSearchParams(window.location.search).get("pid");
+   const queryVID = new URLSearchParams(window.location.search).get("vId");
+   const {data, refetch} = useFetch(`${process.env.REACT_APP_BASE_URL}api/v1/product/get-one-product-in-seller-dsb?pid=${queryPID}&storeName=${userInfo?.seller?.storeInfos?.storeName}&vId=${queryVID || ""}`);
+
 
    var sub_category, post_category, super_category;
 
@@ -77,7 +83,8 @@ const ProductTemplateForm = ({ formTypes, data, refetch }) => {
                <ProductListing required={required} formTypes={formTypes} data={data} refetch={refetch} />
                : <div className='row py-2'>
                   <div className="col-lg-6"><small>CATEGORIES : {data?.categories && data?.categories.join("-->")}</small></div>
-                  <div className="col-lg-6"><small>SELLER : {data?.seller?.name}</small></div>
+                  <div className="col-lg-6"><small>SELLER : {data?.sellerData?.sellerName}</small></div>
+                  <div className="col-lg-6"><small>Store Name : {data?.sellerData?.storeName}</small></div>
                   <div className="col-lg-6"><small>BRAND : {data?.brand}</small></div>
                   <div className="col-lg-6"><small>SAVE AS : {data?.save_as}</small></div>
                   <div className="col-lg-6"><small>Product Title : {data?.title}</small></div>

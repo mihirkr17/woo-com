@@ -34,7 +34,7 @@ const ProductImages = ({ product, userInfo, authRefetch, setMessage, productRefe
          seller: product?.seller?.name
       }
 
-      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/wishlist/add-to-wishlist/${userInfo?.email}`, {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/wishlist/add-to-wishlist/${userInfo?.email}`, {
          method: "PUT",
          withCredentials: true,
          credentials: "include",
@@ -54,7 +54,7 @@ const ProductImages = ({ product, userInfo, authRefetch, setMessage, productRefe
    }
 
    const removeToWishlist = async (productId) => {
-      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/wishlist/remove-from-wishlist/${productId}`, {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/wishlist/remove-from-wishlist/${productId}`, {
          method: "DELETE",
          withCredentials: true,
          credentials: "include"

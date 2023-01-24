@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useMessage } from '../../Hooks/useMessage';
 import { useAuthContext } from '../../lib/AuthProvider';
-import { authLogout } from '../../Shared/common';
 
 const Profile = () => {
    const { msg, setMessage } = useMessage();
@@ -11,7 +10,7 @@ const Profile = () => {
 
    async function submitProfileData() {
       try {
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/user/update-profile-data`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/user/update-profile-data`, {
             method: "PUT",
             withCredential: true,
             credentials: "include",
@@ -23,10 +22,6 @@ const Profile = () => {
          });
 
          const data = await response.json();
-
-         if (response.status === 403) {
-            return authLogout();
-         }
 
          if (response.ok) {
             setMessage(data?.message, 'success');

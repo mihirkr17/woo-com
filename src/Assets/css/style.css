@@ -24,6 +24,7 @@
   --color-link-alt: #e75900;
   --color-blued: #2874f0;
   --color-danger: red;
+  --color-danger-alt: #d30000;
   --color-trans-one: #ffffff91;
   --color-trans-two: #0000001a;
   --color-trans-three: #b3b3b363;
@@ -236,6 +237,9 @@ svg {
   width: 99%;
   margin: auto;
   letter-spacing: 0.9px;
+  -webkit-appearance: button;
+     -moz-appearance: button;
+          appearance: button;
 }
 .bt9_checkout:hover {
   background-color: var(--color-accent-alt);
@@ -256,9 +260,50 @@ svg {
   letter-spacing: 1px;
   -webkit-transition: all 0.4s linear;
   transition: all 0.4s linear;
+  -webkit-appearance: button;
+     -moz-appearance: button;
+          appearance: button;
 }
 .bt9_edit:hover {
   background-color: var(--color-accent-alt);
+}
+
+.bt9_delete {
+  padding: 0.2rem 0.3rem;
+  border: 1px solid var(--color-danger);
+  border-radius: 3px;
+  background-color: var(--color-danger);
+  color: var(--color-light);
+  font-size: 0.7rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+  -webkit-transition: all 0.4s linear;
+  transition: all 0.4s linear;
+  -webkit-appearance: button;
+     -moz-appearance: button;
+          appearance: button;
+}
+.bt9_delete:hover {
+  background-color: var(--color-danger-alt);
+}
+
+.bt9_create {
+  padding: 0.2rem 0.3rem;
+  border: 1px solid var(--color-primary);
+  border-radius: 3px;
+  background-color: var(--color-primary);
+  color: var(--color-light);
+  font-size: 0.7rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+  -webkit-transition: all 0.4s linear;
+  transition: all 0.4s linear;
+  -webkit-appearance: button;
+     -moz-appearance: button;
+          appearance: button;
+}
+.bt9_create:hover {
+  background-color: var(--color-primary-alt);
 }
 
 .bt9_cancel {
@@ -1973,7 +2018,7 @@ label {
   overflow: hidden;
 }
 .auth_container .ac_right h5 {
-  font-size: 4vmax;
+  font-size: 2vmax;
 }
 .auth_container .ac_right p {
   font-size: 14px;

@@ -4,7 +4,6 @@ import { useState } from 'react';
 import UpdateForm from './Components/UpdateForm';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
-import { authLogout } from '../../../Shared/common';
 import { useAuthContext } from '../../../lib/AuthProvider';
 import SellerProfile from './SellerProfile/SellerProfile';
 
@@ -22,10 +21,6 @@ const MyProfile = () => {
       thana: "",
       dob: ""
    });
-
-   let url2 = userInfo && userInfo?.seller?.storeInfos?.storeName ? `${process.env.REACT_APP_BASE_URL}api/product/product-count?seller=${userInfo?.seller?.storeInfos?.storeName}` :
-      `${process.env.REACT_APP_BASE_URL}api/product/product-count`
-   const { data: myProductCount } = useFetch(url2);
 
    let age = new Date().getFullYear() - (userInfo?.dob && parseInt((userInfo?.dob).split("-")[0]));
 
@@ -50,7 +45,7 @@ const MyProfile = () => {
          dob: inputValue.dob || "Not Set"
       }
 
-      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/user/update-profile-data`, {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/user/update-profile-data`, {
          method: "PUT",
          withCredentials: true,
          credentials: "include",
@@ -67,10 +62,6 @@ const MyProfile = () => {
          setActionLoading(false);
          authRefetch();
          // setInputValue({});
-      } else {
-         setActionLoading(false);
-         await authLogout();
-         navigate(`/login?err=${resData?.error}`);
       }
    }
 
@@ -80,7 +71,7 @@ const MyProfile = () => {
 
             <div className="row">
                {
-                  role === 'SELLER' ? <SellerProfile userInfo={userInfo} role={role} myProductCount={myProductCount} /> : <div className="col-12">
+                  role === 'SELLER' ? <SellerProfile userInfo={userInfo} role={role} /> : <div className="col-12">
                      <div className='tty_ssd'>
                         {openEdit ? "Edit Information" : "Personal Information"}
                         {

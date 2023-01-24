@@ -32,10 +32,22 @@ const Register = () => {
 
          formData = Object.fromEntries(formData.entries());
 
-         const { phone, email, password } = formData;
+         const { phone, email, password, gender, fullName, dob } = formData;
 
          if (phone.length <= 0) {
             return setMessage('Phone number required !!!', 'danger');
+         }
+
+         else if (!gender && gender.length <= 0) {
+            return setMessage('Please select your gender !!!', 'danger');
+         }
+
+         else if (!dob && dob.length <= 0) {
+            return setMessage('Please select your birthday !!!', 'danger');
+         }
+
+         else if (!fullName && fullName.length <= 0) {
+            return setMessage('Please enter your full name !!!', 'danger');
          }
 
          else if (email.length <= 0) {
@@ -56,7 +68,7 @@ const Register = () => {
 
          // if all input fields validate then call the api request
          else {
-            const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/user/register-user`, {
+            const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/auth/register-new-user`, {
                method: "POST",
                withCredential: true,
                credentials: 'include',
@@ -135,10 +147,39 @@ const Register = () => {
                               </div>
                            </div>
 
+                           <div className="mb-3 row">
+                              <div className="col-12">
+                                 <div className="input_group mb-3">
+                                    <label htmlFor="fullName">Full Name</label>
+                                    <input type="text" className='form-control' name="fullName" id="fullName" placeholder='Enter your First and last name.' />
+                                 </div>
+                              </div>
+
+                              <div className="col-lg-6">
+                                 <div className="input_group mb-3">
+                                    <label htmlFor="dob">Birthday</label>
+                                    <input type="date" className='form-control' name="dob" id="dob" placeholder='Enter your Birthday.' />
+                                 </div>
+                              </div>
+
+                              <div className="col-lg-6">
+                                 <div className="input_group mb-3">
+                                    <label htmlFor="gender">Gender</label>
+                                    <select className='form-select' name="gender" id="gender">
+                                       <option value="">Select Gender</option>
+                                       <option value="Male">Male</option>
+                                       <option value="Female">Female</option>
+                                       <option value="Others">Others</option>
+                                    </select>
+
+                                 </div>
+                              </div>
+                           </div>
+
                            <div className="mb-3 text-muted">
                               <input type="checkbox" id='accept_terms' onChange={() => setAccept(e => !e)} />
                               &nbsp;
-                              <label htmlFor="accept_terms">Accept our terms & condition ?</label>
+                              <label htmlFor="accept_terms">I'd like to receive exclusive offers and promotions via SMS</label>
                            </div>
 
                            <button id="submit_btn" className='bt9_auth' disabled={accept === false ? true : false} type="submit">

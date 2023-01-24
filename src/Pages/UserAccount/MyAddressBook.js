@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { addressBook } from '../../Assets/CustomData/addressBook';
-import { authLogout } from '../../Shared/common';
 import { useMessage } from '../../Hooks/useMessage';
 import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../../lib/AuthProvider';
@@ -67,7 +66,7 @@ const MyAddressBook = () => {
             address['_SA_UID'] = oldShipAddrs?._SA_UID;
          }
 
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/user/shipping-address`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/user/shipping-address`, {
             method: oldShipAddrs?._SA_UID ? "PUT" : "POST",
             withCredentials: true,
             credentials: "include",
@@ -79,11 +78,6 @@ const MyAddressBook = () => {
 
          const resData = await response.json();
 
-         if (response.status === 401 || response.status === 403) {
-            await authLogout();
-            navigate(`/login?err=${resData?.error}`);
-         }
-
          if (response.ok) {
             // setStep(false);
             setMessage(resData?.message, "success");
@@ -94,7 +88,7 @@ const MyAddressBook = () => {
 
    const selectAddressHandler = async (addressId, selectAddress) => {
 
-      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/user/shipping-address-select`, {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/user/shipping-address-select`, {
          method: "POST",
          withCredentials: true,
          credentials: "include",
@@ -106,11 +100,6 @@ const MyAddressBook = () => {
 
       const resData = await response.json();
 
-      if (response.status === 401 || response.status === 403) {
-         await authLogout();
-         navigate(`/login?err=${resData?.error}`);
-      };
-
       if (response.ok) {
          authRefetch();
          setMessage(resData?.message, "success");
@@ -121,17 +110,12 @@ const MyAddressBook = () => {
 
    const deleteAddressHandler = async (addressId) => {
       if (window.confirm("Want to remove address ?")) {
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/user/shipping-address-delete/${addressId}`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/user/shipping-address-delete/${addressId}`, {
             method: "DELETE",
             withCredentials: true,
             credentials: "include"
          });
          const resData = await response.json();
-
-         if (response.status === 401 || response.status === 403) {
-            await authLogout();
-            navigate(`/login?err=${resData?.error}`);
-         };
 
          if (response.ok) { authRefetch() };
       }

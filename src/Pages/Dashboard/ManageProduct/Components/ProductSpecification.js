@@ -24,7 +24,7 @@ const ProductSpecification = ({ required, data, formTypes, super_category }) => 
             return setMessage("Required all fields!!!", 'danger');
          }
 
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/product/set-product-variation?formType=${formTypes}&attr=ProductSpecs`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/product/set-product-variation?formType=${formTypes}&attr=ProductSpecs`, {
             method: "PUT",
             withCredentials: true,
             credentials: "include",

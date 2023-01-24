@@ -7,7 +7,7 @@ import { useFetch } from '../../Hooks/useFetch';
 
 
 const ManageSellers = () => {
-   const { data, loading } = useFetch(`${process.env.REACT_APP_BASE_URL}api/user/manage-user?uTyp=seller`);
+   const { data, loading } = useFetch(`${process.env.REACT_APP_BASE_URL}api/v1/user/manage-user?uTyp=seller`);
    const [dropAction, setDropAction] = useState(false);
 
    async function deleteSellerHandler() {

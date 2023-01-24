@@ -59,7 +59,7 @@ const SellOnline = () => {
       inputs['seller'] = sellerInputs;
 
       if (window.confirm("Submit the form ?")) {
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/user/register-new-seller`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/user/register-new-seller`, {
             method: "POST",
             withCredential: true,
             credentials: 'include',

@@ -19,7 +19,7 @@ const CheckSeller = () => {
    const makeSellerHandler = async (userId, uuid, userEmail) => {
 
       if (window.confirm("Make Seller ?")) {
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/user/permit-seller-request`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/user/permit-seller-request`, {
             method: "PUT",
             withCredentials: true,
             credentials: "include",

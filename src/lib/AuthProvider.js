@@ -26,7 +26,7 @@ const AuthProvider = ({ children }) => {
             try {
                setAuthLoading(true);
 
-               const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/user/fau`, {
+               const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/user/fau`, {
                   withCredential: true,
                   credentials: 'include',
                });

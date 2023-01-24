@@ -32,7 +32,7 @@ const NavigationBar = () => {
 
          if (searchQuery) {
             setLoading(true);
-            const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/product/search-products/${searchQuery}`);
+            const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/product/search-products/${searchQuery}`);
             const resData = await response.json();
             setData(resData);
             setLoading(false);

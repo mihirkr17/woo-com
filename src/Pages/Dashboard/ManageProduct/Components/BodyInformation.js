@@ -74,7 +74,7 @@ const BodyInformation = ({ required, data, formTypes }) => {
          }
 
 
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/product/set-product-variation?formType=${formTypes}&vId=${variations?.vId || ""}&attr=bodyInformation`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/product/set-product-variation?formType=${formTypes}&vId=${variations?.vId || ""}&attr=bodyInformation`, {
             method: "PUT",
             withCredentials: true,
             credentials: "include",

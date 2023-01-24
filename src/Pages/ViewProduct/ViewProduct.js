@@ -21,13 +21,11 @@ const ViewProduct = () => {
 
    const variationId = new URLSearchParams(window.location.search).get("vId");
 
-   const { data, refetch: productRefetch } = useFetch(`${process.env.REACT_APP_BASE_URL}api/product/fetch-single-product/${product_slug}?pId=${productId}&vId=${variationId}`, userInfo?.email);
+   const { data, refetch: productRefetch } = useFetch(`${process.env.REACT_APP_BASE_URL}api/v1/product/fetch-single-product/${product_slug}?pId=${productId}&vId=${variationId}`, userInfo?.email);
 
    const { msg, setMessage } = useMessage();
 
    const product = data?.data?.product ? data?.data?.product : {};
-
-   console.log(product);
 
    return (
       <div className='view_product section_default'>
@@ -57,6 +55,7 @@ const ViewProduct = () => {
                      authRefetch={authRefetch}
                      productRefetch={productRefetch}
                      setMessage={setMessage}
+                     userInfo={userInfo}
                   />
                </div>
             </div>
