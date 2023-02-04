@@ -133,8 +133,12 @@ const CartItem = ({ product: cartProduct, setMessage, refetch, checkOut, cartTyp
                            <big>{cartProduct?.variations?.pricing?.sellingPrice} TK</big>
                         </div>
                         {
-                           (cartProduct && cartProduct?.variations?.attributes?.size) &&
-                           <small className="text-muted">Size : {cartProduct?.variations?.attributes?.size}</small>
+                           (cartProduct && cartProduct?.variations?.variant?.size) &&
+                           <small className="text-muted">Size : {cartProduct?.variations?.variant?.size}</small>
+                        }
+                        {
+                          (cartProduct && cartProduct?.variations?.variant?.color) &&
+                          <small className="text-muted">Color : {cartProduct?.variations?.variant?.color?.split(',')[0]}</small> 
                         }
                         <small className="text-muted">Qty : {cartProduct?.quantity}</small>
                         <small className="text-muted">Stock : {cartProduct?.variations?.stock}</small>

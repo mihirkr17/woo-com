@@ -9,24 +9,22 @@ import CartItem from '../../Shared/CartComponents/CartItem';
 import CartPayment from '../../Shared/CartComponents/CartPayment';
 import { useAuthContext } from '../../lib/AuthProvider';
 import CartAddress from '../../Shared/CartComponents/CartAddress';
-import { useFetch } from '../../Hooks/useFetch';
 
 const CheckOut = () => {
    const navigate = useNavigate();
    const { msg, setMessage } = useMessage()
    const { authLoading, authRefetch, userInfo } = useAuthContext();
    const [step, setStep] = useState(false);
-   const { data: cartItems } = useFetch(`${process.env.REACT_APP_BASE_URL}api/v1/cart/show-my-cart-items`);
 
    // pick the address where selected address is true
    const selectedAddress = userInfo?.buyer?.shippingAddress && userInfo?.buyer?.shippingAddress.find(a => a?.default_shipping_address === true);
 
-   const products = Array.isArray(cartItems?.data?.products) ? cartItems?.data?.products : [];
+   const products = Array.isArray(userInfo?.buyer?.shoppingCart?.products) ? userInfo?.buyer?.shoppingCart?.products : [];
 
    const buyBtnHandler = async (e) => {
       e.preventDefault();
 
-      if ((cartItems?.data?.numberOfProducts <= 0 || !step)) {
+      if ((userInfo?.buyer?.shoppingCart?.numberOfProducts <= 0 || !step)) {
          return setMessage("No Products to buy", "warning");
       }
 
@@ -106,7 +104,7 @@ const CheckOut = () => {
                      <hr />
                      <div className="row">
                         {
-                           cartItems?.data?.products && cartItems?.data?.products.filter(p => p?.variations?.stock === "in").map((products, index) => {
+                           userInfo?.buyer?.shoppingCart?.products && userInfo?.buyer?.shoppingCart?.products.filter(p => p?.variations?.stock === "in").map((products, index) => {
                               return (
                                  <CartItem
                                     cartTypes={"toCart"}
@@ -127,10 +125,10 @@ const CheckOut = () => {
                <div className="col-lg-4 mb-3">
 
                   <div className="cart_card">
-                     <CartCalculation product={cartItems?.data?.container_p && cartItems?.data?.container_p}
+                     <CartCalculation product={userInfo?.buyer?.shoppingCart?.container_p && userInfo?.buyer?.shoppingCart?.container_p}
                         headTitle={"Order Details"}></CartCalculation>
                      <br />
-                     <CartPayment products={cartItems?.data?.products && cartItems?.data?.products}
+                     <CartPayment products={userInfo?.buyer?.shoppingCart?.products && userInfo?.buyer?.shoppingCart?.products}
                         buyBtnHandler={buyBtnHandler} step={step} isStock={products && products.length > 0 ? true : false}></CartPayment>
                   </div>
                </div>

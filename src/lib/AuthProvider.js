@@ -5,7 +5,7 @@ import { authLogout } from '../Shared/common';
 export const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
-   const isLogged = new URLSearchParams(document.cookie.replaceAll("; ", "&")).get('is_logged');
+   const loggedUUID = new URLSearchParams(document.cookie.replaceAll("; ", "&")).get('loggedUUID');
    const [role, setRole] = useState("");
    const [userInfo, setUserInfo] = useState({});
    const [authLoading, setAuthLoading] = useState(true);
@@ -16,7 +16,7 @@ const AuthProvider = ({ children }) => {
 
    useEffect(() => {
 
-      if (!isLogged) {
+      if (!loggedUUID) {
          setAuthLoading(false);
          return;
       }
@@ -57,7 +57,7 @@ const AuthProvider = ({ children }) => {
 
       return () => clearTimeout(runFunc);
 
-   }, [ref, isLogged]);
+   }, [ref, loggedUUID]);
 
    return (
       <AuthContext.Provider value={{ role, userInfo, authRefetch, authLoading, authErr }}>

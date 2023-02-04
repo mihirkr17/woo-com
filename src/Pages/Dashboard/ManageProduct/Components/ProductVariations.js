@@ -9,7 +9,6 @@ import { faMinusSquare, faPlusSquare } from '@fortawesome/free-solid-svg-icons';
 const ProductVariations = ({ required, data, formTypes, super_category }) => {
    const variation = data?.variations && data?.variations;
 
-
    // Price and discount states
    const [inputPriceDiscount, setInputPriceDiscount] = useState({ price: (variation?.pricing?.price && variation?.pricing?.price) || "", sellingPrice: (variation?.pricing?.sellingPrice && variation?.pricing?.sellingPrice) || "" });
    const { discount } = usePrice(inputPriceDiscount.price, inputPriceDiscount.sellingPrice);
@@ -70,7 +69,7 @@ const ProductVariations = ({ required, data, formTypes, super_category }) => {
          }
 
 
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/product/set-product-variation?formType=${formTypes}&vId=${variation?._vId || ""}&attr=ProductVariations`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/dashboard/seller/products/set-product-variation?formType=${formTypes}&vId=${variation?._vId || ""}&attr=ProductVariations`, {
             withCredentials: true,
             credentials: 'include',
             method: 'PUT',

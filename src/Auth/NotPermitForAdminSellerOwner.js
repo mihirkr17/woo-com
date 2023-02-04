@@ -2,7 +2,7 @@ import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuthContext } from '../lib/AuthProvider';
 
-const NotPermitFor = ({ children }) => {
+const NotPermitForAdminSellerOwner = ({ children }) => {
    const { role } = useAuthContext();
    const location = useLocation();
 
@@ -17,4 +17,4 @@ const NotPermitFor = ({ children }) => {
    return children;
 };
 
-export default NotPermitFor;
+export default NotPermitForAdminSellerOwner;

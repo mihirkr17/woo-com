@@ -2,7 +2,7 @@ import { faCartShopping, faGauge, faSearch, faUserAlt } from '@fortawesome/free-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 import { Navbar } from 'react-bootstrap';
-import { Link, Navigate, NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import { useAuthContext } from '../../lib/AuthProvider';
 import { authLogout } from '../../Shared/common';
 import SearchPage from '../../Pages/SearchPage/SearchPage';
@@ -11,20 +11,19 @@ import CategoryHeader from '../../Pages/Home/Components/CategoryHeader';
 const NavigationBar = () => {
    const [openAccount, setOpenAccount] = useState(false);
    const { role, userInfo } = useAuthContext();
-   const navigate = useNavigate();
+   const location = useLocation();
    // const [query, setQuery] = useState("");
    const [loading, setLoading] = useState(false);
    const [data, setData] = useState([]);
-   const location = useLocation();
+
    const path = location.pathname;
    const [inFocus, setInFocus] = useState(false);
    const [searchQuery, setSearchQuery] = useState("");
 
-   if (role === 'OWNER' || role === 'ADMIN' || role === 'SELLER') {
-      return;
-   }
 
-   const cp = parseInt(new URLSearchParams(document.cookie.replaceAll("; ", "&")).get('cart_p'));
+   if (role === 'OWNER' || role === 'ADMIN' || role === 'SELLER') {
+      return false;
+   }
 
 
    async function callApi(searchQuery) {
@@ -127,7 +126,7 @@ const NavigationBar = () => {
                      {
                         (path !== '/register' && path !== '/login' && (role !== 'SELLER') && (role !== 'ADMIN') && (role !== 'OWNER')) &&
                         <NavLink className="nav_link cart_link" to='/my-cart'><FontAwesomeIcon icon={faCartShopping}></FontAwesomeIcon>
-                           {<div className="bg-info cart_badge">{(cp) || 0}</div>}
+                           {<div className="bg-info cart_badge">{(userInfo?.buyer?.shoppingCart?.numberOfProducts) || 0}</div>}
                         </NavLink>
                      }
                   </div>

@@ -1,8 +1,6 @@
 import React from 'react';
 import ProductListing from './ProductListing';
 import ProductVariations from './ProductVariations';
-import ProductSpecification from './ProductSpecification';
-import BodyInformation from './BodyInformation';
 import { newCategory } from '../../../../Assets/CustomData/categories';
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -14,10 +12,11 @@ const ProductTemplateForm = ({ formTypes, userInfo, setMessage }) => {
    const location = useLocation();
    const from = location?.state?.from?.pathname;
    const navigate = useNavigate();
-   
+
    const queryPID = new URLSearchParams(window.location.search).get("pid");
    const queryVID = new URLSearchParams(window.location.search).get("vId");
-   const {data, refetch} = useFetch(`${process.env.REACT_APP_BASE_URL}api/v1/product/get-one-product-in-seller-dsb?pid=${queryPID}&storeName=${userInfo?.seller?.storeInfos?.storeName}&vId=${queryVID || ""}`);
+   const uri = formTypes !== 'create' && `${process.env.REACT_APP_BASE_URL}api/v1/dashboard/get-one-product-in-seller-dsb?pid=${queryPID}&storeName=${userInfo?.seller?.storeInfos?.storeName}&vId=${queryVID || ""}`
+   const { data, refetch } = useFetch(uri);
 
 
    var sub_category, post_category, super_category;
@@ -62,25 +61,41 @@ const ProductTemplateForm = ({ formTypes, userInfo, setMessage }) => {
 
    return (
       <>
-         <button className='btn' onClick={() => goThere()}>
-            Back
-         </button>
+         {
+            formTypes !== 'create' && <button className='btn' onClick={() => goThere()}>
+               Back
+            </button>
+         }
 
          <div className="card_default card_description">
             <div className="d-flex align-items-start justify-content-between pb-3">
-               <h5>Product Intro</h5>
+
                {
+                  formTypes !== 'update-variation' && formTypes !== 'create' &&
+                  <>
+                     <h5>Product Intro</h5>
 
-                  formTypes !== 'update-variation' &&
-
-                  <button className='bt9_edit' onClick={() => handleToggle('productIntro')}>
-                     {toggle === 'productIntro' ? 'Cancel' : 'Edit'}
-                  </button>
+                     <button className='bt9_edit' onClick={() => handleToggle('productIntro')}>
+                        {toggle === 'productIntro' ? 'Cancel' : 'Edit'}
+                     </button>
+                  </>
                }
             </div>
 
-            {toggle === 'productIntro' ?
-               <ProductListing required={required} formTypes={formTypes} data={data} refetch={refetch} />
+            {toggle === 'productIntro' || formTypes === 'create' ?
+               <>
+                  {
+                     formTypes === 'create' && <button onClick={() => handleToggle(formTypes === 'create' && 'productIntro')} className='bt9_cancel' style={{
+                        position: "absolute",
+                        top: "0",
+                        right: "0"
+                     }}>
+                        Close
+                     </button>
+                  }
+
+                  <ProductListing super_category={super_category} required={required} setMessage={setMessage} formTypes={formTypes} data={data} refetch={refetch} />
+               </>
                : <div className='row py-2'>
                   <div className="col-lg-6"><small>CATEGORIES : {data?.categories && data?.categories.join("-->")}</small></div>
                   <div className="col-lg-6"><small>SELLER : {data?.sellerData?.sellerName}</small></div>
@@ -88,6 +103,20 @@ const ProductTemplateForm = ({ formTypes, userInfo, setMessage }) => {
                   <div className="col-lg-6"><small>BRAND : {data?.brand}</small></div>
                   <div className="col-lg-6"><small>SAVE AS : {data?.save_as}</small></div>
                   <div className="col-lg-6"><small>Product Title : {data?.title}</small></div>
+
+                  {
+                     data?.specification ? getAttrs(data?.specification) : <p>No attributes present here</p>
+                  }
+                  <div className="col-lg-6"><small>Meta Information: {data?.bodyInfo?.metaDescription.slice(0, 20) + "..."}</small></div>
+
+                  {
+                     data?.bodyInfo?.searchKeywords &&
+                     <div className="col-lg-6"><small>Search Keywords : {data?.bodyInfo?.searchKeywords.join(", ")}</small></div>
+                  }
+                  {
+                     data?.bodyInfo?.keyFeatures &&
+                     <div className="col-lg-6"><small>Key Features : {data?.bodyInfo?.keyFeatures.join(", ")}</small></div>
+                  }
                </div>
             }
          </div>
@@ -95,7 +124,8 @@ const ProductTemplateForm = ({ formTypes, userInfo, setMessage }) => {
          <br />
 
          {
-            (formTypes === 'update-variation' || formTypes === 'new-variation') && <div className="card_default card_description">
+            (formTypes === 'update-variation' || formTypes === 'new-variation') &&
+            <div className="card_default card_description">
                <div className="d-flex align-items-start justify-content-between pb-3">
                   <h5>
                      {
@@ -113,7 +143,7 @@ const ProductTemplateForm = ({ formTypes, userInfo, setMessage }) => {
                </div>
 
                {toggle === 'productVariation' ?
-                  <ProductVariations required={required} formTypes={formTypes} data={data} refetch={refetch} super_category={super_category} />
+                  <ProductVariations required={required} setMessage={setMessage} formTypes={formTypes} data={data} refetch={refetch} super_category={super_category} />
                   : <div className='row py-2'>
                      {
                         formTypes === 'update-variation' && getAttrs(data?.variations?.variant)
@@ -131,64 +161,6 @@ const ProductTemplateForm = ({ formTypes, userInfo, setMessage }) => {
                   </div>
                }
             </div>
-         }
-
-         <br />
-
-         {
-            formTypes === 'update' &&
-            <>
-               {
-                  super_category?.specification &&
-                  <div className="card_default card_description">
-                     <div className="d-flex align-items-start justify-content-between pb-3">
-                        <h5>Product Specification</h5>
-                        <button className='bt9_edit' onClick={() => handleToggle('variationTwo')}>
-                           {toggle === 'variationTwo' ? 'Cancel' : 'Edit'}
-                        </button>
-                     </div>
-
-                     {
-                        toggle === 'variationTwo' ?
-                           <ProductSpecification required={required} formTypes={formTypes} data={data} refetch={refetch} super_category={super_category} />
-                           : <div className='row py-2'>
-                              {
-                                 data?.specification ? getAttrs(data?.specification) : <p>No attributes present here</p>
-                              }
-                           </div>
-                     }
-                  </div>
-               }
-
-               <br />
-
-               <div className="card_default card_description">
-                  <div className="d-flex align-items-start justify-content-between pb-3">
-                     <h5>Additional Description</h5>
-                     <button className='bt9_edit' onClick={() => handleToggle('bodyInformation')}>
-                        {toggle === 'bodyInformation' ? 'Cancel' : 'Edit'}
-                     </button>
-                  </div>
-
-                  {
-                     toggle === 'bodyInformation' ?
-                        <BodyInformation required={required} formTypes={formTypes} data={data} refetch={refetch} super_category={super_category} />
-                        : <div className='row py-2'>
-                           <div className="col-lg-6"><small>Meta Information: {data?.bodyInfo?.metaDescription.slice(0, 20) + "..."}</small></div>
-
-                           {
-                              data?.bodyInfo?.searchKeywords &&
-                              <div className="col-lg-6"><small>Search Keywords : {data?.bodyInfo?.searchKeywords.join(", ")}</small></div>
-                           }
-                           {
-                              data?.bodyInfo?.keyFeatures &&
-                              <div className="col-lg-6"><small>Key Features : {data?.bodyInfo?.keyFeatures.join(", ")}</small></div>
-                           }
-
-                        </div>
-                  }
-               </div>
-            </>
          }
       </>
    );

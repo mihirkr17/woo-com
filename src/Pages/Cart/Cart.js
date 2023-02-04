@@ -4,20 +4,16 @@ import { useMessage } from '../../Hooks/useMessage';
 import CartCalculation from '../../Shared/CartComponents/CartCalculation';
 import CartItem from '../../Shared/CartComponents/CartItem';
 import { useAuthContext } from '../../lib/AuthProvider';
-import { useFetch } from '../../Hooks/useFetch';
 
 
 const Cart = () => {
-   const { userInfo } = useAuthContext();
+   const { userInfo, authRefetch } = useAuthContext();
    const { msg, setMessage } = useMessage();
    const navigate = useNavigate();
 
-   const { data: cartItems, refetch } = useFetch(`${process.env.REACT_APP_BASE_URL}api/v1/cart/show-my-cart-items`);
-
-
    // Go checkout page
    const goCheckoutPage = async (id) => {
-      if (cartItems?.data?.products && cartItems?.data?.products.length < 0) {
+      if (userInfo?.buyer?.shoppingCart?.products && userInfo?.buyer?.shoppingCart?.products.length < 0) {
          return setMessage("Your cart is empty. Please add product to your cart", "danger");
       }
       return navigate(`/my-cart/checkout`);
@@ -30,15 +26,15 @@ const Cart = () => {
             <div className="row">
                <div className="col-lg-8 mb-3">
                   <div className="cart_card">
-                     <h6>Total In Cart ({(cartItems?.data?.numberOfProducts && cartItems?.data?.numberOfProducts) || 0})</h6>
+                     <h6>Total In Cart ({(userInfo?.buyer?.shoppingCart?.numberOfProducts && userInfo?.buyer?.shoppingCart?.numberOfProducts) || 0})</h6>
                      <hr />
                      {
-                        Array.isArray(cartItems?.data?.products) && cartItems?.data?.numberOfProducts > 0 ? cartItems?.data?.products.map(product => {
+                        Array.isArray(userInfo?.buyer?.shoppingCart?.products) && userInfo?.buyer?.shoppingCart?.numberOfProducts > 0 ? userInfo?.buyer?.shoppingCart?.products.map(product => {
 
                            return (
                               <CartItem
                                  key={product?._id}
-                                 refetch={refetch}
+                                 refetch={authRefetch}
                                  product={product}
                                  cartTypes={"toCart"}
                                  setMessage={setMessage}
@@ -56,17 +52,17 @@ const Cart = () => {
                <div className="col-lg-4 mb-3">
                   <div className="cart_card">
                      <CartCalculation
-                        product={cartItems?.data?.container_p && cartItems?.data?.container_p}
+                        product={userInfo?.buyer?.shoppingCart?.container_p && userInfo?.buyer?.shoppingCart?.container_p}
                      />
 
                      <br />
 
                      <div className="text-center">
                         {
-                           (cartItems?.data?.numberOfProducts <= 0) &&
+                           (userInfo?.buyer?.shoppingCart?.numberOfProducts <= 0) &&
                            <small className="my-2 p-1">Please Add Product To Your Cart</small>
                         }
-                        <button className='bt9_checkout' disabled={(cartItems?.data?.numberOfProducts <= 0) ? true : false} onClick={() => goCheckoutPage(userInfo?._id)}>
+                        <button className='bt9_checkout' disabled={(userInfo?.buyer?.shoppingCart?.numberOfProducts <= 0) ? true : false} onClick={() => goCheckoutPage(userInfo?._id)}>
                            Proceed To Checkout
                         </button>
                      </div>

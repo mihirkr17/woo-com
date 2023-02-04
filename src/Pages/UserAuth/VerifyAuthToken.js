@@ -29,7 +29,7 @@ const VerifyAuthToken = ({ vToken, setMessage, navigate }) => {
             return;
          }
 
-         navigate(`/login?authenticate=${data?.data?.username}`);
+         navigate(`/login?authenticate=${data?.data?.email}`);
 
       } catch (error) {
 

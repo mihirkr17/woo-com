@@ -10,6 +10,7 @@ import ProductImages from './Components/ProductImages';
 import ProductContents from './Components/ProductContents';
 import ProductAdditionalDetails from './Components/ProductAdditionalDetails';
 import Breadcrumbs from '../../Shared/Breadcrumbs';
+import Spinner from '../../Components/Shared/Spinner/Spinner';
 
 
 const ViewProduct = () => {
@@ -21,11 +22,15 @@ const ViewProduct = () => {
 
    const variationId = new URLSearchParams(window.location.search).get("vId");
 
-   const { data, refetch: productRefetch } = useFetch(`${process.env.REACT_APP_BASE_URL}api/v1/product/fetch-single-product/${product_slug}?pId=${productId}&vId=${variationId}`, userInfo?.email);
+   const { data, refetch: productRefetch, loading } = useFetch(`${process.env.REACT_APP_BASE_URL}api/v1/product/fetch-single-product/${product_slug}?pId=${productId}&vId=${variationId}`, userInfo?.email);
 
    const { msg, setMessage } = useMessage();
 
    const product = data?.data?.product ? data?.data?.product : {};
+
+   if (loading) {
+      return <Spinner />;
+   }
 
    return (
       <div className='view_product section_default'>

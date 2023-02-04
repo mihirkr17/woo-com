@@ -11,7 +11,6 @@ const ManageProductHome = (
       loading,
       productDetailsModal,
       manageProducts,
-      msg,
       setSearchValue,
       setFilterCategory,
       setProductDetailsModal,
@@ -26,14 +25,15 @@ const ManageProductHome = (
       faTrashAlt,
       FontAwesomeIcon,
       Spinner,
-      ProductDetailsModal
+      ProductDetailsModal,
+      userInfo
    }
 ) => {
 
    const deleteProductVariationHandler = async (vid, pid) => {
       try {
 
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/product/delete-product-variation/${pid}/${vid}`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/dashboard/seller/${userInfo?.seller?.storeInfos?.storeName}/product/delete-product-variation/${pid}/${vid}`, {
             method: 'DELETE',
             withCredentials: true,
             credentials: 'include'
@@ -57,14 +57,14 @@ const ManageProductHome = (
    }
 
 
-   const productDeleteHandler = async (productId) => {
+   const deleteThisProductHandler = async (_id, _lId, storeName) => {
       if (window.confirm("Want to delete this product ?")) {
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/product/delete-product`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/dashboard/${storeName}/product/delete-product`, {
             method: "DELETE",
             withCredentials: true,
             credentials: "include",
             headers: {
-               authorization: productId
+               authorization: _id + ',' + _lId
             }
          });
          const resData = await response.json();
@@ -78,14 +78,13 @@ const ManageProductHome = (
    }
 
 
-   const stockHandler = async (e, productId) => {
+   const stockHandler = async (e, productId, _vId) => {
       const { value } = e.target;
 
       let available = parseInt(value);
 
-
       try {
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/product/update-stock`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/dashboard/seller/${userInfo?.seller?.storeInfos?.storeName}/product/update-stock`, {
             method: "PUT",
             withCredentials: true,
             credentials: "include",
@@ -93,7 +92,7 @@ const ManageProductHome = (
                "Content-Type": "application/json",
                authorization: productId
             },
-            body: JSON.stringify({ available })
+            body: JSON.stringify({ variations: { available, _vId }, MARKET_PLACE: 'WooKart' })
          });
 
          const resData = await response.json();
@@ -109,9 +108,16 @@ const ManageProductHome = (
    }
 
 
-   async function productControlHandler(action, lId, pId, vId) {
+   async function productControlHandler(action, lId, pId, vId, mProduct) {
       try {
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/product/product-control`, {
+
+         if ((mProduct?.variations && mProduct?.variations.filter(v => v?.status === 'active').length <= 1) && (action === 'inactive')) {
+            return setMessage("At least one variation need to active !", 'danger');
+         }
+
+
+
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/dashboard/seller/${mProduct?.sellerData?.storeName}/product-control`, {
             method: "PUT",
             withCredentials: true,
             credentials: 'include',
@@ -138,7 +144,7 @@ const ManageProductHome = (
          <div className="product_header">
 
             <div className="d-flex justify-content-between align-items-center flex-wrap">
-               <h5 className='py-3'>{role === 'SELLER' ? "Active Products (" + counter?.count + ")" : "All Products (" + counter?.count + ")"}</h5>
+               <h5 className='py-3'>{role === 'SELLER' ? "Active Products (" + counter + ")" : "All Products (" + counter + ")"}</h5>
                <div className='py-3'>
 
                   <select name="filter_product" style={{ textTransform: "capitalize" }} className='form-select form-select-sm' onChange={e => setFilterCategory(e.target.value)}>
@@ -157,14 +163,13 @@ const ManageProductHome = (
                   <input type="search" className='form-control form-control-sm' placeholder='Search product by name...' onChange={(e) => setSearchValue(e.target.value)} />
                </div>
             </div>
-            {msg}
          </div>
 
          {
             loading ? <Spinner /> :
                manageProducts?.data?.products && manageProducts?.data?.products.map((mProduct, index) => {
                   return (
-                     <div className='border my-3' key={index}>
+                     <div className='border my-3 card_default card_description' key={index}>
                         <div className='p-1'>
                            <small>
                               <pre>
@@ -191,15 +196,20 @@ const ManageProductHome = (
                                  Move To Draft
                               </button>
                            }
+
+                           <Link className='bt9_create mx-2' state={{ from: location }} replace to={`/dashboard/manage-product?np=add-new-variation&store=${mProduct?.sellerData?.storeName}&pid=${mProduct?._id}`}>
+                              Add New Variation
+                           </Link>
                         </div>
-                        <table className='table '>
+                        <table className='table'>
                            <thead>
                               <tr>
                                  <th>Image</th>
                                  <th>_vId</th>
                                  <th>sku</th>
                                  <th>Status</th>
-                                 <th>Pricing (Tk)</th>
+                                 <th>Price (Tk)</th>
+                                 <th>Selling Pricing (Tk)</th>
                                  <th>Availability (Pcs)</th>
                                  <th>Stock</th>
                                  <th>Action</th>
@@ -210,25 +220,39 @@ const ManageProductHome = (
                                  mProduct?.variations ? mProduct?.variations.map(variation => {
 
                                     return (
-                                       <tr key={variation?.vId}>
+                                       <tr key={variation?._vId}>
                                           <td>
                                              <img src={variation?.images && variation?.images[0]} alt="" style={{ width: "60px", height: "60px" }} />
                                           </td>
                                           <td>{variation?._vId}</td>
                                           <td>{variation?.sku}</td>
                                           <td>{variation?.status.toUpperCase()}</td>
+                                          <td>{variation?.pricing?.price}</td>
                                           <td>{variation?.pricing?.sellingPrice}</td>
-                                          <td>{variation?.available}</td>
+                                          <td>
+                                             {
+                                                role === 'SELLER' ?
+                                                   <input type="text" style={{ width: "50px", border: "1px solid black", backgroundColor: "inherit" }}
+                                                      onBlur={(e) => stockHandler(e, mProduct?._id, variation?._vId)}
+                                                      defaultValue={variation?.available}
+                                                      readOnly onDoubleClick={e => e.target.readOnly = false} /> :
+                                                   variation?.available
+
+                                             }
+                                          </td>
                                           <td>{variation?.stock}</td>
                                           <td>
 
-                                             <button className='bt9_edit me-2'
-                                                onClick={() => productControlHandler(variation?.status === 'active' ? "inactive" : 'active', mProduct?._lId, mProduct?._id, variation?._vId)}
+                                             
+
+                                             <button className={`me-2 ${variation?.status === 'active' ? 'bt9_warning' : 'bt9_edit'}`}
+                                                onClick={() => productControlHandler(variation?.status === 'active' ? "inactive" : 'active', mProduct?._lId, mProduct?._id, variation?._vId, mProduct)}
                                              >
                                                 {
                                                    variation?.status === 'active' ? 'Inactive Now' : 'Active Now'
                                                 }
-                                             </button>
+                                             </button> 
+                                 
 
 
                                              <Link className='bt9_edit' state={{ from: location }} replace
@@ -275,89 +299,6 @@ const ManageProductHome = (
 
          </div>
 
-         <div className="mt-3">
-            <h6>Inactive Products</h6>
-            <div className="card_default card_description">
-               <div className='table-responsive'>
-                  <table className='table table-striped table-bordered'>
-                     <thead>
-                        <tr>
-                           {/* <th>Product</th> */}
-                           <th>Title</th>
-                           <th>Price</th>
-                           <th>Selling Price</th>
-                           <th>Discount</th>
-                           <th>Stock</th>
-                           <th>Category</th>
-                           <th>Seller</th>
-                           <th>Action</th>
-                        </tr>
-                     </thead>
-                     <tbody>
-                        {manageProducts?.data?.inactiveProduct && manageProducts?.data?.inactiveProduct.map((p, index) => {
-                           const { categories, variations } = p;
-
-                           return (
-                              <tr key={index}>
-                                 <td>
-                                    <div className="d-flex flex-row align-items-center justify-content-start">
-                                       <img src={variations?.images && variations?.images[0]} style={{ width: "35px", height: "35px" }} alt="" />
-                                       <p style={{ cursor: "pointer", marginLeft: "0.6rem" }} title={`View ${p?.title}`} onClick={() => setProductDetailsModal(true && p)}>
-                                          {p?.title.length > 50 ? p?.title.slice(0, 50) + "..." : p?.title} <br />
-                                          <small>SKU ID: {variations?.sku}</small>
-                                       </p>
-                                    </div>
-                                 </td>
-                                 <td>
-                                    {variations?.pricing?.price} Tk
-                                 </td>
-                                 <td>
-                                    {variations?.pricing?.sellingPrice} Tk
-                                 </td>
-                                 <td>
-                                    {variations?.pricing?.discount} %
-                                 </td>
-                                 <td>
-                                    {role === 'SELLER' ?
-
-                                       <input type="text" style={{ width: "50px", border: "none", backgroundColor: "inherit" }}
-                                          onBlur={(e) => stockHandler(e, p?._id)}
-                                          defaultValue={variations?.available}
-                                          readOnly onDoubleClick={e => e.target.readOnly = false} /> :
-                                       p?.stockInfo?.available}
-                                 </td>
-                                 <td>{p?.categories && p?.categories[0]}</td>
-                                 <td>{p?.seller?.name}</td>
-                                 <td>
-                                    {<>
-                                       {variations?.status === 'inactive' &&
-                                          <button className='bt9_edit me-2'
-                                             onClick={() => productControlHandler("active", p?._lId, p?._id, variations?._vId)}
-                                          >Active</button>}
-                                    </>}
-                                    <button className="btn btn-sm m-1" title={`View ${p?.title}`} onClick={() => setProductDetailsModal(true && p)}>
-                                       <FontAwesomeIcon icon={faEye} />
-                                    </button>
-
-                                    {role === 'SELLER' &&
-                                       <Link className='bt9_edit' to={`/dashboard/manage-product?np=edit_product&store=${p?.sellerData?.storeName}&pid=${p?._id}`}>
-                                          <FontAwesomeIcon icon={faPenToSquare} />
-                                       </Link>}
-                                    <button className='btn btn-sm m-1' title={`Delete ${p?.title}`} onClick={() => productDeleteHandler(p?._id)}>
-                                       <FontAwesomeIcon icon={faTrashAlt} />
-                                    </button>
-                                 </td>
-                              </tr>
-                           );
-                        })}
-                     </tbody>
-                  </table>
-
-
-               </div>
-            </div>
-         </div>
-
          {
             role === 'SELLER' &&
             <div className="mt-3">
@@ -386,7 +327,7 @@ const ManageProductHome = (
                                     &nbsp;Edit Product
                                  </Link>
                                  &nbsp;
-                                 <button className='mt-2 bt9_delete'>Delete This Product</button> &nbsp;
+                                 <button className='mt-2 bt9_delete' onClick={() => deleteThisProductHandler(mProduct?._id, mProduct?._lId, mProduct?.sellerData?.storeName)}>Delete This Product</button> &nbsp;
                                  {
                                     (Array.isArray(mProduct?.variations) && mProduct?.variations.length >= 1 && mProduct?.save_as === 'draft') ?
                                        <button className='bt9_edit me-2'
@@ -421,7 +362,7 @@ const ManageProductHome = (
                                                 mProduct?.variations ? mProduct?.variations.map(variation => {
 
                                                    return (
-                                                      <tr key={variation?.vId}>
+                                                      <tr key={variation?._vId}>
                                                          <td>
                                                             <img src={variation?.images && variation?.images[0]} alt="" style={{ width: "60px", height: "60px" }} />
                                                          </td>

@@ -19,7 +19,7 @@ export const averageRating = (rating) => {
 }
 // ${process.env.REACT_APP_BASE_URL}
 export const authLogout = async () => {
-   const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/user/sign-out`, {
+   const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/auth/sign-out`, {
       method: "POST",
       withCredentials: true,
       credentials: "include",

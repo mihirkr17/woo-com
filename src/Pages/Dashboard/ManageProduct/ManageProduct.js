@@ -35,7 +35,7 @@ const ManageProduct = () => {
 
    useEffect(() => {
       const setTimeUrl = setTimeout(() => {
-         let url = `${process.env.REACT_APP_BASE_URL}api/v1/product/manage-product?page=${queryPage}&items=${8}&category=${filterCategory}&search=${searchValue}`
+         let url = `${process.env.REACT_APP_BASE_URL}api/v1/dashboard/view-products?page=${queryPage}&items=${8}&category=${filterCategory}&search=${searchValue}`
 
          setUrl(url);
       }, 200);
@@ -60,6 +60,7 @@ const ManageProduct = () => {
    return (
       <div className='section_default'>
          <div className="container">
+            {msg}
 
 
             {
@@ -82,7 +83,6 @@ const ManageProduct = () => {
                      loading={loading}
                      productDetailsModal={productDetailsModal}
                      manageProducts={manageProducts}
-                     msg={msg}
                      setSearchValue={setSearchValue}
                      setFilterCategory={setFilterCategory}
                      setProductDetailsModal={setProductDetailsModal}
@@ -98,6 +98,7 @@ const ManageProduct = () => {
                      FontAwesomeIcon={FontAwesomeIcon}
                      Spinner={Spinner}
                      ProductDetailsModal={ProductDetailsModal}
+                     userInfo={userInfo}
                   />
             }
 

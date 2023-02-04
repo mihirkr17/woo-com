@@ -8,7 +8,16 @@ export const useMessage = () => {
    setMessage = (message, types = "success") => {
 
       setMsg(
-         <p>
+         <p style={{
+            position: 'fixed',
+            top: '20px',
+            right: '20px',
+            zIndex: '999999999',
+            padding: '5px 8px',
+            backgroundColor: 'whitesmoke',
+            borderRadius: '10px',
+            transition: 'right 0.8s linear'
+         }}>
             <small className={`${types === "warning" ? "text-warning" : types === "danger" ? "text-danger" : "text-success"}`}>
                <strong>
                   {message}

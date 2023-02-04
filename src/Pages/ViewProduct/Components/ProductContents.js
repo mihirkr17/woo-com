@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import BtnSpinner from '../../../Components/Shared/BtnSpinner/BtnSpinner';
 import { faCartShopping, faHandshake, faLocationPin, faTruck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -9,10 +9,15 @@ import { textToTitleCase } from '../../../Shared/common';
 const ProductContents = ({ product, variationId, authRefetch, productRefetch, setMessage, userInfo }) => {
    const [addCartLoading, setAddCartLoading] = useState(false);
    const [buyLoading, setBuyLoading] = useState(false);
+   const location = useLocation();
 
    const navigate = useNavigate();
 
    const addToCartHandler = async (pId, _lId, vId, params) => {
+
+      if (!userInfo?.email) {
+         return navigate('/login', { state: { from: location } });
+      }
 
       const url = params === "buy" ? `${process.env.REACT_APP_BASE_URL}api/v1/cart/add-buy-product` :
          `${process.env.REACT_APP_BASE_URL}api/v1/cart/add-to-cart`;
@@ -59,8 +64,6 @@ const ProductContents = ({ product, variationId, authRefetch, productRefetch, se
    }
    const defShipAddrs = Array.isArray(userInfo?.buyer?.shippingAddress) &&
       userInfo?.buyer?.shippingAddress.find(addrs => addrs?.default_shipping_address === true);
-
-   console.log(product);
 
    return (
       <div className='row w-100'>
@@ -227,7 +230,7 @@ const ProductContents = ({ product, variationId, authRefetch, productRefetch, se
                product?.fulfilledBy &&
                <div className='pb-3 d-flex align-items-center justify-content-between'>
                   <div className='textMute'>
-                  <FontAwesomeIcon icon={faHandshake} /> &nbsp;
+                     <FontAwesomeIcon icon={faHandshake} /> &nbsp;
                      Fulfilled by
                   </div>
                   <div>

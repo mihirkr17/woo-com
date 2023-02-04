@@ -25,6 +25,8 @@
   --color-blued: #2874f0;
   --color-danger: red;
   --color-danger-alt: #d30000;
+  --color-warning: #ffe600d7;
+  --color-warning-alt: #bba800d7;
   --color-trans-one: #ffffff91;
   --color-trans-two: #0000001a;
   --color-trans-three: #b3b3b363;
@@ -285,6 +287,25 @@ svg {
 }
 .bt9_delete:hover {
   background-color: var(--color-danger-alt);
+}
+
+.bt9_warning {
+  padding: 0.2rem 0.3rem;
+  border: 1px solid var(--color-warning);
+  border-radius: 3px;
+  background-color: var(--color-warning);
+  color: var(--color-dark);
+  font-size: 0.7rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+  -webkit-transition: all 0.4s linear;
+  transition: all 0.4s linear;
+  -webkit-appearance: button;
+     -moz-appearance: button;
+          appearance: button;
+}
+.bt9_warning:hover {
+  background-color: var(--color-warning-alt);
 }
 
 .bt9_create {

@@ -2,7 +2,6 @@ import React, { useContext } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Assets/css/style.css';
 import { Route, Routes, useLocation } from 'react-router-dom';
-import RequireAuth from './Auth/RequireAuth';
 import Home from './Pages/Home/Home';
 import Blog from './Pages/Blog';
 import Footer from './Components/Shared/Footer';
@@ -37,9 +36,9 @@ import RequiredOwnerAdmin from './Auth/RequiredOwnerAdmin';
 import OrderProvider from './lib/OrderProvider';
 import { UserContext } from './lib/UserProvider';
 import Wishlist from './Pages/Wishlist/Wishlist';
-import RequiredUser from './Auth/RequiredUser';
+import RequiredBuyer from './Auth/RequiredBuyer';
 import ManageSellers from './Admin/ManageSellers/ManageSellers';
-import NotPermitFor from './Auth/NotPermitFor';
+import NotPermitForAdminSellerOwner from './Auth/NotPermitForAdminSellerOwner';
 import AddProduct from './Pages/Dashboard/AddProduct/AddProduct';
 import AddSingleProduct from './Pages/Dashboard/AddProduct/Components/AddSingleProduct';
 import UserAccount from './Pages/UserAccount/UserAccount';
@@ -56,35 +55,36 @@ function App() {
       <AuthProvider>
         <NavigationBar></NavigationBar>
 
-        {/*  Only User routes  */}
         <Routes>
-          <Route path='/user/my-account' element={<RequiredUser><UserAccount></UserAccount></RequiredUser>}>
+
+          {/* Only Buyer Routes */}
+          <Route path='/user/my-account' element={<RequiredBuyer><UserAccount></UserAccount></RequiredBuyer>}>
             <Route index element={<Profile></Profile>}></Route>
             <Route path='address-book' element={<MyAddressBook></MyAddressBook>}></Route>
             <Route path='payment-management' element={<MyPayment></MyPayment>}></Route>
             <Route path='orders-management' element={<MyOrder></MyOrder>}></Route>
           </Route>
 
-          <Route path='/my-cart' element={<RequiredUser><Cart></Cart></RequiredUser>}></Route>
-          <Route path='/product/purchase/:productId' element={<RequiredUser><Purchase></Purchase></RequiredUser>}></Route>
-          <Route path='/my-cart/checkout' element={<RequiredUser><CheckOut></CheckOut></RequiredUser>}></Route>
-          <Route path='/my-cart/checkout-single/:productId' element={<RequiredUser><CheckoutSingle></CheckoutSingle></RequiredUser>}></Route>
-   
-          <Route path='/' element={<NotPermitFor><Home></Home></NotPermitFor>}></Route>
+          <Route path='/my-cart' element={<RequiredBuyer><Cart></Cart></RequiredBuyer>}></Route>
+          <Route path='/product/purchase/:productId' element={<RequiredBuyer><Purchase></Purchase></RequiredBuyer>}></Route>
+          <Route path='/my-cart/checkout' element={<RequiredBuyer><CheckOut></CheckOut></RequiredBuyer>}></Route>
+          <Route path='/my-cart/checkout-single/:productId' element={<RequiredBuyer><CheckoutSingle></CheckoutSingle></RequiredBuyer>}></Route>
+
+          <Route path='/' element={<NotPermitForAdminSellerOwner><Home></Home></NotPermitForAdminSellerOwner>}></Route>
           <Route path='/blog' element={<Blog></Blog>}></Route>
           <Route path='/login' element={<Login></Login>}></Route>
           <Route path='/register' element={<Register></Register>}></Route>
           <Route path='/search' element={<SearchPage></SearchPage>}></Route>
 
-          <Route path='/product/:product_slug' element={<NotPermitFor><ViewProduct></ViewProduct></NotPermitFor>}></Route>
-          <Route path='/c/:category' element={<NotPermitFor><ProductCategory></ProductCategory></NotPermitFor>}></Route>
-          <Route path='/c/:category/:sub_category' element={<NotPermitFor><ProductCategory></ProductCategory></NotPermitFor>}></Route>
-          <Route path='/c/:category/:sub_category/:post_category' element={<NotPermitFor><ProductCategory></ProductCategory></NotPermitFor>}></Route>
+          <Route path='/product/:product_slug' element={<NotPermitForAdminSellerOwner><ViewProduct></ViewProduct></NotPermitForAdminSellerOwner>}></Route>
+          <Route path='/c/:category' element={<NotPermitForAdminSellerOwner><ProductCategory></ProductCategory></NotPermitForAdminSellerOwner>}></Route>
+          <Route path='/c/:category/:sub_category' element={<NotPermitForAdminSellerOwner><ProductCategory></ProductCategory></NotPermitForAdminSellerOwner>}></Route>
+          <Route path='/c/:category/:sub_category/:post_category' element={<NotPermitForAdminSellerOwner><ProductCategory></ProductCategory></NotPermitForAdminSellerOwner>}></Route>
 
           <Route path='/sell-online' element={<SellOnline></SellOnline>}></Route>
-          <Route path='/my-profile/my-wishlist' element={<RequiredUser><Wishlist></Wishlist></RequiredUser>}></Route>
+          <Route path='/my-profile/my-wishlist' element={<RequiredBuyer><Wishlist></Wishlist></RequiredBuyer>}></Route>
 
-          {/* // Admin path */}
+          {/* ADMIN, SELLER, OWNER Routes */}
           <Route path='/dashboard' element={<RequiredDashboard>
 
             <SellerCheckProvider>
@@ -115,6 +115,8 @@ function App() {
           </Route>
 
         </Routes>
+
+
 
         {
           (path !== '/login' && path !== '/register' && !path.startsWith('/dashboard')) && <Footer></Footer>

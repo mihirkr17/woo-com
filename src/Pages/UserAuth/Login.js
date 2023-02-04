@@ -12,11 +12,10 @@ const Login = () => {
    const [showPwd, setShowPwd] = useState(false);
    const navigate = useNavigate();
    const location = useLocation();
-   let from = location.state?.from?.pathname || '/';
+   let from = location.state?.from?.pathname + (location.state?.from?.search && location.state?.from?.search) || '/';
    const { authRefetch, role } = useAuthContext();
    const [loading, setLoading] = useState(false);
    const queryParams = new URLSearchParams(window.location.search);
-   const term = queryParams.get("err");
    const sTerm = queryParams.get('authenticate');
    const [verifyToken, setVerifyToken] = useState(undefined);
 
