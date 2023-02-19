@@ -10,16 +10,11 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import ProductImages from '../Pages/ViewProduct/Components/ProductImages';
 
-const ProductModel = ({ product, addToCartHandler, addCartLoading, buyLoading, variationId, showFor, addToWishlist, removeToWishlist, size, handleSetSize }) => {
+const ProductModel = ({ product }) => {
    const navigate = useNavigate();
    const [tab, setTab] = useState("description");
 
    console.log(product)
-
-
-   if (product) {
-      product['size'] = (size);
-   }
 
 
    const sizeBtnStyle = {
@@ -61,7 +56,7 @@ const ProductModel = ({ product, addToCartHandler, addCartLoading, buyLoading, v
 
                <h5 className="product_title py-2">
                   <span className='textMute'>{product?.brand}</span> <br />
-                  {product?.variations?.title}
+                  {product?.title}
                </h5>
 
                <div className="product_rating_model">
@@ -82,52 +77,8 @@ const ProductModel = ({ product, addToCartHandler, addCartLoading, buyLoading, v
 
                <br />
 
-               <small className='textMute'>Seller : {product?.seller?.name}</small><br />
-
-               {
-                  product?.swatch &&
-                  <div className="p-3 border my-4 d-flex align-items-center justify-content-start flex-column">
-
-                     {/* Size Swatch */}
-                     <div className="d-flex align-items-center justify-content-start w-100">
-                        <span>Size</span>
-                        <div className="px-3 d-flex flex-row">
-                           {
-                              product?.swatch &&
-                              product?.swatch.map((e, i) => {
-                                 return (
-                                    <Link key={i} style={e.vId === variationId ? sizeBtnStyle : sizeBtnStyleDisable}
-                                       to={`/product/${e?.slug}?pId=${product?._id}&vId=${e.vId}`}>
-                                       {e.attr?.size}
-                                    </Link>
-                                 )
-                              })
-                           }
-                        </div>
-                     </div>
-
-                  </div>
-               }
+               <small className='textMute'>Seller : {product?.sellerData?.storeName}</small><br />
             </article>
-
-            {
-               (showFor !== 'ADMIN' && showFor !== 'OWNER' && showFor !== 'SELLER') && <div className="py-3 mt-4 product_handler">
-
-                  {
-                     product?.inCart === false ?
-                        <button className='addToCartBtn' disabled={product?.stockInfo?.stock === "out" ? true : false} onClick={() => addToCartHandler(product, "toCart")}>
-                           {addCartLoading ? <BtnSpinner text={"Adding..."}></BtnSpinner> : <><FontAwesomeIcon icon={faCartShopping} /> Add To Cart</>}
-                        </button> :
-                        <button className='ms-4 addToCartBtn' onClick={() => navigate('/my-cart')}>
-                           Go To Cart
-                        </button>
-                  }
-
-                  <button className='ms-4 buyBtn' disabled={product?.stockInfo?.stock === "out" ? true : false} onClick={() => addToCartHandler(product, "buy")}>
-                     {buyLoading ? <BtnSpinner text={"Buying..."}></BtnSpinner> : <> Buy Now</>}
-                  </button>
-               </div>
-            }
 
          </div>
          
@@ -149,16 +100,6 @@ const ProductModel = ({ product, addToCartHandler, addCartLoading, buyLoading, v
                         </tr>
                      </thead>
                      <tbody>
-                        {
-                           product?.bodyInfo?.specification && product?.bodyInfo?.specification.map((items, index) => {
-                              return (
-                                 <tr key={index}>
-                                    <th>{items?.type} </th>
-                                    <td>: {items?.value}</td>
-                                 </tr>
-                              )
-                           })
-                        }
                      </tbody>
                   </table>
                }

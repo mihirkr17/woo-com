@@ -1,17 +1,81 @@
-import React from 'react';
-import { Button, Modal } from 'react-bootstrap';
-import ProductModel from '../../../../Shared/ProductModel';
+import { Interweave } from 'interweave';
+import React, { useState } from 'react';
+import ModalWrapper from '../../../../Shared/ModalWrapper';
 
-const ProductDetailsModal = ({ modalOpen: data, modalClose, showFor }) => {
+
+const ProductDetailsModal = ({ data: product, closeModal }) => {
+   const [tab, setTab] = useState("description");
+
+   if (!product) {
+      return
+   }
+
+   function getAttrs(obj = {}) {
+
+      let str = [];
+
+      for (const [key, value] of Object.entries(obj)) {
+         str.push(
+            <div className="col-lg-6"><small>{key.replace("_", " ").toUpperCase()} : {value}</small></div>
+         )
+      }
+
+      return str;
+   }
    return (
-      <Modal show={data} onHide={modalClose}>
-         <Modal.Header>
-            <Button variant="danger" onClick={modalClose}>X</Button>
-         </Modal.Header>
-         <Modal.Body>
-            <ProductModel product={data} showFor={showFor}></ProductModel>
-         </Modal.Body>
-      </Modal>
+      <ModalWrapper closeModal={closeModal}>
+         <div className="row mb-5">
+            <div className="col-lg-5 pb-3">
+
+            </div>
+
+            <div className="col-lg-7 pb-3 product_description">
+               <article>
+
+                  <h5 className="product_title py-2">
+                     <span className='textMute'>{product?.brand}</span> <br />
+                     {product?.title}
+                  </h5>
+
+                  <div className="product_rating_model">
+                     <small>{product?.ratingAverage || 0} out of 5</small>
+                  </div>
+
+
+                  <small className='text-muted'>
+                     <i>
+                        {product?.variations?.stock === "out" ? "Out of Stock" : "Hurry, Only " + product?.variations?.inventoryDetails?.available + " Left !"}
+                     </i>
+                  </small>
+
+                  <br />
+
+                  <small className='textMute'>Seller : {product?.sellerData?.storeName}</small><br />
+               </article>
+
+            </div>
+
+            <div className="col-12 py-3 mt-3 card_default">
+               <div className="ff_kl3">
+                  <button className={`ddl_g_btn ${tab === "description" ? "active" : ""}`} onClick={() => setTab("description")}>Product Description</button>
+                  <button className={`ddl_g_btn ${tab === "spec" ? "active" : ""}`} onClick={() => setTab("spec")}>Specification</button>
+
+               </div>
+               <div className="dp_fgk card_description">
+                  {
+                     tab === "description" && <Interweave className='pt-4 product_spec' content={product?.bodyInfo?.description} />
+                  }
+                  {
+                     tab === "spec" && <div className="row">
+                        {getAttrs(product?.specification)}
+                     </div>
+                  }
+
+
+               </div>
+            </div>
+         </div>
+      </ModalWrapper>
    );
 };
 

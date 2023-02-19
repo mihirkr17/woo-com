@@ -4,19 +4,22 @@ import { useMessage } from '../../Hooks/useMessage';
 import CartCalculation from '../../Shared/CartComponents/CartCalculation';
 import CartItem from '../../Shared/CartComponents/CartItem';
 import { useAuthContext } from '../../lib/AuthProvider';
+import { useCartContext } from '../../lib/CartProvider';
 
 
 const Cart = () => {
-   const { userInfo, authRefetch } = useAuthContext();
+   const { userInfo, cartQtyUpdater } = useAuthContext();
    const { msg, setMessage } = useMessage();
    const navigate = useNavigate();
+   const { cartData, cartRefetch } = useCartContext();
+
 
    // Go checkout page
-   const goCheckoutPage = async (id) => {
-      if (userInfo?.buyer?.shoppingCart?.products && userInfo?.buyer?.shoppingCart?.products.length < 0) {
+   const goCheckoutPage = async (uuid, params) => {
+      if (cartData?.products && cartData?.products.length < 0) {
          return setMessage("Your cart is empty. Please add product to your cart", "danger");
       }
-      return navigate(`/my-cart/checkout`);
+      return navigate(`/checkout?spa=${uuid}.${params}`);
    }
 
    return (
@@ -26,19 +29,21 @@ const Cart = () => {
             <div className="row">
                <div className="col-lg-8 mb-3">
                   <div className="cart_card">
-                     <h6>Total In Cart ({(userInfo?.buyer?.shoppingCart?.numberOfProducts && userInfo?.buyer?.shoppingCart?.numberOfProducts) || 0})</h6>
+                     <h6>Total In Cart ({(cartData?.numberOfProducts && cartData?.numberOfProducts) || 0})</h6>
                      <hr />
                      {
-                        Array.isArray(userInfo?.buyer?.shoppingCart?.products) && userInfo?.buyer?.shoppingCart?.numberOfProducts > 0 ? userInfo?.buyer?.shoppingCart?.products.map(product => {
-
+                        Array.isArray(cartData?.products) && cartData?.numberOfProducts > 0 ? cartData?.products.map(product => {
                            return (
                               <CartItem
-                                 key={product?._id}
-                                 refetch={authRefetch}
+                                 key={product?.variationID}
+                                 cartRefetch={cartRefetch}
                                  product={product}
-                                 cartTypes={"toCart"}
+                                 cartType={"toCart"}
+                                 checkOut={false}
                                  setMessage={setMessage}
-                              ></CartItem>
+                                 cartQtyUpdater={cartQtyUpdater}
+                                 items={cartData?.numberOfProducts}
+                              />
                            )
                         }) :
                            <div className="card_default">
@@ -52,17 +57,17 @@ const Cart = () => {
                <div className="col-lg-4 mb-3">
                   <div className="cart_card">
                      <CartCalculation
-                        product={userInfo?.buyer?.shoppingCart?.container_p && userInfo?.buyer?.shoppingCart?.container_p}
+                        product={cartData?.container_p && cartData?.container_p}
                      />
 
                      <br />
 
                      <div className="text-center">
                         {
-                           (userInfo?.buyer?.shoppingCart?.numberOfProducts <= 0) &&
+                           (cartData?.numberOfProducts <= 0) &&
                            <small className="my-2 p-1">Please Add Product To Your Cart</small>
                         }
-                        <button className='bt9_checkout' disabled={(userInfo?.buyer?.shoppingCart?.numberOfProducts <= 0) ? true : false} onClick={() => goCheckoutPage(userInfo?._id)}>
+                        <button className='bt9_checkout' disabled={(cartData?.numberOfProducts <= 0) ? true : false} onClick={() => goCheckoutPage(userInfo?._UUID, "cart.proceed_to_checkout")}>
                            Proceed To Checkout
                         </button>
                      </div>

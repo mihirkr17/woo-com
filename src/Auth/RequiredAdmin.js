@@ -13,7 +13,7 @@ const RequiredAdmin = ({ children }) => {
 
       return <Navigate to={'/'} state={{ from: location }} replace></Navigate>;
    } else if (authLoading) {
-
+      return false;
    } else {
       return <Navigate to={'/login'} state={{ from: location }} replace></Navigate>;
    }

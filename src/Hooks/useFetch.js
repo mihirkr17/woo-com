@@ -25,6 +25,7 @@ export const useFetch = (url, authorization = "") => {
                const response = await fetch(url, {
                   withCredential: true,
                   credentials: 'include',
+                  method: "GET",
                   headers: {
                      authorization
                   }

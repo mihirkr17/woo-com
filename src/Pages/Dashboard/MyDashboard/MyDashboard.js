@@ -6,18 +6,14 @@ import { useFetch } from '../../../Hooks/useFetch';
 import { useAuthContext } from '../../../lib/AuthProvider';
 import { useOrder } from '../../../lib/OrderProvider';
 import { useSellerChecker } from '../../../lib/SellerCheckProvider';
-import CheckOrder from '../CheckOrder/CheckOrder';
-import AdminTemplate from './Components/AdminTemplate';
 
 const MyDashboard = () => {
    const { userInfo, role } = useAuthContext();
    const { state } = useSellerChecker();
    const { data } = useFetch(`${process.env.REACT_APP_BASE_URL}api/v1/dashboard/overview`);
 
-   const { orderCount } = useOrder();
-   // search query params
-   const queryParams = new URLSearchParams(window.location.search).get("check_order");
-   const querySeller = new URLSearchParams(window.location.search).get("seller");
+   const { newOrderCount } = useOrder();
+
 
    return (
       <div className='section_default'>
@@ -33,9 +29,9 @@ const MyDashboard = () => {
                                  {
                                     (role === 'SELLER') &&
                                     <>
-                                       <Link to={`/dashboard?check_order=order_checking&seller=${userInfo?.seller}`}>
+                                       <Link to={`manage-orders`} title="Pending orders">
                                           <FontAwesomeIcon icon={faBell} />
-                                          <span className="o_counter">{orderCount}</span>
+                                          <span className="o_counter">{newOrderCount}</span>
                                        </Link>
                                     </>
                                  }
@@ -173,12 +169,6 @@ const MyDashboard = () => {
                                  </table>
                               </div>
                            </div>
-                        }
-
-
-
-                        {
-                           (queryParams === "order_checking" && querySeller === userInfo?.seller && role === 'SELLER') && <CheckOrder />
                         }
                      </div>
                   </div>

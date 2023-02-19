@@ -9,54 +9,50 @@ import CartItem from '../../Shared/CartComponents/CartItem';
 import CartPayment from '../../Shared/CartComponents/CartPayment';
 import { useAuthContext } from '../../lib/AuthProvider';
 import CartAddress from '../../Shared/CartComponents/CartAddress';
+import { useCartContext } from '../../lib/CartProvider';
 
 const CheckOut = () => {
    const navigate = useNavigate();
    const { msg, setMessage } = useMessage()
    const { authLoading, authRefetch, userInfo } = useAuthContext();
    const [step, setStep] = useState(false);
+   const [paymentMode, setPaymentMode] = useState("");
+   const { cartData, cartRefetch } = useCartContext();
 
-   // pick the address where selected address is true
-   const selectedAddress = userInfo?.buyer?.shippingAddress && userInfo?.buyer?.shippingAddress.find(a => a?.default_shipping_address === true);
 
-   const products = Array.isArray(userInfo?.buyer?.shoppingCart?.products) ? userInfo?.buyer?.shoppingCart?.products : [];
 
    const buyBtnHandler = async (e) => {
-      e.preventDefault();
+      try {
+         e.preventDefault();
+         const selectedAddress = userInfo?.buyer?.defaultShippingAddress && userInfo?.buyer?.defaultShippingAddress;
 
-      if ((userInfo?.buyer?.shoppingCart?.numberOfProducts <= 0 || !step)) {
-         return setMessage("No Products to buy", "warning");
-      }
-
-      let buyAlert = window.confirm("Buy Now");
-      let payment_mode = e.target.payment.value;
-
-      for (let i = 0; i < products.length; i++) {
-         let elem = products[i];
-         let orderId = Math.floor(Math.random() * 1000000000);
-         let trackingId = ("TR00" + orderId);
-
-         let product = {
-            orderId: orderId,
-            trackingId,
-            user_email: userInfo?.email,
-            productId: elem._id,
-            title: elem?.title,
-            slug: elem?.slug,
-            brand: elem?.brand,
-            image: elem.image,
-            sku: elem?.sku,
-            price: elem?.price,
-            totalAmount: elem?.totalAmount,
-            quantity: elem?.quantity,
-            seller: elem?.seller,
-            payment_mode: payment_mode,
-            shipping_address: selectedAddress,
-            package_dimension: elem?.package_dimension,
-            delivery_service: elem?.delivery_service,
+         if (paymentMode === "") {
+            return setMessage("Please select payment mode !", "danger");
+         }
+         if (!selectedAddress) {
+            return setMessage("Please select shipping address.", "danger");
          }
 
-         if (buyAlert) {
+         // let buyAlert = window.confirm("Buy Now");
+         let products = cartData?.products && cartData?.products;
+
+         if (Array.isArray(products)) {
+            let newItems = [];
+
+            for (let i = 0; i < products.length; i++) {
+               let pElem = products[i];
+               delete pElem["paymentInfo"];
+               delete pElem["sellerData"];
+               delete pElem["totalAmount"];
+               delete pElem["sellingPrice"];
+               delete pElem["shippingCharge"];
+               delete pElem["paymentInfo"];
+               pElem["shippingAddress"] = selectedAddress;
+               pElem["paymentMode"] = paymentMode;
+               pElem["state"] = "byCart";
+               newItems.push(pElem);
+            }
+
             const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/order/set-order/`, {
                method: "POST",
                withCredentials: true,
@@ -65,21 +61,36 @@ const CheckOut = () => {
                   "Content-Type": "application/json",
                   authorization: `${userInfo?.email}`
                },
-               body: JSON.stringify({ ...product })
+               body: JSON.stringify(newItems)
             });
 
-            const resData = await response.json();
+            const result = await response.json();
 
             if (response.status >= 200 && response.status <= 299) {
-               authRefetch();
-               navigate(`/my-profile/my-order?order=${resData?.message}`);
+
+               if (result?.data) {
+
+                  let data = result?.data && result?.data;
+
+                  for (let i = 0; i < data.length; i++) {
+                     let elem = data[i];
+
+                     if (elem?.orderSuccess) {
+                        setMessage(elem?.message, "success");
+                     } else {
+                        setMessage(elem?.message, "danger");
+                     }
+                  }
+               }
+               // authRefetch();
+               // return navigate(`/my-profile/my-order`);
             } else {
-               setMessage(resData?.message, 'danger');
-               return;
+               return setMessage(result?.message, 'danger');
             }
          }
-      }
+      } catch (error) {
 
+      }
    }
 
    if (authLoading) {
@@ -97,20 +108,20 @@ const CheckOut = () => {
             <div className="row">
                <div className="col-lg-8 mb-3">
                   <div className="cart_card">
-                     <CartAddress setMessage={setMessage} navigate={navigate} authRefetch={authRefetch} addr={userInfo?.buyer?.shippingAddress ? userInfo?.buyer?.shippingAddress : []} setStep={setStep} />
+                     <CartAddress setMessage={setMessage} navigate={navigate} cartRefetch={cartRefetch} authRefetch={authRefetch} addr={userInfo?.buyer?.shippingAddress ? userInfo?.buyer?.shippingAddress : []} setStep={setStep} />
                      <br />
 
                      <h6>Order Summary</h6>
                      <hr />
-                     <div className="row">
+                     <div className="row px-3">
                         {
-                           userInfo?.buyer?.shoppingCart?.products && userInfo?.buyer?.shoppingCart?.products.filter(p => p?.variations?.stock === "in").map((products, index) => {
+                           Array.isArray(cartData?.products) && cartData?.products.filter(p => p?.stock === "in").map((product) => {
                               return (
                                  <CartItem
-                                    cartTypes={"toCart"}
+                                    cartType={"toCart"}
                                     checkOut={true}
-                                    product={products}
-                                    key={index}
+                                    product={product}
+                                    key={product?.variationID}
                                  />
                               )
                            })
@@ -125,11 +136,24 @@ const CheckOut = () => {
                <div className="col-lg-4 mb-3">
 
                   <div className="cart_card">
-                     <CartCalculation product={userInfo?.buyer?.shoppingCart?.container_p && userInfo?.buyer?.shoppingCart?.container_p}
-                        headTitle={"Order Details"}></CartCalculation>
+                     <CartCalculation
+                        product={(cartData?.container_p && cartData?.container_p)}
+                        headTitle={"Order Details"}
+                     />
+
                      <br />
-                     <CartPayment products={userInfo?.buyer?.shoppingCart?.products && userInfo?.buyer?.shoppingCart?.products}
-                        buyBtnHandler={buyBtnHandler} step={step} isStock={products && products.length > 0 ? true : false}></CartPayment>
+
+                     <CartPayment
+                        paymentMode={paymentMode}
+                        setPaymentMode={setPaymentMode}
+                        products={cartData?.products && cartData?.products}
+                        buyBtnHandler={buyBtnHandler}
+                        step={step}
+                        isStock={cartData?.products ? true : false}
+                        isAddress={userInfo?.buyer?.defaultShippingAddress && userInfo?.buyer?.defaultShippingAddress ? true : false}
+                     />
+
+
                   </div>
                </div>
             </div>

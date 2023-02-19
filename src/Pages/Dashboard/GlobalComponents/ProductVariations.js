@@ -1,9 +1,9 @@
 import React from 'react';
 import { useState } from 'react';
-import { usePrice } from '../../../../Hooks/usePrice';
-import { useMessage } from '../../../../Hooks/useMessage';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMinusSquare, faPlusSquare } from '@fortawesome/free-solid-svg-icons';
+import { usePrice } from '../../../Hooks/usePrice';
+import { useMessage } from '../../../Hooks/useMessage';
 
 
 const ProductVariations = ({ required, data, formTypes, super_category }) => {
@@ -69,7 +69,7 @@ const ProductVariations = ({ required, data, formTypes, super_category }) => {
          }
 
 
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/dashboard/seller/products/set-product-variation?formType=${formTypes}&vId=${variation?._vId || ""}&attr=ProductVariations`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/dashboard/seller/products/set-product-variation?formType=${formTypes}&vId=${variation?._VID || ""}&attr=ProductVariations`, {
             withCredentials: true,
             credentials: 'include',
             method: 'PUT',

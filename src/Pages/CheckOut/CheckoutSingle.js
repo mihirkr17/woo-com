@@ -1,104 +1,175 @@
-import { faCheckCircle, faLeftLong } from '@fortawesome/free-solid-svg-icons';
+import { faLeftLong } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
-import { cartCalculate } from '../../Shared/common';
 import CartCalculation from '../../Shared/CartComponents/CartCalculation';
 import CartItem from '../../Shared/CartComponents/CartItem';
 import CartPayment from '../../Shared/CartComponents/CartPayment';
 import { useAuthContext } from '../../lib/AuthProvider';
 import CartAddress from '../../Shared/CartComponents/CartAddress';
+import { useEffect } from 'react';
+import { useMessage } from '../../Hooks/useMessage';
 
 const CheckoutSingle = () => {
    const navigate = useNavigate();
    const { userInfo, authLoading, authRefetch } = useAuthContext();
    const [step, setStep] = useState(false);
-   const product = userInfo && userInfo?.buy_product;
+   const [data, setData] = useState({});
+   const { state } = useLocation();
+   const [productData, setProductData] = useState(state || {});
+   const { msg, setMessage } = useMessage("");
+   const [paymentMode, setPaymentMode] = useState("");
 
-   if (authLoading) return <Spinner></Spinner>
-   const selectedAddress = userInfo && userInfo?.address && userInfo?.address.find(a => a?.select_address === true); //finding selected address to checkout page
+   const selectedAddress = userInfo?.buyer?.defaultShippingAddress && userInfo?.buyer?.defaultShippingAddress;
 
-   const buyBtnHandler = async (e) => {
-      e.preventDefault();
-      let payment_mode = e.target.payment.value;
-      let orderId = Math.floor(Math.random() * 1000000000);
-      let trackingId = ("TR00" + orderId);
-      let products = {
-         orderId: orderId,
-         trackingId,
-         user_email: userInfo?.email,
-         productId: product?._id,
-         title: product?.title,
-         slug: product?.slug,
-         brand: product?.brand,
-         image: product.image,
-         sku: product?.sku,
-         price: product?.price,
-         totalAmount: product?.totalAmount,
-         quantity: product?.quantity,
-         seller: product?.seller,
-         payment_mode: payment_mode,
-         shipping_address: selectedAddress,
-         package_dimension: product?.package_dimension,
-         delivery_service: product?.delivery_service,
+   useEffect(() => {
+
+      if (!state) {
+         return navigate('/', { replace: true });
       }
 
-      if (window.confirm("Buy Now")) {
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/order/set-order/`, {
-            method: "POST",
-            withCredentials: true,
-            credentials: "include",
-            headers: {
-               "Content-Type": "application/json",
-               authorization: `${userInfo?.email}`
-            },
-            body: JSON.stringify({ ...products })
-         });
+      const fetchData = setTimeout(() => {
+         (async () => {
 
-         const resData = await response.json();
+            const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/product/purchase`, {
+               method: "POST",
+               withCredential: true,
+               credentials: "include",
+               headers: {
+                  "Content-Type": "application/json"
+               },
+               body: JSON.stringify(productData)
+            });
 
-         // if (response.status === 400) {
-         //    setMessage(resData?.message);
-         //    return
-         // }
+            const result = await response.json();
 
-         if (response.status >= 200 && response.status <= 299) {
-            navigate(`/my-profile/my-order?order=${resData?.message}`);
+            if (result?.success) {
+               setData(result?.data?.module);
+            }
+         })();
+      }, 0);
+
+      return () => clearTimeout(fetchData);
+   }, [productData, navigate, state]);
+
+
+   if (authLoading) return <Spinner></Spinner>
+
+
+   const buyBtnHandler = async (e) => {
+      try {
+         e.preventDefault();
+
+         let product = data?.product && data?.product;
+         delete product["paymentInfo"];
+         delete product["sellerData"];
+         delete product["totalAmount"];
+         delete product["sellingPrice"];
+         delete product["shippingCharge"];
+         product["shippingAddress"] = selectedAddress;
+         product["paymentMode"] = paymentMode;
+         product["state"] = "byPurchase";
+
+         let p = [product];
+
+         if (window.confirm("Buy Now")) {
+
+            const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/order/set-order/`, {
+               method: "POST",
+               withCredentials: true,
+               credentials: "include",
+               headers: {
+                  "Content-Type": "application/json",
+                  authorization: `${userInfo?.email}`
+               },
+               body: JSON.stringify(p)
+            });
+
+            const result = await response.json();
+
+            if (response.status >= 200 && response.status <= 299) {
+               if (result?.data) {
+
+                  let data = result?.data && result?.data;
+
+                  for (let i = 0; i < data.length; i++) {
+                     let elem = data[i];
+
+                     if (elem?.orderSuccess) {
+                        setMessage(elem?.message, "success");
+                        navigate(`/my-profile/my-order`);
+                     } else {
+                        setMessage(elem?.message, "danger");
+                     }
+                  }
+               }
+
+            }
          }
+      } catch (error) {
+         setMessage(error?.message, "danger");
       }
    }
 
 
+   window.history.replaceState({}, document.title);
+
    return (
       <div className='section_default'>
          <div className="container">
+            {msg}
             <div className="mb-4">
                <Link to='/my-cart'> <FontAwesomeIcon icon={faLeftLong} /> Back To Cart</Link>
             </div>
             <div className="row">
                <div className="col-lg-8 mb-3">
-                  <div>
-                     <CartAddress navigate={navigate}
+                  <div className='cart_card'>
+
+                     <CartAddress
+                        navigate={navigate}
                         authRefetch={authRefetch}
-                        addr={userInfo && userInfo?.address ? userInfo?.address : []}
-                        setStep={setStep} />
-                  </div>
-                  <br />
-                  <div className="cart_card">
+                        addr={userInfo && userInfo?.buyer?.shippingAddress ? userInfo?.buyer?.shippingAddress : []}
+                        setStep={setStep}
+                     />
+
+                     <br />
                      <h6>Order Summary</h6>
                      <hr />
-                     <div className="row">
+                     <div className="row px-3">
                         {
-                           <CartItem checkOut={true} cartTypes={"buy"} product={userInfo && userInfo?.buy_product}></CartItem>
+                           <CartItem
+                              cartType={"buy"}
+                              checkOut={false}
+                              state={productData}
+                              setState={setProductData}
+                              setMessage={setMessage}
+                              product={data?.product && data?.product}
+                           />
                         }
                      </div>
+
                   </div>
                </div>
                <div className="col-lg-4 mb-3">
-                  <CartCalculation product={cartCalculate([userInfo && userInfo?.buy_product])} headTitle={"Order Details"}></CartCalculation>
-                  <br />
-                  <CartPayment step={step} buyBtnHandler={buyBtnHandler} isStock={userInfo && userInfo?.buy_product ? true : false}></CartPayment>
+                  <div className="cart_card">
+
+                     <CartCalculation
+                        product={data?.container_p && data?.container_p}
+                        headTitle={"Order Details"}
+                     />
+
+                     <br />
+
+                     <CartPayment
+                        step={step}
+                        buyBtnHandler={buyBtnHandler}
+                        paymentMode={paymentMode}
+                        setPaymentMode={setPaymentMode}
+                        isStock={data?.product ? true : false}
+                        isAddress={selectedAddress ? true : false}
+                     />
+                  </div>
                </div>
             </div>
          </div>

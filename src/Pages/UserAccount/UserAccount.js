@@ -4,7 +4,7 @@ import { useAuthContext } from '../../lib/AuthProvider';
 
 const UserAccount = () => {
 
-   const {userInfo} = useAuthContext();
+   const { userInfo } = useAuthContext();
    return (
       <div className='section_default'>
          <div className="container">

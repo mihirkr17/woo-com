@@ -6,64 +6,73 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { textToTitleCase } from '../../../Shared/common';
 
 
-const ProductContents = ({ product, variationId, authRefetch, productRefetch, setMessage, userInfo }) => {
+const ProductContents = ({ product, variationID, authRefetch, productRefetch, setMessage, userInfo }) => {
    const [addCartLoading, setAddCartLoading] = useState(false);
-   const [buyLoading, setBuyLoading] = useState(false);
    const location = useLocation();
-
    const navigate = useNavigate();
+   const defShipAddrs = userInfo?.buyer?.defaultShippingAddress && userInfo?.buyer?.defaultShippingAddress;
 
-   const addToCartHandler = async (pId, _lId, vId, params) => {
+   // add to cart handler
+   const addToCartHandler = async (pId, _LID, vId, params) => {
+      try {
+         if (!userInfo?.email) {
+            return navigate('/login', { state: { from: location } });
+         }
+
+         if (product?.variations?.stock === "in") {
+            setAddCartLoading(true);
+
+            const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/cart/add-to-cart`, {
+               method: "POST",
+               withCredentials: true,
+               credentials: 'include',
+               headers: {
+                  "Content-Type": "application/json"
+               },
+               body: JSON.stringify({ productID: pId, listingID: _LID, variationID: vId, action: params })
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result?.success === true) {
+               productRefetch();
+               authRefetch();
+               setMessage(result?.message, "success");
+
+               setAddCartLoading(false);
+               navigate('/my-cart');
+            } else {
+               setAddCartLoading(false);
+            }
+         }
+      } catch (error) {
+         setMessage(error?.message, 'danger');
+      }
+   }
+
+
+
+
+   // direct checkout handler
+   const buyNowHandler = async (product) => {
 
       if (!userInfo?.email) {
          return navigate('/login', { state: { from: location } });
       }
 
-      const url = params === "buy" ? `${process.env.REACT_APP_BASE_URL}api/v1/cart/add-buy-product` :
-         `${process.env.REACT_APP_BASE_URL}api/v1/cart/add-to-cart`;
-
-      if (product?.variations?.stock === "in") {
-         if (params === "buy") {
-            setBuyLoading(true);
-         } else {
-            setAddCartLoading(true);
-         }
-
-         const response = await fetch(url, {
-            method: "POST",
-            withCredentials: true,
-            credentials: 'include',
-            headers: {
-               "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ productId: pId, listingId: _lId, variationId: vId })
-         });
-
-         const resData = await response.json();
-
-
-         if (response.ok) {
-            authRefetch();
-            productRefetch();
-
-            setMessage(resData?.message);
-
-            if (params === "buy") {
-               setBuyLoading(false);
-               navigate(`/product/purchase/${product?._id}`);
-            } else {
-               setAddCartLoading(false);
-               navigate('/my-cart');
-            }
-
-         } else {
-            setAddCartLoading(false);
-            setBuyLoading(false);
-         }
+      if (product?.variations.stock === "out") {
+         return;
       }
+      return navigate(`/single-checkout?oTracker=buy.${product?.title}`, {
+         state: {
+            listingID: product?._LID,
+            productID: product?._id,
+            variationID: product?.variations?._VID,
+            quantity: 1,
+            customerEmail: userInfo?.email
+         }
+      });
    }
-   const defShipAddrs = Array.isArray(userInfo?.buyer?.shippingAddress) &&
-      userInfo?.buyer?.shippingAddress.find(addrs => addrs?.default_shipping_address === true);
 
    return (
       <div className='row w-100'>
@@ -119,15 +128,15 @@ const ProductContents = ({ product, variationId, authRefetch, productRefetch, se
 
                                        <div key={i} className='d-flex align-items-center justify-content-center flex-column'>
                                           {
-                                             e?.variant?.size && <Link className={`swatch_size_btn ${e._vId === variationId ? 'active' : ''}`}
-                                                to={`/product/${product?.slug}?pId=${product?._id}&vId=${e._vId}`}>
+                                             e?.variant?.size && <Link className={`swatch_size_btn ${e._VID === variationID ? 'active' : ''}`}
+                                                to={`/product/${product?.slug}?pId=${product?._id}&vId=${e._VID}`}>
                                                 {e?.variant?.size && e?.variant?.size}
                                              </Link>
                                           }
 
                                           {
-                                             e?.variant?.color && <Link className={`swatch_size_btn ${e._vId === variationId ? 'active' : ''}`}
-                                                to={`/product/${product?.slug}?pId=${product?._id}&vId=${e._vId}`}>
+                                             e?.variant?.color && <Link className={`swatch_size_btn ${e._VID === variationID ? 'active' : ''}`}
+                                                to={`/product/${product?.slug}?pId=${product?._id}&vId=${e._VID}`}>
                                                 <div style={{
                                                    backgroundColor: hex,
                                                    display: 'block',
@@ -175,8 +184,8 @@ const ProductContents = ({ product, variationId, authRefetch, productRefetch, se
                      (!product?.inCart || typeof product?.inCart === 'undefined') ?
                         <button
                            className='addToCartBtn'
-                           disabled={product?.stockInfo?.stock === "out" ? true : false}
-                           onClick={() => addToCartHandler(product?._id, product?._lId, product?.variations?._vId, "toCart")}
+                           disabled={product?.variations?.stock === "out" ? true : false}
+                           onClick={() => addToCartHandler(product?._id, product?._LID, product?.variations?._VID, "toCart")}
                         >
                            {
                               addCartLoading ? <BtnSpinner text={"Adding..."} /> : <>
@@ -191,13 +200,10 @@ const ProductContents = ({ product, variationId, authRefetch, productRefetch, se
 
                   <button
                      className='ms-4 buyBtn'
-                     disabled={product?.stockInfo?.stock === "out" ? true : false}
-                     onClick={() => addToCartHandler(product?._lId, product?.variations?.vId, "buy")}
+                     disabled={product?.variations?.stock === "out" ? true : false}
+                     onClick={() => buyNowHandler(product)}
                   >
-                     {
-                        buyLoading ? <BtnSpinner text={"Buying..."}>
-                        </BtnSpinner> : "Buy Now"
-                     }
+                     Buy Now
                   </button>
                </div>
             }
@@ -249,9 +255,8 @@ const ProductContents = ({ product, variationId, authRefetch, productRefetch, se
 
                <div>
                   {
-                     defShipAddrs?.area_type === 'local' ?
-                        product?.deliveryCharge?.localCharge : (product?.deliveryCharge?.zonalCharge)
-                  }
+                     product?.deliveryCharge
+                  } Tk
                </div>
             </div>
 

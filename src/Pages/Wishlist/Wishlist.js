@@ -11,8 +11,8 @@ const Wishlist = () => {
    const { msg, setMessage } = useMessage();
    const navigate = useNavigate();
 
-   const removeToWishlist = async (productId) => {
-      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/wishlist/remove-from-wishlist/${productId}`, {
+   const removeToWishlist = async (productID) => {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/wishlist/remove-from-wishlist/${productID}`, {
          method: "DELETE",
          withCredentials: true,
          credentials: "include"

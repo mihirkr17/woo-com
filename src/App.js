@@ -10,10 +10,9 @@ import Login from './Pages/UserAuth/Login';
 import Register from './Pages/Register';
 import ViewProduct from './Pages/ViewProduct/ViewProduct';
 import Cart from './Pages/Cart/Cart';
-import Purchase from './Pages/Purchase/Purchase';
 import CheckOut from './Pages/CheckOut/CheckOut';
 import MyOrder from './Pages/UserAccount/MyOrder';
-import ManageOrders from './Seller/ManageOrders/ManageOrders';
+import ManageOrders from './Pages/Dashboard/ManageOrders/ManageOrders';
 import ProductCategory from './Pages/ProductCategory/ProductCategory';
 import Dashboard from './Pages/Dashboard/Dashboard';
 import MyProfile from './Pages/Dashboard/MyProfile/MyProfile';
@@ -25,7 +24,6 @@ import CheckoutSingle from './Pages/CheckOut/CheckoutSingle';
 import SellOnline from './Pages/SellOnline/SellOnline';
 import CheckSeller from './Pages/Dashboard/CheckSeller/CheckSeller';
 import SellerCheckProvider from './lib/SellerCheckProvider';
-import CheckOrder from './Pages/Dashboard/CheckOrder/CheckOrder';
 import SearchPage from './Pages/SearchPage/SearchPage';
 import NotFound from './Pages/NotFound/NotFound';
 import Policy from './Pages/Dashboard/Policy/Policy';
@@ -40,11 +38,13 @@ import RequiredBuyer from './Auth/RequiredBuyer';
 import ManageSellers from './Admin/ManageSellers/ManageSellers';
 import NotPermitForAdminSellerOwner from './Auth/NotPermitForAdminSellerOwner';
 import AddProduct from './Pages/Dashboard/AddProduct/AddProduct';
-import AddSingleProduct from './Pages/Dashboard/AddProduct/Components/AddSingleProduct';
 import UserAccount from './Pages/UserAccount/UserAccount';
 import MyAddressBook from './Pages/UserAccount/MyAddressBook';
 import Profile from './Pages/UserAccount/Profile';
 import MyPayment from './Pages/UserAccount/MyPayment';
+import AdminProvider from './lib/AdminProvider';
+import CheckAllIncomingProductListing from './Pages/Dashboard/Admin/CheckAllIncomingProductListing';
+import CartProvider from './lib/CartProvider';
 
 function App() {
   const location = useLocation();
@@ -65,10 +65,29 @@ function App() {
             <Route path='orders-management' element={<MyOrder></MyOrder>}></Route>
           </Route>
 
-          <Route path='/my-cart' element={<RequiredBuyer><Cart></Cart></RequiredBuyer>}></Route>
-          <Route path='/product/purchase/:productId' element={<RequiredBuyer><Purchase></Purchase></RequiredBuyer>}></Route>
-          <Route path='/my-cart/checkout' element={<RequiredBuyer><CheckOut></CheckOut></RequiredBuyer>}></Route>
-          <Route path='/my-cart/checkout-single/:productId' element={<RequiredBuyer><CheckoutSingle></CheckoutSingle></RequiredBuyer>}></Route>
+          <Route
+            path='/my-cart'
+            element={
+              <RequiredBuyer>
+                <CartProvider>
+                  <Cart></Cart>
+                </CartProvider>
+              </RequiredBuyer>
+            }
+          />
+
+          <Route
+            path='/checkout'
+            element={
+              <RequiredBuyer>
+                <CartProvider>
+                  <CheckOut></CheckOut>
+                </CartProvider>
+              </RequiredBuyer>
+            }
+          />
+
+          <Route path='/single-checkout' element={<RequiredBuyer><CheckoutSingle></CheckoutSingle></RequiredBuyer>}></Route>
 
           <Route path='/' element={<NotPermitForAdminSellerOwner><Home></Home></NotPermitForAdminSellerOwner>}></Route>
           <Route path='/blog' element={<Blog></Blog>}></Route>
@@ -89,7 +108,9 @@ function App() {
 
             <SellerCheckProvider>
               <OrderProvider>
-                <Dashboard></Dashboard>
+                <AdminProvider>
+                  <Dashboard></Dashboard>
+                </AdminProvider>
               </OrderProvider>
             </SellerCheckProvider>
           </RequiredDashboard>}>
@@ -102,9 +123,13 @@ function App() {
             {/* only admin route */}
             <Route path='check-seller' element={<RequiredAdmin><CheckSeller></CheckSeller></RequiredAdmin>}></Route>
             <Route path='manage-seller' element={<RequiredAdmin><ManageSellers></ManageSellers></RequiredAdmin>} />
+            <Route path='check-all-incoming-listing' element={<RequiredAdmin>
+              <CheckAllIncomingProductListing></CheckAllIncomingProductListing>
+            </RequiredAdmin>}>
+
+            </Route>
 
             {/*  seller routes  */}
-            <Route path='check-order' element={<RequiredSeller><CheckOrder></CheckOrder></RequiredSeller>}></Route>
             <Route path='manage-orders' element={<RequiredSeller><ManageOrders></ManageOrders></RequiredSeller>}></Route>
             <Route path='add-product' element={<RequiredSeller><AddProduct></AddProduct></RequiredSeller>}></Route>
 

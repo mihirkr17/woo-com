@@ -1,10 +1,10 @@
 import React from 'react';
-import ProductListing from './ProductListing';
+import ProductListing from "./ProductListing";
 import ProductVariations from './ProductVariations';
-import { newCategory } from '../../../../Assets/CustomData/categories';
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useFetch } from '../../../../Hooks/useFetch';
+import { useFetch } from '../../../Hooks/useFetch';
+import { newCategory } from '../../../Assets/CustomData/categories';
 
 
 const ProductTemplateForm = ({ formTypes, userInfo, setMessage }) => {

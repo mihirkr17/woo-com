@@ -2,14 +2,11 @@ import React, { useState, useEffect } from 'react';
 import Spinner from '../../../Components/Shared/Spinner/Spinner';
 import { useFetch } from '../../../Hooks/useFetch';
 import { useMessage } from '../../../Hooks/useMessage';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faPenToSquare, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
-import ProductDetailsModal from './Components/ProductDetailsModal';
 import { useAuthContext } from '../../../lib/AuthProvider';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { newCategory } from '../../../Assets/CustomData/categories';
 import ManageProductHome from './Components/ManageProductHome';
-import ProductTemplateForm from './Components/ProductTemplateForm';
+import ProductTemplateForm from '../GlobalComponents/ProductTemplateForm';
 
 const ManageProduct = () => {
    const { msg, setMessage } = useMessage();
@@ -23,8 +20,7 @@ const ManageProduct = () => {
 
    // All States
    const [searchValue, setSearchValue] = useState("");
-   const [filterCategory, setFilterCategory] = useState("all");
-   const [productDetailsModal, setProductDetailsModal] = useState(false);
+   const [filterCategory, setFilterCategory] = useState("");
    const navigate = useNavigate();
    const location = useLocation();
 
@@ -43,7 +39,7 @@ const ManageProduct = () => {
    }, [queryPage, searchValue, filterCategory]);
 
    useEffect(() => {
-      if (searchValue.length > 0 || filterCategory !== "all") {
+      if (searchValue.length > 0 || filterCategory !== "") {
          setItems(1);
       } else {
          const pages = counter && Math.ceil(counter?.count / 8);
@@ -81,23 +77,16 @@ const ManageProduct = () => {
                      role={role}
                      counter={counter}
                      loading={loading}
-                     productDetailsModal={productDetailsModal}
                      manageProducts={manageProducts}
                      setSearchValue={setSearchValue}
                      setFilterCategory={setFilterCategory}
-                     setProductDetailsModal={setProductDetailsModal}
                      navigate={navigate}
                      // counterRefetch={counterRefetch}
                      queryPage={queryPage}
                      items={items}
                      pageBtn={pageBtn}
                      location={location}
-                     faEye={faEye}
-                     faPenToSquare={faPenToSquare}
-                     faTrashAlt={faTrashAlt}
-                     FontAwesomeIcon={FontAwesomeIcon}
                      Spinner={Spinner}
-                     ProductDetailsModal={ProductDetailsModal}
                      userInfo={userInfo}
                   />
             }

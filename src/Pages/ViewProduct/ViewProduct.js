@@ -18,11 +18,11 @@ const ViewProduct = () => {
 
    const { authRefetch, userInfo } = useAuthContext();
 
-   const productId = new URLSearchParams(window.location.search).get("pId");
+   const productID = new URLSearchParams(window.location.search).get("pId");
 
-   const variationId = new URLSearchParams(window.location.search).get("vId");
+   const variationID = new URLSearchParams(window.location.search).get("vId");
 
-   const { data, refetch: productRefetch, loading } = useFetch(`${process.env.REACT_APP_BASE_URL}api/v1/product/fetch-single-product/${product_slug}?pId=${productId}&vId=${variationId}`, userInfo?.email);
+   const { data, refetch: productRefetch, loading } = useFetch(`${process.env.REACT_APP_BASE_URL}api/v1/product/fetch-single-product/${product_slug}?pId=${productID}&vId=${variationID}`, userInfo?.email);
 
    const { msg, setMessage } = useMessage();
 
@@ -56,7 +56,7 @@ const ViewProduct = () => {
                <div className="pb-3 product_description col-lg-8">
                   <ProductContents
                      product={product}
-                     variationId={variationId}
+                     variationID={variationID}
                      authRefetch={authRefetch}
                      productRefetch={productRefetch}
                      setMessage={setMessage}

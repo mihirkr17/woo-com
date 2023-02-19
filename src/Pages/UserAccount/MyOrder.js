@@ -24,31 +24,31 @@ const MyOrder = () => {
 
    useEffect(() => {
       if (filterOrder === "" || filterOrder === "all") {
-         setOrderItems(data && data.orders)
+         setOrderItems(data?.data?.module?.orders && data?.data?.module?.orders)
       } else {
-         setOrderItems(data && data.orders.filter(p => p?.status === filterOrder))
+         setOrderItems(data?.data?.module?.orders && data?.data?.module?.orders.filter(p => p?.status === filterOrder))
       }
    }, [data, filterOrder]);
 
-   const openCancelFormHandler = (orderId) => {
-      if (orderId === openCancelForm) {
+   const openCancelFormHandler = (orderID) => {
+      if (orderID === openCancelForm) {
          setOpenCancelForm(false);
       } else {
-         setOpenCancelForm(orderId);
+         setOpenCancelForm(orderID);
       }
    }
 
-   const openReviewFormHandler = (orderId) => {
-      if (orderId === openReviewForm) {
+   const openReviewFormHandler = (orderID) => {
+      if (orderID === openReviewForm) {
          setOpenReviewForm(false);
       } else {
-         setOpenReviewForm(orderId);
+         setOpenReviewForm(orderID);
       }
    }
 
-   const removeOrderHandler = async (orderId) => {
+   const removeOrderHandler = async (orderID) => {
       if (window.confirm("Want to cancel this order ?")) {
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/order/remove-order/${userInfo?.email}/${orderId}`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/order/remove-order/${userInfo?.email}/${orderID}`, {
             method: "DELETE",
             withCredentials: true,
             credentials: "include",
@@ -68,15 +68,15 @@ const MyOrder = () => {
       setActLoading(true);
       let ratingPoint = e.target.rating_point.value;
       let ratingDesc = e.target.rating_description.value;
-      let productId = e.target.product_id.value;
-      let orderId = e.target.order_id.value;
+      let productID = e.target.product_id.value;
+      let orderID = e.target.order_id.value;
       let ratingId = Math.floor(Math.random() * 1000000);
 
       let review = {
-         ratingId, orderId: parseInt(orderId), rating_customer: userInfo?.fullName, rating_point: ratingPoint, rating_description: ratingDesc
+         ratingId, orderID: parseInt(orderID), rating_customer: userInfo?.fullName, rating_point: ratingPoint, rating_description: ratingDesc
       }
 
-      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/review/add-product-rating/${productId}`, {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/review/add-product-rating/${productID}`, {
          method: "PUT",
          withCredentials: true,
          credentials: "include",
@@ -95,26 +95,25 @@ const MyOrder = () => {
       }
    }
 
-   const handleCancelOrder = async (e, quantity, productId) => {
+   const handleCancelOrder = async (e, quantity, productID) => {
       e.preventDefault();
       let cancel_reason = reason;
-      let status = "canceled";
-      let orderId = e.target.orderId.value;
+      let orderID = e.target.orderID.value;
       let userEmail = e.target.user_email.value;
-      let time_canceled = new Date().toLocaleString();
 
       if (cancel_reason === "Choose Reason" || cancel_reason === "") {
          setMessage(<strong className='text-success'>Please Select Cancel Reason...</strong>);
          return;
       } else {
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/order/cancel-my-order/${userEmail}/${orderId}`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/order/cancel-my-order/${userEmail}`, {
             method: "PUT",
             withCredentials: true,
             credentials: "include",
             headers: {
-               "Content-Type": "application/json"
+               "Content-Type": "application/json",
+               authorization: userEmail
             },
-            body: JSON.stringify({ status, cancel_reason, time_canceled, quantity, productId })
+            body: JSON.stringify({ cancel_reason, orderID })
          });
 
          const resData = await response.json();
@@ -147,11 +146,12 @@ const MyOrder = () => {
                   {
                      orderItems && orderItems.length > 0 ? orderItems.map(order => {
 
-                        const { title, quantity, payment_mode, status, orderId, price,
-                           totalAmount, image, productId, seller, cancel_reason, time_canceled,
-                           time_pending, time_placed, time_shipped, isRating, slug } = order && order;
+                        const { title, quantity, paymentMode, orderStatus, orderID, sellingPrice, customerEmail,
+                           totalAmount, image, productID, sellerData, cancelReason, orderCanceledAT,
+                           orderAT, orderPlacedAT, orderShippedAT, isRating, slug } = order && order;
+
                         return (
-                           <div className="col-12 mb-3" key={orderId}>
+                           <div className="col-12 mb-3" key={orderID}>
                               <div className="order_card">
 
                                  <div className="">
@@ -167,10 +167,10 @@ const MyOrder = () => {
                                                 <div>
                                                    {title && title.length > 30 ? title.slice(0, 30) + "..." : title} <br />
                                                    <pre className="text-muted">
-                                                      Price        : {price} Tk<br />
+                                                      Price        : {sellingPrice} Tk<br />
                                                       Qty          : {quantity} <br />
-                                                      Seller       : {seller} <br />
-                                                      Payment Mode : {payment_mode}
+                                                      Seller       : {sellerData?.storeName} <br />
+                                                      Payment Mode : {paymentMode}
                                                    </pre>
                                                 </div>
                                              </div>
@@ -183,33 +183,33 @@ const MyOrder = () => {
 
                                              <div className="col-lg-4">
                                                 {
-                                                   status === "canceled" && <>
+                                                   orderStatus === "canceled" && <>
                                                       <p>
                                                          <small className="text-muted">
-                                                            {"Order Status : " + status} <br />
-                                                            {"Reason : " + cancel_reason} <br />
-                                                            {"Cancel Time : " + time_canceled}
+                                                            {"Order Status : " + orderStatus} <br />
+                                                            {"Reason : " + cancelReason} <br />
+                                                            {"Cancel Time : " + orderCanceledAT?.time}
                                                          </small>
                                                       </p>
                                                       <div className="text-end">
-                                                         <button className='btn btn-sm text-uppercase text-muted' onClick={() => removeOrderHandler(orderId)}>Remove</button>
+                                                         <button className='btn btn-sm text-uppercase text-muted' onClick={() => removeOrderHandler(orderID)}>Remove</button>
                                                       </div>
                                                    </>
                                                 }
                                                 {
-                                                   status === "pending" ?
+                                                   orderStatus === "pending" ?
                                                       <>
                                                          <p>
                                                             <small className="text-muted">
-                                                               {"Order Status : "}<i className="text-success">{status}</i> <br />
-                                                               {"Order Time : " + time_pending}
+                                                               {"Order Status : "}<i className="text-success">{orderStatus}</i> <br />
+                                                               {"Order Time : " + orderAT?.time}
                                                             </small>
                                                          </p>
-                                                         <button className="btn btn-sm text-danger" onClick={() => openCancelFormHandler(orderId)} style={openCancelForm !== orderId ? { display: "block" } : { display: "none" }}>
+                                                         <button className="btn btn-sm text-danger" onClick={() => openCancelFormHandler(orderID)} style={openCancelForm !== orderID ? { display: "block" } : { display: "none" }}>
                                                             Cancel Order
                                                          </button>
-                                                         <div className="py-4" style={openCancelForm === orderId ? { display: "block" } : { display: "none" }}>
-                                                            <form onSubmit={(e) => handleCancelOrder(e, quantity, productId)} >
+                                                         <div className="py-4" style={openCancelForm === orderID ? { display: "block" } : { display: "none" }}>
+                                                            <form onSubmit={(e) => handleCancelOrder(e, quantity, productID)} >
                                                                <label htmlFor="reason">Select Reason</label>
                                                                <div className="form-group d-flex">
 
@@ -221,47 +221,49 @@ const MyOrder = () => {
                                                                         "I want to re-order using promo code",
                                                                         "I placed the order by mistake"
                                                                      ]} filterHandler={setReason} />
-                                                                  <input type="hidden" name="orderId" defaultValue={orderId} />
-                                                                  <input type="hidden" name="user_email" defaultValue={data?.user_email} />
-                                                                  <button type="submit" className="btn btn-sm btn-danger">Cancel</button>
+                                                                  <input type="hidden" name="orderID" defaultValue={orderID} />
+                                                                  <input type="hidden" name="user_email" defaultValue={customerEmail} />
+
+
                                                                </div>
+                                                               <button type="submit" className="bt9_warning">Cancel Order</button>
                                                             </form>
-                                                            <button className='btn btn-sm' onClick={() => openCancelFormHandler(false)} style={openCancelForm === orderId ? { display: "block" } : { display: "none" }}>Back</button>
+                                                            <button className='btn btn-sm' onClick={() => openCancelFormHandler(false)} style={openCancelForm === orderID ? { display: "block" } : { display: "none" }}>Back</button>
                                                          </div>
                                                       </> :
-                                                      status === "placed" ? <p>
+                                                      orderStatus === "placed" ? <p>
                                                          <small className="text-muted">
-                                                            {"Order Status : "}<i className="text-success">{status}</i> <br />
-                                                            {"Order Time : " + time_pending} <br />
-                                                            {"Order Placed Time : " + time_placed}
+                                                            {"Order Status : "}<i className="text-success">{orderStatus}</i> <br />
+                                                            {"Order Time : " + orderAT} <br />
+                                                            {"Order Placed Time : " + orderPlacedAT}
                                                          </small>
                                                       </p> :
-                                                         status === "shipped" ?
+                                                         orderStatus === "shipped" ?
                                                             <>
                                                                <p>
                                                                   <small className="text-muted">
-                                                                     {"Order Status : "}<i className="text-success">{status}</i> <br />
-                                                                     {"Order Time : " + time_pending} <br />
-                                                                     {"Order Placed Time : " + time_placed} <br />
-                                                                     {"Order Shipped Time : " + time_shipped}
+                                                                     {"Order Status : "}<i className="text-success">{orderStatus}</i> <br />
+                                                                     {"Order Time : " + orderAT} <br />
+                                                                     {"Order Placed Time : " + orderPlacedAT} <br />
+                                                                     {"Order Shipped Time : " + orderShippedAT}
                                                                   </small>
                                                                </p>
                                                                <div className='d-flex align-items-center justify-content-end' >
                                                                   {isRating ? <Link to={`/product/${slug}#rating`}>Review</Link> :
                                                                      <>
-                                                                        <button className="btn btn-sm text-danger" onClick={() => openReviewFormHandler(orderId)} style={openReviewForm !== orderId ? { display: "block" } : { display: "none" }}>
+                                                                        <button className="btn btn-sm text-danger" onClick={() => openReviewFormHandler(orderID)} style={openReviewForm !== orderID ? { display: "block" } : { display: "none" }}>
                                                                            Add Review
                                                                         </button>
-                                                                        <div className="text-center p-3" style={openReviewForm === orderId ? { display: "block" } : { display: "none" }}>
+                                                                        <div className="text-center p-3" style={openReviewForm === orderID ? { display: "block" } : { display: "none" }}>
                                                                            <form onSubmit={ratingHandler} className='d-flex flex-column'>
                                                                               <input type="text" disabled defaultValue={ratPoint} key={ratPoint} />
-                                                                              <input type="range" min={1} max={5} step={1} name='rating_point' className='my-2' onChange={(e) => setRatPoint(e.target.value, orderId)} />
+                                                                              <input type="range" min={1} max={5} step={1} name='rating_point' className='my-2' onChange={(e) => setRatPoint(e.target.value, orderID)} />
                                                                               <textarea type="text" name='rating_description' className='form-control form-control-sm' placeholder='Write a Review' />
-                                                                              <input type="hidden" defaultValue={productId} name='product_id' />
-                                                                              <input type="hidden" defaultValue={orderId} name='order_id' />
+                                                                              <input type="hidden" defaultValue={productID} name='product_id' />
+                                                                              <input type="hidden" defaultValue={orderID} name='order_id' />
                                                                               <button className='btn btn-sm btn-primary mt-2'>{actLoading === true ? <BtnSpinner text={"Adding Review..."}></BtnSpinner> : "Add Review"}</button>
                                                                            </form>
-                                                                           <button className='btn btn-sm' onClick={() => openReviewFormHandler(false)} style={openReviewForm === orderId ? { display: "block" } : { display: "none" }}>Back</button>
+                                                                           <button className='btn btn-sm' onClick={() => openReviewFormHandler(false)} style={openReviewForm === orderID ? { display: "block" } : { display: "none" }}>Back</button>
                                                                         </div>
                                                                      </>
 

@@ -1,5 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useRef } from 'react';
 import { Link } from 'react-router-dom';
+import useWindowDimensions from '../../../../Hooks/useWindowDimensions';
+import DropDown from './DropDown';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faPenToSquare, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import ProductDetailsModal from './ProductDetailsModal';
 
 const ManageProductHome = (
    {
@@ -9,26 +15,24 @@ const ManageProductHome = (
       role,
       counter,
       loading,
-      productDetailsModal,
       manageProducts,
       setSearchValue,
       setFilterCategory,
-      setProductDetailsModal,
       navigate,
       // counterRefetch,
       queryPage,
       items,
       pageBtn,
       location,
-      faEye,
-      faPenToSquare,
-      faTrashAlt,
-      FontAwesomeIcon,
       Spinner,
-      ProductDetailsModal,
       userInfo
    }
 ) => {
+   const [productDetailModal, setProductDetailModal] = useState(false);
+   const [openDropDown, setOpenDropDown] = useState("");
+   const { width } = useWindowDimensions();
+   const [flashSale, setFlashSale] = useState("");
+
 
    const deleteProductVariationHandler = async (vid, pid) => {
       try {
@@ -57,14 +61,14 @@ const ManageProductHome = (
    }
 
 
-   const deleteThisProductHandler = async (_id, _lId, storeName) => {
+   const deleteThisProductHandler = async (_id, _LID, storeName) => {
       if (window.confirm("Want to delete this product ?")) {
          const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/dashboard/${storeName}/product/delete-product`, {
             method: "DELETE",
             withCredentials: true,
             credentials: "include",
             headers: {
-               authorization: _id + ',' + _lId
+               authorization: _id + ',' + _LID
             }
          });
          const resData = await response.json();
@@ -77,8 +81,18 @@ const ManageProductHome = (
       }
    }
 
+   const handleFlashSaleMenu = (params) => {
+      if (params !== flashSale) {
+         setFlashSale(params);
+      }
 
-   const stockHandler = async (e, productId, _vId) => {
+      else {
+         setFlashSale("");
+      }
+   }
+
+
+   const stockHandler = async (e, productID, _VID) => {
       const { value } = e.target;
 
       let available = parseInt(value);
@@ -90,9 +104,9 @@ const ManageProductHome = (
             credentials: "include",
             headers: {
                "Content-Type": "application/json",
-               authorization: productId
+               authorization: productID
             },
-            body: JSON.stringify({ variations: { available, _vId }, MARKET_PLACE: 'WooKart' })
+            body: JSON.stringify({ variations: { available, _VID }, MARKET_PLACE: 'WooKart' })
          });
 
          const resData = await response.json();
@@ -139,6 +153,60 @@ const ManageProductHome = (
          setMessage(error?.error);
       }
    }
+
+
+   function openDropDownHandler(p) {
+
+      if (p !== openDropDown) {
+         setOpenDropDown(p);
+      } else {
+         setOpenDropDown('');
+      }
+
+   }
+
+
+
+
+
+   async function flashSellFormHandler(e, product) {
+      try {
+         e.preventDefault();
+
+         const fSaleStart = e.target.fSaleStart?.value;
+         const fSaleEnd = e.target.fSaleEnd?.value;
+
+         if (fSaleEnd !== "" && fSaleStart !== "") {
+            const fSale = {
+               fSaleStart, fSaleEnd
+            }
+            const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/dashboard/seller/${userInfo?.seller?.storeInfos?.storeName}/start-flash-sale`, {
+               method: "PUT",
+               withCredentials: true,
+               credentials: 'include',
+               headers: {
+                  "Content-Type": "application/json"
+               },
+               body: JSON.stringify({ market_place: 'woo-kart', actionType: "FLASH_SALE", data: { productID: product?._id, listingID: product?._LID, fSale } })
+            });
+
+
+            const result = await response.json();
+
+
+            if (result?.success === true) {
+               setMessage(result?.message, 'success')
+            } else {
+               setMessage(result?.message, 'danger');
+            }
+
+         }
+      } catch (error) {
+
+      }
+   }
+
+
    return (
       <>
          <div className="product_header">
@@ -148,7 +216,7 @@ const ManageProductHome = (
                <div className='py-3'>
 
                   <select name="filter_product" style={{ textTransform: "capitalize" }} className='form-select form-select-sm' onChange={e => setFilterCategory(e.target.value)}>
-                     <option value="all">All</option>
+                     <option value="">All</option>
                      {
                         newCategory && newCategory.map((opt, index) => {
                            return (
@@ -169,110 +237,132 @@ const ManageProductHome = (
             loading ? <Spinner /> :
                manageProducts?.data?.products && manageProducts?.data?.products.map((mProduct, index) => {
                   return (
-                     <div className='border my-3 card_default card_description' key={index}>
-                        <div className='p-1'>
-                           <small>
-                              <pre>
-                                 TITLE           : {mProduct?.title} <br />
-                                 PID             : {mProduct?._id} <br />
-                                 Listing ID      : {mProduct?._lId} <br />
-                                 BRAND           : {mProduct?.brand} <br />
-                                 CATEGORIES      : {mProduct?.categories && mProduct?.categories.join(" >> ")} <br />
-                                 Total Variation : {(mProduct?.variations && mProduct?.variations.length) || 0}
-                              </pre>
-                           </small>
+                     <div className='border my-3 card_default card_description w-100' key={index}>
 
-                           <Link className='bt9_edit' state={{ from: location }} replace
-                              to={`/dashboard/manage-product?np=edit_product&store=${mProduct?.sellerData?.storeName}&pid=${mProduct?._id}`}>
-                              <FontAwesomeIcon icon={faPenToSquare} />
-                              &nbsp;Edit Product
-                           </Link>
-                           &nbsp;&nbsp;
-                           {
-                              mProduct?.save_as === 'fulfilled' &&
-                              <button className='bt9_cancel'
-                                 onClick={() => productControlHandler("draft", mProduct?._lId, mProduct?._id)}
-                              >
-                                 Move To Draft
-                              </button>
-                           }
+                        <div className={`p-1 d-flex justify-content-between flex-wrap`}>
+                           <div className="p-1">
+                              <small>
+                                 <pre style={{ whiteSpace: 'break-spaces' }}>
+                                    TITLE           : {mProduct?.title} <br />
+                                    PID             : {mProduct?._id} <br />
+                                    Listing ID      : {mProduct?._LID} <br />
+                                    BRAND           : {mProduct?.brand} <br />
+                                    CATEGORIES      : {mProduct?.categories && mProduct?.categories.join(" >> ")} <br />
+                                    Total Variation : {(mProduct?.variations && mProduct?.variations.length) || 0} <br />
+                                    View            : <button onClick={() => setProductDetailModal(true && mProduct)}>view</button>
+                                 </pre>
+                              </small>
+                              <br />
 
-                           <Link className='bt9_create mx-2' state={{ from: location }} replace to={`/dashboard/manage-product?np=add-new-variation&store=${mProduct?.sellerData?.storeName}&pid=${mProduct?._id}`}>
-                              Add New Variation
-                           </Link>
-                        </div>
-                        <table className='table'>
-                           <thead>
-                              <tr>
-                                 <th>Image</th>
-                                 <th>_vId</th>
-                                 <th>sku</th>
-                                 <th>Status</th>
-                                 <th>Price (Tk)</th>
-                                 <th>Selling Pricing (Tk)</th>
-                                 <th>Availability (Pcs)</th>
-                                 <th>Stock</th>
-                                 <th>Action</th>
-                              </tr>
-                           </thead>
-                           <tbody>
+                              <button className='bt9_edit' onClick={() => handleFlashSaleMenu(mProduct)}>Start Flash Selling</button>
+
                               {
-                                 mProduct?.variations ? mProduct?.variations.map(variation => {
+                                 flashSale?._LID === mProduct?._LID && <div className='card_default card_description'>
 
-                                    return (
-                                       <tr key={variation?._vId}>
-                                          <td>
-                                             <img src={variation?.images && variation?.images[0]} alt="" style={{ width: "60px", height: "60px" }} />
-                                          </td>
-                                          <td>{variation?._vId}</td>
-                                          <td>{variation?.sku}</td>
-                                          <td>{variation?.status.toUpperCase()}</td>
-                                          <td>{variation?.pricing?.price}</td>
-                                          <td>{variation?.pricing?.sellingPrice}</td>
-                                          <td>
-                                             {
-                                                role === 'SELLER' ?
-                                                   <input type="text" style={{ width: "50px", border: "1px solid black", backgroundColor: "inherit" }}
-                                                      onBlur={(e) => stockHandler(e, mProduct?._id, variation?._vId)}
-                                                      defaultValue={variation?.available}
-                                                      readOnly onDoubleClick={e => e.target.readOnly = false} /> :
-                                                   variation?.available
+                                    <form onSubmit={(e) => flashSellFormHandler(e, mProduct)}>
+                                       <div className='py-2'>
+                                          <label htmlFor="fSaleStart">Start Date</label> <br />
+                                          <input type="date" className='form-control form-control-sm' name='fSaleStart' id='fSaleStart' />
+                                       </div>
 
-                                             }
-                                          </td>
-                                          <td>{variation?.stock}</td>
-                                          <td>
+                                       <div className='py-2'>
+                                          <label htmlFor="fSaleEnd">End date</label> <br />
+                                          <input type="date" className='form-control form-control-sm' name='fSaleEnd' id='fSaleEnd' />
+                                       </div>
 
-                                             
+                                       <div className="py-2">
+                                          <button type='submit' className='bt9_create'>Start Sale</button>
+                                       </div>
+                                    </form>
 
-                                             <button className={`me-2 ${variation?.status === 'active' ? 'bt9_warning' : 'bt9_edit'}`}
-                                                onClick={() => productControlHandler(variation?.status === 'active' ? "inactive" : 'active', mProduct?._lId, mProduct?._id, variation?._vId, mProduct)}
-                                             >
-                                                {
-                                                   variation?.status === 'active' ? 'Inactive Now' : 'Active Now'
-                                                }
-                                             </button> 
-                                 
-
-
-                                             <Link className='bt9_edit' state={{ from: location }} replace
-                                                to={`/dashboard/manage-product?np=update-variation&store=${mProduct?.sellerData?.storeName}&pid=${mProduct?._id}&vId=${variation?._vId}`}>
-                                                Update Variation
-                                             </Link>
-
-                                             {
-                                                mProduct?.variations && mProduct?.variations.length >= 2 && <button className='btn btn-sm m-1' title={`Delete ${mProduct?.title}`}
-                                                   onClick={() => deleteProductVariationHandler(variation?._vId, mProduct?._id)}>
-                                                   <FontAwesomeIcon icon={faTrashAlt} />
-                                                </button>
-                                             }
-                                          </td>
-                                       </tr>
-                                    )
-                                 }) : <tr><td>No product in your drafts</td></tr>
+                                 </div>
                               }
-                           </tbody>
-                        </table>
+                           </div>
+
+                           <div className={`dropdown`} style={width <= 567 ? { width: '100%' } : { width: 'unset' }}>
+
+                              <button className='dropdown-toggle' style={{ border: 'none', background: 'transparent' }} type="button" data-bs-toggle="dropdown" aria-expanded="false" onClick={() => openDropDownHandler(mProduct)}>
+                                 Option
+                              </button>
+
+                              {
+                                 <DropDown mProduct={mProduct} openDropDown={openDropDown} FontAwesomeIcon={FontAwesomeIcon}
+                                    faPenToSquare={faPenToSquare} location={location} productControlHandler={productControlHandler}
+                                 ></DropDown>
+                              }
+                           </div>
+
+                        </div>
+
+                        <div className="table-responsive">
+                           <table className='table'>
+                              <thead>
+                                 <tr>
+                                    <th>Image</th>
+                                    <th>_VID</th>
+                                    <th>sku</th>
+                                    <th>Status</th>
+                                    <th>Price (Tk)</th>
+                                    <th>Selling Price (Tk)</th>
+                                    <th>Availability (Pcs)</th>
+                                    <th>Stock</th>
+                                    <th>Action</th>
+                                 </tr>
+                              </thead>
+                              <tbody>
+                                 {
+                                    mProduct?.variations ? mProduct?.variations.map(variation => {
+
+                                       return (
+                                          <tr key={variation?._VID}>
+                                             <td>
+                                                <img src={variation?.images && variation?.images[0]} alt="" style={{ width: "60px", height: "60px" }} />
+                                             </td>
+                                             <td>{variation?._VID}</td>
+                                             <td>{variation?.sku}</td>
+                                             <td>{variation?.status.toUpperCase()}</td>
+                                             <td>{variation?.pricing?.price}</td>
+                                             <td>{variation?.pricing?.sellingPrice}</td>
+                                             <td>
+                                                {
+                                                   role === 'SELLER' ?
+                                                      <input type="text" style={{ width: "50px", border: "1px solid black", padding: "0 2px", backgroundColor: "inherit" }}
+                                                         onBlur={(e) => stockHandler(e, mProduct?._id, variation?._VID)}
+                                                         defaultValue={variation?.available}
+                                                         readOnly onDoubleClick={e => e.target.readOnly = false} /> :
+                                                      variation?.available
+
+                                                }
+                                             </td>
+                                             <td>{variation?.stock}</td>
+                                             <td>
+                                                <button className={`${variation?.status === 'active' ? 'bt9_warning' : 'bt9_edit'}`}
+                                                   onClick={() => productControlHandler(variation?.status === 'active' ? "inactive" : 'active', mProduct?._LID, mProduct?._id, variation?._VID, mProduct)}
+                                                >
+                                                   {
+                                                      variation?.status === 'active' ? 'Inactive Now' : 'Active Now'
+                                                   }
+                                                </button>
+
+                                                <Link className='bt9_edit' state={{ from: location }} replace
+                                                   to={`/dashboard/manage-product?np=update-variation&store=${mProduct?.sellerData?.storeName}&pid=${mProduct?._id}&vId=${variation?._VID}`}>
+                                                   Update Variation
+                                                </Link>
+
+                                                {
+                                                   mProduct?.variations && mProduct?.variations.length >= 2 && <button className='btn btn-sm m-1' title={`Delete ${mProduct?.title}`}
+                                                      onClick={() => deleteProductVariationHandler(variation?._VID, mProduct?._id)}>
+                                                      <FontAwesomeIcon icon={faTrashAlt} />
+                                                   </button>
+                                                }
+                                             </td>
+                                          </tr>
+                                       )
+                                    }) : <tr><td>No product in your drafts</td></tr>
+                                 }
+                              </tbody>
+                           </table>
+                        </div>
                      </div>
                   );
                }
@@ -293,10 +383,9 @@ const ManageProductHome = (
             </ul>
 
             <ProductDetailsModal
-               modalOpen={productDetailsModal}
-               modalClose={() => setProductDetailsModal(false)}
-               showFor={role} />
-
+               data={productDetailModal}
+               closeModal={() => setProductDetailModal(false)}
+            />
          </div>
 
          {
@@ -314,7 +403,7 @@ const ManageProductHome = (
                                     <pre>
                                        TITLE           : {mProduct?.title} <br />
                                        PID             : {mProduct?._id} <br />
-                                       Listing ID      : {mProduct?._lId} <br />
+                                       Listing ID      : {mProduct?._LID} <br />
                                        BRAND           : {mProduct?.brand} <br />
                                        CATEGORIES      : {mProduct?.categories && mProduct?.categories.join(" >> ")} <br />
                                        Total Variation : {(mProduct?.variations && mProduct?.variations.length) || 0}
@@ -327,11 +416,11 @@ const ManageProductHome = (
                                     &nbsp;Edit Product
                                  </Link>
                                  &nbsp;
-                                 <button className='mt-2 bt9_delete' onClick={() => deleteThisProductHandler(mProduct?._id, mProduct?._lId, mProduct?.sellerData?.storeName)}>Delete This Product</button> &nbsp;
+                                 <button className='mt-2 bt9_delete' onClick={() => deleteThisProductHandler(mProduct?._id, mProduct?._LID, mProduct?.sellerData?.storeName)}>Delete This Product</button> &nbsp;
                                  {
                                     (Array.isArray(mProduct?.variations) && mProduct?.variations.length >= 1 && mProduct?.save_as === 'draft') ?
                                        <button className='bt9_edit me-2'
-                                          onClick={() => productControlHandler("fulfilled", mProduct?._lId, mProduct?._id)}
+                                          onClick={() => productControlHandler("fulfilled", mProduct?._LID, mProduct?._id)}
                                        >
                                           Publish
                                        </button> : <p>Please Create at least one variation for publish this product</p>
@@ -352,7 +441,7 @@ const ManageProductHome = (
                                           <thead>
                                              <tr>
                                                 <th>Image</th>
-                                                <th>_vId</th>
+                                                <th>_VID</th>
                                                 <th>sku</th>
                                                 <th>Action</th>
                                              </tr>
@@ -362,23 +451,23 @@ const ManageProductHome = (
                                                 mProduct?.variations ? mProduct?.variations.map(variation => {
 
                                                    return (
-                                                      <tr key={variation?._vId}>
+                                                      <tr key={variation?._VID}>
                                                          <td>
                                                             <img src={variation?.images && variation?.images[0]} alt="" style={{ width: "60px", height: "60px" }} />
                                                          </td>
-                                                         <td>{variation?._vId}</td>
+                                                         <td>{variation?._VID}</td>
                                                          <td>{variation?.sku}</td>
                                                          <td>
 
 
 
                                                             <Link className='bt9_edit' state={{ from: location }} replace
-                                                               to={`/dashboard/manage-product?np=update-variation&store=${mProduct?.sellerData?.storeName}&pid=${mProduct?._id}&vId=${variation?._vId}`}>
+                                                               to={`/dashboard/manage-product?np=update-variation&store=${mProduct?.sellerData?.storeName}&pid=${mProduct?._id}&vId=${variation?._VID}`}>
                                                                Update Variation
                                                             </Link>
 
                                                             <button className='bt9_delete m-1' title={`Delete ${mProduct?.title}`}
-                                                               onClick={() => deleteProductVariationHandler(variation?._vId, mProduct?._id)}>
+                                                               onClick={() => deleteProductVariationHandler(variation?._VID, mProduct?._id)}>
                                                                Delete this variation
                                                             </button>
                                                          </td>
@@ -408,7 +497,7 @@ const ManageProductHome = (
                                                    {
                                                       mProduct?.save_as === 'draft' &&
                                                       <button className='bt9_edit me-2'
-                                                         onClick={() => productControlHandler("fulfilled", mProduct?._lId, mProduct?._id)}
+                                                         onClick={() => productControlHandler("fulfilled", mProduct?._LID, mProduct?._id)}
                                                       >Publish</button>
                                                    }
                                                 </>

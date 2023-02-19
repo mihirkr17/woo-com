@@ -1,4 +1,4 @@
-import { faCartShopping, faGauge, faSearch, faUserAlt } from '@fortawesome/free-solid-svg-icons';
+import { faCartShopping, faSearch, faUserAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 import { Navbar } from 'react-bootstrap';
@@ -126,7 +126,7 @@ const NavigationBar = () => {
                      {
                         (path !== '/register' && path !== '/login' && (role !== 'SELLER') && (role !== 'ADMIN') && (role !== 'OWNER')) &&
                         <NavLink className="nav_link cart_link" to='/my-cart'><FontAwesomeIcon icon={faCartShopping}></FontAwesomeIcon>
-                           {<div className="bg-info cart_badge">{(userInfo?.buyer?.shoppingCart?.numberOfProducts) || 0}</div>}
+                           {<div className="bg-info cart_badge">{(userInfo?.buyer?.shoppingCartItems) || 0}</div>}
                         </NavLink>
                      }
                   </div>

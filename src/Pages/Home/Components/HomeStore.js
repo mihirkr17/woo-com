@@ -27,7 +27,7 @@ const HomeStore = () => {
 
    return (
       <>
-         <TopRated data={data?.data?.topRatedProducts ? data?.data?.topRatedProducts : []} />
+         {/* <TopRated data={data?.data?.topRatedProducts ? data?.data?.topRatedProducts : []} /> */}
          {/* <TopSell data={data?.data?.topSellingProducts ? data?.data?.topSellingProducts : []} /> */}
 
          <section className='section_default'>

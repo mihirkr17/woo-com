@@ -33,9 +33,9 @@ const SocialAuth = () => {
             try {
                const email = user?.user?.email;
 
-               const url = `${process.env.REACT_APP_BASE_URL}api/v1/user/login-user`;
+               const url = `${process.env.REACT_APP_BASE_URL}api/v1/auth/login`;
 
-               const obj = { username: email, authProvider: 'thirdParty' };
+               const obj = { emailOrPhone: email, authProvider: 'thirdParty' };
 
                const response = await fetch(url, {
                   method: 'POST',

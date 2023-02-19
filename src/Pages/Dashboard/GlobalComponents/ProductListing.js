@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
-import { slugMaker } from '../../../../Shared/common';
-import BtnSpinner from '../../../../Components/Shared/BtnSpinner/BtnSpinner';
-import { useMessage } from '../../../../Hooks/useMessage';
-import { newCategory } from '../../../../Assets/CustomData/categories';
-import { paymentMode } from '../../../../Assets/CustomData/paymentMode';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMinusSquare, faPlusSquare } from '@fortawesome/free-solid-svg-icons';
+import BtnSpinner from '../../../Components/Shared/BtnSpinner/BtnSpinner';
+import { slugMaker } from '../../../Shared/common';
+import { paymentOption } from '../../../Assets/CustomData/paymentMode';
+import { newCategory } from '../../../Assets/CustomData/categories';
 
 const ProductListing = ({ required, userInfo, formTypes, data, refetch, setMessage, super_category }) => {
    const specs = data?.specification && data?.specification;
@@ -133,13 +132,13 @@ const ProductListing = ({ required, userInfo, formTypes, data, refetch, setMessa
             return setMessage("Required all fields!!!", 'danger');
          }
 
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/dashboard/seller/${userInfo?.seller?.storeInfos?.storeName}/product/set-product-intro/${formTypes}`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/dashboard/seller/${userInfo?.seller?.storeInfos?.storeName}/product/listing/${formTypes}`, {
             method: 'POST',
             withCredentials: true,
             credentials: "include",
             headers: {
                "Content-Type": "application/json",
-               authorization: data?._lId
+               authorization: data?._LID
             },
             body: JSON.stringify(formData)
          });
@@ -428,7 +427,7 @@ const ProductListing = ({ required, userInfo, formTypes, data, refetch, setMessa
                   <div className="col-lg-12 my-2">
                      <h6>Set Payment Options</h6>
                      {
-                        paymentMode && paymentMode.map((e, i) => {
+                        paymentOption && paymentOption.map((e, i) => {
                            return (
                               <div className="col-12" key={i}>
                                  <label htmlFor={e}>

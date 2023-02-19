@@ -58,7 +58,7 @@ const Dashboard = () => {
             <div className="db_left_bar">
                <div className="db_left_items">
                   <div className="pp_iyg">
-                     <NavLink className="brand_logo" to="/">WooKart</NavLink>
+                     <NavLink className="brand_logo" to="/dashboard">WooKart</NavLink>
                      <span>{role.toUpperCase()}</span>
 
                      {!shrink && <button className='bars' onClick={() => setShrink(true)}>
@@ -76,32 +76,34 @@ const Dashboard = () => {
                            </NavLink>
                         </li>
 
-                        <li className="link_group">
 
-                           <button onClick={() => setAccordion('catalog')}>
-                              <FontAwesomeIcon icon={faDatabase} />
-                              <span>&nbsp;&nbsp;Catalog</span>
-                           </button>
-
-                           <div style={childLink === 'catalog' ? { display: 'block' } : { display: 'none' }}>
-                              <NavLink className={act === "manage-product" ? "active_link" : ""} to='manage-product'>
-                                 <span>&nbsp;&nbsp;Products</span>
-                              </NavLink>
-                              <NavLink className={act === "add-product" ? "active_link" : ""} to={`add-product`}>
-                                 &nbsp;&nbsp;Add new product
-                              </NavLink>
-                           </div>
-                        </li>
 
                         {
-                           role === 'SELLER' &&
-                           <li className="link_group">
-                              <NavLink className={act === "manage-orders" ? "active_link" : ""} to='manage-orders'>
-                                 <FontAwesomeIcon icon={faCartFlatbed} />
-                                 <span>&nbsp;&nbsp;Orders</span>
-                              </NavLink>
+                           role === 'SELLER' && <>
+                              <li className="link_group">
+                                 <NavLink className={act === "manage-orders" ? "active_link" : ""} to='manage-orders'>
+                                    <FontAwesomeIcon icon={faCartFlatbed} />
+                                    <span>&nbsp;&nbsp;Orders</span>
+                                 </NavLink>
 
-                           </li>
+                              </li>
+
+                              <li className="link_group">
+
+                                 <button onClick={() => setAccordion('catalog')}>
+                                    <FontAwesomeIcon icon={faDatabase} />
+                                    <span>&nbsp;&nbsp;Catalog</span>
+                                 </button>
+
+                                 <div style={childLink === 'catalog' ? { display: 'block' } : { display: 'none' }}>
+                                    <NavLink className={act === "manage-product" ? "active_link" : ""} to='manage-product'>
+                                       <span>&nbsp;&nbsp;Products</span>
+                                    </NavLink>
+                                    <NavLink className={act === "add-product" ? "active_link" : ""} to={`add-product`}>
+                                       &nbsp;&nbsp;Add new product
+                                    </NavLink>
+                                 </div>
+                              </li></>
                         }
 
                         {
@@ -126,6 +128,13 @@ const Dashboard = () => {
                                  <NavLink className={act === "privacy-policy" ? "active_link" : ""} to='privacy-policy'>
                                     <FontAwesomeIcon icon={faBlind} />
                                     <span>&nbsp;&nbsp;Privacy & Policy</span>
+                                 </NavLink>
+                              </li>
+
+                              <li className="link_group">
+                                 <NavLink className={act === "check-all-incoming-listing" ? "active_link" : ""} to='check-all-incoming-listing'>
+                                    <FontAwesomeIcon icon={faBlind} />
+                                    <span>&nbsp;&nbsp;Listing</span>
                                  </NavLink>
                               </li>
                            </>

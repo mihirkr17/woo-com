@@ -2,6 +2,7 @@ import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuthContext } from '../lib/AuthProvider';
 
+
 const RequiredBuyer = ({ children }) => {
    const { role, authLoading } = useAuthContext();
    const location = useLocation();

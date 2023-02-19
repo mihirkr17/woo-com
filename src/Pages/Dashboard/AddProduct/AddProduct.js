@@ -3,7 +3,7 @@ import "./AddProduct.css";
 // import ProductTemplateForm from './Components/ProductTemplateForm';
 import { useAuthContext } from '../../../lib/AuthProvider';
 import { Link, useParams } from 'react-router-dom';
-import ProductTemplateForm from '../ManageProduct/Components/ProductTemplateForm';
+import ProductTemplateForm from '../GlobalComponents/ProductTemplateForm';
 import { useMessage } from '../../../Hooks/useMessage';
 
 const AddProduct = () => {

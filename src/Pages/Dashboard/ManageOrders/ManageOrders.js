@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
-import { useMessage } from '../../Hooks/useMessage';
-import Modal from './Components/Modal/Modal';
-import Spinner from '../../Components/Shared/Spinner/Spinner';
+import OrderDetailsModal from './Components/OrderDetailsModal';
+import Spinner from '../../../Components/Shared/Spinner/Spinner';
 import { useEffect } from 'react';
 import OrderTable from './Components/OrderTable';
-import { useOrder } from '../../lib/OrderProvider';
-import { useNavigate } from 'react-router-dom';
-import ModalLabel from './Components/ModalLabel/ModalLabel';
-import { useAuthContext } from '../../lib/AuthProvider';
+import { useOrder } from '../../../lib/OrderProvider';
+import OrderLabelModal from './Components/OrderLabelModal';
+import { useAuthContext } from '../../../lib/AuthProvider';
+import { useMessage } from '../../../Hooks/useMessage';
 
 const ManageOrders = () => {
    const { userInfo } = useAuthContext();
@@ -19,15 +18,14 @@ const ManageOrders = () => {
    const [dispatchOrder, setDispatchOrder] = useState([]);
    const [shipOrder, setShipOrder] = useState([]);
    const [showOrders, setShowOrders] = useState("pending");
-   const navigate = useNavigate();
 
 
    // Filtering orders by status
    useEffect(() => {
       if (order) {
-         setPendingOrders(order.filter(odr => odr?.orders?.status === "pending").reverse());
-         setDispatchOrder(order.filter(odr => odr?.orders?.status === "dispatch").reverse())
-         setShipOrder(order.filter(odr => odr?.orders?.status === "shipped").reverse());
+         setPendingOrders(order.filter(odr => odr?.orderStatus === "pending").reverse());
+         setDispatchOrder(order.filter(odr => odr?.orderStatus === "dispatch").reverse())
+         setShipOrder(order.filter(odr => odr?.orderStatus === "shipped").reverse());
       }
    }, [order]);
 
@@ -49,47 +47,18 @@ const ManageOrders = () => {
       }
    }
 
-   // Update the order status by seller or admin
-   // const updateOrderStatusHandler = async (userEmail, orderId, status, ownerCommission = 0, totalEarn = 0, productId, quantity, seller) => {
-
-   //    let confirmMsg = status === "pending" ? "Want To Placed This Order" : "Want To Shipped This Order";
-   //    let successMsg = status === "pending" ? "Order Successfully Placed" : "Order Successfully Shipped";
-
-   //    let st = status === "pending" ? "placed" : status === "placed" ? "shipped" : "";
-
-   //    if (window.confirm(confirmMsg)) {
-   //       const response = await fetch(`${process.env.REACT_APP_BASE_URL}update-order-status/${st}/${orderId}`, {
-   //          method: "PUT",
-   //          withCredentials: true,
-   //          credentials: "include",
-   //          headers: {
-   //             "Content-Type": "application/json",
-   //             authorization: `${userEmail}`
-   //          },
-   //          body: JSON.stringify({ ownerCommission, totalEarn: parseFloat(totalEarn), productId, quantity, seller })
-   //       });
-
-   //       if (response.ok) {
-   //          await response.json();
-   //          setMessage(<p className='text-success'><small><strong>{successMsg}</strong></small></p>);
-   //          orderRefetch();
-   //       }
-
-   //    }
-   // }
-
    const orderDispatchHandler = async (order) => {
-      const { orderId, trackingId, user_email } = order;
+      const { orderID, trackingID, customerEmail } = order;
 
-      if (orderId && trackingId) {
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/order/dispatch-order-request/${orderId}/${trackingId}`, {
+      if (orderID && trackingID && customerEmail) {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/dashboard/store/${userInfo?.seller?.storeInfos?.storeName}/order/dispatch-order`, {
             method: "PUT",
             withCredentials: true,
             credentials: "include",
             headers: {
-               "Content-Type": "application/json",
-               authorization: `${user_email}`
-            }
+               "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ context: { MARKET_PLACE: "WooKart" }, module: { orderID, trackingID, customerEmail } })
          });
 
          const resData = await response.json();
@@ -179,17 +148,17 @@ const ManageOrders = () => {
             </div>
          </div>
          {
-            openModal && <Modal
+            openModal && <OrderDetailsModal
                data={openModal}
                closeModal={() => setOpenModal(false)}
-            ></Modal>
+            ></OrderDetailsModal>
          }
 
-         {labelModal && <ModalLabel
+         {labelModal && <OrderLabelModal
             data={labelModal}
             userInfo={userInfo}
             closeModal={() => setLabelModal(false)}
-         ></ModalLabel>
+         ></OrderLabelModal>
          }
       </div >
    );
