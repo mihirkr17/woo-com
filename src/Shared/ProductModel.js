@@ -14,8 +14,6 @@ const ProductModel = ({ product }) => {
    const navigate = useNavigate();
    const [tab, setTab] = useState("description");
 
-   console.log(product)
-
 
    const sizeBtnStyle = {
       border: '1px solid blue',

@@ -2,7 +2,27 @@ import React from 'react';
 import ModalWrapper from '../../../../Shared/ModalWrapper';
 
 const OrderDetailsModal = ({ data, closeModal }) => {
-   const { orderID, title, customerEmail, paymentMode, image, trackingID, shipping, orderStatus, quantity, orderAT, shippingAddress, sellingPrice, totalAmount } = data && data;
+   const { orderID, title, customerEmail, paymentMode, image, trackingID, shipping, orderStatus, variant, quantity, orderAT, shippingAddress, sellingPrice, baseAmount } = data && data;
+
+
+   function getAttrs(obj = {}, optStr = "") {
+
+      let str = [];
+
+      for (let [key, value] of Object.entries(obj)) {
+
+         if (typeof value === 'object' || typeof value === "undefined" || !value) {
+            key = "";
+            value = "";
+         };
+
+         str.push(
+            <li key={key}><small>{key.replace(/[_+]/gi, " ").toUpperCase()} : {value + optStr} </small></li>
+         )
+      }
+
+      return str.slice(0, 6);
+   }
 
    return (
       <ModalWrapper closeModal={closeModal}>
@@ -43,7 +63,7 @@ const OrderDetailsModal = ({ data, closeModal }) => {
                   </tr>
                   <tr>
                      <th>Total Amount</th>
-                     <td>{totalAmount} Tk</td>
+                     <td>{baseAmount} Tk</td>
                   </tr>
                   <tr>
                      <th>Payment Mode</th>
@@ -74,17 +94,25 @@ const OrderDetailsModal = ({ data, closeModal }) => {
                   <tr>
                      <th>Shipping Address</th>
                      <td>
-                        <pre>
-                           Customer  : {shippingAddress?.name} <br />
-                           Area      : {shippingAddress?.area} <br />
-                           LandMark  : {shippingAddress?.landmark} <br />
-                           City      : {shippingAddress?.city} <br />
-                           Division  : {shippingAddress?.division} <br />
-                           Zip code  : {shippingAddress?.postal_code} <br />
-                           Phone     : {shippingAddress?.phone_number}
-                        </pre>
+                        <ul>
+                           {
+                              getAttrs(shippingAddress)
+                           }
+                        </ul>
                      </td>
                   </tr>
+
+                  <tr>
+                     <th>Variant</th>
+                     <td>
+                        <ul>
+                           {
+                              getAttrs(variant)
+                           }
+                        </ul>
+                     </td>
+                  </tr>
+
 
                   <tr>
                      <th>In The Box</th>
@@ -93,12 +121,10 @@ const OrderDetailsModal = ({ data, closeModal }) => {
                   <tr>
                      <th>Package Dimension</th>
                      <td>
-                        <pre>
-                           weight : {shipping?.package?.weight} kg <br />
-                           height : {shipping?.package?.dimension?.height} cm <br />
-                           length : {shipping?.package?.dimension?.length} cm <br />
-                           width  : {shipping?.package?.dimension?.width} cm
-                        </pre>
+                        <ul>
+                           <li><small>WEIGHT : {shipping?.package?.weight} kg</small></li>
+                           {getAttrs(shipping?.package?.dimension, " cm")}
+                        </ul>
                      </td>
                   </tr>
                </tbody>

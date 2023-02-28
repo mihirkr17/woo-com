@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useFetch } from '../../Hooks/useFetch';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
 import { useMessage } from '../../Hooks/useMessage';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import BtnSpinner from '../../Components/Shared/BtnSpinner/BtnSpinner';
 import FilterOption from "../../Shared/FilterOption";
 import { useEffect } from 'react';
@@ -20,7 +20,7 @@ const MyOrder = () => {
    const [openReviewForm, setOpenReviewForm] = useState(false);
    const [filterOrder, setFilterOrder] = useState("");
    const [orderItems, setOrderItems] = useState([]);
-   const navigate = useNavigate();
+
 
    useEffect(() => {
       if (filterOrder === "" || filterOrder === "all") {
@@ -125,7 +125,10 @@ const MyOrder = () => {
       }
    }
 
+
    if (loading) return <Spinner></Spinner>;
+
+   window.history.replaceState({}, document.title);
    return (
       <div className="container">
          {msg}
@@ -147,8 +150,8 @@ const MyOrder = () => {
                      orderItems && orderItems.length > 0 ? orderItems.map(order => {
 
                         const { title, quantity, paymentMode, orderStatus, orderID, sellingPrice, customerEmail,
-                           totalAmount, image, productID, sellerData, cancelReason, orderCanceledAT,
-                           orderAT, orderPlacedAT, orderShippedAT, isRating, slug } = order && order;
+                           baseAmount, image, productID, sellerData, cancelReason, orderCanceledAT,
+                           orderAT, orderPlacedAT, orderShippedAT, isRating, slug, paymentStatus, shippingCharge } = order && order;
 
                         return (
                            <div className="col-12 mb-3" key={orderID}>
@@ -167,17 +170,19 @@ const MyOrder = () => {
                                                 <div>
                                                    {title && title.length > 30 ? title.slice(0, 30) + "..." : title} <br />
                                                    <pre className="text-muted">
-                                                      Price        : {sellingPrice} Tk<br />
-                                                      Qty          : {quantity} <br />
-                                                      Seller       : {sellerData?.storeName} <br />
-                                                      Payment Mode : {paymentMode}
+                                                      Price            : {sellingPrice} Tk<br />
+                                                      Shipping Charge  : {shippingCharge} Tk<br />
+                                                      Qty              : {quantity} <br />
+                                                      Seller           : {sellerData?.storeName} <br />
+                                                      Payment Mode     : {paymentMode} <br />
+                                                      Payment Status   : {paymentStatus}
                                                    </pre>
                                                 </div>
                                              </div>
 
                                              <div className="col-lg-3">
                                                 <p>
-                                                   Amount : {totalAmount}&nbsp;Tk <br />
+                                                   Amount : {baseAmount}&nbsp;Tk <br />
                                                 </p>
                                              </div>
 

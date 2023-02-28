@@ -16,10 +16,29 @@ const Cart = () => {
 
    // Go checkout page
    const goCheckoutPage = async (uuid, params) => {
-      if (cartData?.products && cartData?.products.length < 0) {
+     
+
+      let products = cartData && cartData?.products.filter(p => p?.stock === "in");
+
+      if (products && products.length <= 0) {
          return setMessage("Your cart is empty. Please add product to your cart", "danger");
       }
-      return navigate(`/checkout?spa=${uuid}.${params}`);
+
+      const baseAmounts = products && products.map((tAmount) => (parseInt(tAmount?.baseAmount))).reduce((p, c) => p + c, 0);
+      const totalQuantities = products && products.map((tQuant) => (parseInt(tQuant?.quantity))).reduce((p, c) => p + c, 0);
+      const shippingFees = products && products.map((p) => parseInt(p?.shippingCharge)).reduce((p, c) => p + c, 0);
+      const finalAmounts = products && products.map((fAmount) => (parseInt(fAmount?.totalAmount))).reduce((p, c) => p + c, 0);
+      const savingAmounts = products && products.map((fAmount) => (parseInt(fAmount?.savingAmount))).reduce((p, c) => p + c, 0);
+
+      return navigate(`/checkout?spa=${uuid}.${params}`, {
+         state: {
+            products,
+            container_p: {
+               baseAmounts, totalQuantities, shippingFees, finalAmounts, savingAmounts
+            },
+            numberOfProducts: products.length || 0,
+         }
+      });
    }
 
    return (

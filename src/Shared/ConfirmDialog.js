@@ -1,6 +1,7 @@
 import React from 'react';
 
 const ConfirmDialog = ({ payload }) => {
+
    return (
       <div className={`confirm_box ${payload?.openBox ? "active" : ""}`}>
          <span>

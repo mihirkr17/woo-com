@@ -10,7 +10,6 @@ import Login from './Pages/UserAuth/Login';
 import Register from './Pages/Register';
 import ViewProduct from './Pages/ViewProduct/ViewProduct';
 import Cart from './Pages/Cart/Cart';
-import CheckOut from './Pages/CheckOut/CheckOut';
 import MyOrder from './Pages/UserAccount/MyOrder';
 import ManageOrders from './Pages/Dashboard/ManageOrders/ManageOrders';
 import ProductCategory from './Pages/ProductCategory/ProductCategory';
@@ -20,7 +19,6 @@ import ManageUsers from './Owner/ManageUsers/ManageUsers';
 import RequiredDashboard from './Auth/RequiredDashboard';
 import ManageProduct from './Pages/Dashboard/ManageProduct/ManageProduct';
 import MyDashboard from './Pages/Dashboard/MyDashboard/MyDashboard';
-import CheckoutSingle from './Pages/CheckOut/CheckoutSingle';
 import SellOnline from './Pages/SellOnline/SellOnline';
 import CheckSeller from './Pages/Dashboard/CheckSeller/CheckSeller';
 import SellerCheckProvider from './lib/SellerCheckProvider';
@@ -45,6 +43,8 @@ import MyPayment from './Pages/UserAccount/MyPayment';
 import AdminProvider from './lib/AdminProvider';
 import CheckAllIncomingProductListing from './Pages/Dashboard/Admin/CheckAllIncomingProductListing';
 import CartProvider from './lib/CartProvider';
+import SinglePurchase from './Pages/Purchase/SinglePurchase';
+import CartPurchase from './Pages/Purchase/CartPurchase';
 
 function App() {
   const location = useLocation();
@@ -80,14 +80,13 @@ function App() {
             path='/checkout'
             element={
               <RequiredBuyer>
-                <CartProvider>
-                  <CheckOut></CheckOut>
-                </CartProvider>
+                <CartPurchase>
+                </CartPurchase>
               </RequiredBuyer>
             }
           />
 
-          <Route path='/single-checkout' element={<RequiredBuyer><CheckoutSingle></CheckoutSingle></RequiredBuyer>}></Route>
+          <Route path='/single-checkout' element={<RequiredBuyer><SinglePurchase></SinglePurchase></RequiredBuyer>}></Route>
 
           <Route path='/' element={<NotPermitForAdminSellerOwner><Home></Home></NotPermitForAdminSellerOwner>}></Route>
           <Route path='/blog' element={<Blog></Blog>}></Route>

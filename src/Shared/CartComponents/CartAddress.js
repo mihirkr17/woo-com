@@ -1,18 +1,10 @@
 import { faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
-import { useEffect } from 'react';
 
-const CartAddress = ({ authRefetch, addr, setStep, navigate, setMessage, cartRefetch }) => {
 
-   useEffect(() => {
-      const selectAddress = addr && addr.map(a => a?.select_address);
-      if (selectAddress.includes(true)) {
-         setStep(true)
-      } else {
-         setStep(false)
-      }
-   }, [addr, setStep]);
+const CartAddress = ({ authRefetch, addr, navigate, setMessage }) => {
+
 
    const selectAddressHandler = async (addressId, selectAddress) => {
 
@@ -29,7 +21,6 @@ const CartAddress = ({ authRefetch, addr, setStep, navigate, setMessage, cartRef
       const resData = await response.json();
 
       if (response.ok) {
-         cartRefetch();
          authRefetch();
          setMessage(resData?.message, "success");
       } else {

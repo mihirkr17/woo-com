@@ -11,8 +11,15 @@ const OrderProvider = ({ children }) => {
    const [orderLoading, setOrderLoading] = useState(false);
    const [orderError, setOrderError] = useState("");
    const [ref, setRef] = useState(false);
+   const viewMode = new URLSearchParams(window.location.search).get("view");
+   const [view, setView] = useState(viewMode || "single");
 
    const orderRefetch = () => setRef(e => !e);
+
+   const viewController = (params) => {
+      setView(params);
+   }
+
 
    useEffect(() => {
       if (role !== "SELLER") {
@@ -23,7 +30,7 @@ const OrderProvider = ({ children }) => {
          (async () => {
             try {
                setOrderLoading(true);
-               const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/dashboard/store/${userInfo?.seller?.storeInfos?.storeName}/manage-orders`, {
+               const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/dashboard/store/${userInfo?.seller?.storeInfos?.storeName}/manage-orders?view=${view}`, {
                   method: "GET",
                   withCredential: true,
                   credentials: "include"
@@ -51,7 +58,7 @@ const OrderProvider = ({ children }) => {
       }, 0);
 
       return () => clearTimeout(fetchData);
-   }, [ref, role, userInfo?.seller?.storeInfos?.storeName]);
+   }, [ref, role, userInfo?.seller?.storeInfos?.storeName, view]);
 
    return (
       <OrderContext.Provider value={{
@@ -60,7 +67,8 @@ const OrderProvider = ({ children }) => {
          orderRefetch,
          orderCount,
          newOrderCount,
-         orderError
+         orderError,
+         viewController
       }}>
          {children}
       </OrderContext.Provider>

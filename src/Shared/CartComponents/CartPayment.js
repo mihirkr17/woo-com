@@ -1,44 +1,51 @@
+// CartPayment.js
+
 import React from 'react';
-import { paymentOption } from '../../Assets/CustomData/paymentMode';
 
 
-const CartPayment = ({ paymentMode, setPaymentMode, buyBtnHandler, isStock, step, products, isAddress }) => {
-
-   // const isCod = products && products.map(p => p?.paymentInfo).every(s => s.includes("cod"));
-
+const CartPayment = ({ buyBtnHandler, isStock, step, isAddress, CardElement, orderLoading, confirmLoading, totalAmount }) => {
 
    return (
-      <div className='py-1'>
-         <h6>Select Payment Mode</h6>
-         <hr />
-         <div className="row">
-            <div className="col-12">
-
-               <form onSubmit={buyBtnHandler}>
-
-                  <select name="payment" id="payment" className='form-select form-select-sm mb-3' onChange={(e) => setPaymentMode(e.target.value)}>
-                     <option value="">Select Payment Method</option>
-                     {
-                        paymentOption && paymentOption.map((paymentOpt, i) => {
-                           return (
-                              <option key={i} value={paymentOpt}>{paymentOpt}</option>
-                           )
-                        })
+      <div className='p-1 d-flex align-items-center flex-column'>
+         <h6>Pay With Card</h6>
+         <form style={{
+            width: "100%"
+         }} onSubmit={buyBtnHandler}>
+            <div className="py-4">
+               <CardElement
+                  options={{
+                     style: {
+                        base: {
+                           iconColor: '#c4f0ff',
+                           color: '#000',
+                           fontWeight: '500',
+                           fontFamily: 'Roboto, Open Sans, Segoe UI, sans-serif',
+                           fontSize: '16px',
+                           fontSmoothing: 'antialiased',
+                           ':-webkit-autofill': {
+                              color: '#fce88',
+                           },
+                           '::placeholder': {
+                              color: '#87BBFG',
+                           },
+                        },
+                        invalid: {
+                           color: '#9e2146',
+                        }
                      }
-                  </select>
-
-                  {
-                     !isAddress && <p>Please select shipping address.</p> 
-                  }
-
-                  <button className='bt9_checkout' disabled={(isStock && isAddress) ? false : true} type='submit'>
-                     Place Order
-                  </button>
-               </form>
-
-
+                  }}
+               />
             </div>
-         </div>
+            {
+               !isAddress && <p>Please select shipping address.</p>
+            }
+
+            <button className='bt9_checkout' disabled={(isStock && isAddress) ? false : true} type='submit'>
+               {
+                  orderLoading ? "Paying..." : confirmLoading ? "Confirming...." : "Pay Now " + parseInt(totalAmount) + " Tk"
+               }
+            </button>
+         </form>
       </div>
    );
 };
