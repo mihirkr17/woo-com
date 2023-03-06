@@ -4,9 +4,9 @@ import { Link } from 'react-router-dom';
 const Product = ({ product }) => {
    return (
       <div className='product_card my-2'>
-         <Link to={`/product/${product?.slug}?pId=${product?._id}&vId=${product?.variations?._VID}`}>
+         <Link to={`/product/${product?.slug}?pId=${product?._id}&vId=${product?._VID}`}>
             <div className="product_card_img">
-               <img src={product?.variations?.images && product?.variations?.images[0]} alt='' />
+               <img src={product?.image && product?.image} alt='' />
             </div>
             <article className='product_card_description'>
                <div className="product_title">
@@ -24,12 +24,12 @@ const Product = ({ product }) => {
                   </div>
 
                   <div className="price_model">
-                     <big>{product?.variations?.pricing?.sellingPrice || product?.variations?.pricing?.price} TK</big>
+                     <big><span className='dollar_Symbol'>$</span>{product?.pricing?.sellingPrice || product?.pricing?.price}</big>
                      <p>
                         <strike>
-                           {product?.variations?.pricing?.price} TK
+                           $ {product?.pricing?.price}
                         </strike>
-                        ({product?.variations?.pricing?.discount || 0}%) off
+                        ({product?.pricing?.discount || 0}%) off
                      </p>
                   </div>
 

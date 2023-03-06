@@ -62,7 +62,7 @@
 
 .search_box {
   position: relative;
-  width: 80%;
+  width: 50%;
 }
 
 .search_form {
@@ -72,6 +72,7 @@
     border-radius: unset;
     background-color: white;
     border: 1px solid rgb(216, 216, 216);
+    border-radius: 4px;
   }
 
   > button {
@@ -88,7 +89,7 @@
     position: absolute;
     top: 40px;
     left: 0;
-    width: 100%;
+    width: 150%;
     display: none;
 
     &.active {
@@ -219,6 +220,10 @@
     .brand_logo {
       font-size: 1rem;
     }
+  }
+
+  .search_box {
+    width: 100%;
   }
 
   .search_form {

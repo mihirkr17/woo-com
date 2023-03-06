@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import useWindowDimensions from '../../../../Hooks/useWindowDimensions';
 import DropDown from './DropDown';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faPenToSquare, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { faPenToSquare, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import ProductDetailsModal from './ProductDetailsModal';
+import UpdateProductModal from './UpdateProductModal';
+import ProductVariationModal from './ProductVariationModal';
 
 const ManageProductHome = (
    {
@@ -32,6 +33,9 @@ const ManageProductHome = (
    const [openDropDown, setOpenDropDown] = useState("");
    const { width } = useWindowDimensions();
    const [flashSale, setFlashSale] = useState("");
+   const [updateProductForm, setUpdateProductForm] = useState(false);
+   const [openProductVariationModal, setOpenProductVariationModal] = useState(false);
+
 
 
    const deleteProductVariationHandler = async (vid, pid) => {
@@ -209,6 +213,23 @@ const ManageProductHome = (
 
    return (
       <>
+         {
+            openProductVariationModal &&
+            <ProductVariationModal
+               closeModal={() => setOpenProductVariationModal(false)}
+               data={openProductVariationModal}
+               refetch={refetch}
+               userInfo={userInfo}
+            />
+         }
+         {
+            updateProductForm && <UpdateProductModal
+               closeModal={() => setUpdateProductForm(false)}
+               data={updateProductForm}
+               setMessage={setMessage}
+               refetch={refetch}
+            />
+         }
          <div className="product_header">
 
             <div className="d-flex justify-content-between align-items-center flex-wrap">
@@ -241,14 +262,17 @@ const ManageProductHome = (
 
                         <div className={`p-1 d-flex justify-content-between flex-wrap`}>
                            <div className="p-1">
+                              <img src={mProduct?.images && mProduct?.images[0]} alt="" style={{ width: "60px", height: "60px" }} />
+
                               <small>
                                  <pre style={{ whiteSpace: 'break-spaces' }}>
                                     TITLE           : {mProduct?.title} <br />
                                     PID             : {mProduct?._id} <br />
                                     Listing ID      : {mProduct?._LID} <br />
                                     BRAND           : {mProduct?.brand} <br />
+                                    SELLING PRICE   : {mProduct?.pricing?.sellingPrice} <br />
                                     CATEGORIES      : {mProduct?.categories && mProduct?.categories.join(" >> ")} <br />
-                                    Total Variation : {(mProduct?.variations && mProduct?.variations.length) || 0} <br />
+                                    Total Variation : {(mProduct?.totalVariation && mProduct?.totalVariation) || 0} <br />
                                     View            : <button onClick={() => setProductDetailModal(true && mProduct)}>view</button>
                                  </pre>
                               </small>
@@ -286,8 +310,13 @@ const ManageProductHome = (
                               </button>
 
                               {
-                                 <DropDown mProduct={mProduct} openDropDown={openDropDown} FontAwesomeIcon={FontAwesomeIcon}
-                                    faPenToSquare={faPenToSquare} location={location} productControlHandler={productControlHandler}
+                                 <DropDown mProduct={mProduct}
+                                    openDropDown={openDropDown}
+                                    FontAwesomeIcon={FontAwesomeIcon}
+                                    faPenToSquare={faPenToSquare}
+                                    location={location} productControlHandler={productControlHandler}
+                                    setUpdateProductForm={setUpdateProductForm}
+                                    setOpenProductVariationModal={setOpenProductVariationModal}
                                  ></DropDown>
                               }
                            </div>
@@ -298,12 +327,10 @@ const ManageProductHome = (
                            <table className='table'>
                               <thead>
                                  <tr>
-                                    <th>Image</th>
-                                    <th>_VID</th>
+                                    <th>Variation ID</th>
                                     <th>sku</th>
                                     <th>Status</th>
-                                    <th>Price (Tk)</th>
-                                    <th>Selling Price (Tk)</th>
+                                    <th>Price Modifier ($)</th>
                                     <th>Availability (Pcs)</th>
                                     <th>Stock</th>
                                     <th>Action</th>
@@ -315,14 +342,10 @@ const ManageProductHome = (
 
                                        return (
                                           <tr key={variation?._VID}>
-                                             <td>
-                                                <img src={variation?.images && variation?.images[0]} alt="" style={{ width: "60px", height: "60px" }} />
-                                             </td>
                                              <td>{variation?._VID}</td>
                                              <td>{variation?.sku}</td>
                                              <td>{variation?.status.toUpperCase()}</td>
-                                             <td>{variation?.pricing?.price}</td>
-                                             <td>{variation?.pricing?.sellingPrice}</td>
+                                             <td>{variation?.priceModifier}</td>
                                              <td>
                                                 {
                                                    role === 'SELLER' ?
@@ -344,10 +367,18 @@ const ManageProductHome = (
                                                    }
                                                 </button>
 
-                                                <Link className='bt9_edit' state={{ from: location }} replace
-                                                   to={`/dashboard/manage-product?np=update-variation&store=${mProduct?.sellerData?.storeName}&pid=${mProduct?._id}&vId=${variation?._VID}`}>
+                                                <button className='bt9_edit' onClick={() => setOpenProductVariationModal(
+                                                   {
+                                                      variations: variation,
+                                                      categories: mProduct?.categories,
+                                                      listingID: mProduct?._LID,
+                                                      _id: mProduct?._id,
+                                                      title: mProduct?.title,
+                                                      formType: "update-variation"
+                                                   }
+                                                )}>
                                                    Update Variation
-                                                </Link>
+                                                </button>
 
                                                 {
                                                    mProduct?.variations && mProduct?.variations.length >= 2 && <button className='btn btn-sm m-1' title={`Delete ${mProduct?.title}`}
@@ -431,9 +462,15 @@ const ManageProductHome = (
                                  mProduct?.variations && mProduct?.variations.length >= 0 ?
                                     <>
                                        <div className="px-1 pb-3">
-                                          <Link className='bt9_create me-2' state={{ from: location }} replace to={`/dashboard/manage-product?np=add-new-variation&store=${mProduct?.sellerData?.storeName}&pid=${mProduct?._id}`}>
+                                          <button className="bt9_primary" onClick={() => setOpenProductVariationModal(mProduct && {
+                                             _id: mProduct?._id,
+                                             formType: "new-variation",
+                                             title: mProduct?.title,
+                                             categories: mProduct?.categories,
+                                             listingID: mProduct?._LID,
+                                          })}>
                                              Add New Variation
-                                          </Link>
+                                          </button>
                                        </div>
 
 
@@ -453,14 +490,11 @@ const ManageProductHome = (
                                                    return (
                                                       <tr key={variation?._VID}>
                                                          <td>
-                                                            <img src={variation?.images && variation?.images[0]} alt="" style={{ width: "60px", height: "60px" }} />
+                                                            <img src={mProduct?.images && mProduct?.images[0]} alt="" style={{ width: "60px", height: "60px" }} />
                                                          </td>
                                                          <td>{variation?._VID}</td>
                                                          <td>{variation?.sku}</td>
                                                          <td>
-
-
-
                                                             <Link className='bt9_edit' state={{ from: location }} replace
                                                                to={`/dashboard/manage-product?np=update-variation&store=${mProduct?.sellerData?.storeName}&pid=${mProduct?._id}&vId=${variation?._VID}`}>
                                                                Update Variation

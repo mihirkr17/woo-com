@@ -8,8 +8,7 @@ import OrderLabelModal from './Components/OrderLabelModal';
 import { useAuthContext } from '../../../lib/AuthProvider';
 import { useMessage } from '../../../Hooks/useMessage';
 import { useNavigate } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGrin, faGrip, faGripHorizontal, faGripLinesVertical, faHamburger, faList } from '@fortawesome/free-solid-svg-icons';
+import OrderPaymentInfoModal from './Components/OrderPaymentInfoModal';
 
 
 const ManageOrders = () => {
@@ -17,6 +16,7 @@ const ManageOrders = () => {
    const { msg, setMessage } = useMessage();
    const { order, orderRefetch, orderLoading, viewController } = useOrder();
    const [openModal, setOpenModal] = useState(false);
+   const [openOrderPaymentInfo, setOpenOrderPaymentInfo] = useState(false);
    const [labelModal, setLabelModal] = useState(false);
    const [pendingOrders, setPendingOrders] = useState([]);
    const [dispatchOrder, setDispatchOrder] = useState([]);
@@ -33,53 +33,6 @@ const ManageOrders = () => {
          setShipOrder(order.filter(odr => odr?.orderStatus === "shipped").reverse());
       }
    }, [order]);
-
-   // Cancel the order if any wrong 
-   const cancelOrderHandler = async (email, orderId) => {
-      if (window.confirm("Want to cancel this order ?")) {
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/order/remove-order/${email}/${orderId}`, {
-            method: "DELETE",
-            withCredentials: true,
-            credentials: "include",
-         });
-
-         const resData = await response.json();
-
-         if (response.ok) {
-            setMessage(resData?.message, "success");
-            orderRefetch();
-         }
-      }
-   }
-
-   const orderDispatchHandler = async (order) => {
-      try {
-         const { orderID, trackingID, customerEmail } = order;
-
-         if (orderID && trackingID && customerEmail) {
-            const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/dashboard/store/${userInfo?.seller?.storeInfos?.storeName}/order/dispatch-order`, {
-               method: "PUT",
-               withCredentials: true,
-               credentials: "include",
-               headers: {
-                  "Content-Type": "application/json"
-               },
-               body: JSON.stringify({ context: { MARKET_PLACE: "WooKart" }, module: { orderID, trackingID, customerEmail } })
-            });
-
-            const resData = await response.json();
-
-            if (response.status >= 200 && response.status <= 299) {
-               setMessage(resData?.message, "success")
-               orderRefetch();
-            } else {
-               setMessage(resData?.message, "danger");
-            }
-         }
-      } catch (error) {
-         setMessage(error?.message, "danger");
-      }
-   }
 
    function view(params) {
       viewController(params);
@@ -119,39 +72,44 @@ const ManageOrders = () => {
             <div className="row">
                {
                   viewMode === "group" ?
-                     Array.isArray(order) && order.map(og => {
+                     Array.isArray(order) && order.map((og, index) => {
+
                         return (
-                           <div className="col-lg-12" style={{ border: "1px solid black", margin: "0 0 1rem 0" }} key={og?._id}>
-                              <p>
-                                 Order Payment ID: {og?._id} <br />
-                                 Total Order Amount: {og?.totalOrderAmount}
-                              </p>
+                           <div className="col-lg-12" style={{ border: "1px solid black", margin: "0 0 1rem 0", minHeight: "200px" }} key={index}>
+                              <small>
+                                 <pre>
+                                    Order Payment ID     : {og?._id} <br />
+                                    Total Payment Amount : {og?.totalOrderAmount}
+                                 </pre>
+                              </small>
+
                               <OrderTable
                                  orderList={Array.isArray(og?.orders) && og?.orders}
-                                 orderDispatchHandler={orderDispatchHandler}
-                                 cancelOrderHandler={cancelOrderHandler}
                                  setOpenModal={setOpenModal}
                                  setLabelModal={setLabelModal}
-
+                                 setOpenOrderPaymentInfo={setOpenOrderPaymentInfo}
+                                 orderRefetch={orderRefetch}
+                                 setMessage={setMessage}
+                                 userInfo={userInfo}
                               />
                            </div>
                         )
                      }) : <>
                         {
-                           showOrders === "pending" &&
                            <div className="col-lg-12 mb-4 p-3">
                               <div className="card_default card_description">
                                  <div className="py-1">
                                     {
-                                       orderLoading ? <Spinner /> : pendingOrders.length > 0 ?
+                                       orderLoading ? <Spinner /> :
                                           <OrderTable
+                                             setMessage={setMessage}
                                              orderRefetch={orderRefetch}
                                              orderList={order}
-                                             orderDispatchHandler={orderDispatchHandler}
-                                             cancelOrderHandler={cancelOrderHandler}
                                              setOpenModal={setOpenModal}
                                              setLabelModal={setLabelModal}
-                                          /> : <i className='text-muted'>No pending orders</i>
+                                             setOpenOrderPaymentInfo={setOpenOrderPaymentInfo}
+                                             userInfo={userInfo}
+                                          /> 
                                     }
                                  </div>
                               </div>
@@ -197,11 +155,16 @@ const ManageOrders = () => {
                      </>
                }
             </div>
-
-            <div className="row">
-
-            </div>
          </div>
+
+         {
+            openOrderPaymentInfo && <OrderPaymentInfoModal
+               orderRefetch={orderRefetch}
+               data={openOrderPaymentInfo}
+               closeModal={() => setOpenOrderPaymentInfo(false)}
+            />
+         }
+
          {
             openModal && <OrderDetailsModal
                data={openModal}

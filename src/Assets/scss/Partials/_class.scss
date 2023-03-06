@@ -170,6 +170,24 @@
   }
 }
 
+.bt9_primary {
+  padding: 0.2rem 0.3rem;
+  border: 1px solid var(--color-primary);
+  border-radius: 3px;
+  background-color: var(--color-primary);
+  color: var(--color-light);
+  font-size: 0.7rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+  transition: all 0.4s linear;
+  appearance: button;
+  margin: 1px;
+
+  &:hover {
+    background-color: var(--color-primary-alt);
+  }
+}
+
 .bt9_cancel {
   padding: 0.2rem 0.3rem;
   border: 1px solid var(--color-mute);
@@ -314,13 +332,13 @@ label {
   }
 }
 
-.action_buttons {
-  padding: 0.9rem;
+.action_menu {
+  padding: 0.3rem;
   background-color: #f3f3f3;
   position: absolute;
-  left: 0;
+  right: 10px;
   top: 37px;
-  width: 150px;
+  min-width: 150px;
   border-radius: 10px;
   box-shadow: 0 0 20px 10px #00000026;
   z-index: 999;
@@ -478,4 +496,40 @@ label {
 .modal_body .modal_close:hover {
   background-color: var(--color-dark-alt);
   color: var(--color-light);
+}
+
+.badge_success {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.4rem;
+  border-radius: 10px;
+  display: inline-block;
+  background-color: var(--color-green);
+  letter-spacing: 1px;
+  color: var(--color-light);
+  font-weight: bold;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+}
+
+.badge_failed {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.4rem;
+  border-radius: 10px;
+  display: inline-block;
+  background-color: var(--color-danger);
+  letter-spacing: 1px;
+  color: var(--color-light);
+  font-weight: bold;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+}
+
+.dollar_Symbol {
+  padding: 0 2px;
+  display: inline-block;
+  font-size: 1.1rem;
+  text-decoration-style: dotted;
+  vertical-align: text-top;
 }

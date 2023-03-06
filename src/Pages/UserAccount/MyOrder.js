@@ -95,25 +95,24 @@ const MyOrder = () => {
       }
    }
 
-   const handleCancelOrder = async (e, quantity, productID) => {
+   const handleCancelOrder = async (e, order) => {
       e.preventDefault();
-      let cancel_reason = reason;
-      let orderID = e.target.orderID.value;
-      let userEmail = e.target.user_email.value;
 
-      if (cancel_reason === "Choose Reason" || cancel_reason === "") {
+      const { orderID } = order;
+
+      if (reason === "Choose Reason" || reason === "") {
          setMessage(<strong className='text-success'>Please Select Cancel Reason...</strong>);
          return;
       } else {
-         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/order/cancel-my-order/${userEmail}`, {
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/order/cancel-my-order/${userInfo?.email}`, {
             method: "PUT",
             withCredentials: true,
             credentials: "include",
             headers: {
                "Content-Type": "application/json",
-               authorization: userEmail
+               authorization: userInfo?.email
             },
-            body: JSON.stringify({ cancel_reason, orderID })
+            body: JSON.stringify({ cancelReason: reason, orderID })
          });
 
          const resData = await response.json();
@@ -151,7 +150,7 @@ const MyOrder = () => {
 
                         const { title, quantity, paymentMode, orderStatus, orderID, sellingPrice, customerEmail,
                            baseAmount, image, productID, sellerData, cancelReason, orderCanceledAT,
-                           orderAT, orderPlacedAT, orderShippedAT, isRating, slug, paymentStatus, shippingCharge } = order && order;
+                           orderAT, orderPlacedAT, orderShippedAT, isRating, slug, paymentStatus, shippingCharge, isCanceled, refund } = order && order;
 
                         return (
                            <div className="col-12 mb-3" key={orderID}>
@@ -170,25 +169,31 @@ const MyOrder = () => {
                                                 <div>
                                                    {title && title.length > 30 ? title.slice(0, 30) + "..." : title} <br />
                                                    <pre className="text-muted">
-                                                      Price            : {sellingPrice} Tk<br />
-                                                      Shipping Charge  : {shippingCharge} Tk<br />
+                                                      Price            : $ {sellingPrice}<br />
+                                                      Shipping Charge  : $ {shippingCharge}<br />
                                                       Qty              : {quantity} <br />
                                                       Seller           : {sellerData?.storeName} <br />
                                                       Payment Mode     : {paymentMode} <br />
                                                       Payment Status   : {paymentStatus}
+
                                                    </pre>
+                                                   <small>
+                                                      {
+                                                         refund && refund?.isRefunded && ("Refunded : " + refund?.isRefunded)
+                                                      }
+                                                   </small>
                                                 </div>
                                              </div>
 
                                              <div className="col-lg-3">
                                                 <p>
-                                                   Amount : {baseAmount}&nbsp;Tk <br />
+                                                   Total Amount : $&nbsp;{baseAmount} <br />
                                                 </p>
                                              </div>
 
                                              <div className="col-lg-4">
                                                 {
-                                                   orderStatus === "canceled" && <>
+                                                   isCanceled && <>
                                                       <p>
                                                          <small className="text-muted">
                                                             {"Order Status : " + orderStatus} <br />
@@ -214,22 +219,18 @@ const MyOrder = () => {
                                                             Cancel Order
                                                          </button>
                                                          <div className="py-4" style={openCancelForm === orderID ? { display: "block" } : { display: "none" }}>
-                                                            <form onSubmit={(e) => handleCancelOrder(e, quantity, productID)} >
+                                                            <form onSubmit={(e) => handleCancelOrder(e, { orderID, quantity, productID, customerEmail })} >
                                                                <label htmlFor="reason">Select Reason</label>
                                                                <div className="form-group d-flex">
 
                                                                   <FilterOption
                                                                      options={[
                                                                         "Choose Reason",
-                                                                        "I want to order a different product",
-                                                                        "I am getting better price",
-                                                                        "I want to re-order using promo code",
-                                                                        "I placed the order by mistake"
+                                                                        "i_want_to_order_a_different_product",
+                                                                        "i_am_getting_better_price",
+                                                                        "i_want_to_re_order_using_promo_code",
+                                                                        "i_placed_the_order_by_mistake"
                                                                      ]} filterHandler={setReason} />
-                                                                  <input type="hidden" name="orderID" defaultValue={orderID} />
-                                                                  <input type="hidden" name="user_email" defaultValue={customerEmail} />
-
-
                                                                </div>
                                                                <button type="submit" className="bt9_warning">Cancel Order</button>
                                                             </form>

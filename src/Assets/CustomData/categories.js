@@ -14,12 +14,14 @@ export const newCategory = [
             post_category_items: [
                {
                   name: 'smartphone',
-                  variant: {
+                  attrs: {
                      model_number: "",
                      model_name: "",
+                     expandable_storage: ['1GB', '2GB', '3GB', '4GB', '6GB', '8GB', '12GB', '32GB', '64GB', "128GB"],
+                  },
+                  variant: {
                      ram: ['1GB', '2GB', '3GB', '4GB', '6GB', '8GB', '12GB'],
                      rom: ['1GB', '2GB', '3GB', '4GB', '6GB', '8GB', '12GB', '32GB', '64GB', "128GB"],
-                     expandable_storage: ['1GB', '2GB', '3GB', '4GB', '6GB', '8GB', '12GB', '32GB', '64GB', "128GB"],
                      color: ['red,#ff0000', 'orange,#ffa500', 'green,#008000', 'blue,#0000ff', 'white,#ffffff', 'black,#000000', 'not here'],
                   },
                   specification: {
@@ -91,10 +93,12 @@ export const newCategory = [
             post_category_items: [
                {
                   name: 't-shirt',
+                  attrs: {
+                     model: "",
+                  },
                   variant: {
                      color: ['red,#ff0000', 'orange,#ffa500', 'green,#008000', 'blue,#0000ff', 'white,#ffffff', 'black,#000000', 'not here'],
                      sizes: ['S', 'M', 'L', 'XXL', 'XS'],
-                     model: "",
                   },
                   specification: {
                      fabric: ['lace', 'net', 'denim', 'nylon', 'pure-cotton', 'muslin', 'latex'],
@@ -117,12 +121,14 @@ export const newCategory = [
             post_category_items: [
                {
                   name: 'pants',
+                  attrs: {
+                     model: "",
+                  },
                   variant: {
                      color: ['red,#ff0000', 'orange,#ffa500', 'green,#008000', 'blue,#0000ff', 'white,#ffffff', 'black,#000000', 'not here'],
                      sizes: ['S', 'M', 'L', 'XXL', 'XS'],
-                     model: "",
                   },
-                  attribute: {
+                  specification: {
                      fabric: ['lace', 'net', 'denim', 'nylon', 'pure-cotton', 'muslin', 'latex'],
                      type: ['round-neck'],
                      pattern: ['solid', 'thin', 'stripped', 'printed'],

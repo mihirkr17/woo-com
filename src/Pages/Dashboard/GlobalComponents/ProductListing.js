@@ -5,11 +5,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMinusSquare, faPlusSquare } from '@fortawesome/free-solid-svg-icons';
 import BtnSpinner from '../../../Components/Shared/BtnSpinner/BtnSpinner';
 import { slugMaker } from '../../../Shared/common';
-import { paymentOption } from '../../../Assets/CustomData/paymentMode';
 import { newCategory } from '../../../Assets/CustomData/categories';
+import { usePrice } from '../../../Hooks/usePrice';
 
 const ProductListing = ({ required, userInfo, formTypes, data, refetch, setMessage, super_category }) => {
    const specs = data?.specification && data?.specification;
+
+
+   // Price and discount states
+   const [inputPriceDiscount, setInputPriceDiscount] = useState({ price: (data?.pricing?.price && data?.pricing?.price) || "", sellingPrice: (data?.pricing?.sellingPrice && data?.pricing?.sellingPrice) || "" });
+   const { discount } = usePrice(inputPriceDiscount.price, inputPriceDiscount.sellingPrice);
 
    const [specification, setSpecification] = useState(specs || {});
    const [slug, setSlug] = useState(data?.slug || "");
@@ -20,13 +25,14 @@ const ProductListing = ({ required, userInfo, formTypes, data, refetch, setMessa
    const [subCategory, setSubCategory] = useState((data?.categories && data?.categories[1]) || '');
    const [postCategory, setPostCategory] = useState((data?.categories && data?.categories[2]) || '');
 
-   const [paymentInfo, setPaymentInfo] = useState({ payment_info: data?.paymentInfo || [] });
 
+   const [warrantyTerm, setWarrantyTerm] = useState(data?.warranty?.wType || "");
+   const [warrantyPeriod, setWarrantyPeriod] = useState(data?.warranty?.wTime || "");
 
-   const [warrantyType, setWarrantyType] = useState(data?.warranty?.wType || "");
-   const [warrantyTime, setWarrantyTime] = useState(data?.warranty?.wTime || "");
+   const [description, setDescription] = useState((data?.description && data?.description) || "CKEditor v5");
+   const [images, setImages] = useState((data?.images && data?.images.length >= 1 ? data?.images : [""]));
 
-   const [description, setDescription] = useState((data?.bodyInfo?.description && data?.bodyInfo?.description) || "CKEditor v5");
+   console.log(images);
 
 
    // search keywords
@@ -39,6 +45,22 @@ const ProductListing = ({ required, userInfo, formTypes, data, refetch, setMessa
    const sub_category = newCategory && newCategory.find(e => e.category === category);
    const post_category = sub_category?.sub_category_items && sub_category?.sub_category_items.find(e => e.name === subCategory);
    const superCategory = post_category?.post_category_items && post_category?.post_category_items.find(e => e.name === postCategory);
+
+
+   // images upload handlers 
+   const imageInputHandler = (e, index) => {
+      const { value } = e.target;
+      let list = [...images];
+      list[index] = value;
+      setImages(list);
+   }
+
+   const removeImageInputFieldHandler = (index) => {
+      let listArr = [...images];
+      listArr.splice(index, 1);
+      setImages(listArr);
+   }
+
 
    // keyword action
    const searchKeywordInputHandler = (e, index) => {
@@ -77,20 +99,6 @@ const ProductListing = ({ required, userInfo, formTypes, data, refetch, setMessa
       setSlug(slugs);
    }
 
-   const handlePaymentMode = (e) => {
-      const { value, checked } = e.target;
-      const { payment_info } = paymentInfo;
-      if (checked) {
-         setPaymentInfo({
-            payment_info: [...payment_info, value],
-         });
-      } else {
-         setPaymentInfo({
-            payment_info: payment_info.filter((e) => e !== value)
-         });
-      }
-   }
-
 
    async function productIntroHandler(e) {
       try {
@@ -98,34 +106,32 @@ const ProductListing = ({ required, userInfo, formTypes, data, refetch, setMessa
          let metaDescription = e.target.metaDescription.value;
 
          let warranty = {
-            wType: warrantyType,
-            wTime: warrantyTime
+            term: warrantyTerm,
+            period: warrantyPeriod || null
          }
 
          let bodyInfo = {
             keyFeatures,
             searchKeywords,
             metaDescription,
-            description
          }
 
-         let payments = paymentInfo?.payment_info;
-
          let formData = new FormData(e.currentTarget);
-         formData.append('slug', slug)
-
-
+         formData.append('slug', slug);
          formData.append('category', category);
          formData.append('subCategory', subCategory);
          formData.append('postCategory', postCategory);
 
-
          formData = Object.fromEntries(formData.entries());
          formData['warranty'] = warranty;
-         formData['paymentInformation'] = payments;
          formData['bodyInfo'] = bodyInfo;
          formData['specification'] = specification;
+         formData["description"] = description;
+         formData["discount"] = discount;
+         formData["isFree"] = e.target.isFree.checked;
+         formData["images"] = images;
 
+      
          const notEmpty = Object.values(formData).every(x => x !== null && x !== '');
 
          if (!notEmpty) {
@@ -147,12 +153,12 @@ const ProductListing = ({ required, userInfo, formTypes, data, refetch, setMessa
          setActionLoading(false);
 
          if (response.ok) {
+            setMessage(resData?.message, 'success');
             if (formTypes === "create") {
-               e.target.reset();
+               // e.target.reset();
             } else {
                refetch();
             }
-            setMessage(resData?.message, 'success');
          }
 
       } catch (error) {
@@ -279,6 +285,61 @@ const ProductListing = ({ required, userInfo, formTypes, data, refetch, setMessa
                      </>
                   }
 
+                  <div className="col-lg-12 py-2">
+                     <label htmlFor='image'>{required} Image(<small>Product Image</small>)&nbsp;</label>
+                     {
+                        Array.isArray(images) && images.map((img, index) => {
+                           return (
+                              <div className="py-2 d-flex align-items-end justify-content-start" key={index}>
+                                 <input className="form-control form-control-sm" name="images" id='images' type="text"
+                                    placeholder='Image url' value={img} onChange={(e) => imageInputHandler(e, index)}></input>
+
+                                 {
+                                    images.length !== 1 && <span
+                                       style={btnStyle}
+                                       onClick={() => removeImageInputFieldHandler(index)}>
+                                       <FontAwesomeIcon icon={faMinusSquare} />
+                                    </span>
+                                 } {
+                                    images.length - 1 === index && <span style={btnStyle}
+                                       onClick={() => setImages([...images, ''])}>
+                                       <FontAwesomeIcon icon={faPlusSquare} />
+                                    </span>
+                                 }
+
+                              </div>
+                           )
+                        })
+                     }
+                     <div className="py-2">
+                        {
+                           images && images.map((img, index) => {
+                              return (
+                                 <img style={{ width: "180px", height: "auto" }} key={index} srcSet={img} alt="" />
+                              )
+                           })
+                        }
+                     </div>
+                  </div>
+
+                  {/* Price information  */}
+                  <div className="col-lg-12 my-2">
+                     <h6>Price Details</h6>
+                     <div className="row">
+                        {/* Price */}
+                        <div className='col-lg-3 mb-3'>
+                           <label htmlFor='price'>{required} Price (BDT)</label>
+                           <input name='price' id='price' type='number' className="form-control form-control-sm" value={inputPriceDiscount.price || ""} onChange={e => setInputPriceDiscount({ ...inputPriceDiscount, [e.target.name]: e.target.value })} />
+                        </div>
+
+                        {/* Selling Price */}
+                        <div className='col-lg-3 mb-3'>
+                           <label htmlFor='sellingPrice'>Selling Price<small>(Discount : {discount || 0}%)</small></label>
+                           <input name='sellingPrice' id='sellingPrice' type='number' className="form-control form-control-sm" value={inputPriceDiscount.sellingPrice} onChange={e => setInputPriceDiscount({ ...inputPriceDiscount, [e.target.name]: e.target.value })} />
+                        </div>
+                     </div>
+                  </div>
+
 
                   {/* Inventory Details */}
                   <div className="col-lg-12 my-2">
@@ -329,28 +390,6 @@ const ProductListing = ({ required, userInfo, formTypes, data, refetch, setMessa
                      </div>
                   </div>
 
-                  {/* Delivery Charge To Customers */}
-                  <div className="col-lg-12 my-2">
-                     <h6>Delivery Charge To Customers</h6>
-                     <div className="row">
-                        <div className="col-lg-3">
-                           <label htmlFor="localCharge">Local Delivery Charge</label>
-                           <input type="number" className='form-control form-control-sm'
-                              name="localCharge" id="localCharge"
-                              defaultValue={data?.shipping?.delivery?.localCharge || 0} />
-                        </div>
-
-                        <div className="col-lg-3">
-                           <label htmlFor="zonalCharge">Zonal Delivery Charge</label>
-                           <input type="number" className='form-control form-control-sm'
-                              name="zonalCharge"
-                              id="zonalCharge"
-                              defaultValue={data?.shipping?.delivery?.zonalCharge || 0}
-                           />
-                        </div>
-                     </div>
-                  </div>
-
                   {/* Packaging Details */}
                   <div className="col-lg-12 my-2">
                      <h6>Packaging Details</h6>
@@ -358,28 +397,28 @@ const ProductListing = ({ required, userInfo, formTypes, data, refetch, setMessa
 
                         <div className="col-lg-3 col-sm-6 mb-2">
                            <label htmlFor="packageWeight">Weight (kg)</label>
-                           <input className='form-control form-control-sm' type="number" id='packageWeight' name="packageWeight"
-                              defaultValue={(data?.shipping?.package?.weight) || ""} />
+                           <input className='form-control form-control-sm' type="text" id='packageWeight' name="packageWeight"
+                              defaultValue={(data?.package?.weight) || ""} />
                         </div>
                         <div className="col-lg-3 col-sm-6 mb-2">
                            <label htmlFor="packageLength">Length (cm)</label>
-                           <input className='form-control form-control-sm' type="number" id='packageLength' name='packageLength'
-                              defaultValue={(data?.shipping?.package?.dimension?.length) || ""} />
+                           <input className='form-control form-control-sm' type="text" id='packageLength' name='packageLength'
+                              defaultValue={(data?.package?.dimension?.length) || ""} />
                         </div>
                         <div className="col-lg-3 col-sm-6 mb-2">
                            <label htmlFor="packageWidth">Width (cm)</label>
-                           <input className='form-control form-control-sm' type="number" id='packageWidth' name='packageWidth'
-                              defaultValue={(data?.shipping?.package?.dimension?.width) || ""} />
+                           <input className='form-control form-control-sm' type="text" id='packageWidth' name='packageWidth'
+                              defaultValue={(data?.package?.dimension?.width) || ""} />
                         </div>
                         <div className="col-lg-3 col-sm-6 mb-2">
                            <label htmlFor="packageHeight">Height (cm)</label>
-                           <input className='form-control form-control-sm' type="number" id='packageHeight' name='packageHeight'
-                              defaultValue={((data?.shipping?.package?.dimension?.height) || "") || ""} />
+                           <input className='form-control form-control-sm' type="text" id='packageHeight' name='packageHeight'
+                              defaultValue={((data?.package?.dimension?.height) || "") || ""} />
                         </div>
                         <div className='col-lg-12 mb-3'>
                            <label htmlFor='inTheBox'>{required} What is in the box</label>
                            <input className='form-control form-control-sm' name="inTheBox" id='inTheBox' type="text"
-                              defaultValue={(data?.shipping?.package?.inTheBox || "")} placeholder="e.g: 1 x hard disk" />
+                              defaultValue={(data?.package?.inTheBox || "")} placeholder="e.g: 1 x hard disk" />
                         </div>
 
                      </div>
@@ -403,6 +442,15 @@ const ProductListing = ({ required, userInfo, formTypes, data, refetch, setMessa
                      </div>
                   </div>
 
+                  <div className="col-lg-12 my-2">
+                     <div className="py-2">
+                        <label htmlFor="isFree">
+                           Free Shipping &nbsp;
+                           <input type="checkbox" name="isFree" id="isFree" defaultChecked={data?.shipping?.isFree ? true : false} />
+                        </label>
+                     </div>
+                  </div>
+
                   {/* Manufacturing Details */}
                   <div className="col-lg-12 my-2">
                      <h6>Manufacturing Details</h6>
@@ -423,46 +471,30 @@ const ProductListing = ({ required, userInfo, formTypes, data, refetch, setMessa
                      </div>
                   </div>
 
-                  {/* Set Payment Options */}
-                  <div className="col-lg-12 my-2">
-                     <h6>Set Payment Options</h6>
-                     {
-                        paymentOption && paymentOption.map((e, i) => {
-                           return (
-                              <div className="col-12" key={i}>
-                                 <label htmlFor={e}>
-                                    <input type="checkbox" className='me-3' name={e} checked={paymentInfo?.payment_info.includes(e) ? true : false} id={e} value={e} onChange={handlePaymentMode} />
-                                    {e}
-                                 </label>
-                              </div>
-                           )
-                        })
-                     }
-                  </div>
 
                   <div className="col-lg-3 my-2">
-                     <label htmlFor="warrantyType">Warranty</label>
-                     <select className='form-select form-select-sm' name="warrantyType" id="warrantyType"
-                        onChange={(e) => setWarrantyType(e.target.value)}>
+                     <label htmlFor="warrantyTerm">Warranty</label>
+                     <select className='form-select form-select-sm' name="warrantyTerm" id="warrantyTerm"
+                        onChange={(e) => setWarrantyTerm(e.target.value)}>
                         {data?.warranty?.wType &&
                            <option value={data?.warranty?.wType}>{data?.warranty?.wType}</option>}
-                        <option value="">Choose Warranty Types</option>
-                        <option value={"seller_warranty"}>Seller Warranty</option>
+                        <option value="">Choose Warranty Terms</option>
+                        <option value="seller_warranty">Seller Warranty</option>
                         <option value="brand_warranty">Brand Warranty</option>
                         <option value="no_warranty">No Warranty</option>
                      </select>
                   </div>
 
                   {
-                     warrantyType === "seller_warranty" &&
+                     warrantyTerm === "seller_warranty" &&
                      <div className="col-lg-3 my-2">
-                        <label htmlFor="warrantyTime">Choose Warranty Time</label>
-                        <select className='form-select form-select-sm' name="warrantyTime" id="warrantyTime"
-                           onChange={(e) => setWarrantyTime(e.target.value)}>
+                        <label htmlFor="warrantyPeriod">Choose Warranty Period</label>
+                        <select className='form-select form-select-sm' name="warrantyPeriod" id="warrantyPeriod"
+                           onChange={(e) => setWarrantyPeriod(e.target.value)}>
 
                            {
-                              data?.warranty?.wTime &&
-                              <option value={data?.warranty.wTime}>{data?.warranty?.wTime}</option>
+                              data?.warranty?.period &&
+                              <option value={data?.warranty.period}>{data?.warranty?.period}</option>
                            }
                            <option value="">Choose Warranty Time</option>
                            <option value={"6-months"}>6 Months</option>
@@ -474,11 +506,10 @@ const ProductListing = ({ required, userInfo, formTypes, data, refetch, setMessa
                   }
 
                   <div className="col-lg-12 my-2">
+                     <h6>Specification</h6>
                      <div className="row">
                         {
-
                            cSl(super_category?.specification || superCategory?.specification, specs || {})
-
                         }
                      </div>
                   </div>
@@ -547,7 +578,6 @@ const ProductListing = ({ required, userInfo, formTypes, data, refetch, setMessa
                                              onClick={() => setKeyFeatures([...keyFeatures, ''])}>
                                              <FontAwesomeIcon icon={faPlusSquare} />
                                           </span>
-
                                        }
                                     </div>
                                  )

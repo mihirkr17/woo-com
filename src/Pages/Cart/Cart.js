@@ -27,7 +27,7 @@ const Cart = () => {
       const baseAmounts = products && products.map((tAmount) => (parseInt(tAmount?.baseAmount))).reduce((p, c) => p + c, 0);
       const totalQuantities = products && products.map((tQuant) => (parseInt(tQuant?.quantity))).reduce((p, c) => p + c, 0);
       const shippingFees = products && products.map((p) => parseInt(p?.shippingCharge)).reduce((p, c) => p + c, 0);
-      const finalAmounts = products && products.map((fAmount) => (parseInt(fAmount?.totalAmount))).reduce((p, c) => p + c, 0);
+      const finalAmounts = products && products.map((fAmount) => (parseInt(fAmount?.baseAmount) + fAmount?.shippingCharge)).reduce((p, c) => p + c, 0);
       const savingAmounts = products && products.map((fAmount) => (parseInt(fAmount?.savingAmount))).reduce((p, c) => p + c, 0);
 
       return navigate(`/checkout?spa=${uuid}.${params}`, {

@@ -116,3 +116,16 @@ export const textToTitleCase = (str) => {
 
    return finalStr.trim();
 }
+
+
+export const callApi = async (url, method, body) => {
+   return await fetch(url, {
+      method,
+      withCredentials: true,
+      credentials: "include",
+      headers: {
+         "Content-Type": "application/json"
+      },
+      body: JSON.stringify(body)
+   })
+}

@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Interweave } from 'interweave';
 import { textToTitleCase } from '../../../Shared/common';
 
 
 const ProductAdditionalDetails = ({ product }) => {
+
+   const [tab, setTab] = useState("specification");
 
    const specs = product?.specification;
 
@@ -24,32 +26,44 @@ const ProductAdditionalDetails = ({ product }) => {
 
    return (
       <div className="product-details row w-100">
-         <div className='p_details col-lg-12'>
-            <h5>Product details of {product?.title}</h5>
-            <div className="product-details__items">
-               <ul>
-                  {
-                     getSpecs(product?.variations?.variant)
-                  }
-                  {
-                     getSpecs(specs)
-                  }
-               </ul>
+
+         <div className="col-12 details_wrapper">
+            <div className="tabHeader">
+               <div className="tabBtns">
+                  <span className={tab === "specification" && "active"} onClick={() => setTab("specification")}>Specification</span>
+                  <span className={tab === "description" && "active"} onClick={() => setTab("description")}>Description</span>
+               </div>
             </div>
+
+
+            {
+               tab === "specification" && <div className='p_details'>
+                  <h5>Specification of {product?.title}</h5>
+                  <div className="product-details__items">
+                     <ul>
+                        {
+                           getSpecs(product?.variations?.attrs)
+                        }
+                        {
+                           getSpecs(product?.variations?.variant)
+                        }
+                        {
+                           getSpecs(specs)
+                        }
+                     </ul>
+                  </div>
+               </div>
+            }
+
+            {
+               tab === "description" && <div className="p_details">
+                  <h5>Description of {product?.title}</h5>
+                  <article>
+                     <Interweave content={product?.description} />
+                  </article>
+               </div>
+            }
          </div>
-
-         {
-            body?.description && <div className="p_details col-lg-12">
-               <h5>Product description of {product?.title}</h5>
-               <article>
-
-                  <Interweave content={body?.description} />
-
-               </article>
-            </div>
-         }
-
-
       </div>
    );
 };

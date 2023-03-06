@@ -42,12 +42,6 @@ const ProductDetailsModal = ({ data: product, closeModal }) => {
                   </div>
 
 
-                  <small className='text-muted'>
-                     <i>
-                        {product?.variations?.stock === "out" ? "Out of Stock" : "Hurry, Only " + product?.variations?.inventoryDetails?.available + " Left !"}
-                     </i>
-                  </small>
-
                   <br />
 
                   <small className='textMute'>Seller : {product?.sellerData?.storeName}</small><br />
@@ -61,9 +55,9 @@ const ProductDetailsModal = ({ data: product, closeModal }) => {
                   <button className={`ddl_g_btn ${tab === "spec" ? "active" : ""}`} onClick={() => setTab("spec")}>Specification</button>
 
                </div>
-               <div className="dp_fgk card_description">
+               <div className="dp_fgk">
                   {
-                     tab === "description" && <Interweave className='pt-4 product_spec' content={product?.bodyInfo?.description} />
+                     tab === "description" && <Interweave className='pt-4 product_spec' content={product?.description} />
                   }
                   {
                      tab === "spec" && <div className="row">

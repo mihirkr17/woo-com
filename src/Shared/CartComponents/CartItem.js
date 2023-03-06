@@ -140,11 +140,11 @@ const CartItem = ({ product: cartProduct, setMessage, cartRefetch, checkOut, car
 
                      <div className="d-flex align-items-center justify-content-between flex-wrap">
                         <div className="product_price_model">
-                           <big>{cartProduct?.sellingPrice} TK</big>
+                           <big><span className="dollar_Symbol">$</span>{cartProduct?.sellingPrice}</big>
                         </div>
                         {
-                           (cartProduct && cartProduct?.variant?.size) &&
-                           <small className="text-muted">Size : {cartProduct?.variant?.size}</small>
+                           (cartProduct && cartProduct?.variant?.sizes) &&
+                           <small className="text-muted">Size : {cartProduct?.variant?.sizes}</small>
                         }
                         {
                            (cartProduct && cartProduct?.variant?.color) &&

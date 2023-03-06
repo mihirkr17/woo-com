@@ -89,14 +89,14 @@ const ProductContents = ({ product, variationID, authRefetch, productRefetch, se
                </div>
 
                <div className="product_price_model">
-                  <big>{product?.variations?.pricing?.sellingPrice || product?.variations?.pricing?.price} TK</big>
+                  <big><span className="dollar_Symbol">$</span>{product?.pricing?.sellingPrice || product?.pricing?.price}</big>
 
                   <div>
                      <strike>
-                        {product?.variations?.pricing?.price} TK
+                        <i>${product?.pricing?.price}</i>
                      </strike>
                      <span>
-                        ({product?.variations?.pricing?.discount || 0}%) off
+                        ({product?.pricing?.discount || 0}%) off
                      </span>
                   </div>
                </div>
@@ -104,9 +104,12 @@ const ProductContents = ({ product, variationID, authRefetch, productRefetch, se
 
                <small className='text-muted'>
                   <i>
-                     {product?.variations?.stock === "out" ? "Out of Stock" : "Hurry, Only " + product?.variations?.available + " Left !"}
+                     {product?.variations?.stock === "out" ? <span className='badge_failed'>Out of Stock</span> :
+                        "Hurry, Only " + product?.variations?.available + " Left !"}
                   </i>
                </small>
+
+
 
                <br />
 
@@ -116,7 +119,7 @@ const ProductContents = ({ product, variationID, authRefetch, productRefetch, se
                      {
                         <div className="d-flex align-items-center justify-content-start w-100">
 
-                           <span>Variants</span>
+
                            <div className="px-3 d-flex flex-row">
 
                               {
@@ -128,26 +131,22 @@ const ProductContents = ({ product, variationID, authRefetch, productRefetch, se
 
                                        <div key={i} className='d-flex align-items-center justify-content-center flex-column'>
                                           {
-                                             e?.variant?.size && <Link className={`swatch_size_btn ${e._VID === variationID ? 'active' : ''}`}
-                                                to={`/product/${product?.slug}?pId=${product?._id}&vId=${e._VID}`}>
-                                                {e?.variant?.size && e?.variant?.size}
-                                             </Link>
-                                          }
-
-                                          {
                                              e?.variant?.color && <Link className={`swatch_size_btn ${e._VID === variationID ? 'active' : ''}`}
                                                 to={`/product/${product?.slug}?pId=${product?._id}&vId=${e._VID}`}>
                                                 <div style={{
                                                    backgroundColor: hex,
                                                    display: 'block',
-                                                   width: '90%',
-                                                   height: '90%',
+                                                   width: '20px',
+                                                   height: '20px',
                                                    borderRadius: "100%"
                                                 }}>
                                                 </div>
+
+                                                {e?.variant?.sizes && <span>{e?.variant?.sizes}</span>}
+                                                {e?.variant?.ram && <span>{e?.variant?.ram}</span>}
+                                                {e?.variant?.rom && <span>{e?.variant?.rom}</span>}
                                              </Link>
                                           }
-
 
                                        </div>
                                     )
@@ -226,7 +225,7 @@ const ProductContents = ({ product, variationID, authRefetch, productRefetch, se
                               }
                            </span>
                         </address>
-                        : "Not Found"
+                        : "Please Login"
                   }
                </div>
             </div>
@@ -255,8 +254,8 @@ const ProductContents = ({ product, variationID, authRefetch, productRefetch, se
 
                <div>
                   {
-                     product?.deliveryCharge
-                  } Tk
+                     (product?.shippingCharge === 0 && product?.isFreeShipping) ? "Free" : "$ " + product?.shippingCharge
+                  }
                </div>
             </div>
 

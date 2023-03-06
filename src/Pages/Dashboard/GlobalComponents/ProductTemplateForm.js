@@ -94,7 +94,7 @@ const ProductTemplateForm = ({ formTypes, userInfo, setMessage }) => {
                      </button>
                   }
 
-                  <ProductListing super_category={super_category} required={required} setMessage={setMessage} formTypes={formTypes} data={data} refetch={refetch} />
+                  <ProductListing userInfo={userInfo} super_category={super_category} required={required} setMessage={setMessage} formTypes={formTypes} data={data} refetch={refetch} />
                </>
                : <div className='row py-2'>
                   <div className="col-lg-6"><small>CATEGORIES : {data?.categories && data?.categories.join("-->")}</small></div>
@@ -120,48 +120,6 @@ const ProductTemplateForm = ({ formTypes, userInfo, setMessage }) => {
                </div>
             }
          </div>
-
-         <br />
-
-         {
-            (formTypes === 'update-variation' || formTypes === 'new-variation') &&
-            <div className="card_default card_description">
-               <div className="d-flex align-items-start justify-content-between pb-3">
-                  <h5>
-                     {
-                        formTypes === 'update-variation' ? "Update Product Variation" : "Create Product Variation"
-                     }
-                  </h5>
-
-                  {
-                     formTypes === 'update-variation' ? <button className='bt9_edit' onClick={() => handleToggle('productVariation')}>
-                        {toggle === 'productVariation' ? 'Cancel' : 'Edit'}
-                     </button> : <button className='bt9_edit' onClick={() => handleToggle('productVariation')}>
-                        {toggle === 'productVariation' ? 'Cancel' : 'Create Variation'}
-                     </button>
-                  }
-               </div>
-
-               {toggle === 'productVariation' ?
-                  <ProductVariations required={required} setMessage={setMessage} formTypes={formTypes} data={data} refetch={refetch} super_category={super_category} />
-                  : <div className='row py-2'>
-                     {
-                        formTypes === 'update-variation' && getAttrs(data?.variations?.variant)
-                     }
-                     {
-                        formTypes === 'update-variation' && getAttrs(data?.variations?.pricing)
-                     }
-
-                     {
-                        formTypes === 'new-variation' && <button className='bt9_edit py-3' onClick={() => handleToggle('productVariation')}>
-                           {toggle === 'productVariation' ? 'Cancel' : 'Add New Variation'}
-                        </button>
-                     }
-
-                  </div>
-               }
-            </div>
-         }
       </>
    );
 };

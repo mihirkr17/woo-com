@@ -31,8 +31,6 @@ const CartCheckOut = () => {
    const buyBtnHandler = async (e) => {
       try {
          e.preventDefault();
-         let clientSecret;
-         let orderPaymentID;
 
          const selectedAddress = userInfo?.buyer?.defaultShippingAddress && userInfo?.buyer?.defaultShippingAddress;
 
@@ -74,15 +72,13 @@ const CartCheckOut = () => {
                body: JSON.stringify({ state: "byCart", paymentMethod })
             });
 
-            const result = await response.json();
+            const { clientSecret, orderPaymentID, orderItems } = await response.json();
 
             if (response.status >= 200 && response.status <= 299) {
 
                setOrderLoading(false);
 
-               if (result?.clientSecret && result?.orderPaymentID && result?.orderItems) {
-                  clientSecret = result?.clientSecret;
-                  orderPaymentID = result?.orderPaymentID;
+               if (clientSecret && orderPaymentID && orderItems) {
 
                   const { paymentIntent, error: intErr } = await stripe.confirmCardPayment(
                      clientSecret,
@@ -95,7 +91,6 @@ const CartCheckOut = () => {
                               phone: selectedAddress?.phone_number,
                               address: {
                                  city: selectedAddress?.city,
-                                 postal_code: selectedAddress?.postal_code,
                                  state: selectedAddress?.division,
                                  line1: selectedAddress?.area,
                                  line2: selectedAddress?.landmark,
@@ -130,13 +125,13 @@ const CartCheckOut = () => {
                            orderPaymentID: orderPaymentID,
                            paymentIntentID: paymentIntent?.id,
                            paymentMethodID: paymentIntent?.payment_method,
-                           orderItems: result?.orderItems
+                           orderItems: orderItems
                         })
                      });
 
-                     const response2Result = await response2.json();
+                     const { success } = await response2.json();
 
-                     if (response2Result?.success) {
+                     if (success) {
 
                         setConfirmLoading(false);
 
@@ -147,7 +142,6 @@ const CartCheckOut = () => {
 
             } else {
                setOrderLoading(false);
-               return setMessage(result?.message, 'danger');
             }
          }
       } catch (error) {

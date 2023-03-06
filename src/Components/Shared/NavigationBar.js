@@ -1,67 +1,37 @@
-import { faCartShopping, faSearch, faUserAlt } from '@fortawesome/free-solid-svg-icons';
+import { faCartShopping, faClose, faSearch, faUserAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Navbar } from 'react-bootstrap';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { useAuthContext } from '../../lib/AuthProvider';
 import { authLogout } from '../../Shared/common';
-import SearchPage from '../../Pages/SearchPage/SearchPage';
 import CategoryHeader from '../../Pages/Home/Components/CategoryHeader';
 
 const NavigationBar = () => {
    const [openAccount, setOpenAccount] = useState(false);
    const { role, userInfo } = useAuthContext();
    const location = useLocation();
-   // const [query, setQuery] = useState("");
-   const [loading, setLoading] = useState(false);
    const [data, setData] = useState([]);
 
    const path = location.pathname;
-   const [inFocus, setInFocus] = useState(false);
-   const [searchQuery, setSearchQuery] = useState("");
+   const [searchQuery, setSearchQuery] = useState(null);
 
+   useEffect(() => {
+      const fetchData = setTimeout(() => {
+         (async () => {
+            if (searchQuery !== "" && searchQuery) {
+               const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/product/search-products/${searchQuery}`);
+               const resData = await response.json();
+               setData(resData);
+            }
+         })();
+      }, 100);
+
+      return () => clearTimeout(fetchData);
+   }, [searchQuery]);
 
    if (role === 'OWNER' || role === 'ADMIN' || role === 'SELLER') {
       return false;
-   }
-
-
-   async function callApi(searchQuery) {
-      try {
-
-         if (searchQuery) {
-            setLoading(true);
-            const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/product/search-products/${searchQuery}`);
-            const resData = await response.json();
-            setData(resData);
-            setLoading(false);
-            setInFocus(true);
-         }
-
-      } catch (error) {
-         setLoading(false)
-      } finally {
-         setLoading(false);
-      }
-   }
-
-
-   function handleOnChange(e) {
-      let { value } = e.target;
-      setSearchQuery(value);
-      callApi(value)
-   }
-
-   async function handleSearch(e) {
-      try {
-
-         e.preventDefault();
-         setInFocus(true);
-         await callApi(searchQuery);
-
-      } catch (error) {
-         setLoading(false)
-      }
    }
 
    const handleLogout = async () => {
@@ -79,37 +49,35 @@ const NavigationBar = () => {
 
                      <div className="search_box">
 
-                        <form className='search_form' onSubmit={handleSearch}>
+                        <div className='search_form'>
                            <input type="search"
-                              onChange={handleOnChange}
-                              onFocus={() => setInFocus(true)}
-                              onBlur={() => setInFocus(false)}
+                              onChange={(e) => setSearchQuery(e.target.value)}
                               placeholder='Search for products, brands and more'
                               name="s_query"
-                              value={searchQuery}
+                              value={searchQuery || ""}
                            />
-                           <button type='submit'>
-                              <FontAwesomeIcon icon={faSearch} />
+                           <button onClick={() => setSearchQuery(null)}>
+                              <FontAwesomeIcon icon={faClose} />
                            </button>
 
-                           {
-                              <div className={`search_result ${inFocus ? 'active' : ""}`}>
+                           {(searchQuery) &&
+                              <div className={`search_result active`}>
                                  <div className='card_default card_description'>
                                     {
                                        (data && data.length > 0) ? data.map((product, index) => {
                                           return (
                                              <div className="d-flex flex-row align-items-center justify-content-start mb-3" key={index}>
-                                                <img src={product?.images && product?.images[0]} style={{ width: "25px", height: "25px", marginRight: "0.8rem", marginBottom: "0.4rem" }} alt="" />
-                                                <Link to={`/c/${product?.categories && (product?.categories.join("/").toString())}`} style={{ fontSize: "0.7rem" }}>{product?.title}</Link>
+                                                <img src={product?.image && product?.image} style={{ width: "25px", height: "25px", marginRight: "0.8rem", marginBottom: "0.4rem" }} alt="" />
+                                                <Link to={`/product/${product?.slug}?pId=${product._id}&vId=${product?._VID}`} style={{ fontSize: "0.7rem" }}>{product?.title}</Link>
                                              </div>
                                           )
-                                       }) : <p>No Product Found...</p>
+                                       }) : <b>No Product Found...</b>
                                     }
                                  </div>
 
                               </div>
                            }
-                        </form>
+                        </div>
 
 
 

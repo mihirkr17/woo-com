@@ -32,7 +32,7 @@ const OrderPaymentInfoModal = ({ data, closeModal, orderRefetch }) => {
             return;
          }
 
-         const { baseAmount, orderID, customerEmail } = order;
+         const { baseAmount, orderID, customerEmail, trackingID } = order;
 
          const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/payment/refund`, {
             method: "POST",
@@ -46,7 +46,8 @@ const OrderPaymentInfoModal = ({ data, closeModal, orderRefetch }) => {
                reason: "requested_by_customer",
                amount: parseInt(baseAmount),
                orderID,
-               customerEmail
+               customerEmail,
+               trackingID
             })
          });
 
@@ -54,6 +55,7 @@ const OrderPaymentInfoModal = ({ data, closeModal, orderRefetch }) => {
 
          if (response.ok) {
             orderRefetch();
+            closeModal();
          }
 
       } catch (error) {
@@ -63,8 +65,6 @@ const OrderPaymentInfoModal = ({ data, closeModal, orderRefetch }) => {
 
    return (
       <ModalWrapper closeModal={closeModal}>
-
-
          <div className="row">
             <div className="col-lg-7">
                <i>Payment Information</i> <br />

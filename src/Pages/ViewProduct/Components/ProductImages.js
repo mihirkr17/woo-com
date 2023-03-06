@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 const ProductImages = ({ product, userInfo, authRefetch, setMessage, productRefetch }) => {
    const [tabImg, setTabImg] = useState("");
    const [zoom, setZoom] = useState({ transform: "translate3d('0px, 0px, 0px')" });
-   useEffect(() => setTabImg(product?.variations?.images && product?.variations?.images[0]), [product?.variations?.images]);
+   useEffect(() => setTabImg(product?.images && product?.images[0]), [product?.images]);
 
 
    const handleImgTab = (params) => {
@@ -84,7 +84,7 @@ const ProductImages = ({ product, userInfo, authRefetch, setMessage, productRefe
          </div>
          <div className="product_image_tab">
             {
-               product?.variations?.images && product?.variations?.images.map((img, index) => {
+               product?.images && product?.images.map((img, index) => {
                   return (
                      <div key={index} className="image_btn" onMouseOver={() => handleImgTab(img)}>
                         <img src={img} alt="" />
