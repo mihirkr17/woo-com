@@ -39,7 +39,7 @@ const SocialAuth = () => {
 
                const response = await fetch(url, {
                   method: 'POST',
-                  withCredential: true,
+                  withCredentials: true,
                   credentials: 'include',
                   headers: {
                      "Content-Type": "application/json"

@@ -32,7 +32,7 @@ const OrderProvider = ({ children }) => {
                setOrderLoading(true);
                const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/dashboard/store/${userInfo?.seller?.storeInfos?.storeName}/manage-orders?view=${view}`, {
                   method: "GET",
-                  withCredential: true,
+                  withCredentials: true,
                   credentials: "include"
                });
 

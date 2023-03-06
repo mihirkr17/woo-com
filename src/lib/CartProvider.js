@@ -22,7 +22,7 @@ const CartProvider = ({ children }) => {
 
                const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/cart/cart-context`, {
                   method: "GET",
-                  withCredential: true,
+                  withCredentials: true,
                   credentials: "include"
                });
 

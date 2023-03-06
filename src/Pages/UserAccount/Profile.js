@@ -12,7 +12,7 @@ const Profile = () => {
       try {
          const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/user/update-profile-data`, {
             method: "PUT",
-            withCredential: true,
+            withCredentials: true,
             credentials: "include",
             headers: {
                "Content-Type": "application/json",

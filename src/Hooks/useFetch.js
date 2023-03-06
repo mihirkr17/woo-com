@@ -23,7 +23,7 @@ export const useFetch = (url, authorization = "") => {
                setLoading(true);
 
                const response = await fetch(url, {
-                  withCredential: true,
+                  withCredentials: true,
                   credentials: 'include',
                   method: "GET",
                   headers: {

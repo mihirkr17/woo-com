@@ -61,7 +61,7 @@ const SellOnline = () => {
       if (window.confirm("Submit the form ?")) {
          const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/user/register-new-seller`, {
             method: "POST",
-            withCredential: true,
+            withCredentials: true,
             credentials: 'include',
             headers: {
                "Content-Type": "application/json"

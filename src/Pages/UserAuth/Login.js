@@ -48,7 +48,7 @@ const Login = () => {
          else {
             const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/auth/login`, {
                method: "POST",
-               withCredential: true,
+               withCredentials: true,
                credentials: 'include',
                headers: {
                   "Content-Type": "application/json",

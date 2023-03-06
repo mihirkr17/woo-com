@@ -13,7 +13,7 @@ const OrderTable = ({ orderList, setOpenModal, setLabelModal, orderRefetch, setM
       try {
          const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/payment/retrieve-payment-intent/${piID}`, {
             method: "GET",
-            withCredential: true,
+            withCredentials: true,
             credentials: "include"
          });
 

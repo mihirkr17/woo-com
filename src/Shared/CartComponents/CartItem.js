@@ -15,7 +15,7 @@ const CartItem = ({ product: cartProduct, setMessage, cartRefetch, checkOut, car
 
       const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/cart/delete-cart-item/${cartType && cartType}`, {
          method: "DELETE",
-         withCredential: true,
+         withCredentials: true,
          credentials: 'include',
          headers: {
             authorization: productID
@@ -49,7 +49,7 @@ const CartItem = ({ product: cartProduct, setMessage, cartRefetch, checkOut, car
 
          const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/cart/update-cart-product-quantity`, {
             method: "PUT",
-            withCredential: true,
+            withCredentials: true,
             credentials: 'include',
             headers: {
                "Content-Type": "application/json",
