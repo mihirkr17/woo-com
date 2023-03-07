@@ -59,22 +59,19 @@ const Login = () => {
 
             setLoading(false);
 
-            const d = await response.json();
+            const { name, uuid, message } = await response.json();
 
             let verifyTok = document.cookie.split('; ').find(e => e.startsWith('verifyToken='))?.split('=')[1];
 
             setVerifyToken(verifyTok);
 
             if (!response.ok) {
-               setMessage(d?.message, 'danger');
+               return setMessage(message, 'danger');
             }
 
-            if (d?.name === 'isLogin') {
-               let setUUID = localStorage.setItem("uuid", d?.uuid);
-               console.log(setUUID);
-               if (setUUID) {
-                  authRefetch();
-               }
+            if (name === 'isLogin' && uuid) {
+               localStorage.setItem("uuid", uuid);
+               authRefetch();
             }
          }
 
