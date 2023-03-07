@@ -17,8 +17,9 @@ const AuthProvider = ({ children }) => {
    const authRefetch = () => setRef(e => !e);
 
    useEffect(() => {
-      const loggedUUID = new URLSearchParams(document.cookie.replaceAll("; ", "&")).get('loggedUUID');
-      console.log(loggedUUID);
+      // const loggedUUID = new URLSearchParams(document.cookie.replaceAll("; ", "&")).get('loggedUUID');
+      const loggedUUID = localStorage.getItem("uuid");
+
       const runFunc = setTimeout(() => {
          (async () => {
             try {

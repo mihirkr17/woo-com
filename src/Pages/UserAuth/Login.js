@@ -70,7 +70,11 @@ const Login = () => {
             }
 
             if (d?.name === 'isLogin') {
-               authRefetch();
+               let setUUID = localStorage.setItem("uuid", d?.uuid);
+               console.log(setUUID);
+               if (setUUID) {
+                  authRefetch();
+               }
             }
          }
 
