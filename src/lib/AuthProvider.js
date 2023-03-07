@@ -18,39 +18,40 @@ const AuthProvider = ({ children }) => {
 
    useEffect(() => {
       const loggedUUID = new URLSearchParams(document.cookie.replaceAll("; ", "&")).get('loggedUUID');
-      if (!loggedUUID) {
-         setAuthLoading(false);
-         return;
-      }
 
       const runFunc = setTimeout(() => {
          (async () => {
             try {
-               setAuthLoading(true);
 
-               const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/user/fau`, {
-                  withCredentials: true,
-                  credentials: 'include',
-                  method: "GET",
-                  headers: {
-                     authorization: loggedUUID
+               if (loggedUUID) {
+                  setAuthLoading(true);
+
+                  const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/user/fau`, {
+                     withCredentials: true,
+                     credentials: 'include',
+                     method: "GET",
+                     headers: {
+                        authorization: loggedUUID
+                     }
+                  });
+
+                  const data = await response.json();
+
+                  if (response.ok) {
+                     setAuthLoading(false);
+                     const userData = data && data?.data;
+                     setRole(userData?.role);
+                     setUserInfo(userData);
+                  } else {
+                     setAuthLoading(false);
+
+                     if (response.status === 401) {
+                        await authLogout();
+                        return;
+                     }
                   }
-               });
-
-               const data = await response.json();
-
-               if (response.ok) {
-                  setAuthLoading(false);
-                  const userData = data && data?.data;
-                  setRole(userData?.role);
-                  setUserInfo(userData);
                } else {
                   setAuthLoading(false);
-
-                  if (response.status === 401) {
-                     await authLogout();
-                     return;
-                  }
                }
 
             } catch (error) {
