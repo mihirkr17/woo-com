@@ -18,7 +18,7 @@ const AuthProvider = ({ children }) => {
 
    useEffect(() => {
       const loggedUUID = new URLSearchParams(document.cookie.replaceAll("; ", "&")).get('loggedUUID');
-
+      console.log(loggedUUID);
       const runFunc = setTimeout(() => {
          (async () => {
             try {
