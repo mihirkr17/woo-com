@@ -6,7 +6,7 @@ export const AuthContext = createContext();
 
 
 const AuthProvider = ({ children }) => {
-   const loggedUUID = new URLSearchParams(document.cookie.replaceAll("; ", "&")).get('loggedUUID');
+
    const [role, setRole] = useState("");
    const [userInfo, setUserInfo] = useState({});
    const [authLoading, setAuthLoading] = useState(true);
@@ -17,7 +17,7 @@ const AuthProvider = ({ children }) => {
    const authRefetch = () => setRef(e => !e);
 
    useEffect(() => {
-
+      const loggedUUID = new URLSearchParams(document.cookie.replaceAll("; ", "&")).get('loggedUUID');
       if (!loggedUUID) {
          setAuthLoading(false);
          return;
@@ -63,7 +63,7 @@ const AuthProvider = ({ children }) => {
 
       return () => clearTimeout(runFunc);
 
-   }, [ref, loggedUUID]);
+   }, [ref]);
 
    function cartQtyUpdater(params) {
 
