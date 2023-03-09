@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import BtnSpinner from '../../Components/Shared/BtnSpinner/BtnSpinner';
-import { useMessage } from '../../Hooks/useMessage';
 import { useAuthContext } from '../../lib/AuthProvider';
 import SocialAuth from './SocialAuth';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useBaseContext } from '../../lib/BaseProvider';
 
 const Login = () => {
-   const { msg, setMessage } = useMessage();
+   const { setMessage } = useBaseContext();
    const [showPwd, setShowPwd] = useState(false);
    const navigate = useNavigate();
    const location = useLocation();
@@ -103,7 +103,6 @@ const Login = () => {
                      it takes less than a minute
                   </p>
 
-                  {msg}
                   <form onSubmit={handleLogin} className='text-start'>
                      <div className="mb-3 input_group">
                         <label htmlFor='emailOrPhone'>Email address or phone</label>

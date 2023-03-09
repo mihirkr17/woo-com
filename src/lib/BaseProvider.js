@@ -1,12 +1,13 @@
-import { useEffect, useState } from "react"
+import React, { createContext, useContext, useEffect, useState } from 'react';
 
-// message hooks
-export const useMessage = () => {
+export const baseContext = createContext();
+
+const BaseProvider = ({ children }) => {
+
    const [msg, setMsg] = useState('');
    let setMessage;
 
    setMessage = (message, types = "success") => {
-
       setMsg(
          <p style={{
             position: 'fixed',
@@ -34,5 +35,12 @@ export const useMessage = () => {
       return () => clearInterval(messageTimeout);
    }, [msg]);
 
-   return { msg, setMessage };
-}
+   return (
+      <baseContext.Provider value={{ msg, setMessage }}>
+         {children}
+      </baseContext.Provider>
+   );
+};
+
+export const useBaseContext = () => useContext(baseContext);
+export default BaseProvider;

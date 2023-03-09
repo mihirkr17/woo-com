@@ -129,3 +129,14 @@ export const callApi = async (url, method, body) => {
       body: JSON.stringify(body)
    })
 }
+
+export const calcTime = (iso, offset) => {
+
+   let date = new Date(iso);
+
+   let utc = date.getTime() + (date.getTimezoneOffset() * 60000);
+
+   let nd = new Date(utc + (3600000 * offset));
+
+   return nd?.toLocaleTimeString();
+}

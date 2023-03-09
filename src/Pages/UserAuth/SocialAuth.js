@@ -4,12 +4,12 @@ import { auth } from '../../firebase.init';
 import { useSignInWithGoogle } from 'react-firebase-hooks/auth';
 import { useLocation, useNavigate } from 'react-router-dom';
 import BtnSpinner from "../../Components/Shared/BtnSpinner/BtnSpinner";
-import { useMessage } from '../../Hooks/useMessage';
 import { useAuthContext } from '../../lib/AuthProvider';
 import { useState } from 'react';
+import { useBaseContext } from '../../lib/BaseProvider';
 
 const SocialAuth = () => {
-   const { msg, setMessage } = useMessage();
+   const { setMessage } = useBaseContext();
    const [isLogged, setIsLogged] = useState(false);
    const [signInWithGoogle, user, loading, error] = useSignInWithGoogle(auth);
    const navigate = useNavigate();
@@ -74,10 +74,9 @@ const SocialAuth = () => {
 
    return (
       <div>
-         {msg}
          <button className='login-with-google-btn' onClick={socialHandler}>
             {loading ? <BtnSpinner text={"Signing..."}></BtnSpinner> : "Sign In With Google"}
-            </button>
+         </button>
       </div>
    );
 };

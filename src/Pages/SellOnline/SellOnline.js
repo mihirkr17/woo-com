@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { useState } from 'react';
 import { sellerAddressBook } from '../../Assets/CustomData/sellerAddressBook';
-import { useMessage } from '../../Hooks/useMessage';
 import { useAuthContext } from '../../lib/AuthProvider';
 import { slugMaker } from '../../Shared/common';
 
@@ -9,8 +8,7 @@ import { slugMaker } from '../../Shared/common';
 
 
 const SellOnline = () => {
-   const { userInfo, authRefetch } = useAuthContext();
-   const { msg, setMessage } = useMessage();
+   const { userInfo, authRefetch, setMessage } = useAuthContext();
    const [inputs, setInputs] = useState({
       email: "",
       password: "",
@@ -93,7 +91,6 @@ const SellOnline = () => {
                <div className="row">
 
                   <div className="col-lg-7 mx-auto py-5">
-                     {msg}
 
                      {
                         (userInfo?.isSeller === "pending") ? <p className='text-success'>We are looking for your request as soon as possible.</p> :

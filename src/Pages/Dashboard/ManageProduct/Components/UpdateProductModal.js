@@ -1,11 +1,9 @@
 import React from 'react';
-import { useMessage } from '../../../../Hooks/useMessage';
+import { useBaseContext } from '../../../../lib/BaseProvider';
 import ModalWrapper from '../../../../Shared/ModalWrapper';
 
 const UpdateProductModal = ({ data, closeModal, refetch }) => {
-   const { msg, setMessage } = useMessage();
-
-   console.log(data);
+   const { setMessage } = useBaseContext();
 
    const required = <span style={{ color: "red" }}>*</span>;
 
@@ -146,7 +144,6 @@ const UpdateProductModal = ({ data, closeModal, refetch }) => {
          {/* Product pricing form  */}
          <div className='p-3 handle_pricing'>
             <b>Pricing Information</b> <br />
-            {msg}
             <form action="" className='form' onSubmit={handlePricing}>
                <div className="row">
                   <div className="col-lg-6 py-2">

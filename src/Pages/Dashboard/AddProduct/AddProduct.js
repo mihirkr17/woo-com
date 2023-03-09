@@ -4,20 +4,16 @@ import "./AddProduct.css";
 import { useAuthContext } from '../../../lib/AuthProvider';
 import { Link, useParams } from 'react-router-dom';
 import ProductTemplateForm from '../GlobalComponents/ProductTemplateForm';
-import { useMessage } from '../../../Hooks/useMessage';
 
 const AddProduct = () => {
-   const { userInfo } = useAuthContext();
+   const { userInfo, setMessage } = useAuthContext();
    const queryParams = new URLSearchParams(window.location.search).get("np");
    const querySeller = new URLSearchParams(window.location.search).get("s");
-   const { msg, setMessage } = useMessage();
 
 
    return (
       <div className='section_default'>
          <div className="container">
-            {msg}
-
             {
                queryParams === 'add_product' ? <ProductTemplateForm userInfo={userInfo} setMessage={setMessage} formTypes={"create"} /> :
                   <>

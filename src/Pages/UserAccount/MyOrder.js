@@ -1,17 +1,15 @@
-import React, { useCallback, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useFetch } from '../../Hooks/useFetch';
 import Spinner from '../../Components/Shared/Spinner/Spinner';
-import { useMessage } from '../../Hooks/useMessage';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import BtnSpinner from '../../Components/Shared/BtnSpinner/BtnSpinner';
 import FilterOption from "../../Shared/FilterOption";
-import { useEffect } from 'react';
 import { useAuthContext } from '../../lib/AuthProvider';
+import { calcTime } from '../../Shared/common';
 
 
 const MyOrder = () => {
-   const { userInfo } = useAuthContext();
-   const { msg, setMessage } = useMessage();
+   const { userInfo, setMessage } = useAuthContext();
    const { data, refetch, loading } = useFetch(`${process.env.REACT_APP_BASE_URL}api/v1/order/my-order/${userInfo?.email}`);
    const [actLoading, setActLoading] = useState(false);
    const [ratPoint, setRatPoint] = useState("5");
@@ -26,17 +24,10 @@ const MyOrder = () => {
       if (filterOrder === "" || filterOrder === "all") {
          setOrderItems(data?.data?.module?.orders && data?.data?.module?.orders)
       } else {
-         setOrderItems(data?.data?.module?.orders && data?.data?.module?.orders.filter(p => p?.status === filterOrder))
+         setOrderItems(data?.data?.module?.orders && data?.data?.module?.orders.filter(p => p?.orderStatus === filterOrder))
       }
    }, [data, filterOrder]);
 
-   const openCancelFormHandler = (orderID) => {
-      if (orderID === openCancelForm) {
-         setOpenCancelForm(false);
-      } else {
-         setOpenCancelForm(orderID);
-      }
-   }
 
    const openReviewFormHandler = (orderID) => {
       if (orderID === openReviewForm) {
@@ -61,7 +52,6 @@ const MyOrder = () => {
          }
       }
    }
-
 
    const ratingHandler = async (e) => {
       e.preventDefault();
@@ -127,10 +117,8 @@ const MyOrder = () => {
 
    if (loading) return <Spinner></Spinner>;
 
-   window.history.replaceState({}, document.title);
    return (
       <div className="container">
-         {msg}
          <h5 className="py-4 text-start">
             My Orders
          </h5>
@@ -151,7 +139,6 @@ const MyOrder = () => {
                         const { title, quantity, paymentMode, orderStatus, orderID, sellingPrice, customerEmail,
                            baseAmount, image, productID, sellerData, cancelReason, orderCanceledAT,
                            orderAT, orderPlacedAT, orderShippedAT, isRating, slug, paymentStatus, shippingCharge, isCanceled, refund } = order && order;
-
                         return (
                            <div className="col-12 mb-3" key={orderID}>
                               <div className="order_card">
@@ -198,7 +185,7 @@ const MyOrder = () => {
                                                          <small className="text-muted">
                                                             {"Order Status : " + orderStatus} <br />
                                                             {"Reason : " + cancelReason} <br />
-                                                            {"Cancel Time : " + orderCanceledAT?.time}
+                                                            {"Cancel Time : " + calcTime(orderCanceledAT?.iso, "+6")}
                                                          </small>
                                                       </p>
                                                       <div className="text-end">
@@ -212,12 +199,16 @@ const MyOrder = () => {
                                                          <p>
                                                             <small className="text-muted">
                                                                {"Order Status : "}<i className="text-success">{orderStatus}</i> <br />
-                                                               {"Order Time : " + orderAT?.time}
+                                                               {"Order Time : " + calcTime(orderAT?.iso, "+6")}
                                                             </small>
                                                          </p>
-                                                         <button className="btn btn-sm text-danger" onClick={() => openCancelFormHandler(orderID)} style={openCancelForm !== orderID ? { display: "block" } : { display: "none" }}>
+
+                                                         <button className="btn btn-sm text-danger"
+                                                            onClick={() => setOpenCancelForm(e => e = orderID)}
+                                                            style={openCancelForm !== orderID ? { display: "block" } : { display: "none" }}>
                                                             Cancel Order
                                                          </button>
+
                                                          <div className="py-4" style={openCancelForm === orderID ? { display: "block" } : { display: "none" }}>
                                                             <form onSubmit={(e) => handleCancelOrder(e, { orderID, quantity, productID, customerEmail })} >
                                                                <label htmlFor="reason">Select Reason</label>
@@ -234,7 +225,7 @@ const MyOrder = () => {
                                                                </div>
                                                                <button type="submit" className="bt9_warning">Cancel Order</button>
                                                             </form>
-                                                            <button className='btn btn-sm' onClick={() => openCancelFormHandler(false)} style={openCancelForm === orderID ? { display: "block" } : { display: "none" }}>Back</button>
+                                                            <button className='btn btn-sm' onClick={() => setOpenCancelForm(e => e = false)} style={openCancelForm === orderID ? { display: "block" } : { display: "none" }}>Back</button>
                                                          </div>
                                                       </> :
                                                       orderStatus === "placed" ? <p>

@@ -8,16 +8,14 @@ import CartItem from '../../Shared/CartComponents/CartItem';
 import { useAuthContext } from '../../lib/AuthProvider';
 import CartAddress from '../../Shared/CartComponents/CartAddress';
 import { useEffect } from 'react';
-import { useMessage } from '../../Hooks/useMessage';
 import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
 
 const SingleCheckOut = () => {
    const navigate = useNavigate();
-   const { userInfo, authLoading, authRefetch } = useAuthContext();
+   const { userInfo, authLoading, authRefetch, setMessage } = useAuthContext();
    const [data, setData] = useState({});
    const { state } = useLocation();
    const [productData, setProductData] = useState(state || {});
-   const { msg, setMessage } = useMessage("");
    const [orderLoading, setOrderLoading] = useState(false);
 
    const stripe = useStripe();
@@ -201,7 +199,6 @@ const SingleCheckOut = () => {
    return (
       <div className='section_default'>
          <div className="container">
-            {msg}
             <div className="mb-4">
                <Link to='/my-cart'> <FontAwesomeIcon icon={faLeftLong} /> Back To Cart</Link>
             </div>

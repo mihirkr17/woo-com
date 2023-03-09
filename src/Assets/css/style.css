@@ -1141,21 +1141,101 @@ label {
     width: 31%;
   }
 }
-.cart {
+.cart_wrapper {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  border: 1px solid #ededed;
+  background: ghostwhite;
+  border-radius: 4px;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  padding: 0.6rem 0.4rem;
+}
+.cart_wrapper .c_list1 {
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1;
+          flex: 1 1;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
 }
-
-.cart_img {
-  padding: 0.3rem;
+.cart_wrapper .c_list2 {
+  -webkit-box-flex: 4;
+      -ms-flex: 4 1;
+          flex: 4 1;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+.cart_wrapper .c_list2 .c_meta_info .c_title a {
+  font-size: 0.9rem;
+}
+.cart_wrapper .c_list2 .remove_btn {
+  -ms-flex-item-align: start;
+      align-self: flex-start;
 }
 
-.cart_img img {
+.c_img {
+  padding: 0.3rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+.c_img img {
   width: 50px;
 }
 
-.cart_btn {
+.c_meta {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-align: end;
+      -ms-flex-align: end;
+          align-items: end;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  padding: 0.4rem 0;
+}
+.c_meta big {
+  margin-right: 0.6rem;
+  font-weight: bold;
+  color: var(--color-green);
+  font-size: 1.5rem;
+  line-height: normal;
+}
+.c_meta small {
+  margin-right: 0.5rem;
+}
+
+.c_btn {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;

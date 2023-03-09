@@ -1,6 +1,5 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useMessage } from '../../Hooks/useMessage';
 import CartCalculation from '../../Shared/CartComponents/CartCalculation';
 import CartItem from '../../Shared/CartComponents/CartItem';
 import { useAuthContext } from '../../lib/AuthProvider';
@@ -8,15 +7,14 @@ import { useCartContext } from '../../lib/CartProvider';
 
 
 const Cart = () => {
-   const { userInfo, cartQtyUpdater } = useAuthContext();
-   const { msg, setMessage } = useMessage();
+   const { userInfo, cartQtyUpdater, setMessage } = useAuthContext();
    const navigate = useNavigate();
    const { cartData, cartRefetch } = useCartContext();
 
 
    // Go checkout page
    const goCheckoutPage = async (uuid, params) => {
-     
+
 
       let products = cartData && cartData?.products.filter(p => p?.stock === "in");
 
@@ -44,7 +42,7 @@ const Cart = () => {
    return (
       <div className='section_default'>
          <div className="container">
-            {msg}
+            {/* {msg} */}
             <div className="row">
                <div className="col-lg-8 mb-3">
                   <div className="cart_card">

@@ -2,8 +2,6 @@ import { faLeftLong } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import Spinner from '../../Components/Shared/Spinner/Spinner';
-import { useMessage } from '../../Hooks/useMessage';
 import CartCalculation from '../../Shared/CartComponents/CartCalculation';
 import CartItem from '../../Shared/CartComponents/CartItem';
 import { useAuthContext } from '../../lib/AuthProvider';
@@ -12,8 +10,7 @@ import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
 
 const CartCheckOut = () => {
    const navigate = useNavigate();
-   const { msg, setMessage } = useMessage()
-   const { authLoading, authRefetch, userInfo } = useAuthContext();
+   const { authRefetch, userInfo, setMessage } = useAuthContext();
    const { state } = useLocation();
    const [orderLoading, setOrderLoading] = useState(false);
    const [confirmLoading, setConfirmLoading] = useState(false);
@@ -149,10 +146,6 @@ const CartCheckOut = () => {
       }
    }
 
-   if (authLoading) {
-      return <Spinner></Spinner>;
-   }
-
    window.history.replaceState(null, document.title);
 
    return (
@@ -161,8 +154,6 @@ const CartCheckOut = () => {
             <div className="mb-4">
                <Link to='/my-cart'> <FontAwesomeIcon icon={faLeftLong} /> Back To Cart</Link>
             </div>
-            {msg}
-
 
             <div className="row">
                <div className="col-lg-8 mb-3">
@@ -238,7 +229,7 @@ const CartCheckOut = () => {
 
                            <button className='bt9_checkout' disabled={(state?.products && userInfo?.buyer?.defaultShippingAddress) ? false : true} type='submit'>
                               {
-                                 orderLoading ? "Paying..." : confirmLoading ? "Confirming...." : "Pay Now " + parseInt(state?.container_p.finalAmounts && state?.container_p?.finalAmounts) + " Tk"
+                                 orderLoading ? "Paying..." : confirmLoading ? "Confirming...." : "Pay Now $" + parseInt(state?.container_p.finalAmounts && state?.container_p?.finalAmounts)
                               }
                            </button>
                         </form>

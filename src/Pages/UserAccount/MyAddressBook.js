@@ -4,18 +4,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { addressBook } from '../../Assets/CustomData/addressBook';
-import { useMessage } from '../../Hooks/useMessage';
 import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../../lib/AuthProvider';
 
 const MyAddressBook = () => {
-   const { authRefetch, userInfo } = useAuthContext();
+   const { authRefetch, userInfo,setMessage } = useAuthContext();
    const [newShipAddrs, setNewShipAddrs] = useState(false);
    const [oldShipAddrs, setOldShipAddrs] = useState(false);
    const [newDivision, setNewDivision] = useState({});
    const [newCity, setNewCity] = useState({});
    const [address, setAddress] = useState({});
-   const { msg, setMessage } = useMessage();
    const navigate = useNavigate();
    const addr = userInfo && userInfo?.buyer?.shippingAddress;
 
@@ -122,7 +120,6 @@ const MyAddressBook = () => {
    }
    return (
       <>
-         {msg}
          <div className="row">
             <div className="col-lg-12">
                <div className="d-flex align-items-center justify-content-between flex-wrap w-100">

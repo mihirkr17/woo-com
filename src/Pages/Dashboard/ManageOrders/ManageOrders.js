@@ -6,14 +6,12 @@ import OrderTable from './Components/OrderTable';
 import { useOrder } from '../../../lib/OrderProvider';
 import OrderLabelModal from './Components/OrderLabelModal';
 import { useAuthContext } from '../../../lib/AuthProvider';
-import { useMessage } from '../../../Hooks/useMessage';
 import { useNavigate } from 'react-router-dom';
 import OrderPaymentInfoModal from './Components/OrderPaymentInfoModal';
 
 
 const ManageOrders = () => {
-   const { userInfo } = useAuthContext();
-   const { msg, setMessage } = useMessage();
+   const { userInfo, setMessage } = useAuthContext();
    const { order, orderRefetch, orderLoading, viewController } = useOrder();
    const [openModal, setOpenModal] = useState(false);
    const [openOrderPaymentInfo, setOpenOrderPaymentInfo] = useState(false);
@@ -46,7 +44,6 @@ const ManageOrders = () => {
             <h5 className="pb-1">
                All Orders
             </h5>
-            {msg}
             <div className="headers">
                <button onClick={() => setShowOrders("pending")} className={`hBtn ${showOrders === "pending" ? "active" : ""}`}>
                   Pending Orders ({pendingOrders.length})

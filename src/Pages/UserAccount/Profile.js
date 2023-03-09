@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
-import { useMessage } from '../../Hooks/useMessage';
 import { useAuthContext } from '../../lib/AuthProvider';
 
 const Profile = () => {
-   const { msg, setMessage } = useMessage();
-   const { userInfo, authRefetch } = useAuthContext();
+   const { userInfo, authRefetch, setMessage } = useAuthContext();
    const [openProfileUpdateForm, setOpenProfileUpdateForm] = useState(false);
    const [inputs, setInputs] = useState({ fullName: userInfo?.fullName, dob: userInfo?.dob, gender: userInfo?.gender } || {});
 
@@ -42,8 +40,6 @@ const Profile = () => {
    return (
       <div className='container'>
          <h5 className='py-4 text-start'>My Profile</h5>
-
-         {msg}
          <div className="row">
             <div className="col-lg-12">
                <ul className='my-profile'>

@@ -2,13 +2,11 @@ import { faClose } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useMessage } from '../../Hooks/useMessage';
 import { useAuthContext } from '../../lib/AuthProvider';
 import { authLogout } from '../../Shared/common';
 
 const Wishlist = () => {
-   const { userInfo, authRefetch } = useAuthContext();
-   const { msg, setMessage } = useMessage();
+   const { userInfo, authRefetch, setMessage } = useAuthContext();
    const navigate = useNavigate();
 
    const removeToWishlist = async (productID) => {
@@ -32,7 +30,7 @@ const Wishlist = () => {
       <div className='section_default'>
          <div className="container">
             <h6>My Wishlist ({(userInfo?.wishlist && userInfo?.wishlist.length) || 0})</h6>
-            {msg}
+
             <div className="row">
                {
                   userInfo?.wishlist && userInfo?.wishlist.map((product, index) => {

@@ -2,7 +2,6 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useFetch } from '../../Hooks/useFetch';
 import "./ViewProduct.css";
-import { useMessage } from '../../Hooks/useMessage';
 import { useAuthContext } from '../../lib/AuthProvider';
 import RelatedProducts from './Components/RelatedProducts';
 import ProductReviews from './Components/ProductReviews';
@@ -16,15 +15,13 @@ import Spinner from '../../Components/Shared/Spinner/Spinner';
 const ViewProduct = () => {
    const { product_slug } = useParams();
 
-   const { authRefetch, userInfo } = useAuthContext();
+   const { authRefetch, userInfo, setMessage } = useAuthContext();
 
    const productID = new URLSearchParams(window.location.search).get("pId");
 
    const variationID = new URLSearchParams(window.location.search).get("vId");
 
    const { data, refetch: productRefetch, loading } = useFetch(`${process.env.REACT_APP_BASE_URL}api/v1/product/fetch-single-product/${product_slug}?pId=${productID}&vId=${variationID}`, userInfo?.email);
-
-   const { msg, setMessage } = useMessage();
 
    const product = data?.data?.product ? data?.data?.product : {};
 
@@ -39,7 +36,7 @@ const ViewProduct = () => {
             <Breadcrumbs
                path={(Array.isArray(product?.categories)) && product?.categories}
             />
-            {msg}
+
             {/* first content  */}
             <div className=" mb-5 row">
                <div className="pb-3 col-lg-4">

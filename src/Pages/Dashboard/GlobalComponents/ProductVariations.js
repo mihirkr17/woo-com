@@ -1,13 +1,13 @@
 import React from 'react';
 import { useState } from 'react';
-import { useMessage } from '../../../Hooks/useMessage';
+import { useBaseContext } from '../../../lib/BaseProvider';
 
 
 const ProductVariations = ({ required, data, formTypes, super_category, userInfo, refetch }) => {
 
    const variation = data?.variations && data?.variations;
 
-   const { msg, setMessage } = useMessage();
+   const { setMessage } = useBaseContext();
 
    const [variant, setVariant] = useState(variation?.variant || {});
 
@@ -195,7 +195,7 @@ const ProductVariations = ({ required, data, formTypes, super_category, userInfo
             </div>
 
             <div className="col-lg-12 my-2 pt-4">
-               {msg}
+
                <button type='submit' className='bt9_edit'>Save Changes</button>
             </div>
          </form>

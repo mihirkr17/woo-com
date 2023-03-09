@@ -3,12 +3,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 import { Button, Modal } from 'react-bootstrap';
 import Spinner from '../../../Components/Shared/Spinner/Spinner';
-import { useMessage } from '../../../Hooks/useMessage';
+import { useBaseContext } from '../../../lib/BaseProvider';
 
 import { useSellerChecker } from '../../../lib/SellerCheckProvider';
 
 const CheckSeller = () => {
-   const { msg, setMessage } = useMessage();
+   const { setMessage } = useBaseContext();
    const [modals, setModals] = useState(false);
    // const token = new URLSearchParams(document.cookie.replaceAll("; ", "&")).get('accessToken');
    const { state, dispatch, refetch, loading } = useSellerChecker();
@@ -45,7 +45,7 @@ const CheckSeller = () => {
    return (
       <div className='section_default'>
          <div className="container">
-            {msg}
+
             <div className="row">
                {data && data.length > 0 && <table className='table table-responsive'>
                   <thead>
@@ -60,7 +60,7 @@ const CheckSeller = () => {
                   <tbody>
                      {
                         data.map((user, index) => {
-                           
+
                            return (
                               <tr key={index}>
                                  <td>{user?.fullName}</td>

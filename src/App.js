@@ -45,14 +45,17 @@ import CheckAllIncomingProductListing from './Pages/Dashboard/Admin/CheckAllInco
 import CartProvider from './lib/CartProvider';
 import SinglePurchase from './Pages/Purchase/SinglePurchase';
 import CartPurchase from './Pages/Purchase/CartPurchase';
+import { useBaseContext } from './lib/BaseProvider';
 
 function App() {
   const location = useLocation();
   const path = location.pathname;
+  const { msg } = useBaseContext();
 
   return (
     <>
       <AuthProvider>
+        {msg}
         <NavigationBar></NavigationBar>
 
         <Routes>

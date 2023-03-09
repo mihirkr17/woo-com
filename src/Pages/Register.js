@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import BtnSpinner from "../Components/Shared/BtnSpinner/BtnSpinner";
-import { useMessage } from '../Hooks/useMessage';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import VerifyAuthToken from './UserAuth/VerifyAuthToken';
 import { emailValidator } from '../Shared/common';
+import { useBaseContext } from '../lib/BaseProvider';
 
 
 const Register = () => {
-   const { msg, setMessage } = useMessage();
+   const { setMessage } = useBaseContext();
    const [loading, setLoading] = useState(false);
    const [accept, setAccept] = useState(false);
    const [showPwd, setShowPwd] = useState(false);
@@ -117,7 +117,6 @@ const Register = () => {
                      &nbsp;<Link to={'/login'}>Go To Login</Link>&nbsp;
                      it takes less than a minute
                   </p>
-                  {msg}
                   {
                      verifyToken ? <VerifyAuthToken vToken={verifyToken} setMessage={setMessage} navigate={navigate} /> :
                         <form onSubmit={handleRegister}>

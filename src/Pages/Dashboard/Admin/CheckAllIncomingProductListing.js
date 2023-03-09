@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import { useState } from 'react';
-import { useMessage } from '../../../Hooks/useMessage';
 import { useAdminContext } from '../../../lib/AdminProvider';
+import { useBaseContext } from '../../../lib/BaseProvider';
 
 const CheckAllIncomingProductListing = () => {
    const { data, refetch, triggers } = useAdminContext();
    const [items, setItems] = useState(1);
-   const {msg, setMessage} = useMessage();
+   const {setMessage} = useBaseContext();
    const qProducts = data && (data?.data?.queueProducts || []);
    const countQueueProduct = data && data?.data?.countQueueProducts;
 
@@ -60,7 +60,6 @@ const CheckAllIncomingProductListing = () => {
          <div className="container">
 
             <h5>Incoming Listing</h5>
-            {msg}
             <div className="row">
                {
                   Array.isArray(qProducts) && qProducts.map((product) => {

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useContext } from 'react';
 import { createContext } from 'react';
 import { authLogout } from '../Shared/common';
+import { useBaseContext } from './BaseProvider';
 export const AuthContext = createContext();
 
 
@@ -12,6 +13,7 @@ const AuthProvider = ({ children }) => {
    const [authLoading, setAuthLoading] = useState(true);
    const [authErr, setAuthErr] = useState();
    const [ref, setRef] = useState(false);
+   const { setMessage } = useBaseContext();
 
 
    const authRefetch = () => setRef(e => !e);
@@ -79,7 +81,7 @@ const AuthProvider = ({ children }) => {
    }
 
    return (
-      <AuthContext.Provider value={{ role, userInfo, authRefetch, authLoading, authErr, cartQtyUpdater }}>
+      <AuthContext.Provider value={{ role, userInfo, authRefetch, authLoading, authErr, cartQtyUpdater, setMessage }}>
          {children}
       </AuthContext.Provider>
    )

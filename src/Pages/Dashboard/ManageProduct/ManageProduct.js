@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Spinner from '../../../Components/Shared/Spinner/Spinner';
 import { useFetch } from '../../../Hooks/useFetch';
-import { useMessage } from '../../../Hooks/useMessage';
 import { useAuthContext } from '../../../lib/AuthProvider';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { newCategory } from '../../../Assets/CustomData/categories';
@@ -9,8 +8,7 @@ import ManageProductHome from './Components/ManageProductHome';
 import ProductTemplateForm from '../GlobalComponents/ProductTemplateForm';
 
 const ManageProduct = () => {
-   const { msg, setMessage } = useMessage();
-   const { userInfo, role } = useAuthContext();
+   const { userInfo, role, setMessage } = useAuthContext();
    const [items, setItems] = useState(1);
    const [url, setUrl] = useState("");
 
@@ -56,9 +54,6 @@ const ManageProduct = () => {
    return (
       <div className='section_default'>
          <div className="container">
-            {msg}
-
-
             {
                queryParams && queryStoreName === userInfo?.seller?.storeInfos?.storeName ?
                   <ProductTemplateForm

@@ -3,33 +3,41 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import ConfirmDialog from '../ConfirmDialog';
 
 const CartItem = ({ product: cartProduct, setMessage, cartRefetch, checkOut, cartType, state, setState, cartQtyUpdater, items }) => {
-   const [openBox, setOpenBox] = useState(false);
    const [qtyLoading, setQtyLoading] = useState(false);
-
+   const [loading, setLoading] = useState(false);
+console.log(cartProduct?.variations?.available);
    //  Remove product from cartProduct && cartProduct handler
    const removeItemFromCartHandler = async (cp) => {
-      const { productID, title } = cp;
+      try {
+         setLoading(true);
 
-      const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/cart/delete-cart-item/${cartType && cartType}`, {
-         method: "DELETE",
-         withCredentials: true,
-         credentials: 'include',
-         headers: {
-            authorization: productID
+         const { productID, title } = cp;
+
+         const response = await fetch(`${process.env.REACT_APP_BASE_URL}api/v1/cart/delete-cart-item/${cartType && cartType}`, {
+            method: "DELETE",
+            withCredentials: true,
+            credentials: 'include',
+            headers: {
+               authorization: productID
+            }
+         });
+
+         setLoading(false);
+         const resData = await response.json();
+
+         if (response.ok) {
+            setMessage(`${title} ${resData?.message}`, 'success');
+            cartRefetch();
+            cartQtyUpdater(items - 1);
+         } else {
+            setMessage(`${title} ${resData?.error}`, 'danger');
          }
-      });
-
-      const resData = await response.json();
-
-      if (response.ok) {
-         setMessage(`${title} ${resData?.message}`, 'success');
-         cartRefetch();
-         cartQtyUpdater(items - 1);
-      } else {
-         setMessage(`${title} ${resData?.error}`, 'danger');
+      } catch (error) {
+         setMessage(error?.message, "danger");
+      } finally {
+         setLoading(false);
       }
    }
 
@@ -92,87 +100,90 @@ const CartItem = ({ product: cartProduct, setMessage, cartRefetch, checkOut, car
       }
    }
 
+   function getVariant(obj = {}) {
+      const newObj = Object.entries(obj);
+      const arr = [];
+
+      for (let [key, value] of newObj) {
+         arr.push(
+            <small key={key} className="text-muted">{key}:&nbsp;{value.split(",")[0]}</small>
+         );
+      }
+
+      return arr;
+   }
+
    return (
-      <div className="card_default d-flex mb-2">
-         <div className="d-flex px-3">
-            <div className="cart_img d-flex align-items-center justify-content-center">
-               {qtyLoading ? "Loading" : <img src={cartProduct?.image && cartProduct?.image} alt="" />}
-            </div>
-            {
-               !checkOut &&
-               <div className="ms-2 cart_btn">
-
-                  <button
-                     className='badge bg-primary my-1'
-                     disabled={cartProduct && cartProduct?.quantity <= 1 ? true : false}
-                     onClick={() => itemQuantityHandler(parseInt(cartProduct?.quantity) - 1, cartProduct?.productID, cartProduct?.variationID, cartProduct?.cartID)}>
-                     -
-                  </button>
-
-                  <input
-                     className='border px-2' type="number"
-                     value={cartProduct?.quantity || 0}
-                     onChange={(e) => itemQuantityHandler(e.target.value, cartProduct?.productID, cartProduct?.variationID, cartProduct?.cartID)}
-                     maxLength='3'
-                     style={{ width: '50px' }}
-                  />
-
-                  <button
-                     className='badge bg-primary my-1'
-                     disabled={cartProduct && cartProduct?.quantity >= cartProduct && cartProduct?.variations?.available ? true : false}
-                     onClick={() => itemQuantityHandler(parseInt(cartProduct?.quantity) + 1, cartProduct?.productID, cartProduct?.variationID, cartProduct?.cartID)}>
-                     +
-                  </button>
+      <>
+         {loading && <div className="text-center py-2">Removing...</div>}
+         <div className="mb-2 cart_wrapper">
+            <div className="c_list1">
+               <div className="c_img">
+                  {qtyLoading ? "Loading" : <img src={cartProduct?.image && cartProduct?.image} alt="" />}
                </div>
-            }
-         </div>
 
-         <div className="row w-100 card_description">
-            <div className="col-12">
-               <div className="row">
-                  <div className="col-11">
+               {
+                  !checkOut &&
+                  <div className="ms-2 c_btn">
 
-                     <p className="card_title">
-                        <Link to={`/product/${cartProduct?.slug}?pId=${cartProduct?.productID}&vId=${cartProduct?.variationID}`}>
-                           {cartProduct && cartProduct?.title}
-                        </Link>
-                     </p>
+                     <button
+                        className='badge bg-primary my-1'
+                        disabled={cartProduct && cartProduct?.quantity <= 1 ? true : false}
+                        onClick={() => itemQuantityHandler(parseInt(cartProduct?.quantity) - 1, cartProduct?.productID, cartProduct?.variationID, cartProduct?.cartID)}>
+                        -
+                     </button>
 
-                     <div className="d-flex align-items-center justify-content-between flex-wrap">
-                        <div className="product_price_model">
-                           <big><span className="dollar_Symbol">$</span>{cartProduct?.sellingPrice}</big>
-                        </div>
-                        {
-                           (cartProduct && cartProduct?.variant?.sizes) &&
-                           <small className="text-muted">Size : {cartProduct?.variant?.sizes}</small>
-                        }
-                        {
-                           (cartProduct && cartProduct?.variant?.color) &&
-                           <small className="text-muted">Color : {cartProduct?.variant?.color?.split(',')[0]}</small>
-                        }
-                        <small className="text-muted">Qty : {cartProduct?.quantity}</small>
-                        <small className="text-muted">Stock : {cartProduct?.stock}</small>
-                     </div>
+                     <input
+                        className='border px-2' type="number"
+                        value={cartProduct?.quantity || 0}
+                        onChange={(e) => itemQuantityHandler(e.target.value, cartProduct?.productID, cartProduct?.variationID, cartProduct?.cartID)}
+                        maxLength='3'
+                        style={{ width: '50px' }}
+                     />
+
+                     <button
+                        className='badge bg-primary my-1'
+                        disabled={cartProduct && cartProduct?.quantity >= cartProduct && cartProduct?.variations?.available ? true : false}
+                        onClick={() => itemQuantityHandler(parseInt(cartProduct?.quantity) + 1, cartProduct?.productID, cartProduct?.variationID, cartProduct?.cartID)}>
+                        +
+                     </button>
                   </div>
-                  {
-                     !checkOut && <div className="remove_btn col-1 text-end">
-                        {
-                           cartType !== "buy" && <button className='btn btn-sm' onClick={() => removeItemFromCartHandler(cartProduct)}><FontAwesomeIcon icon={faClose} /></button>
-                        }
+               }
+            </div>
 
-                        {
-                           openBox && <ConfirmDialog payload={{
-                              reference: cartProduct, openBox, setOpenBox,
-                              handler: removeItemFromCartHandler, types: "Delete", text: `Remove this from your cart`
-                           }} />
-                        }
-                     </div>
-                  }
+            <div className="c_list2">
+               <div className='c_meta_info'>
+
+                  <b className="c_title">
+                     <Link to={`/product/${cartProduct?.slug}?pId=${cartProduct?.productID}&vId=${cartProduct?.variationID}`}>
+                        {cartProduct && cartProduct?.title}
+                     </Link>
+                  </b>
+
+                  <div className="c_meta">
+                     <big className="c_price">
+                        <span className="dollar_Symbol">$</span>{cartProduct?.sellingPrice}
+                     </big>
+                     {
+                        getVariant(cartProduct?.variant)
+                     }
+                     <small className="text-muted">Qty : {cartProduct?.quantity}</small>
+                     <small className="text-muted">Stock : {cartProduct?.stock}</small>
+                  </div>
                </div>
+               {
+                  !checkOut && <div className="remove_btn text-end">
+                     {
+                        cartType !== "buy" && <button className='btn btn-sm' onClick={() => removeItemFromCartHandler(cartProduct)}>
+                           <FontAwesomeIcon icon={faClose} />
+                        </button>
+                     }
+                  </div>
+               }
+
             </div>
          </div>
-      </div>
-
+      </>
    );
 };
 
